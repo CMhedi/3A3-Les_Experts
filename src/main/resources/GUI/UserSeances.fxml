@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<BorderPane xmlns="http://javafx.com/javafx/17"
+            xmlns:fx="http://javafx.com/fxml"
+            fx:controller="Controllers.UserSeancesController"
+            stylesheets="@userSeances.css"
+            styleClass="root">
+
+    <!-- TOP BAR -->
+    <top>
+        <HBox alignment="CENTER_LEFT" spacing="12" styleClass="topbar">
+            <Label text="Espaces Reservations" styleClass="topbar-title"/>
+            <Region HBox.hgrow="ALWAYS"/>
+            <Button text="Utilisateur"
+                    onAction="#goToAdmin"
+                    styleClass="user-pill"/>
+        </HBox>
+    </top>
+
+    <!-- LEFT SIDEBAR -->
+    <left>
+        <VBox spacing="14" styleClass="sidebar">
+            <Label text="Eco " styleClass="brand">
+                <graphic>
+                    <Label text="Adventure" styleClass="brand-accent"/>
+                </graphic>
+            </Label>
+
+            <Separator styleClass="sep"/>
+
+            <Button text="Résev_Activite" styleClass="side-btn"/>
+            <Button text="Résev_Evénements" styleClass="side-btn"/>
+        </VBox>
+    </left>
+
+    <!-- CENTER CONTENT -->
+    <center>
+        <StackPane styleClass="content-wrap">
+            <VBox spacing="30" alignment="CENTER" styleClass="card">
+
+                <Label text="Actions disponibles"
+                       styleClass="card-title"/>
+
+                <!-- Boutons centrés -->
+                <Button text="✓ Réserver la séance"
+                        onAction="#reserver"
+                        styleClass="primary-btn"
+                        prefWidth="260"/>
+
+                <Button text="+ Ajouter une activité"
+                        onAction="#openAjouterActivite"
+                        styleClass="secondary-btn"
+                        prefWidth="260"/>
+
+            </VBox>
+        </StackPane>
+    </center>
+
+</BorderPane>

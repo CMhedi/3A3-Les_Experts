@@ -1,0 +1,93 @@
+/* ===== Background ===== */
+.root-bg {
+    -fx-background-color: #eef1f4;
+    -fx-font-family: "Segoe UI";
+}
+
+/* ===== Card ===== */
+.form-card {
+    -fx-background-color: white;
+    -fx-background-radius: 18;
+    -fx-padding: 22 22 22 22;
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.22), 18, 0.18, 0, 6);
+}
+
+/* ===== Title ===== */
+.title-row {
+    -fx-alignment: CENTER_LEFT;
+}
+
+.title-icon {
+    -fx-text-fill: #f4b400;
+    -fx-font-size: 18px;
+    -fx-font-weight: 900;
+}
+
+.title-label {
+    -fx-font-size: 22px;
+    -fx-font-weight: 800;
+    -fx-text-fill: #1f2a37;
+}
+
+/* Divider */
+.divider-line {
+    -fx-stroke: #e5e7eb;
+    -fx-stroke-width: 1.2;
+}
+
+/* ===== Labels ===== */
+.form-label {
+    -fx-font-size: 13px;
+    -fx-font-weight: 700;
+    -fx-text-fill: #374151;
+}
+
+/* ===== Inputs ===== */
+.input, .combo, .text-field, .combo-box {
+    -fx-background-color: #ffffff;
+    -fx-border-color: #d1d5db;
+    -fx-border-width: 1.2;
+    -fx-border-radius: 10;
+    -fx-background-radius: 10;
+    -fx-padding: 9 12 9 12;
+    -fx-font-size: 13px;
+}
+
+.input:focused, .combo:focused, .text-field:focused, .combo-box:focused {
+    -fx-border-color: #2aa8d2;
+    -fx-border-width: 1.6;
+    -fx-effect: dropshadow(gaussian, rgba(42,168,210,0.25), 10, 0.2, 0, 2);
+}
+
+/* ===== Buttons ===== */
+.btn-row {
+    -fx-alignment: CENTER;
+    -fx-padding: 12 0 0 0;
+}
+
+.btn {
+    -fx-min-width: 160;
+    -fx-background-radius: 12;
+    -fx-padding: 10 18 10 18;
+    -fx-font-size: 13px;
+    -fx-font-weight: 800;
+    -fx-cursor: hand;
+}
+
+/* orange */
+.btn-save {
+    -fx-background-color: #f39c12;
+    -fx-text-fill: white;
+}
+.btn-save:hover {
+    -fx-background-color: #e08a0a;
+}
+
+/* grey */
+.btn-secondary {
+    -fx-background-color: #6b7280;
+    -fx-text-fill: white;
+}
+.btn-secondary:hover {
+    -fx-background-color: #59606c;
+}

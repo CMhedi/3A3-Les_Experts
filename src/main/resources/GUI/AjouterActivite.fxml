@@ -1,0 +1,88 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.shape.Line?>
+
+<AnchorPane xmlns:fx="http://javafx.com/fxml"
+            fx:controller="Controllers.AjouterActiviteController"
+            stylesheets="@ajouterActivite.css"
+            styleClass="root-bg">
+
+    <children>
+
+        <!-- Card -->
+        <VBox spacing="16"
+              AnchorPane.topAnchor="20"
+              AnchorPane.leftAnchor="25"
+              AnchorPane.rightAnchor="25"
+              AnchorPane.bottomAnchor="20"
+              styleClass="form-card">
+
+            <!-- Title row -->
+            <HBox spacing="10" styleClass="title-row">
+                <Label text="⦿" styleClass="title-icon"/>
+                <Label text="Ajouter une Activité" styleClass="title-label"/>
+            </HBox>
+
+            <!-- Divider -->
+            <Line styleClass="divider-line"/>
+
+            <!-- Form -->
+            <VBox spacing="14">
+
+                <VBox spacing="6">
+                    <Label text="Nom" styleClass="form-label"/>
+                    <TextField fx:id="nomField" promptText="Nom de l'activité" styleClass="input"/>
+                </VBox>
+
+                <VBox spacing="6">
+                    <Label text="Type" styleClass="form-label"/>
+                    <ComboBox fx:id="typeBox" prefWidth="360" styleClass="combo"/>
+                </VBox>
+
+                <VBox spacing="6">
+                    <Label text="Catégorie" styleClass="form-label"/>
+                    <ComboBox fx:id="categorieBox" prefWidth="360" styleClass="combo"/>
+                </VBox>
+
+                <VBox spacing="6">
+                    <Label text="Niveau" styleClass="form-label"/>
+                    <ComboBox fx:id="niveauBox" prefWidth="360" styleClass="combo"/>
+                </VBox>
+
+                <VBox spacing="6">
+                    <Label text="Prix" styleClass="form-label"/>
+                    <TextField fx:id="prixField" promptText="Ex: 25" styleClass="input"/>
+                </VBox>
+
+                <VBox spacing="6">
+                    <Label text="Statut" styleClass="form-label"/>
+                    <ComboBox fx:id="statutBox" prefWidth="360" styleClass="combo"/>
+                </VBox>
+
+                <VBox spacing="6">
+                    <Label text="Image URL" styleClass="form-label"/>
+                    <TextField fx:id="imageField" promptText="Lien de l'image" styleClass="input"/>
+                </VBox>
+
+            </VBox>
+
+            <!-- Buttons -->
+            <HBox spacing="14" styleClass="btn-row">
+                <Button text="✔ Ajouter"
+                        onAction="#ajouterActivite"
+                        styleClass="btn btn-save"/>
+
+
+
+                <Button text="↩ Retourner"
+                        onAction="#goUserSeances"
+                        styleClass="btn btn-secondary"/>
+            </HBox>
+
+        </VBox>
+    </children>
+
+</AnchorPane>

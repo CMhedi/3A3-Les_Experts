@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.shape.Line?>
+
+<AnchorPane xmlns:fx="http://javafx.com/fxml"
+            fx:controller="Controllers.AjouterReservationController"
+            stylesheets="@addres.css"
+            styleClass="root-bg">
+
+    <children>
+
+        <!-- Card -->
+        <VBox spacing="16"
+              AnchorPane.topAnchor="20"
+              AnchorPane.leftAnchor="25"
+              AnchorPane.rightAnchor="25"
+              AnchorPane.bottomAnchor="20"
+              styleClass="form-card">
+
+            <!-- Title row -->
+            <HBox spacing="10" styleClass="title-row">
+                <Label text="⦿" styleClass="title-icon"/>
+                <Label text="Ajouter une Réservation" styleClass="title-label"/>
+            </HBox>
+
+            <!-- Divider -->
+            <Line styleClass="divider-line"/>
+
+            <!-- Form -->
+            <VBox spacing="14">
+
+                <VBox spacing="6">
+                    <Label text="Date de réservation" styleClass="form-label"/>
+                    <DatePicker fx:id="dateReservation" prefWidth="360" styleClass="date-blue"/>
+                </VBox>
+
+                <VBox spacing="6">
+                    <Label text="Statut" styleClass="form-label"/>
+                    <ComboBox fx:id="statutRes" prefWidth="360" styleClass="combo"/>
+                </VBox>
+
+                <VBox spacing="6">
+                    <Label text="Nombre de personnes" styleClass="form-label"/>
+                    <TextField fx:id="nbPersonnes" promptText="Ex: 3" styleClass="input"/>
+                </VBox>
+
+                <VBox spacing="6">
+                    <Label text="ID Utilisateur" styleClass="form-label"/>
+                    <TextField fx:id="idUser" styleClass="input"/>
+                </VBox>
+
+                <VBox spacing="6">
+                    <Label text="ID Activité" styleClass="form-label"/>
+                    <TextField fx:id="idActivite" styleClass="input"/>
+                </VBox>
+
+            </VBox>
+
+            <!-- Buttons -->
+            <HBox spacing="14" styleClass="btn-row">
+                <Button text="✔ Ajouter"
+                        fx:id="btnAjouter"
+                        onAction="#ajouterReservation"
+                        styleClass="btn btn-save"/>
+
+
+
+                <Button text="↩ Retourner"
+                        onAction="#goUserSeances"
+                        styleClass="btn btn-secondary"/>
+            </HBox>
+
+        </VBox>
+    </children>
+
+</AnchorPane>

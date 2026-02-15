@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.control.*?>
+
+<AnchorPane xmlns:fx="http://javafx.com/fxml"
+            fx:controller="Controllers.RecuReservationController">
+
+    <children>
+        <VBox spacing="15"
+              alignment="CENTER"
+              AnchorPane.topAnchor="30"
+              AnchorPane.leftAnchor="30"
+              AnchorPane.rightAnchor="30">
+
+            <Label text="REÇU DE RÉSERVATION"
+                   style="-fx-font-size:22px; -fx-font-weight:bold;" />
+
+            <Separator/>
+
+            <Label fx:id="lblId"/>
+            <Label fx:id="lblDate"/>
+            <Label fx:id="lblStatut"/>
+            <Label fx:id="lblNb"/>
+            <Label fx:id="lblUser"/>
+            <Label fx:id="lblActivite"/>
+
+            <Separator/>
+
+
+        </VBox>
+    </children>
+</AnchorPane>

@@ -1,0 +1,81 @@
+/* Background principal */
+.main-bg {
+    -fx-background-color: linear-gradient(to bottom right, #1e3c2f, #2e5e47);
+}
+
+/* Carte centrale */
+.receipt-card {
+    -fx-background-color: white;
+    -fx-background-radius: 18;
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.25), 20, 0, 0, 8);
+    -fx-max-width: 500;
+}
+
+/* Titre */
+.title-label {
+    -fx-font-size: 22px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #1e3c2f;
+}
+
+/* Séparateur moderne */
+.separator-modern {
+    -fx-background-color: #d9d9d9;
+}
+
+/* Contenu */
+.receipt-content {
+    -fx-padding: 10 0 10 0;
+}
+
+/* Texte normal */
+.receipt-text {
+    -fx-font-size: 14px;
+    -fx-text-fill: #444;
+}
+
+/* Type */
+.receipt-type {
+    -fx-font-size: 16px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #2e5e47;
+}
+
+/* Prix */
+.receipt-price {
+    -fx-font-size: 16px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #f39c12;
+}
+
+/* Statut */
+.receipt-status {
+    -fx-font-size: 14px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #27ae60;
+}
+
+/* Bouton réserver */
+.reserve-button {
+    -fx-background-color: #f4b860;
+    -fx-text-fill: white;
+    -fx-font-weight: bold;
+    -fx-background-radius: 25;
+    -fx-padding: 8 20 8 20;
+}
+
+.reserve-button:hover {
+    -fx-background-color: #e5a94f;
+}
+
+/* Bouton secondaire */
+.secondary-button {
+    -fx-background-color: #dcdcdc;
+    -fx-text-fill: #333;
+    -fx-background-radius: 25;
+    -fx-padding: 8 18 8 18;
+}
+
+.secondary-button:hover {
+    -fx-background-color: #c5c5c5;
+}
