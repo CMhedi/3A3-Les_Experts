@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<BorderPane xmlns="http://javafx.com/javafx"
+            xmlns:fx="http://javafx.com/fxml"
+            fx:controller="GUI.MenuController"
+            styleClass="root">
+
+    <center>
+        <VBox alignment="CENTER" spacing="20" styleClass="menu-box">
+            <Label text="EcoAdventure" styleClass="title"/>
+
+            <Button text="ADMIN" onAction="#openAdmin" styleClass="btn-primary"/>
+            <Button text="COACH" onAction="#openCoach" styleClass="btn-primary"/>
+            <Button text="USER" onAction="#openUser" styleClass="btn-primary"/>
+        </VBox>
+    </center>
+
+</BorderPane>

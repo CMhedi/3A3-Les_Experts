@@ -14,11 +14,17 @@ public class Seance {
     private StatutSeance statutSeance;
     private int idPlanning;
     private int idCoach;
-
+    private String nom;
     public Seance() {}
 
     // ===== Getters & Setters =====
+    public String getNom() {
+        return nom;
+    }
 
+    public void setNom(String nom) {
+        this.nom = nom;
+    }
     public int getIdSeance() {
         return idSeance;
     }
@@ -86,6 +92,6 @@ public class Seance {
     // ===== toString =====
     @Override
     public String toString() {
-        return dateSeance + " | " + heureDebut + "-" + heureFin + " | " + statutSeance;
+        return nom +" | "+ dateSeance + " | " + heureDebut + "-" + heureFin + " | " + statutSeance;
     }
 }

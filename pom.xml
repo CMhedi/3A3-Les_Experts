@@ -14,11 +14,77 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     </properties>
     <dependencies>
+
+
+        <!-- MySQL -->
         <dependency>
             <groupId>mysql</groupId>
             <artifactId>mysql-connector-java</artifactId>
             <version>8.0.33</version>
         </dependency>
-    </dependencies>
 
+        <!-- JUnit -->
+        <dependency>
+
+            <groupId>org.junit.jupiter</groupId>
+
+            <artifactId>junit-jupiter</artifactId>
+
+            <version>5.10.1</version>
+
+            <scope>test</scope>
+
+        </dependency>
+
+        <!-- JavaFX -->
+        <dependency>
+
+            <groupId>org.openjfx</groupId>
+
+            <artifactId>javafx-fxml</artifactId>
+
+            <version>21.0.2</version>
+
+        </dependency>
+
+        <dependency>
+
+            <groupId>org.openjfx</groupId>
+
+            <artifactId>javafx-controls</artifactId>
+
+            <version>21.0.2</version>
+
+        </dependency>
+
+
+        <!-- FontAwesome -->
+        <dependency>
+            <groupId>de.jensd</groupId>
+            <artifactId>fontawesomefx-fontawesome</artifactId>
+            <version>4.7.0-9.1.2</version>
+        </dependency>
+
+    </dependencies>
+    <build>
+
+        <plugins>
+
+            <plugin>
+
+                <groupId>org.openjfx</groupId>
+
+                <artifactId>javafx-maven-plugin</artifactId>
+
+                <version>0.0.8</version>
+
+                <configuration>
+                    <mainClass>GUI.MainApp</mainClass>
+                </configuration>
+
+            </plugin>
+
+        </plugins>
+
+    </build>
 </project>

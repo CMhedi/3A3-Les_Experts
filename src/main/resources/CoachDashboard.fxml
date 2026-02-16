@@ -1,0 +1,186 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import java.net.URL?>
+<?import de.jensd.fx.glyphs.fontawesome.FontAwesomeIconView?>
+
+<BorderPane xmlns="http://javafx.com/javafx"
+            xmlns:fx="http://javafx.com/fxml"
+            fx:controller="GUI.CoachDashboardController"
+            prefWidth="1200"
+            prefHeight="700"
+            styleClass="root">
+
+    <stylesheets>
+        <URL value="@admin.css"/>
+    </stylesheets>
+
+    <!-- ================= LEFT SIDEBAR ================= -->
+    <left>
+        <VBox styleClass="sidebar"
+              spacing="18"
+              alignment="TOP_LEFT">
+
+            <!-- LOGO -->
+            <HBox spacing="4" alignment="CENTER_LEFT">
+                <Label text="Eco" styleClass="logo"/>
+                <Label text="Adventure" styleClass="logo-accent"/>
+            </HBox>
+
+            <Separator styleClass="sidebar-separator"/>
+
+            <!-- MENU -->
+            <Button styleClass="menu-btn"
+                    defaultButton="false"
+                    maxWidth="Infinity"
+                    onAction="#handleRetour">
+                <graphic>
+                    <FontAwesomeIconView glyphName="ARROW_LEFT"
+                                         size="15"
+                                         fill="WHITE"/>
+                </graphic>
+                <text>Retour Menu</text>
+            </Button>
+
+
+
+        </VBox>
+    </left>
+
+    <!-- ================= TOP BAR ================= -->
+    <top>
+        <HBox spacing="12"
+              alignment="CENTER_LEFT"
+              styleClass="top-bar">
+
+            <Label text="Espace Coach"
+                   styleClass="title"/>
+
+            <Region HBox.hgrow="ALWAYS"/>
+
+            <HBox spacing="8"
+                  alignment="CENTER"
+                  styleClass="user-chip">
+
+                <FontAwesomeIconView glyphName="USER"
+                                     size="14"
+                                     fill="WHITE"/>
+
+                <Label text="Coach"
+                       styleClass="user-name"/>
+            </HBox>
+
+        </HBox>
+    </top>
+
+    <!-- ================= CENTER ================= -->
+    <center>
+        <VBox spacing="25"
+              alignment="TOP_CENTER"
+              style="-fx-padding:30;"/>
+
+            <!-- ===== STAT CARDS ===== -->
+            <HBox spacing="20"
+                  alignment="CENTER">
+
+                <VBox styleClass="stat-card"
+                      alignment="CENTER">
+
+                    <FontAwesomeIconView glyphName="CALENDAR"
+                                         size="18"
+                                         fill="#f28c00"/>
+
+                    <Label text="Total Séances"
+                           styleClass="stat-title"/>
+
+                    <Label fx:id="lblTotal"
+                           text="0"
+                           styleClass="stat-value"/>
+                </VBox>
+
+                <VBox styleClass="stat-card"
+                      alignment="CENTER">
+
+                    <FontAwesomeIconView glyphName="CLOCK_ALT"
+                                         size="18"
+                                         fill="#f28c00"/>
+
+                    <Label text="Aujourd'hui"
+                           styleClass="stat-title"/>
+
+                    <Label fx:id="lblToday"
+                           text="0"
+                           styleClass="stat-value"/>
+                </VBox>
+
+                <VBox styleClass="stat-card"
+                      alignment="CENTER">
+
+                    <FontAwesomeIconView glyphName="CHECK_CIRCLE"
+                                         size="18"
+                                         fill="#f28c00"/>
+
+                    <Label text="Terminées"
+                           styleClass="stat-title"/>
+
+                    <Label fx:id="lblTerminee"
+                           text="0"
+                           styleClass="stat-value"/>
+                </VBox>
+
+            </HBox>
+
+        <!-- ===== TABLE CARD ===== -->
+        <VBox styleClass="card"
+              spacing="18"
+              prefWidth="920"
+              VBox.vgrow="ALWAYS">
+
+            <!-- HEADER -->
+            <HBox alignment="CENTER_LEFT" spacing="15">
+
+                <Label text="Mes Séances"
+                       styleClass="form-title"/>
+
+                <Region HBox.hgrow="ALWAYS"/>
+
+                <!-- 🔎 SEARCH -->
+                <HBox spacing="8" alignment="CENTER_LEFT">
+                    <TextField fx:id="searchField"
+                               promptText="Rechercher..."
+                               styleClass="search-field"
+                               prefWidth="220"/>
+                </HBox>
+
+                <!-- 🎛 FILTER STATUT -->
+                <ComboBox fx:id="statutFilter"
+                          promptText="Filtrer par statut"
+                          prefWidth="180"
+                          styleClass="modern-combo"/>
+
+            </HBox>
+
+            <!-- TABLE -->
+            <TableView fx:id="seanceTable"
+                       VBox.vgrow="ALWAYS"
+                       styleClass="modern-table">
+
+                <columns>
+                    <TableColumn fx:id="colNom" text="Séance"/>
+
+                    <TableColumn fx:id="colDate" text="Date"/>
+                    <TableColumn fx:id="colDebut" text="Début"/>
+                    <TableColumn fx:id="colFin" text="Fin"/>
+                    <TableColumn fx:id="colCapacite" text="Capacité"/>
+                    <TableColumn fx:id="colStatut" text="Statut"/>
+                    <TableColumn fx:id="colPlanning" text="Planning"/>
+                </columns>
+
+            </TableView>
+
+        </VBox>
+
+    </center>
+
+</BorderPane>

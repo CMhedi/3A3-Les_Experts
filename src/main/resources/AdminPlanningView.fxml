@@ -1,0 +1,190 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import java.net.URL?>
+<?import de.jensd.fx.glyphs.fontawesome.FontAwesomeIconView?>
+
+<BorderPane xmlns="http://javafx.com/javafx"
+            xmlns:fx="http://javafx.com/fxml"
+            fx:controller="GUI.AdminPlanningController"
+            prefWidth="1200"
+            prefHeight="700"
+            styleClass="root">
+
+    <stylesheets>
+        <URL value="@admin.css"/>
+    </stylesheets>
+
+    <!-- ================= LEFT SIDEBAR ================= -->
+    <left>
+        <VBox styleClass="sidebar"
+              spacing="18"
+              alignment="TOP_LEFT">
+
+            <!-- LOGO -->
+            <HBox spacing="4" alignment="CENTER_LEFT">
+                <Label text="Eco" styleClass="logo"/>
+                <Label text="Adventure" styleClass="logo-accent"/>
+            </HBox>
+
+            <Separator styleClass="sidebar-separator"/>
+
+            <!-- MENU -->
+            <Button styleClass="menu-btn"
+                    defaultButton="false"
+                    onAction="#handleRetour"
+                    maxWidth="Infinity">
+                <graphic>
+                    <FontAwesomeIconView glyphName="ARROW_LEFT"
+                                         size="15"
+                                         fill="WHITE"/>
+                </graphic>
+                <text>Retour Menu</text>
+            </Button>
+
+
+
+        </VBox>
+    </left>
+
+    <!-- ================= TOP BAR ================= -->
+    <top>
+        <HBox spacing="15"
+              alignment="CENTER_LEFT"
+              styleClass="top-bar">
+
+            <Label text="Gestion des Plannings"
+                   styleClass="title"/>
+
+            <Region HBox.hgrow="ALWAYS"/>
+
+            <HBox spacing="8"
+                  alignment="CENTER"
+                  styleClass="user-chip">
+
+                <FontAwesomeIconView glyphName="USER"
+                                     size="14"
+                                     fill="WHITE"/>
+
+                <Label text="Admin"
+                       styleClass="user-name"/>
+            </HBox>
+
+        </HBox>
+    </top>
+
+    <!-- ================= CENTER CONTENT ================= -->
+    <center>
+        <VBox spacing="25"
+              alignment="TOP_CENTER"
+              style="-fx-padding:30;">
+
+            <!-- ===== STATS ===== -->
+            <HBox spacing="20" alignment="CENTER">
+
+                <VBox styleClass="stat-card"
+                      alignment="CENTER"
+                      spacing="6">
+
+                    <FontAwesomeIconView glyphName="CALENDAR"
+                                         size="18"
+                                         fill="#f28c00"/>
+
+                    <Label text="Total Plannings"
+                           styleClass="stat-title"/>
+
+                    <Label fx:id="lblTotalPlanning"
+                           text="0"
+                           styleClass="stat-value"/>
+                </VBox>
+
+            </HBox>
+
+
+            <!-- ===== TABLE CARD ===== -->
+            <VBox styleClass="card"
+                  spacing="20"
+                  prefWidth="900"
+                  VBox.vgrow="ALWAYS">
+
+                <!-- ===== SEARCH BAR ===== -->
+                <HBox spacing="10" alignment="CENTER_LEFT">
+
+                    <FontAwesomeIconView glyphName="SEARCH"
+                                         size="14"
+                                         fill="#1f4d36"/>
+
+                    <TextField fx:id="searchField"
+                               promptText="Rechercher par période ou description..."
+                               HBox.hgrow="ALWAYS"
+                               styleClass="search-field"/>
+                </HBox>
+
+
+                <TableView fx:id="planningTable"
+                           VBox.vgrow="ALWAYS">
+
+                    <columns>
+                        <TableColumn fx:id="colPeriode"
+                                     text="Période"/>
+                        <TableColumn fx:id="colDescription"
+                                     text="Description"/>
+                    </columns>
+                </TableView>
+
+                <!-- ===== ACTION BUTTONS ===== -->
+                <HBox spacing="18"
+                      alignment="CENTER">
+
+                    <Button fx:id="btnAjouter"
+                            styleClass="btn-primary"
+                            onAction="#handleAdd">
+                        <graphic>
+                            <FontAwesomeIconView glyphName="PLUS"
+                                                 size="11"
+                                                 fill="WHITE"/>
+                        </graphic>
+                        <text>Ajouter</text>
+                    </Button>
+
+                    <Button fx:id="btnModifier"
+                            styleClass="btn-secondary"
+                            onAction="#handleUpdate">
+                        <graphic>
+                            <FontAwesomeIconView glyphName="PENCIL"
+                                                 size="11"
+                                                 fill="WHITE"/>
+                        </graphic>
+                        <text>Modifier</text>
+                    </Button>
+
+                    <Button fx:id="btnSupprimer"
+                            styleClass="btn-danger"
+                            onAction="#handleDelete">
+                        <graphic>
+                            <FontAwesomeIconView glyphName="TRASH"
+                                                 size="11"
+                                                 fill="WHITE"/>
+                        </graphic>
+                        <text>Supprimer</text>
+                    </Button>
+
+                    <Button styleClass="btn-primary"
+                            onAction="#handleSeances">
+                        <graphic>
+                            <FontAwesomeIconView glyphName="CLOCK_ALT"
+                                                 size="11"
+                                                 fill="WHITE"/>
+                        </graphic>
+                        <text>Gérer Séances</text>
+                    </Button>
+
+                </HBox>
+
+            </VBox>
+
+        </VBox>
+    </center>
+
+</BorderPane>

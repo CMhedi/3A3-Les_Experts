@@ -1,0 +1,94 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import de.jensd.fx.glyphs.fontawesome.FontAwesomeIconView?>
+
+<VBox xmlns="http://javafx.com/javafx"
+      xmlns:fx="http://javafx.com/fxml"
+      fx:controller="GUI.PlanningFormController"
+      spacing="22"
+      alignment="TOP_CENTER"
+      styleClass="form-modal"
+      prefWidth="450"
+      prefHeight="380">
+
+    <!-- ===== HEADER ===== -->
+    <HBox alignment="CENTER_LEFT"
+          spacing="12"
+          style="-fx-padding: 5 0 5 0;">
+
+        <FontAwesomeIconView glyphName="CALENDAR"
+                             size="20"
+                             fill="#f28c00"/>
+
+        <Label fx:id="titleLabel"
+               text="Planning"
+               styleClass="form-title"/>
+    </HBox>
+
+    <Separator style="-fx-opacity: 0.3;"/>
+
+    <!-- ===== FORM ===== -->
+    <VBox spacing="14"
+          alignment="CENTER_LEFT"
+          style="-fx-padding: 5 10 0 10;">
+
+        <Label text="Période"
+               styleClass="form-label"/>
+
+        <TextField fx:id="periodeField"
+                   promptText="Ex : Mars 2026"
+                   prefHeight="38"/>
+
+        <Label text="Description"
+               styleClass="form-label"/>
+
+        <TextArea fx:id="descriptionField"
+                  prefHeight="100"
+                  wrapText="true"
+                  promptText="Description du planning..."
+                  style="-fx-background-radius: 10;"/>
+
+        <!-- ERROR MESSAGE -->
+        <Label fx:id="errorLabel"
+               text=""
+               visible="false"
+               wrapText="true"
+               styleClass="form-error"/>
+    </VBox>
+
+    <!-- ===== BUTTONS ===== -->
+    <HBox spacing="18"
+          alignment="CENTER"
+          style="-fx-padding: 10 0 0 0;">
+
+        <Button onAction="#handleSave"
+                styleClass="btn-primary"
+                prefWidth="130">
+
+            <graphic>
+                <FontAwesomeIconView glyphName="CHECK"
+                                     size="12"
+                                     fill="WHITE"/>
+            </graphic>
+
+            <text>Enregistrer</text>
+        </Button>
+
+        <Button onAction="#handleCancel"
+                styleClass="btn-secondary"
+                prefWidth="130">
+
+            <graphic>
+                <FontAwesomeIconView glyphName="TIMES"
+                                     size="12"
+                                     fill="WHITE"/>
+            </graphic>
+
+            <text>Annuler</text>
+        </Button>
+
+    </HBox>
+
+</VBox>

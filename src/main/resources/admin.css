@@ -1,0 +1,695 @@
+/* ===================================================
+   ROOT
+   =================================================== */
+
+.root {
+    -fx-background-color: linear-gradient(to bottom right, #1f4d36, #183c2a);
+    -fx-font-family: "Segoe UI";
+}
+
+/* ===================================================
+   TOP BAR
+   =================================================== */
+
+.top-bar {
+    -fx-background-color: rgba(36,79,61,0.92);
+    -fx-padding: 14 28;
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.35), 15,0.2,0,2);
+}
+
+.title {
+    -fx-text-fill: white;
+    -fx-font-size: 22px;
+    -fx-font-weight: bold;
+}
+
+/* ===================================================
+   SIDEBAR
+   =================================================== */
+
+.sidebar {
+    -fx-background-color: #163626;
+    -fx-padding: 22;
+    -fx-pref-width: 230;
+}
+
+.logo {
+    -fx-text-fill: white;
+    -fx-font-size: 26px;
+    -fx-font-weight: bold;
+}
+
+.logo-accent {
+    -fx-text-fill: #f28c00;
+    -fx-font-size: 26px;
+    -fx-font-weight: bold;
+}
+
+.sidebar-separator {
+    -fx-opacity: 0.20;
+}
+
+/* ===== SIDEBAR BUTTONS ===== */
+
+.menu-btn {
+    -fx-background-color: transparent;
+    -fx-text-fill: white;
+    -fx-font-size: 14px;
+    -fx-font-weight: bold;
+
+    -fx-alignment: CENTER_LEFT;
+    -fx-padding: 10 16;
+    -fx-graphic-text-gap: 10;
+
+    -fx-background-radius: 8;
+    -fx-border-radius: 8;
+    -fx-border-color: transparent;
+
+    -fx-pref-height: 40;
+    -fx-max-width: Infinity;
+}
+
+/* hover */
+.menu-btn:hover {
+    -fx-background-color: #2b5d46;
+}
+
+/* active */
+.menu-btn-active {
+    -fx-background-color: #2b5d46;
+    -fx-border-color: #f28c00;
+    -fx-border-width: 0 0 0 4;
+}
+
+/* remove blue ring */
+.menu-btn:focused,
+.button:focused {
+    -fx-focus-color: transparent;
+    -fx-faint-focus-color: transparent;
+}
+
+/* ===================================================
+   USER CHIP
+   =================================================== */
+
+.user-chip {
+    -fx-background-color: rgba(255,255,255,0.15);
+    -fx-background-radius: 20;
+    -fx-padding: 6 12;
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.25), 8,0.2,0,2);
+}
+
+.user-chip .label {
+    -fx-text-fill: white;
+    -fx-font-weight: bold;
+}
+
+/* ===================================================
+   GLOBAL BUTTONS
+   =================================================== */
+
+.button {
+    -fx-background-radius: 10;
+    -fx-font-weight: bold;
+    -fx-padding: 9 18;
+    -fx-cursor: hand;
+}
+
+.btn-primary {
+    -fx-background-color: #f28c00;
+    -fx-text-fill: white;
+}
+.btn-primary:hover {
+    -fx-background-color: #ff9d1f;
+}
+
+.btn-secondary {
+    -fx-background-color: #3b6e58;
+    -fx-text-fill: white;
+}
+.btn-secondary:hover {
+    -fx-background-color: #4a8a70;
+}
+
+.btn-danger {
+    -fx-background-color: #c0392b;
+    -fx-text-fill: white;
+}
+.btn-danger:hover {
+    -fx-background-color: #e74c3c;
+}
+
+/* ===================================================
+   CARDS
+   =================================================== */
+
+.card {
+    -fx-background-color: white;
+    -fx-background-radius: 16;
+    -fx-padding: 22;
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.12), 18,0.2,0,4);
+}
+
+.stat-card {
+    -fx-background-color: white;
+    -fx-background-radius: 16;
+    -fx-padding: 22;
+    -fx-pref-width: 210;
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.12), 18,0.2,0,4);
+}
+
+.stat-title {
+    -fx-text-fill: #777;
+    -fx-font-size: 13px;
+}
+
+.stat-value {
+    -fx-text-fill: #1f4d36;
+    -fx-font-size: 26px;
+    -fx-font-weight: bold;
+}
+
+/* ===================================================
+   TABLE — ULTIMATE ENTERPRISE DESIGN
+   =================================================== */
+
+.table-view {
+    -fx-background-color: white;
+    -fx-background-radius: 14;
+    -fx-border-radius: 14;
+    -fx-padding: 0;
+    -fx-effect: dropshadow(gaussian,
+    rgba(0,0,0,0.12), 18,0.2,0,3);
+
+    /* remove ugly inner border */
+    -fx-table-cell-border-color: transparent;
+}
+
+/* ---------- HEADER ---------- */
+
+.table-view .column-header-background {
+    -fx-background-color: #f7f8f9;
+    -fx-background-radius: 14 14 0 0;
+    -fx-border-color: transparent transparent #f28c00 transparent;
+    -fx-border-width: 0 0 2 0;
+}
+
+.table-view .column-header {
+    -fx-background-color: transparent;
+    -fx-padding: 10 0;
+}
+
+.table-view .column-header .label {
+    -fx-text-fill: #1f4d36;
+    -fx-font-size: 13px;
+    -fx-font-weight: bold;
+    -fx-alignment: CENTER;
+}
+
+/* filler */
+.table-view .column-header-background .filler {
+    -fx-background-color: #f7f8f9;
+}
+
+/* ---------- ROWS ---------- */
+
+/* zebra soft */
+.table-row-cell:odd {
+    -fx-background-color: #fcfcfc;
+}
+
+/* hover (smooth modern) */
+.table-row-cell:hover {
+    -fx-background-color: #eef7f2;
+}
+
+/* selected (premium soft orange) */
+.table-row-cell:selected {
+    -fx-background-color: #ffd59c;
+    -fx-border-color: #f28c00;
+    -fx-border-width: 0 0 0 4;
+}
+
+
+/* selected text */
+.table-row-cell:selected .table-cell {
+    -fx-text-fill: #1f4d36;
+    -fx-font-weight: 600;
+}
+
+
+
+/* ---------- CELLS ---------- */
+
+.table-cell {
+    -fx-alignment: CENTER;
+    -fx-text-fill: #2d2d2d;
+    -fx-font-size: 13px;
+    -fx-padding: 10 6;
+}
+
+/* remove vertical lines */
+.table-view .table-row-cell .table-cell {
+    -fx-border-color: transparent;
+}
+
+/* ---------- PLACEHOLDER ---------- */
+
+.table-view .placeholder .label {
+    -fx-text-fill: #999;
+    -fx-font-style: italic;
+    -fx-font-size: 13px;
+}
+
+/* ---------- SCROLL BAR CLEAN ---------- */
+
+.table-view .scroll-bar:vertical,
+.table-view .scroll-bar:horizontal {
+    -fx-background-color: transparent;
+}
+
+.table-view .increment-button,
+.table-view .decrement-button {
+    -fx-background-color: transparent;
+    -fx-padding: 0;
+}
+
+.table-view .thumb {
+    -fx-background-color: #d4d4d4;
+    -fx-background-radius: 6;
+}
+
+
+/* ===================================================
+   BADGES STATUS (for labels in cells)
+   =================================================== */
+
+.badge-planifiee {
+    -fx-background-color: #2ecc71;
+    -fx-text-fill: white;
+    -fx-background-radius: 14;
+    -fx-padding: 4 10;
+    -fx-font-size: 11px;
+    -fx-font-weight: bold;
+}
+
+.badge-terminee {
+    -fx-background-color: #f39c12;
+    -fx-text-fill: white;
+    -fx-background-radius: 14;
+    -fx-padding: 4 10;
+    -fx-font-size: 11px;
+    -fx-font-weight: bold;
+}
+
+.badge-annulee {
+    -fx-background-color: #e74c3c;
+    -fx-text-fill: white;
+    -fx-background-radius: 14;
+    -fx-padding: 4 10;
+    -fx-font-size: 11px;
+    -fx-font-weight: bold;
+}
+
+/* ===================================================
+   MODAL FORM
+   =================================================== */
+
+.form-modal {
+    -fx-background-color: white;
+    -fx-background-radius: 16;
+    -fx-padding: 28;
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.22), 20,0.3,0,4);
+}
+
+.form-title {
+    -fx-text-fill: #1f4d36;
+    -fx-font-size: 20px;
+    -fx-font-weight: bold;
+}
+
+.form-label {
+    -fx-text-fill: #1f4d36;
+    -fx-font-weight: bold;
+}
+
+.text-field,
+.text-area,
+.combo-box,
+.date-picker {
+    -fx-background-radius: 8;
+    -fx-border-radius: 8;
+    -fx-padding: 7 10;
+}
+
+/* error label */
+.form-error {
+    -fx-text-fill: #e74c3c;
+    -fx-font-size: 12px;
+    -fx-font-weight: bold;
+}
+.table-cell {
+    -fx-alignment: CENTER;
+}
+
+/* animation légère */
+.badge-planifiee,
+.badge-terminee,
+.badge-annulee {
+    -fx-effect: dropshadow(gaussian,
+    rgba(0,0,0,0.15), 4,0.2,0,1);
+}
+/* ===================================================
+   TABPANE — USER DASHBOARD PRO
+   =================================================== */
+
+.tab-pane {
+    -fx-background-color: transparent;
+}
+
+/* zone header */
+.tab-pane .tab-header-area {
+    -fx-padding: 0 0 10 0;
+}
+
+.tab-pane .tab-header-background {
+    -fx-background-color: transparent;
+}
+
+/* tabs */
+.tab {
+    -fx-background-color: #e9ecef;
+    -fx-background-radius: 8 8 0 0;
+    -fx-padding: 8 18;
+}
+
+.tab .tab-label {
+    -fx-text-fill: #1f4d36;
+    -fx-font-weight: bold;
+}
+
+/* selected tab */
+.tab:selected {
+    -fx-background-color: #f28c00;
+}
+
+.tab:selected .tab-label {
+    -fx-text-fill: white;
+}
+
+/* hover */
+.tab:hover {
+    -fx-background-color: #dfe6e2;
+}
+
+/* remove ugly focus */
+.tab-pane *.focus-indicator {
+    -fx-border-color: transparent;
+}
+/* ===================================================
+   TABLE — DASHBOARD PREMIUM
+   =================================================== */
+
+.table-view {
+    -fx-background-color: white;
+    -fx-background-radius: 12;
+    -fx-border-radius: 12;
+    -fx-padding: 6;
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.1), 12,0.2,0,3);
+}
+
+/* Header */
+.table-view .column-header-background {
+    -fx-background-color: #f5f7f6;
+    -fx-border-color: transparent transparent #f28c00 transparent;
+    -fx-border-width: 0 0 2 0;
+}
+
+.table-view .column-header .label {
+    -fx-text-fill: #1f4d36;
+    -fx-font-weight: bold;
+    -fx-font-size: 13px;
+}
+
+
+
+
+/* cell */
+.table-cell {
+    -fx-alignment: CENTER;
+    -fx-padding: 8 6;
+}
+/* ===============================
+   STAT CARD — PRO DASHBOARD
+   =============================== */
+
+.stat-card {
+    -fx-background-color: white;
+    -fx-background-radius: 18;
+    -fx-padding: 22 28;
+
+    -fx-pref-width: 240;
+    -fx-pref-height: 120;
+
+    -fx-alignment: CENTER;
+
+    -fx-effect: dropshadow(
+            gaussian,
+            rgba(0,0,0,0.12),
+            18, 0.2, 0, 4
+    );
+
+    -fx-border-color: rgba(242,140,0,0.15);
+    -fx-border-radius: 18;
+    -fx-border-width: 1;
+}
+
+/* titre */
+.stat-title {
+    -fx-text-fill: #7b7b7b;
+    -fx-font-size: 13px;
+    -fx-font-weight: 600;
+    -fx-padding: 0 0 6 0;
+}
+
+/* valeur */
+.stat-value {
+    -fx-text-fill: #1f4d36;
+    -fx-font-size: 34px;
+    -fx-font-weight: bold;
+}
+
+/* hover premium */
+.stat-card:hover {
+    -fx-translate-y: -2;
+    -fx-effect: dropshadow(
+            gaussian,
+            rgba(0,0,0,0.18),
+            22, 0.25, 0, 5
+    );
+}
+/* ==============================
+   CUSTOM DIALOG STYLE
+   ============================== */
+
+.custom-dialog {
+    -fx-background-color: white;
+    -fx-background-radius: 16;
+    -fx-padding: 20;
+}
+
+/* Header text */
+.custom-dialog .header-panel .label {
+    -fx-text-fill: white;
+    -fx-font-size: 16px;
+    -fx-font-weight: bold;
+}
+
+
+/* Content text */
+.custom-dialog .content.label {
+    -fx-text-fill: #2d2d2d;
+    -fx-font-size: 14px;
+}
+
+/* Buttons container */
+.custom-dialog .button-bar {
+    -fx-padding: 15 0 0 0;
+}
+
+.badge-disponible {
+    -fx-background-color: #2ecc71;
+    -fx-text-fill: white;
+    -fx-alignment: CENTER;
+    -fx-background-radius: 6;
+    -fx-padding: 4 8;
+}
+
+.badge-complete {
+    -fx-background-color: #e74c3c;
+    -fx-text-fill: white;
+    -fx-alignment: CENTER;
+    -fx-background-radius: 6;
+    -fx-padding: 4 8;
+}
+
+.badge-terminee {
+    -fx-background-color: #95a5a6;
+    -fx-text-fill: white;
+    -fx-alignment: CENTER;
+    -fx-background-radius: 6;
+    -fx-padding: 4 8;
+}
+/* ===== SEARCH FIELD ===== */
+
+.search-field {
+    -fx-background-radius: 20;
+    -fx-border-radius: 20;
+    -fx-padding: 6 15;
+    -fx-background-color: #f4f6f5;
+    -fx-border-color: #dcdcdc;
+}
+
+.search-field:focused {
+    -fx-border-color: #f28c00;
+    -fx-background-color: white;
+}
+/* ===========================
+   MODERN COMBOBOX FIXED
+   =========================== */
+
+.modern-combo {
+    -fx-background-radius: 20;
+    -fx-border-radius: 20;
+
+    -fx-background-color: white;
+    -fx-border-color: #f28c00;
+    -fx-border-width: 1.5;
+
+    -fx-padding: 3 12;
+    -fx-font-weight: bold;
+
+    -fx-focus-color: transparent;
+    -fx-faint-focus-color: transparent;
+}
+
+/* Remove internal background layer */
+.modern-combo .list-cell {
+    -fx-background-color: transparent;
+    -fx-text-fill: #1f4d36;
+}
+
+/* Arrow button */
+.modern-combo .arrow-button {
+    -fx-background-color: transparent;
+}
+
+/* Arrow icon */
+.modern-combo .arrow {
+    -fx-background-color: #1f4d36;
+}
+
+/* Hover */
+.modern-combo:hover {
+    -fx-border-color: #ff9d1f;
+}
+
+/* Focus */
+.modern-combo:focused {
+    -fx-border-color: #f28c00;
+}
+/* =========================
+   DROPDOWN MENU DESIGN PRO
+   ========================= */
+
+/* Menu container */
+.combo-box-popup .list-view {
+    -fx-background-color: white;
+    -fx-background-radius: 12;
+    -fx-border-color: #f28c00;
+    -fx-border-radius: 12;
+    -fx-border-width: 1;
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.15), 12,0.2,0,3);
+}
+
+/* Items */
+.combo-box-popup .list-cell {
+    -fx-background-color: transparent;
+    -fx-text-fill: #1f4d36;
+    -fx-padding: 10 15;
+    -fx-font-weight: bold;
+}
+
+/* Hover effect */
+.combo-box-popup .list-cell:hover {
+    -fx-background-color: #eef7f2;
+}
+
+/* Selected item */
+.combo-box-popup .list-cell:selected {
+    -fx-background-color: #f28c00;
+    -fx-text-fill: white;
+}
+/* ===============================
+   CUSTOM DIALOG
+   =============================== */
+
+.custom-dialog {
+    -fx-background-color: white;
+    -fx-background-radius: 16;
+}
+
+.custom-dialog .header-panel {
+    -fx-background-radius: 16 16 0 0;
+    -fx-padding: 20;
+}
+
+.dialog-message {
+    -fx-fill: #2d2d2d;
+    -fx-font-size: 14px;
+}
+
+/* INFO */
+.dialog-info .header-panel {
+    -fx-background-color: #2ecc71;
+}
+
+/* WARNING */
+.dialog-warning .header-panel {
+    -fx-background-color: #f28c00;
+}
+
+
+
+/* ERROR */
+.dialog-error .header-panel {
+    -fx-background-color: #e74c3c;
+}
+.dialog-confirm .header-panel {
+    -fx-background-color: #1f4d36;
+}
+
+/* CONFIRM */
+.dialog-confirm .header-panel .label {
+    -fx-text-fill: white;
+    -fx-font-weight: bold;
+}
+
+.field-error {
+    -fx-border-color: #e74c3c;
+    -fx-border-width: 2;
+    -fx-border-radius: 6;
+}
+.text-field,
+.text-area {
+    -fx-background-color: #f9faf9;
+    -fx-border-color: #dfe6e2;
+    -fx-border-radius: 10;
+    -fx-background-radius: 10;
+}
+
+.text-field:focused,
+.text-area:focused {
+    -fx-border-color: #f28c00;
+    -fx-background-color: white;
+}

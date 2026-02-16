@@ -1,0 +1,168 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import java.net.URL?>
+<?import de.jensd.fx.glyphs.fontawesome.FontAwesomeIconView?>
+
+<BorderPane xmlns="http://javafx.com/javafx"
+            xmlns:fx="http://javafx.com/fxml"
+            fx:controller="GUI.UserSeanceController"
+            prefWidth="1200"
+            prefHeight="700"
+            styleClass="root">
+
+    <stylesheets>
+        <URL value="@admin.css"/>
+    </stylesheets>
+
+    <!-- ================= LEFT SIDEBAR ================= -->
+    <left>
+        <VBox styleClass="sidebar"
+              spacing="18"
+              alignment="TOP_LEFT">
+
+            <!-- LOGO -->
+            <HBox spacing="4" alignment="CENTER_LEFT">
+                <Label text="Eco" styleClass="logo"/>
+                <Label text="Adventure" styleClass="logo-accent"/>
+            </HBox>
+
+            <Separator styleClass="sidebar-separator"/>
+
+            <!-- MENU -->
+            <Button styleClass="menu-btn"
+                    defaultButton="false"
+                    maxWidth="Infinity"
+                    onAction="#handleRetour">
+                <graphic>
+                    <FontAwesomeIconView glyphName="ARROW_LEFT"
+                                         size="15"
+                                         fill="WHITE"/>
+                </graphic>
+                <text>Retour Menu</text>
+            </Button>
+
+            <Button styleClass="menu-btn"
+                    onAction="#handleDashboard">
+
+                <graphic>
+                    <FontAwesomeIconView glyphName="DASHBOARD"
+                                         size="14"
+                                         fill="WHITE"/>
+                </graphic>
+
+                <text> Mes Séances </text>
+            </Button>
+
+
+        </VBox>
+    </left>
+
+    <!-- ================= TOP BAR ================= -->
+    <top>
+        <HBox spacing="12"
+              alignment="CENTER_LEFT"
+              styleClass="top-bar">
+
+            <Label text="Séances disponibles"
+                   styleClass="title"/>
+
+            <Region HBox.hgrow="ALWAYS"/>
+
+            <HBox spacing="8"
+                  alignment="CENTER"
+                  styleClass="user-chip">
+
+                <FontAwesomeIconView glyphName="USER"
+                                     size="14"
+                                     fill="WHITE"/>
+
+                <Label text="Utilisateur"
+                       styleClass="user-name"/>
+            </HBox>
+
+        </HBox>
+    </top>
+
+    <!-- ================= CENTER ================= -->
+    <center>
+        <VBox spacing="25"
+              alignment="TOP_CENTER"
+              style="-fx-padding:30;">
+
+            <!-- ===== TABLE CARD ===== -->
+            <VBox spacing="18"
+                  styleClass="card"
+                  prefWidth="920"
+                  VBox.vgrow="ALWAYS">
+
+                <!-- ===== TITLE + SEARCH ===== -->
+                <HBox alignment="CENTER_LEFT"
+                      spacing="15">
+
+                    <Label text="Liste des Séances"
+                           styleClass="form-title"/>
+
+                    <Region HBox.hgrow="ALWAYS"/>
+
+                    <!-- 🔎 SEARCH BAR -->
+                    <HBox spacing="8"
+                          alignment="CENTER_LEFT"
+                          styleClass="search-container">
+
+                        <FontAwesomeIconView glyphName="SEARCH"
+                                             size="13"
+                                             fill="#1f4d36"/>
+
+                        <TextField fx:id="searchField"
+                                   promptText="Rechercher séance..."
+                                   styleClass="search-field"/>
+
+                    </HBox>
+
+                </HBox>
+
+                <!-- ===== TABLE ===== -->
+                <TableView fx:id="seanceTable"
+                           VBox.vgrow="ALWAYS">
+
+                    <columns>
+                        <TableColumn fx:id="colNom" text="Séance"/>
+
+                        <TableColumn fx:id="colDate" text="Date"/>
+                        <TableColumn fx:id="colDebut" text="Début"/>
+                        <TableColumn fx:id="colFin" text="Fin"/>
+                        <TableColumn fx:id="colCoach" text="Coach"/>
+                        <TableColumn fx:id="colPlaces" text="Places restantes"/>
+                        <TableColumn fx:id="colStatut" text="Statut"/>
+                    </columns>
+
+                </TableView>
+
+                <!-- ===== ACTION BUTTON ===== -->
+                <HBox alignment="CENTER"
+                      spacing="10">
+
+                    <Button fx:id="btnReserver"
+                            onAction="#handleReserver"
+                            styleClass="btn-primary">
+
+                        <graphic>
+                            <FontAwesomeIconView glyphName="CHECK"
+                                                 size="12"
+                                                 fill="WHITE"/>
+                        </graphic>
+
+                        <text>Réserver la séance</text>
+                    </Button>
+
+                </HBox>
+
+            </VBox>
+
+
+        </VBox>
+    </center>
+
+</BorderPane>

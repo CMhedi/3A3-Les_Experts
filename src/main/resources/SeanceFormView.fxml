@@ -1,0 +1,140 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import de.jensd.fx.glyphs.fontawesome.FontAwesomeIconView?>
+
+<VBox xmlns="http://javafx.com/javafx"
+      xmlns:fx="http://javafx.com/fxml"
+      fx:controller="GUI.SeanceFormController"
+      spacing="22"
+      alignment="TOP_CENTER"
+      styleClass="form-modal"
+      prefWidth="480"
+      prefHeight="580">
+
+    <!-- ===== HEADER ===== -->
+    <HBox alignment="CENTER_LEFT"
+          spacing="12"
+          style="-fx-padding: 5 0 5 0;">
+
+        <FontAwesomeIconView glyphName="CLOCK_ALT"
+                             size="20"
+                             fill="#f28c00"/>
+
+        <Label fx:id="titleLabel"
+               text="Gestion de Séance"
+               styleClass="form-title"/>
+    </HBox>
+
+    <Separator style="-fx-opacity: 0.3;"/>
+
+    <!-- ===== FORM ===== -->
+    <VBox spacing="16"
+          alignment="CENTER_LEFT"
+          style="-fx-padding: 5 15 0 15;">
+        <!-- NOM SEANCE -->
+        <Label text="Nom de la séance"
+               styleClass="form-label"/>
+
+        <TextField fx:id="nomField"
+                   promptText="Ex: Yoga débutant"
+                   prefHeight="38"
+                   maxWidth="Infinity"/>
+
+
+        <!-- DATE -->
+        <Label text="Date de la séance"
+               styleClass="form-label"/>
+        <DatePicker fx:id="datePicker"
+                    prefHeight="38"
+                    maxWidth="Infinity"/>
+
+        <!-- HEURES (2 colonnes) -->
+        <HBox spacing="15">
+
+            <VBox spacing="6" HBox.hgrow="ALWAYS">
+                <Label text="Heure début"
+                       styleClass="form-label"/>
+                <TextField fx:id="heureDebutField"
+                           promptText="HH:mm"
+                           prefHeight="38"
+                           maxWidth="Infinity"/>
+            </VBox>
+
+            <VBox spacing="6" HBox.hgrow="ALWAYS">
+                <Label text="Heure fin"
+                       styleClass="form-label"/>
+                <TextField fx:id="heureFinField"
+                           promptText="HH:mm"
+                           prefHeight="38"
+                           maxWidth="Infinity"/>
+            </VBox>
+
+        </HBox>
+
+        <!-- CAPACITE -->
+        <Label text="Capacité"
+               styleClass="form-label"/>
+        <TextField fx:id="capaciteField"
+                   promptText="Nombre de places"
+                   prefHeight="38"
+                   maxWidth="Infinity"/>
+
+        <!-- STATUT -->
+        <Label text="Statut"
+               styleClass="form-label"/>
+        <ComboBox fx:id="statutCombo"
+                  prefHeight="38"
+                  maxWidth="Infinity"/>
+
+        <!-- COACH -->
+        <Label text="Coach"
+               styleClass="form-label"/>
+        <ComboBox fx:id="coachCombo"
+                  prefHeight="38"
+                  maxWidth="Infinity"/>
+
+        <!-- ERROR -->
+        <Label fx:id="errorLabel"
+               text=""
+               visible="false"
+               wrapText="true"
+               styleClass="form-error"/>
+
+    </VBox>
+
+    <!-- ===== BUTTONS ===== -->
+    <HBox spacing="20"
+          alignment="CENTER"
+          style="-fx-padding: 10 0 0 0;">
+
+        <Button onAction="#handleSave"
+                styleClass="btn-primary"
+                prefWidth="140">
+
+            <graphic>
+                <FontAwesomeIconView glyphName="CHECK"
+                                     size="12"
+                                     fill="WHITE"/>
+            </graphic>
+
+            <text>Enregistrer</text>
+        </Button>
+
+        <Button onAction="#handleCancel"
+                styleClass="btn-secondary"
+                prefWidth="140">
+
+            <graphic>
+                <FontAwesomeIconView glyphName="TIMES"
+                                     size="12"
+                                     fill="WHITE"/>
+            </graphic>
+
+            <text>Annuler</text>
+        </Button>
+
+    </HBox>
+
+</VBox>

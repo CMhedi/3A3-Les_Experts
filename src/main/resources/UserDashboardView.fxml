@@ -1,0 +1,134 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import java.net.URL?>
+<?import de.jensd.fx.glyphs.fontawesome.FontAwesomeIconView?>
+
+<BorderPane xmlns="http://javafx.com/javafx"
+            xmlns:fx="http://javafx.com/fxml"
+            fx:controller="GUI.UserDashboardController"
+            prefWidth="1200"
+            prefHeight="700"
+            styleClass="root">
+
+    <stylesheets>
+        <URL value="@admin.css"/>
+    </stylesheets>
+
+    <!-- ================= TOP BAR ================= -->
+    <top>
+        <HBox spacing="15"
+              alignment="CENTER_LEFT"
+              styleClass="top-bar">
+
+            <Label text="Mes Séances"
+                   styleClass="title"/>
+
+            <Region HBox.hgrow="ALWAYS"/>
+
+            <Button text="Retour"
+                    onAction="#handleRetour"
+                    styleClass="btn-secondary">
+                <graphic>
+                    <FontAwesomeIconView glyphName="ARROW_LEFT"
+                                         size="12"
+                                         fill="WHITE"/>
+                </graphic>
+            </Button>
+            <Button styleClass="menu-btn"
+                    onAction="#handleSeances">
+
+                <graphic>
+                    <FontAwesomeIconView glyphName="CALENDAR"
+                                         size="14"
+                                         fill="WHITE"/>
+                </graphic>
+
+                <text> Séances Disponibles </text>
+            </Button>
+
+
+        </HBox>
+    </top>
+
+    <!-- ================= CENTER ================= -->
+    <center>
+        <VBox spacing="20"
+              alignment="TOP_CENTER"
+              style="-fx-padding:25;">
+
+            <!-- CARD STYLE -->
+            <VBox styleClass="card"
+                  spacing="15"
+                  prefWidth="950"
+                  VBox.vgrow="ALWAYS">
+                <TabPane fx:id="tabPane"
+                         tabClosingPolicy="UNAVAILABLE"
+                         VBox.vgrow="ALWAYS">
+
+
+
+                    <tabs>
+
+                        <!-- PLANIFIEES -->
+                        <Tab text="Planifiées" closable="false">
+                            <VBox spacing="15" style="-fx-padding:15;">
+
+                                <TableView fx:id="tablePlanifiees"
+                                           VBox.vgrow="ALWAYS">
+                                    <columns>
+                                        <TableColumn fx:id="colNomP" text="Séance"/>
+
+                                        <TableColumn fx:id="colDateP" text="Date"/>
+                                        <TableColumn fx:id="colDebutP" text="Début"/>
+                                        <TableColumn fx:id="colFinP" text="Fin"/>
+                                        <TableColumn fx:id="colCoachP" text="Coach"/>
+                                    </columns>
+                                </TableView>
+
+                                <HBox alignment="CENTER_RIGHT">
+                                    <Button fx:id="btnAnnuler"
+                                            text="Annuler réservation"
+                                            onAction="#handleAnnuler"
+                                            styleClass="btn-danger"/>
+                                </HBox>
+
+                            </VBox>
+                        </Tab>
+
+
+                        <!-- TERMINEES -->
+                        <Tab text="Terminées"
+                             closable="false">
+
+                            <TableView fx:id="tableTerminees"
+                                       VBox.vgrow="ALWAYS">
+
+                                <columns>
+                                    <TableColumn fx:id="colNomT" text="Séance"/>
+
+
+                                    <TableColumn fx:id="colDateT"
+                                                 text="Date"/>
+                                    <TableColumn fx:id="colDebutT"
+                                                 text="Début"/>
+                                    <TableColumn fx:id="colFinT"
+                                                 text="Fin"/>
+                                    <TableColumn fx:id="colCoachT"
+                                                 text="Coach"/>
+                                </columns>
+                            </TableView>
+
+                        </Tab>
+
+                    </tabs>
+
+                </TabPane>
+
+            </VBox>
+
+        </VBox>
+    </center>
+
+</BorderPane>
