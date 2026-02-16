@@ -1,0 +1,85 @@
+package gui;
+
+import Entities.UserApp;
+import Services.interfaces.UserService;
+import enums.RoleUser; // Thabbet f'esm el package mta3 el RoleUser mte3ek
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
+import javafx.fxml.FXML;
+import javafx.scene.control.*;
+import java.util.stream.Collectors;
+import java.util.Arrays;
+
+public class UserUpdateController {
+
+    @FXML private TextField txtNom, txtPrenom, txtEmail;
+    @FXML private PasswordField txtPassword;
+    @FXML private ComboBox<String> comboRole;
+
+    private UserApp currentUser;
+    private UserService userService = new UserService();
+    private AdminUsersController parentController;
+
+    public void initData(UserApp user, AdminUsersController parent) {
+        this.currentUser = user;
+        this.parentController = parent;
+
+        // 1. Setup Roles
+        ObservableList<String> roles = FXCollections.observableArrayList(
+                Arrays.stream(RoleUser.values()).map(Enum::name).collect(Collectors.toList())
+        );
+        comboRole.setItems(roles);
+
+        // 2. Fill Form (Safe Check)
+        if (user != null) {
+            if (txtNom != null) txtNom.setText(user.getNom());
+            if (txtPrenom != null) txtPrenom.setText(user.getPrenom());
+            if (txtEmail != null) txtEmail.setText(user.getEmail());
+            if (comboRole != null && user.getRole() != null) {
+                comboRole.setValue(user.getRole().name());
+            }
+        }
+    }
+
+    @FXML
+    void handleUpdate() {
+        try {
+            // Check sghir ken el ComboBox fergha
+            if (comboRole.getValue() == null) {
+                new Alert(Alert.AlertType.WARNING, "Veuillez choisir un rôle!").show();
+                return;
+            }
+
+            currentUser.setNom(txtNom.getText());
+            currentUser.setPrenom(txtPrenom.getText());
+            currentUser.setEmail(txtEmail.getText());
+
+            // ✅ Converti el String mta3 el ComboBox l-Enum RoleUser
+            currentUser.setRole(RoleUser.valueOf(comboRole.getValue()));
+
+            String newPassword = txtPassword.getText();
+            if (newPassword != null && !newPassword.trim().isEmpty()) {
+                currentUser.setMotDePasse(newPassword);
+            }
+
+            userService.update(currentUser);
+            new Alert(Alert.AlertType.INFORMATION, "✅ Utilisateur mis à jour !").showAndWait();
+
+            // ✅ Hedhom dima lezem ykounou l-ekher bech tarja3 lel dashboard
+            parentController.loadUserData();
+            parentController.showUserTable();
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            new Alert(Alert.AlertType.ERROR, "Erreur: " + e.getMessage()).show();
+        }
+    }
+
+    // Fil-UserUpdateController.java
+    @FXML
+    void handleCancel() {
+        if (parentController != null) {
+            // Nadiw el methode elli traj3na lel table
+            parentController.showUserTable();
+        }
+    }}

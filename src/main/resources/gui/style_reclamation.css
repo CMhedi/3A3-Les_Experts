@@ -1,0 +1,74 @@
+/* 1. El Background el kbir: N-7ottou loun "Slate" bared bech el cards y-banou */
+.main-container, .root {
+    -fx-background-color: #000000; /* Gris bared a8me9 chwaya mel 9dim */
+}
+
+/* 2. Les Cartes (VBox): N-9awiw chwaya fil Shadow bech t-welli dhihra */
+.card {
+    -fx-background-color: white;
+    -fx-background-radius: 12;
+    -fx-padding: 25;
+    /* Shadow akther Pro: y-khalli el card tban tal3a chwaya */
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.08), 20, 0, 0, 10);
+}
+
+/* 3. Styling el TableView (Modern & Clear) */
+.table-view {
+    -fx-background-color: white;
+    -fx-background-radius: 8;
+    -fx-border-color: #143d30;
+    -fx-border-radius: 8;
+    -fx-padding: 5;
+}
+
+/* Header mta3 el Table: N-rodouh dhaher b-loun a8me9 */
+.table-view .column-header {
+    -fx-background-color: #143d30;
+    -fx-border-color: transparent transparent #cbd5e1 transparent;
+    -fx-border-width: 0 0 1 0;
+}
+
+.table-view .column-header .label {
+    -fx-text-fill: #ffffff; /* Loun k-7ali a8me9 */
+    -fx-font-weight: bold;
+}
+
+/* Les Lignes (Rows) */
+.table-row-cell {
+    -fx-background-color: white;
+    -fx-border-color: transparent transparent #f1f5f9 transparent;
+}
+
+.table-row-cell:even {
+    -fx-background-color: #f8fafc; /* Alternance sghira bech el 3in ma tat3abch */
+}
+
+/* Selection: Loun "Eco" (Vert Forêt) */
+.table-row-cell:selected {
+    -fx-background-color: #143D30;
+}
+
+.table-row-cell:selected .label {
+    -fx-text-fill: white;
+}
+
+/* 4. Les Inputs (TextArea w ComboBox) */
+.text-area, .combo-box {
+    -fx-background-color: #ffffff;
+    -fx-border-color: #143d30;
+    -fx-border-radius: 6;
+    -fx-background-radius: 6;
+}
+
+.text-area:focused, .combo-box:focused {
+    -fx-border-color: #143D30;
+    -fx-border-width: 1.5;
+    -fx-effect: dropshadow(gaussian, rgba(20, 61, 48, 0.1), 5, 0, 0, 0);
+}
+
+/* 5. Buttons Hover Transitions */
+.btn-primary:hover {
+    -fx-opacity: 0.85;
+    -fx-scale-x: 1.02;
+    -fx-scale-y: 1.02;
+}

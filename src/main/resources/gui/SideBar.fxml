@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<VBox prefWidth="230.0" spacing="15.0"
+      style="-fx-background-color: #143D30; -fx-padding: 30 15 15 15;"
+      xmlns="http://javafx.com/javafx/17"
+      xmlns:fx="http://javafx.com/fxml/1"
+      fx:controller="gui.SideBarController">
+
+    <children>
+        <Label text="EcoAdventure" style="-fx-text-fill: white; -fx-font-size: 20; -fx-font-weight: bold;"/>
+
+        <Button onAction="#goToDashboard" maxWidth="Infinity" text="📊 Dashboard" style="-fx-background-color: transparent; -fx-text-fill: white;"/>
+        <Button onAction="#goToReclamations" maxWidth="Infinity" text="✉ Réclamations" style="-fx-background-color: transparent; -fx-text-fill: white;"/>
+        <Button onAction="#goTogestionuser" maxWidth="Infinity" text="Gestion des utilisateurs" style="-fx-background-color: transparent; -fx-text-fill: white;"/>
+
+
+        <Region VBox.vgrow="ALWAYS" />
+        <Button onAction="#handleLogout" maxWidth="Infinity" text="🚪 Déconnexion" style="-fx-background-color: #ef4444; -fx-text-fill: white;"/>
+    </children>
+</VBox>

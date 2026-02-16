@@ -1,0 +1,162 @@
+/* Container Principal */
+.main-container {
+    -fx-background-color: #F0F2F5;
+}
+
+/* Header */
+.header-title {
+    -fx-font-size: 28px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #1A202C;
+}
+.header-subtitle {
+    -fx-font-size: 14px;
+    -fx-text-fill: #718096;
+}
+
+/* Search Box */
+.search-box {
+    -fx-background-color: white;
+    -fx-background-radius: 25;
+    -fx-padding: 5 15;
+    -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.05), 10, 0, 0, 2);
+}
+.search-field {
+    -fx-background-color: transparent;
+    -fx-pref-width: 250;
+    -fx-prompt-text-fill: #A0AEC0;
+}
+
+/* Stats Cards */
+.stat-card {
+    -fx-background-color: white;
+    -fx-padding: 20;
+    -fx-background-radius: 15;
+    -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.05), 15, 0, 0, 5);
+}
+.stat-label { -fx-text-fill: #718096; -fx-font-weight: bold; }
+.stat-value { -fx-font-size: 24px; -fx-font-weight: bold; -fx-text-fill: #1A202C; }
+
+.stat-pending { -fx-border-color: transparent transparent transparent #F37021; -fx-border-width: 0 0 0 5; }
+.stat-done { -fx-border-color: transparent transparent transparent #28a745; -fx-border-width: 0 0 0 5; }
+
+/* Content Cards */
+.content-card {
+    -fx-background-color: white;
+    -fx-padding: 20;
+    -fx-background-radius: 20;
+    -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.05), 20, 0, 0, 10);
+}
+.card-title {
+    -fx-font-size: 18px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #2D3748;
+}
+
+
+
+/* Buttons */
+.btn {
+    -fx-padding: 12 20;
+    -fx-background-radius: 10;
+    -fx-font-weight: bold;
+    -fx-cursor: hand;
+}
+.btn-success {
+    -fx-background-color: #143D30;
+    -fx-text-fill: white;
+}
+.btn-success:hover { -fx-background-color: #0d2920; }
+
+.btn-danger {
+    -fx-background-color: transparent;
+    -fx-text-fill: #E53E3E;
+    -fx-border-color: #E53E3E;
+    -fx-border-radius: 10;
+}
+.btn-danger:hover { -fx-background-color: #FFF5F5; }
+
+/* TextArea */
+.modern-textarea {
+    -fx-control-inner-background: #F7FAFC;
+    -fx-background-color: #F7FAFC;
+    -fx-background-radius: 10;
+    -fx-border-radius: 10;
+    -fx-border-color: #E2E8F0;
+}
+/* Bouton Répondre (Success/Primary) */
+.btn-success {
+    -fx-background-color: #143D30;
+    -fx-text-fill: white;
+}
+
+/* Bouton Rejeter (Warning/Orange) */
+.btn-warning {
+    -fx-background-color: #F37021;
+    -fx-text-fill: white;
+}
+
+/* Bouton Supprimer (Danger/Red) */
+.btn-danger {
+    -fx-background-color: transparent;
+    -fx-text-fill: #E53E3E;
+    -fx-border-color: #E53E3E;
+    -fx-border-radius: 10;
+}
+.btn-danger:hover {
+    -fx-background-color: #E53E3E;
+    -fx-text-fill: white;
+}
+/* Styling specialized for the legend dots */
+.legend-dot {
+    -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.1), 5, 0, 0, 0);
+}
+
+
+
+/* Modern Textarea for content + response */
+.modern-textarea {
+    -fx-background-color: #f8fafc;
+    -fx-border-color: #e2e8f0;
+    -fx-border-radius: 10;
+    -fx-text-fill: #1e293b;
+    -fx-font-family: "Segoe UI Semibold";
+}
+/* Container mta3 el tableau */
+.table-view {
+    -fx-background-color: white;
+    -fx-background-radius: 10;
+    -fx-border-color: #E2E8F0; /* Border r-madi khfif kima tlabt */
+    -fx-border-width: 1;
+    -fx-border-radius: 10;
+}
+
+/* El Headers (mouch m-alwnin barcha ama pro) */
+.table-view .column-header {
+    -fx-background-color: #F8FAFC;
+    -fx-border-color: transparent transparent #E2E8F0 transparent;
+    -fx-border-width: 0 0 1.5 0;
+    -fx-padding: 10;
+}
+
+.table-view .column-header .label {
+    -fx-text-fill: #475569;
+    -fx-font-weight: bold;
+    -fx-font-size: 13px;
+}
+
+/* El Rows: na7iw el borders bin el columns */
+.table-row-cell {
+    -fx-background-color: white;
+    -fx-border-color: transparent transparent #F1F5F9 transparent;
+    -fx-border-width: 0 0 1 0;
+}
+
+.table-row-cell:hover {
+    -fx-background-color: #F1F5F9;
+}
+
+.table-row-cell:selected {
+    -fx-background-color: #EDF2F7;
+    -fx-text-fill: black;
+}

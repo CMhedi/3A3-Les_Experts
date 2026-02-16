@@ -10,12 +10,19 @@ public class Reclamation {
     private String contenu;
     private StatutReclamation statut;
     private LocalDateTime dateCreation;
+    private String reponse;
     private int idUser;
-
+    private String userName;
     public Reclamation() {}
 
     // ===== Getters & Setters =====
+    public String getUserName() {
+        return userName;
+    }
 
+    public void setUserName(String userName) {
+        this.userName = userName;
+    }
     public int getIdReclamation() {
         return idReclamation;
     }
@@ -64,6 +71,8 @@ public class Reclamation {
         this.idUser = idUser;
     }
 
+    public String getReponse() { return reponse; }
+    public void setReponse(String reponse) { this.reponse = reponse; }
     // ===== toString =====
     @Override
     public String toString() {
