@@ -56,19 +56,17 @@
             <VBox spacing="6" HBox.hgrow="ALWAYS">
                 <Label text="Heure début"
                        styleClass="form-label"/>
-                <TextField fx:id="heureDebutField"
-                           promptText="HH:mm"
-                           prefHeight="38"
-                           maxWidth="Infinity"/>
+                <Spinner fx:id="heureDebutSpinner"
+                         prefHeight="38"
+                         maxWidth="Infinity"/>
             </VBox>
 
             <VBox spacing="6" HBox.hgrow="ALWAYS">
                 <Label text="Heure fin"
                        styleClass="form-label"/>
-                <TextField fx:id="heureFinField"
-                           promptText="HH:mm"
-                           prefHeight="38"
-                           maxWidth="Infinity"/>
+                <Spinner fx:id="heureFinSpinner"
+                         prefHeight="38"
+                         maxWidth="Infinity"/>
             </VBox>
 
         </HBox>

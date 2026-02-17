@@ -3,9 +3,15 @@
    =================================================== */
 
 .root {
-    -fx-background-color: linear-gradient(to bottom right, #1f4d36, #183c2a);
-    -fx-font-family: "Segoe UI";
+    -fx-background-color: linear-gradient(
+            to bottom right,
+            #1f4d36,
+            #1f4d36 20%,
+            #f5f7f6 20%,
+            #f5f7f6
+    );
 }
+
 
 /* ===================================================
    TOP BAR
@@ -28,7 +34,8 @@
    =================================================== */
 
 .sidebar {
-    -fx-background-color: #163626;
+        -fx-background-color: #1c3f2e;
+
     -fx-padding: 22;
     -fx-pref-width: 230;
 }
@@ -285,31 +292,33 @@
    =================================================== */
 
 .badge-planifiee {
-    -fx-background-color: #2ecc71;
-    -fx-text-fill: white;
-    -fx-background-radius: 14;
-    -fx-padding: 4 10;
+    -fx-background-color: #eef2ff;
+    -fx-text-fill: #4338ca;
+    -fx-padding: 6 14;
+    -fx-background-radius: 30;
     -fx-font-size: 11px;
-    -fx-font-weight: bold;
+    -fx-font-weight: 600;
 }
 
 .badge-terminee {
-    -fx-background-color: #f39c12;
-    -fx-text-fill: white;
-    -fx-background-radius: 14;
-    -fx-padding: 4 10;
+    -fx-background-color: #ecfdf5;
+    -fx-text-fill: #065f46;
+    -fx-padding: 6 14;
+    -fx-background-radius: 30;
     -fx-font-size: 11px;
-    -fx-font-weight: bold;
+    -fx-font-weight: 600;
 }
 
 .badge-annulee {
-    -fx-background-color: #e74c3c;
-    -fx-text-fill: white;
-    -fx-background-radius: 14;
-    -fx-padding: 4 10;
+    -fx-background-color: #fef2f2;
+    -fx-text-fill: #991b1b;
+    -fx-padding: 6 14;
+    -fx-background-radius: 30;
     -fx-font-size: 11px;
-    -fx-font-weight: bold;
+    -fx-font-weight: 600;
 }
+
+
 
 /* ===================================================
    MODAL FORM
@@ -443,51 +452,53 @@
    STAT CARD — PRO DASHBOARD
    =============================== */
 
-.stat-card {
-    -fx-background-color: white;
-    -fx-background-radius: 18;
-    -fx-padding: 22 28;
+/* ===============================
+   STAT CARD — PREMIUM
+   =============================== */
 
-    -fx-pref-width: 240;
-    -fx-pref-height: 120;
+.stat-card {
+    -fx-background-color: linear-gradient(to bottom right, white, #f8faf9);
+    -fx-background-radius: 24;
+    -fx-padding: 28;
+
+    -fx-pref-width: 280;
+    -fx-pref-height: 150;
 
     -fx-alignment: CENTER;
+    -fx-spacing: 10;
 
     -fx-effect: dropshadow(
             gaussian,
-            rgba(0,0,0,0.12),
-            18, 0.2, 0, 4
+            rgba(0,0,0,0.15),
+            25, 0.3, 0, 8
     );
 
-    -fx-border-color: rgba(242,140,0,0.15);
-    -fx-border-radius: 18;
+    -fx-border-color: rgba(242,140,0,0.25);
+    -fx-border-radius: 24;
     -fx-border-width: 1;
 }
 
-/* titre */
-.stat-title {
-    -fx-text-fill: #7b7b7b;
-    -fx-font-size: 13px;
-    -fx-font-weight: 600;
-    -fx-padding: 0 0 6 0;
-}
-
-/* valeur */
-.stat-value {
-    -fx-text-fill: #1f4d36;
-    -fx-font-size: 34px;
-    -fx-font-weight: bold;
-}
-
-/* hover premium */
 .stat-card:hover {
-    -fx-translate-y: -2;
+    -fx-translate-y: -5;
     -fx-effect: dropshadow(
             gaussian,
-            rgba(0,0,0,0.18),
-            22, 0.25, 0, 5
+            rgba(0,0,0,0.25),
+            30, 0.4, 0, 12
     );
 }
+
+.stat-title {
+    -fx-text-fill: #6b7280;
+    -fx-font-size: 14px;
+    -fx-font-weight: 600;
+}
+
+.stat-value {
+    -fx-text-fill: #111827;
+    -fx-font-size: 40px;
+    -fx-font-weight: 800;
+}
+
 /* ==============================
    CUSTOM DIALOG STYLE
    ============================== */
@@ -542,36 +553,33 @@
 }
 /* ===== SEARCH FIELD ===== */
 
-.search-field {
-    -fx-background-radius: 20;
-    -fx-border-radius: 20;
-    -fx-padding: 6 15;
-    -fx-background-color: #f4f6f5;
-    -fx-border-color: #dcdcdc;
-}
-
-.search-field:focused {
-    -fx-border-color: #f28c00;
+.search-field-pro {
     -fx-background-color: white;
+    -fx-background-radius: 40;
+    -fx-border-radius: 40;
+    -fx-border-color: #e5e7eb;
+    -fx-border-width: 1.8;
+    -fx-padding: 12 20;
+    -fx-font-size: 13px;
+
+    -fx-effect: dropshadow(
+            gaussian,
+            rgba(0,0,0,0.05),
+            8,0.2,0,2
+    );
 }
-/* ===========================
-   MODERN COMBOBOX FIXED
-   =========================== */
 
-.modern-combo {
-    -fx-background-radius: 20;
-    -fx-border-radius: 20;
-
-    -fx-background-color: white;
+.search-field-pro:focused {
     -fx-border-color: #f28c00;
-    -fx-border-width: 1.5;
-
-    -fx-padding: 3 12;
-    -fx-font-weight: bold;
-
-    -fx-focus-color: transparent;
-    -fx-faint-focus-color: transparent;
+    -fx-effect: dropshadow(
+            gaussian,
+            rgba(242,140,0,0.4),
+            18,0.4,0,0
+    );
 }
+
+
+
 
 /* Remove internal background layer */
 .modern-combo .list-cell {
@@ -594,10 +602,20 @@
     -fx-border-color: #ff9d1f;
 }
 
-/* Focus */
+.modern-combo {
+    -fx-background-color: white;
+    -fx-background-radius: 25;
+    -fx-border-radius: 25;
+    -fx-border-color: #e5e7eb;
+    -fx-border-width: 1.2;
+    -fx-padding: 8 16;
+    -fx-font-size: 13px;
+}
+
 .modern-combo:focused {
     -fx-border-color: #f28c00;
 }
+
 /* =========================
    DROPDOWN MENU DESIGN PRO
    ========================= */
@@ -693,3 +711,278 @@
     -fx-border-color: #f28c00;
     -fx-background-color: white;
 }
+/* ===============================
+   SPINNER MODERNE PRO
+   =============================== */
+
+.spinner {
+    -fx-background-color: white;
+    -fx-border-color: #dcdcdc;
+    -fx-border-radius: 10;
+    -fx-background-radius: 10;
+    -fx-pref-height: 38;
+    -fx-padding: 0 5;
+}
+
+.spinner:focused {
+    -fx-border-color: #f28c00;
+}
+
+/* Editor text */
+.spinner .text-field {
+    -fx-background-color: transparent;
+    -fx-alignment: CENTER;
+    -fx-font-weight: bold;
+    -fx-text-fill: #1f4d36;
+}
+
+/* Arrow buttons */
+.spinner .increment-arrow-button,
+.spinner .decrement-arrow-button {
+    -fx-background-color: transparent;
+}
+
+/* Arrow icon */
+.spinner .increment-arrow,
+.spinner .decrement-arrow {
+    -fx-background-color: #1f4d36;
+}
+
+/* Hover */
+.spinner:hover {
+    -fx-border-color: #ff9d1f;
+}
+/* ===============================
+   COACH DASHBOARD PREMIUM
+   =============================== */
+
+.stat-card-pro {
+    -fx-background-color: white;
+    -fx-background-radius: 22;
+    -fx-padding: 28;
+    -fx-pref-width: 260;
+    -fx-alignment: CENTER;
+    -fx-spacing: 10;
+
+    -fx-border-color: rgba(0,0,0,0.05);
+    -fx-border-radius: 22;
+    -fx-border-width: 1;
+
+    -fx-effect: dropshadow(
+            gaussian,
+            rgba(0,0,0,0.07),
+            25, 0.3, 0, 8
+    );
+}
+
+.stat-card-pro:hover {
+    -fx-translate-y: -5;
+    -fx-effect: dropshadow(
+            gaussian,
+            rgba(0,0,0,0.18),
+            30, 0.35, 0, 12
+    );
+}
+
+.stat-title {
+    -fx-text-fill: #6b7280;
+    -fx-font-size: 13px;
+    -fx-font-weight: 600;
+}
+
+.stat-value {
+    -fx-text-fill: #111827;
+    -fx-font-size: 36px;
+    -fx-font-weight: 800;
+}
+
+.stat-icon {
+    -fx-fill: #f28c00;
+}
+
+.subtitle {
+    -fx-text-fill: rgba(255,255,255,0.75);
+    -fx-font-size: 12px;
+}
+.dashboard-toolbar {
+    -fx-padding: 10 0 5 0;
+}
+
+.section-title {
+    -fx-font-size: 20px;
+    -fx-font-weight: 700;
+    -fx-text-fill: #111827;
+}
+.dashboard-toolbar {
+    -fx-padding: 10 0 5 0;
+}
+
+.section-title {
+    -fx-font-size: 20px;
+    -fx-font-weight: 700;
+    -fx-text-fill: #111827;
+}
+.combo-pro {
+    -fx-background-color: white;
+    -fx-background-radius: 25;
+    -fx-border-radius: 25;
+    -fx-border-color: #e5e7eb;
+    -fx-border-width: 1.5;
+    -fx-padding: 8 16;
+    -fx-font-size: 13px;
+}
+
+.combo-pro:focused {
+    -fx-border-color: #f28c00;
+}
+.stat-card-pro {
+    -fx-background-color: white;
+    -fx-background-radius: 22;
+    -fx-padding: 28;
+    -fx-pref-width: 260;
+    -fx-alignment: CENTER;
+    -fx-spacing: 10;
+
+    -fx-border-color: rgba(0,0,0,0.05);
+    -fx-border-radius: 22;
+    -fx-border-width: 1;
+
+    -fx-effect: dropshadow(
+            gaussian,
+            rgba(0,0,0,0.07),
+            25, 0.3, 0, 8
+    );
+}
+
+.stat-card-pro:hover {
+    -fx-translate-y: -5;
+    -fx-effect: dropshadow(
+            gaussian,
+            rgba(0,0,0,0.18),
+            30, 0.35, 0, 12
+    );
+}
+
+.stat-title {
+    -fx-text-fill: #6b7280;
+    -fx-font-size: 13px;
+    -fx-font-weight: 600;
+}
+
+.stat-value {
+    -fx-text-fill: #111827;
+    -fx-font-size: 36px;
+    -fx-font-weight: 800;
+}
+
+.stat-icon {
+    -fx-fill: #f28c00;
+}
+/* ===== SCROLL CLEAN ===== */
+.card-scroll {
+    -fx-background-color: transparent;
+    -fx-border-color: transparent;
+}
+
+/* ===== GRID BACKGROUND ===== */
+.card-grid {
+    -fx-background-color: white;
+    -fx-background-radius: 25;
+    -fx-padding: 25;
+}
+
+
+/* ===== COACH CARD PREMIUM ===== */
+/* ===============================
+   COACH CARD — MODERNE
+   =============================== */
+
+.coach-card {
+    -fx-background-color: linear-gradient(to bottom right, white, #f9faf9);
+    -fx-background-radius: 22;
+    -fx-padding: 20;
+    -fx-pref-width: 300;
+    -fx-spacing: 12;
+
+    -fx-border-radius: 22;
+    -fx-border-color: rgba(0,0,0,0.05);
+    -fx-border-width: 1;
+
+    -fx-effect: dropshadow(
+            gaussian,
+            rgba(0,0,0,0.15),
+            20,0.25,0,5
+    );
+}
+
+.coach-card:hover {
+    -fx-translate-y: -6;
+    -fx-effect: dropshadow(
+            gaussian,
+            rgba(0,0,0,0.3),
+            28,0.35,0,10
+    );
+}
+
+.coach-card-title {
+    -fx-font-size: 17px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #1f4d36;
+}
+
+.coach-card-info {
+    -fx-font-size: 13px;
+    -fx-text-fill: #4b5563;
+}
+
+.coach-card-footer {
+    -fx-padding: 10 0 0 0;
+}
+
+.stat-card {
+    -fx-background-color: white;
+    -fx-background-radius: 20;
+    -fx-padding: 25;
+
+    -fx-pref-width: 260;
+    -fx-pref-height: 140;
+
+    -fx-alignment: CENTER;
+    -fx-spacing: 8;
+
+    -fx-effect: dropshadow(
+            gaussian,
+            rgba(0,0,0,0.15),
+            20,0.25,0,5
+    );
+
+    -fx-border-color: rgba(242,140,0,0.2);
+    -fx-border-radius: 20;
+    -fx-border-width: 1;
+}
+
+.stat-card:hover {
+    -fx-translate-y: -3;
+}
+/* ===== SCROLL CLEAN ===== */
+
+.scroll-pane {
+    -fx-background-color: transparent;
+    -fx-border-color: transparent;
+}
+
+.scroll-pane > .viewport {
+    -fx-background-color: transparent;
+}
+
+.card-scroll {
+    -fx-background-color: transparent;
+}
+.section-title-accent {
+    -fx-font-size: 22px;
+    -fx-font-weight: 800;
+    -fx-text-fill: #f28c00;
+    -fx-letter-spacing: 0.5px;
+}
+
+

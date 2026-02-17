@@ -20,13 +20,14 @@ public class SeanceFormController {
     // ================= UI =================
     @FXML private Label titleLabel;
     @FXML private Label errorLabel;
+
     @FXML private TextField nomField;
-
     @FXML private DatePicker datePicker;
-    @FXML private TextField heureDebutField;
-    @FXML private TextField heureFinField;
-    @FXML private TextField capaciteField;
 
+    @FXML private Spinner<LocalTime> heureDebutSpinner;
+    @FXML private Spinner<LocalTime> heureFinSpinner;
+
+    @FXML private TextField capaciteField;
     @FXML private ComboBox<StatutSeance> statutCombo;
     @FXML private ComboBox<UserApp> coachCombo;
 
@@ -38,7 +39,7 @@ public class SeanceFormController {
     private int planningId;
 
     // =================================================
-    // INIT
+    // INITIALISATION
     // =================================================
     @FXML
     public void initialize() {
@@ -49,8 +50,12 @@ public class SeanceFormController {
 
         loadCoachs();
         configureCoachCombo();
+        initTimeSpinners();   // 🔥 Important
     }
 
+    // =================================================
+    // CONFIG COACH
+    // =================================================
     private void configureCoachCombo() {
 
         coachCombo.setCellFactory(lv -> new ListCell<>() {
@@ -70,7 +75,6 @@ public class SeanceFormController {
         try {
             List<UserApp> coachs = userService.getAllCoachs();
             coachCombo.getItems().setAll(coachs);
-
         } catch (Exception e) {
             DialogUtils.showError("Erreur",
                     "Impossible de charger les coachs.");
@@ -83,22 +87,25 @@ public class SeanceFormController {
     public void setSeance(Seance s, int planningId) {
 
         this.planningId = planningId;
-
         this.seance = (s == null) ? new Seance() : s;
 
         if (s == null) {
-            titleLabel.setText("Ajouter une Séance");
-        } else {
-            if (s != null) {
-                nomField.setText(s.getNom());
-            }
 
+            titleLabel.setText("Ajouter une Séance");
+
+        } else {
 
             titleLabel.setText("Modifier la Séance");
 
+            nomField.setText(s.getNom());
             datePicker.setValue(s.getDateSeance());
-            heureDebutField.setText(s.getHeureDebut().toString());
-            heureFinField.setText(s.getHeureFin().toString());
+
+            heureDebutSpinner.getValueFactory()
+                    .setValue(s.getHeureDebut());
+
+            heureFinSpinner.getValueFactory()
+                    .setValue(s.getHeureFin());
+
             capaciteField.setText(String.valueOf(s.getCapacite()));
             statutCombo.setValue(s.getStatutSeance());
         }
@@ -111,7 +118,6 @@ public class SeanceFormController {
     private void handleSave() {
 
         clearValidationUI();
-        seance.setNom(nomField.getText().trim());
 
         String validationError = validateForm();
 
@@ -132,8 +138,7 @@ public class SeanceFormController {
                         "Succès",
                         "Séance ajoutée avec succès."
                 );
-            }
-            else {
+            } else {
 
                 seanceService.update(seance);
 
@@ -144,12 +149,12 @@ public class SeanceFormController {
             }
 
             close();
-        }
-        catch (ValidationException e) {
+
+        } catch (ValidationException e) {
 
             showValidationError(e.getMessage());
-        }
-        catch (Exception e) {
+
+        } catch (Exception e) {
 
             DialogUtils.showError(
                     "Erreur",
@@ -160,9 +165,10 @@ public class SeanceFormController {
 
     private void populateSeanceFromFields() {
 
+        seance.setNom(nomField.getText().trim());
         seance.setDateSeance(datePicker.getValue());
-        seance.setHeureDebut(LocalTime.parse(heureDebutField.getText()));
-        seance.setHeureFin(LocalTime.parse(heureFinField.getText()));
+        seance.setHeureDebut(heureDebutSpinner.getValue());
+        seance.setHeureFin(heureFinSpinner.getValue());
         seance.setCapacite(Integer.parseInt(capaciteField.getText()));
         seance.setStatutSeance(statutCombo.getValue());
         seance.setIdCoach(coachCombo.getValue().getIdUser());
@@ -173,6 +179,7 @@ public class SeanceFormController {
     // VALIDATION
     // =================================================
     private String validateForm() {
+
         if (nomField.getText().isBlank())
             return "Le nom de la séance est obligatoire.";
 
@@ -181,37 +188,30 @@ public class SeanceFormController {
             return "La date est obligatoire.";
         }
 
-        if (heureDebutField.getText().isBlank()) {
-            addErrorStyle(heureDebutField);
+        LocalTime debut = heureDebutSpinner.getValue();
+        LocalTime fin = heureFinSpinner.getValue();
+
+        if (debut == null) {
+            addErrorStyle(heureDebutSpinner);
             return "L'heure de début est obligatoire.";
         }
 
-        if (heureFinField.getText().isBlank()) {
-            addErrorStyle(heureFinField);
+        if (fin == null) {
+            addErrorStyle(heureFinSpinner);
             return "L'heure de fin est obligatoire.";
         }
 
-        try {
-            LocalTime debut = LocalTime.parse(heureDebutField.getText());
-            LocalTime fin = LocalTime.parse(heureFinField.getText());
-
-            if (!debut.isBefore(fin)) {
-                addErrorStyle(heureDebutField);
-                addErrorStyle(heureFinField);
-                return "L'heure de début doit être avant l'heure de fin.";
-            }
-
-        } catch (Exception e) {
-            addErrorStyle(heureDebutField);
-            addErrorStyle(heureFinField);
-            return "Format heure invalide (HH:mm).";
+        if (!debut.isBefore(fin)) {
+            addErrorStyle(heureDebutSpinner);
+            addErrorStyle(heureFinSpinner);
+            return "L'heure de début doit être avant l'heure de fin.";
         }
 
         try {
             int cap = Integer.parseInt(capaciteField.getText());
             if (cap <= 0) {
                 addErrorStyle(capaciteField);
-                return "La capacité doit être supérieure à 0.";
+                return "La capacité doit être > 0.";
             }
         } catch (Exception e) {
             addErrorStyle(capaciteField);
@@ -232,21 +232,66 @@ public class SeanceFormController {
     }
 
     // =================================================
-    // UI VALIDATION HELPERS
+    // SPINNER CONFIGURATION PRO
+    // =================================================
+    private void initTimeSpinners() {
+
+        SpinnerValueFactory<LocalTime> debutFactory =
+                new SpinnerValueFactory<>() {
+
+                    {
+                        setValue(LocalTime.of(8, 0));
+                    }
+
+                    @Override
+                    public void decrement(int steps) {
+                        setValue(getValue().minusMinutes(30 * steps));
+                    }
+
+                    @Override
+                    public void increment(int steps) {
+                        setValue(getValue().plusMinutes(30 * steps));
+                    }
+                };
+
+        SpinnerValueFactory<LocalTime> finFactory =
+                new SpinnerValueFactory<>() {
+
+                    {
+                        setValue(LocalTime.of(9, 0));
+                    }
+
+                    @Override
+                    public void decrement(int steps) {
+                        setValue(getValue().minusMinutes(30 * steps));
+                    }
+
+                    @Override
+                    public void increment(int steps) {
+                        setValue(getValue().plusMinutes(30 * steps));
+                    }
+                };
+
+        heureDebutSpinner.setValueFactory(debutFactory);
+        heureFinSpinner.setValueFactory(finFactory);
+
+        heureDebutSpinner.setEditable(false);
+        heureFinSpinner.setEditable(false);
+    }
+
+    // =================================================
+    // UI HELPERS
     // =================================================
     private void showValidationError(String message) {
-
         errorLabel.setText(message);
         errorLabel.setVisible(true);
     }
 
     private void clearValidationUI() {
-
         errorLabel.setVisible(false);
-
         removeErrorStyle(datePicker);
-        removeErrorStyle(heureDebutField);
-        removeErrorStyle(heureFinField);
+        removeErrorStyle(heureDebutSpinner);
+        removeErrorStyle(heureFinSpinner);
         removeErrorStyle(capaciteField);
         removeErrorStyle(statutCombo);
         removeErrorStyle(coachCombo);
@@ -260,12 +305,8 @@ public class SeanceFormController {
         field.getStyleClass().remove("field-error");
     }
 
-    // =================================================
-    // CANCEL
-    // =================================================
     @FXML
     private void handleCancel() {
-
         if (DialogUtils.showConfirmation(
                 "Annuler",
                 "Fermer sans enregistrer ?"
@@ -275,8 +316,7 @@ public class SeanceFormController {
     }
 
     private void close() {
-        Stage stage =
-                (Stage) datePicker.getScene().getWindow();
+        Stage stage = (Stage) datePicker.getScene().getWindow();
         stage.close();
     }
 }

@@ -8,57 +8,61 @@
 <BorderPane xmlns="http://javafx.com/javafx"
             xmlns:fx="http://javafx.com/fxml"
             fx:controller="GUI.CoachDashboardController"
-            prefWidth="1200"
-            prefHeight="700"
+            prefWidth="1250"
+            prefHeight="720"
             styleClass="root">
 
     <stylesheets>
         <URL value="@admin.css"/>
     </stylesheets>
 
-    <!-- ================= LEFT SIDEBAR ================= -->
+    <!-- ================= SIDEBAR ================= -->
     <left>
         <VBox styleClass="sidebar"
-              spacing="18"
+              spacing="30"
               alignment="TOP_LEFT">
 
-            <!-- LOGO -->
-            <HBox spacing="4" alignment="CENTER_LEFT">
+            <!-- Logo -->
+            <HBox spacing="6" alignment="CENTER_LEFT">
                 <Label text="Eco" styleClass="logo"/>
                 <Label text="Adventure" styleClass="logo-accent"/>
             </HBox>
 
             <Separator styleClass="sidebar-separator"/>
 
-            <!-- MENU -->
+            <!-- Retour -->
             <Button styleClass="menu-btn"
-                    defaultButton="false"
                     maxWidth="Infinity"
                     onAction="#handleRetour">
+
                 <graphic>
                     <FontAwesomeIconView glyphName="ARROW_LEFT"
-                                         size="15"
+                                         size="16"
                                          fill="WHITE"/>
                 </graphic>
+
                 <text>Retour Menu</text>
             </Button>
-
-
 
         </VBox>
     </left>
 
     <!-- ================= TOP BAR ================= -->
     <top>
-        <HBox spacing="12"
+        <HBox spacing="15"
               alignment="CENTER_LEFT"
               styleClass="top-bar">
 
-            <Label text="Espace Coach"
-                   styleClass="title"/>
+            <VBox spacing="4">
+                <Label text="Dashboard Coach"
+                       styleClass="title"/>
+                <Label text="Gérez vos séances efficacement"
+                       styleClass="subtitle"/>
+            </VBox>
 
             <Region HBox.hgrow="ALWAYS"/>
 
+            <!-- User -->
             <HBox spacing="8"
                   alignment="CENTER"
                   styleClass="user-chip">
@@ -67,8 +71,7 @@
                                      size="14"
                                      fill="WHITE"/>
 
-                <Label text="Coach"
-                       styleClass="user-name"/>
+                <Label text="Coach"/>
             </HBox>
 
         </HBox>
@@ -76,54 +79,41 @@
 
     <!-- ================= CENTER ================= -->
     <center>
-        <VBox spacing="25"
-              alignment="TOP_CENTER"
-              style="-fx-padding:30;"/>
 
-            <!-- ===== STAT CARDS ===== -->
-            <HBox spacing="20"
+        <VBox spacing="35"
+              alignment="TOP_CENTER"
+              style="-fx-padding:40;"
+              VBox.vgrow="ALWAYS">
+
+            <!-- ================= STAT CARDS ================= -->
+            <HBox spacing="30"
                   alignment="CENTER">
 
-                <VBox styleClass="stat-card"
-                      alignment="CENTER">
-
+                <VBox styleClass="stat-card-pro">
                     <FontAwesomeIconView glyphName="CALENDAR"
-                                         size="18"
-                                         fill="#f28c00"/>
-
-                    <Label text="Total Séances"
-                           styleClass="stat-title"/>
-
+                                         size="22"
+                                         styleClass="stat-icon"/>
+                    <Label text="Total Séances" styleClass="stat-title"/>
                     <Label fx:id="lblTotal"
                            text="0"
                            styleClass="stat-value"/>
                 </VBox>
 
-                <VBox styleClass="stat-card"
-                      alignment="CENTER">
-
+                <VBox styleClass="stat-card-pro">
                     <FontAwesomeIconView glyphName="CLOCK_ALT"
-                                         size="18"
-                                         fill="#f28c00"/>
-
-                    <Label text="Aujourd'hui"
-                           styleClass="stat-title"/>
-
+                                         size="22"
+                                         styleClass="stat-icon"/>
+                    <Label text="Aujourd'hui" styleClass="stat-title"/>
                     <Label fx:id="lblToday"
                            text="0"
                            styleClass="stat-value"/>
                 </VBox>
 
-                <VBox styleClass="stat-card"
-                      alignment="CENTER">
-
+                <VBox styleClass="stat-card-pro">
                     <FontAwesomeIconView glyphName="CHECK_CIRCLE"
-                                         size="18"
-                                         fill="#f28c00"/>
-
-                    <Label text="Terminées"
-                           styleClass="stat-title"/>
-
+                                         size="22"
+                                         styleClass="stat-icon"/>
+                    <Label text="Terminées" styleClass="stat-title"/>
                     <Label fx:id="lblTerminee"
                            text="0"
                            styleClass="stat-value"/>
@@ -131,53 +121,43 @@
 
             </HBox>
 
-        <!-- ===== TABLE CARD ===== -->
-        <VBox styleClass="card"
-              spacing="18"
-              prefWidth="920"
-              VBox.vgrow="ALWAYS">
-
-            <!-- HEADER -->
-            <HBox alignment="CENTER_LEFT" spacing="15">
+            <!-- ================= TOOLBAR ================= -->
+            <HBox alignment="CENTER_LEFT"
+                  spacing="25"
+                  styleClass="dashboard-toolbar">
 
                 <Label text="Mes Séances"
-                       styleClass="form-title"/>
+                       styleClass="section-title-accent"/>
 
                 <Region HBox.hgrow="ALWAYS"/>
 
-                <!-- 🔎 SEARCH -->
-                <HBox spacing="8" alignment="CENTER_LEFT">
-                    <TextField fx:id="searchField"
-                               promptText="Rechercher..."
-                               styleClass="search-field"
-                               prefWidth="220"/>
-                </HBox>
+                <TextField fx:id="searchField"
+                           promptText="Rechercher une séance..."
+                           styleClass="search-field-pro"
+                           prefWidth="300"/>
 
-                <!-- 🎛 FILTER STATUT -->
                 <ComboBox fx:id="statutFilter"
-                          promptText="Filtrer par statut"
                           prefWidth="180"
-                          styleClass="modern-combo"/>
+                          styleClass="combo-pro"/>
 
             </HBox>
 
-            <!-- TABLE -->
-            <TableView fx:id="seanceTable"
-                       VBox.vgrow="ALWAYS"
-                       styleClass="modern-table">
+            <!-- ================= CARDS CONTAINER ================= -->
+            <ScrollPane fitToWidth="true"
+                        VBox.vgrow="ALWAYS"
+                        styleClass="card-scroll"
+                        hbarPolicy="NEVER">
 
-                <columns>
-                    <TableColumn fx:id="colNom" text="Séance"/>
+                <FlowPane fx:id="cardContainer"
+                          styleClass="card-grid"
+                          hgap="25"
+                          vgap="25"
+                          prefWrapLength="1000"
+                          alignment="TOP_LEFT"
 
-                    <TableColumn fx:id="colDate" text="Date"/>
-                    <TableColumn fx:id="colDebut" text="Début"/>
-                    <TableColumn fx:id="colFin" text="Fin"/>
-                    <TableColumn fx:id="colCapacite" text="Capacité"/>
-                    <TableColumn fx:id="colStatut" text="Statut"/>
-                    <TableColumn fx:id="colPlanning" text="Planning"/>
-                </columns>
+                          style="-fx-padding: 10 10 30 10;"/>
 
-            </TableView>
+            </ScrollPane>
 
         </VBox>
 

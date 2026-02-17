@@ -6,47 +6,27 @@ import GUI.utils.DialogUtils;
 import GUI.utils.SceneUtils;
 import Services.interfaces.PlanningService;
 import Services.interfaces.SeanceService;
-
 import enums.StatutSeance;
 
-import javafx.beans.property.*;
-import javafx.collections.FXCollections;
-import javafx.collections.ObservableList;
-import javafx.collections.transformation.FilteredList;
-import javafx.collections.transformation.SortedList;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
+import javafx.scene.layout.*;
 
 import java.time.LocalDate;
-import java.time.LocalTime;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 public class CoachDashboardController {
 
-    // ================= TABLE =================
-    @FXML private TableView<Seance> seanceTable;
-
-    @FXML private TableColumn<Seance, LocalDate> colDate;
-    @FXML private TableColumn<Seance, LocalTime> colDebut;
-    @FXML private TableColumn<Seance, LocalTime> colFin;
-    @FXML private TableColumn<Seance, Integer> colCapacite;
-    @FXML private TableColumn<Seance, String> colStatut;
-    @FXML private TableColumn<Seance, String> colPlanning;
-    @FXML private TableColumn<Seance, String> colNom;
-
+    // ================= UI =================
+    @FXML private FlowPane cardContainer;
     @FXML private TextField searchField;
     @FXML private ComboBox<String> statutFilter;
 
-    // ================= STATS =================
     @FXML private Label lblTotal;
     @FXML private Label lblToday;
     @FXML private Label lblTerminee;
-
-    // ================= DATA =================
-    private ObservableList<Seance> masterData = FXCollections.observableArrayList();
-    private FilteredList<Seance> filteredData;
 
     // ================= SERVICES =================
     private final SeanceService seanceService = new SeanceService();
@@ -54,8 +34,9 @@ public class CoachDashboardController {
 
     private final Map<Integer, String> planningMap = new HashMap<>();
 
-    // ⚠️ Temporaire (login plus tard)
-    private final int coachId = 1;
+    private final int coachId = 1; // ⚠️ login plus tard
+
+    private List<Seance> masterData;
 
     // =================================================
     // INITIALISATION
@@ -64,14 +45,16 @@ public class CoachDashboardController {
     public void initialize() {
 
         configureFilters();
-        configureTable();
-        configureSearch();
+
+        searchField.textProperty().addListener((obs, o, n) -> refreshCards());
+        statutFilter.valueProperty().addListener((obs, o, n) -> refreshCards());
+
         loadPlannings();
         loadData();
     }
 
     // =================================================
-    // CONFIGURATION
+    // CONFIG FILTER
     // =================================================
     private void configureFilters() {
 
@@ -83,147 +66,10 @@ public class CoachDashboardController {
         );
 
         statutFilter.setValue("Tous");
+        statutFilter.getStyleClass().add("combo-pro");
 
-        statutFilter.valueProperty().addListener((obs, o, n) -> applyFilters());
-    }
-
-    private void configureTable() {
-
-        seanceTable.setColumnResizePolicy(
-                TableView.CONSTRAINED_RESIZE_POLICY
-        );
-        colNom.setCellValueFactory(d->
-                new SimpleStringProperty(d.getValue().getNom()));
-        colNom.setCellFactory(col -> new TableCell<>() {
-            @Override
-            protected void updateItem(String item, boolean empty) {
-                super.updateItem(item, empty);
-
-                if (empty || item == null) {
-                    setText(null);
-                    return;
-                }
-
-                setText(item);
-                setStyle("-fx-font-weight: bold; -fx-text-fill: #1f4d36;");
-            }
-        });
-
-
-        colDate.setCellValueFactory(d ->
-                new SimpleObjectProperty<>(d.getValue().getDateSeance()));
-
-        colDebut.setCellValueFactory(d ->
-                new SimpleObjectProperty<>(d.getValue().getHeureDebut()));
-
-        colFin.setCellValueFactory(d ->
-                new SimpleObjectProperty<>(d.getValue().getHeureFin()));
-
-        colCapacite.setCellValueFactory(d ->
-                new SimpleIntegerProperty(
-                        d.getValue().getCapacite()).asObject());
-
-        // ========= STATUT BADGE =========
-        colStatut.setCellValueFactory(d ->
-                new SimpleStringProperty(
-                        d.getValue().getStatutSeance().name()));
-
-        colStatut.setCellFactory(col -> new TableCell<>() {
-
-            private final Label badge = new Label();
-
-            @Override
-            protected void updateItem(String statut, boolean empty) {
-                super.updateItem(statut, empty);
-
-                if (empty || statut == null) {
-                    setGraphic(null);
-                    return;
-                }
-
-                badge.setText(statut);
-
-                badge.getStyleClass().removeAll(
-                        "badge-planifiee",
-                        "badge-terminee",
-                        "badge-annulee"
-                );
-
-                switch (statut) {
-                    case "PLANIFIEE" -> badge.getStyleClass().add("badge-planifiee");
-                    case "TERMINEE" -> badge.getStyleClass().add("badge-terminee");
-                    case "ANNULEE" -> badge.getStyleClass().add("badge-annulee");
-                }
-
-                setGraphic(badge);
-                setContentDisplay(ContentDisplay.GRAPHIC_ONLY);
-            }
-        });
-
-        colPlanning.setCellValueFactory(d ->
-                new SimpleStringProperty(
-                        planningMap.getOrDefault(
-                                d.getValue().getIdPlanning(),
-                                "Inconnu"
-                        )
-                )
-        );
-
-        filteredData = new FilteredList<>(masterData, s -> true);
-
-        SortedList<Seance> sortedData =
-                new SortedList<>(filteredData);
-
-        sortedData.comparatorProperty()
-                .bind(seanceTable.comparatorProperty());
-
-        seanceTable.setItems(sortedData);
-    }
-
-    private void configureSearch() {
-
-        searchField.textProperty().addListener((obs, o, n) -> applyFilters());
-    }
-
-    // =================================================
-    // FILTER LOGIC (CENTRALIZED)
-    // =================================================
-    private void applyFilters() {
-
-        filteredData.setPredicate(seance -> {
-
-            String search = searchField.getText();
-            String statut = statutFilter.getValue();
-
-            boolean matchesSearch = true;
-            boolean matchesStatut = true;
-
-            if (search != null && !search.isBlank()) {
-
-                String keyword = search.toLowerCase();
-
-                String planningName =
-                        planningMap.getOrDefault(
-                                seance.getIdPlanning(),
-                                ""
-                        ).toLowerCase();
-
-                matchesSearch =
-                        seance.getNom().toLowerCase().contains(keyword)
-                                || seance.getDateSeance().toString().contains(keyword)
-                                || seance.getHeureDebut().toString().contains(keyword)
-                                || seance.getStatutSeance().name().toLowerCase().contains(keyword)
-                                || planningName.contains(keyword);
-
-            }
-
-            if (statut != null && !statut.equals("Tous")) {
-                matchesStatut =
-                        seance.getStatutSeance().name().equals(statut);
-            }
-
-            return matchesSearch && matchesStatut;
-        });
+        searchField.getStyleClass().add("search-field-pro");
+        searchField.setPromptText("🔍 Rechercher une séance...");
     }
 
     // =================================================
@@ -233,12 +79,10 @@ public class CoachDashboardController {
 
         try {
 
-            List<Seance> list =
-                    seanceService.getByCoach(coachId);
+            masterData = seanceService.getByCoach(coachId);
 
-            masterData.setAll(list);
-
-            updateStats(list);
+            updateStats(masterData);
+            refreshCards();
 
         } catch (Exception e) {
 
@@ -253,8 +97,7 @@ public class CoachDashboardController {
 
         try {
 
-            List<Planning> list =
-                    planningService.getAll();
+            List<Planning> list = planningService.getAll();
 
             for (Planning p : list) {
                 planningMap.put(
@@ -273,6 +116,96 @@ public class CoachDashboardController {
     }
 
     // =================================================
+    // CARD SYSTEM (PRO VERSION CLEAN)
+    // =================================================
+    private void refreshCards() {
+
+        cardContainer.getChildren().clear();
+
+        if (masterData == null) return;
+
+        String search = searchField.getText() == null ?
+                "" : searchField.getText().toLowerCase();
+
+        String statutSelected = statutFilter.getValue();
+
+        for (Seance s : masterData) {
+
+            boolean matchesSearch =
+                    s.getNom().toLowerCase().contains(search)
+                            || s.getDateSeance().toString().contains(search);
+
+            boolean matchesStatut =
+                    statutSelected.equals("Tous")
+                            || s.getStatutSeance().name().equals(statutSelected);
+
+            if (matchesSearch && matchesStatut) {
+                cardContainer.getChildren().add(createCard(s));
+            }
+        }
+    }
+
+    private VBox createCard(Seance s) {
+
+        VBox card = new VBox(14);
+        card.getStyleClass().add("coach-card");
+        card.setStyle("-fx-padding: 24;");
+
+        // ===== TITLE
+        Label title = new Label(s.getNom());
+        title.getStyleClass().add("coach-card-title");
+        title.setStyle("-fx-wrap-text: true;");
+
+        // ===== INFO CONTAINER
+        VBox infoContainer = new VBox(10);
+        infoContainer.setStyle("-fx-spacing: 10;");
+
+        // Date info
+        HBox dateRow = new HBox(10);
+        dateRow.setStyle("-fx-alignment: CENTER_LEFT;");
+        Label dateLabel = new Label("📅  " + s.getDateSeance());
+        dateLabel.getStyleClass().add("coach-card-info");
+        dateRow.getChildren().add(dateLabel);
+
+        // Time info
+        HBox timeRow = new HBox(10);
+        timeRow.setStyle("-fx-alignment: CENTER_LEFT;");
+        Label timeLabel = new Label("⏰  " + s.getHeureDebut() + " - " + s.getHeureFin());
+        timeLabel.getStyleClass().add("coach-card-info");
+        timeRow.getChildren().add(timeLabel);
+
+        // Planning info
+        HBox planningRow = new HBox(10);
+        planningRow.setStyle("-fx-alignment: CENTER_LEFT;");
+        Label planningLabel = new Label("📁  " + planningMap.getOrDefault(
+                s.getIdPlanning(), "Inconnu"));
+        planningLabel.getStyleClass().add("coach-card-info");
+        planningRow.getChildren().add(planningLabel);
+
+        infoContainer.getChildren().addAll(dateRow, timeRow, planningRow);
+
+        // ===== FOOTER WITH BADGE
+        VBox footer = new VBox();
+        footer.getStyleClass().add("coach-card-footer");
+        footer.setStyle("-fx-padding: 16 0 0 0; -fx-alignment: CENTER_LEFT;");
+
+        Label badge = new Label(s.getStatutSeance().name());
+        badge.setStyle("-fx-padding: 8 18; -fx-font-weight: 700; -fx-font-size: 11;");
+
+        switch (s.getStatutSeance()) {
+            case PLANIFIEE -> badge.getStyleClass().add("badge-planifiee");
+            case TERMINEE -> badge.getStyleClass().add("badge-terminee");
+            case ANNULEE -> badge.getStyleClass().add("badge-annulee");
+        }
+
+        footer.getChildren().add(badge);
+
+        card.getChildren().addAll(title, infoContainer, footer);
+
+        return card;
+    }
+
+    // =================================================
     // STATS
     // =================================================
     private void updateStats(List<Seance> list) {
@@ -280,23 +213,20 @@ public class CoachDashboardController {
         lblTotal.setText(String.valueOf(list.size()));
 
         long today = list.stream()
-                .filter(s -> s.getDateSeance()
-                        .equals(LocalDate.now()))
+                .filter(s -> s.getDateSeance().equals(LocalDate.now()))
                 .count();
 
         lblToday.setText(String.valueOf(today));
 
         long terminees = list.stream()
-                .filter(s ->
-                        s.getStatutSeance()
-                                == StatutSeance.TERMINEE)
+                .filter(s -> s.getStatutSeance() == StatutSeance.TERMINEE)
                 .count();
 
         lblTerminee.setText(String.valueOf(terminees));
     }
 
     // =================================================
-    // RETOUR MENU
+    // NAVIGATION
     // =================================================
     @FXML
     private void handleRetour(javafx.event.ActionEvent event) {
