@@ -2,7 +2,7 @@ package gui;
 
 import Entities.UserApp;
 import Services.interfaces.UserService;
-import enums.RoleUser; // Thabbet f'esm el package mta3 el RoleUser mte3ek
+import enums.RoleUser;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
@@ -24,13 +24,13 @@ public class UserUpdateController {
         this.currentUser = user;
         this.parentController = parent;
 
-        // 1. Setup Roles
+
         ObservableList<String> roles = FXCollections.observableArrayList(
                 Arrays.stream(RoleUser.values()).map(Enum::name).collect(Collectors.toList())
         );
         comboRole.setItems(roles);
 
-        // 2. Fill Form (Safe Check)
+
         if (user != null) {
             if (txtNom != null) txtNom.setText(user.getNom());
             if (txtPrenom != null) txtPrenom.setText(user.getPrenom());
@@ -44,7 +44,7 @@ public class UserUpdateController {
     @FXML
     void handleUpdate() {
         try {
-            // Check sghir ken el ComboBox fergha
+
             if (comboRole.getValue() == null) {
                 new Alert(Alert.AlertType.WARNING, "Veuillez choisir un rôle!").show();
                 return;
@@ -54,7 +54,7 @@ public class UserUpdateController {
             currentUser.setPrenom(txtPrenom.getText());
             currentUser.setEmail(txtEmail.getText());
 
-            // ✅ Converti el String mta3 el ComboBox l-Enum RoleUser
+
             currentUser.setRole(RoleUser.valueOf(comboRole.getValue()));
 
             String newPassword = txtPassword.getText();
@@ -65,7 +65,7 @@ public class UserUpdateController {
             userService.update(currentUser);
             new Alert(Alert.AlertType.INFORMATION, "✅ Utilisateur mis à jour !").showAndWait();
 
-            // ✅ Hedhom dima lezem ykounou l-ekher bech tarja3 lel dashboard
+
             parentController.loadUserData();
             parentController.showUserTable();
 
@@ -75,11 +75,11 @@ public class UserUpdateController {
         }
     }
 
-    // Fil-UserUpdateController.java
+
     @FXML
     void handleCancel() {
         if (parentController != null) {
-            // Nadiw el methode elli traj3na lel table
+
             parentController.showUserTable();
         }
     }}

@@ -21,9 +21,9 @@ public class UserAddController {
     @FXML private TextField txtNom, txtPrenom, txtEmail;
     @FXML private PasswordField txtPassword;
     @FXML private ComboBox<String> comboRole;
-    @FXML private Button btnEnregistrer; // Zid el ID mta3 el bouton fil FXML
+    @FXML private Button btnEnregistrer;
 
-    // Labels lel error (lezem t-zidhom fil FXML)
+
     @FXML private Label errorNom, errorPrenom, errorEmail, errorPassword;
 
     private UserService userService = new UserService();
@@ -36,7 +36,7 @@ public class UserAddController {
                 Arrays.stream(RoleUser.values()).map(Enum::name).collect(Collectors.toList())
         ));
 
-        // ✅ 1. Validation Nom & Prenom
+        // 1. Validation Nom & Prenom
         txtNom.textProperty().addListener((o, old, n) -> {
             boolean valid = !n.trim().isEmpty();
             errorNom.setVisible(!valid);
@@ -49,7 +49,7 @@ public class UserAddController {
             txtPrenom.setStyle(valid ? "" : "-fx-border-color: red;");
         });
 
-        // ✅ 2. Validation Email
+        // 2. Validation Email
         txtEmail.textProperty().addListener((obs, oldV, newV) -> {
             if (newV.isEmpty()) {
                 errorEmail.setText("⚠️ L'email est obligatoire");
@@ -65,7 +65,7 @@ public class UserAddController {
             }
         });
 
-        // ✅ 3. Validation Password
+        //  3. Validation Password
         txtPassword.textProperty().addListener((o, old, n) -> {
             boolean valid = n.length() >= 6;
             errorPassword.setText("⚠️ Minimum 6 caractères");
@@ -73,7 +73,7 @@ public class UserAddController {
             txtPassword.setStyle(valid ? "" : "-fx-border-color: red;");
         });
 
-        // ✅ 4. Disable Button (Binding)
+        // 4. Disable Button (Binding)
         // El bouton "Enregistrer" mayekhdem ken ki yabda kol chay mrigel
         btnEnregistrer.disableProperty().bind(
                 txtNom.textProperty().isEmpty()
@@ -112,11 +112,10 @@ public class UserAddController {
             Parent layout = txtNom.getScene().getRoot();
 
             if (layout instanceof BorderPane mainPane) {
-                // 2. Loadi ken el view mta3 el Table dakhil el center
+
                 Parent root = FXMLLoader.load(getClass().getResource("/gui/AdminUsers.fxml"));
                 mainPane.setCenter(root);
             } else {
-                // 3. Fallback: ken el layout mouch BorderPane (safety), badel el scene kemla
                 Parent root = FXMLLoader.load(getClass().getResource("/gui/AdminUsers.fxml"));
                 Stage stage = (Stage) txtNom.getScene().getWindow();
                 stage.setScene(new Scene(root));

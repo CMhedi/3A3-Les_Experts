@@ -13,7 +13,7 @@ import javafx.stage.Stage;
 public class ResetPasswordController {
 
     @FXML private PasswordField txtNewPass, txtConfirmPass;
-    private String userEmail; // Beich n'jibouh mel page elli fatet
+    private String userEmail;
     private UserService us = new UserService();
 
     public void setUserEmail(String email) {
@@ -36,11 +36,11 @@ public class ResetPasswordController {
         }
 
         try {
-            // ✅ UPDATE fil Database
+            //  UPDATE fil Database
             us.updatePassword(userEmail, mdp1);
             new Alert(Alert.AlertType.INFORMATION, "Succès ! Votre mot de passe a été réinitialisé.").show();
 
-            // 🔙 Tarja3 lel Login
+
             Parent root = FXMLLoader.load(getClass().getResource("/gui/Login.fxml"));
             Stage stage = (Stage) txtNewPass.getScene().getWindow();
             stage.setScene(new Scene(root));

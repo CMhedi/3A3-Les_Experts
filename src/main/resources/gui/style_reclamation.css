@@ -72,3 +72,50 @@
     -fx-scale-x: 1.02;
     -fx-scale-y: 1.02;
 }
+/* 1. Nadhafelna el DialogPane kemla */
+.my-custom-dialog.dialog-pane {
+    -fx-background-color: white;
+    -fx-padding: 0; /* Na7i el padding el zayed bech el header yalsa9 fou9 */
+}
+
+/* 2. El Header (el blaca el khadhra kima fil tsawer) */
+.my-custom-dialog.dialog-pane > .header-panel {
+    -fx-background-color: #143D30;
+    -fx-padding: 20;
+}
+
+.my-custom-dialog.dialog-pane > .header-panel > .label {
+    -fx-text-fill: white;
+    -fx-font-weight: bold;
+    -fx-font-size: 18px;
+}
+
+/* 3. El blaca elli feha el form (VBox) */
+.my-custom-dialog .content.pane {
+    -fx-background-color: white;
+    -fx-padding: 20;
+}
+
+/* 4. Style mta3 el Labels fost el form */
+.my-custom-dialog .label {
+    -fx-text-fill: #143D30;
+    -fx-font-weight: bold;
+}
+
+/* 5. El blaca mta3 el boutonnet (ButtonBar) */
+.my-custom-dialog .button-bar {
+    -fx-background-color: white;
+    -fx-padding: 10 20 20 20;
+}
+
+/* 6. Style mta3 el bouton Enregistrer (Lounou orange kima image_b3fa48) */
+.my-custom-dialog .button {
+    -fx-background-radius: 10;
+    -fx-cursor: hand;
+    -fx-font-weight: bold;
+}
+
+.my-custom-dialog .button:default {
+    -fx-background-color: #F37021;
+    -fx-text-fill: white;
+}

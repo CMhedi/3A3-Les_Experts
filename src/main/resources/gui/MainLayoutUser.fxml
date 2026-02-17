@@ -7,6 +7,6 @@
     </left>
 
     <center>
-        <fx:include source="UserReclamation.fxml" />
+        <fx:include source="AddReclamation.fxml" />
     </center>
 </BorderPane>

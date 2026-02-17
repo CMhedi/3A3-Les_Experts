@@ -16,7 +16,7 @@ public class SideBarController {
 
     @FXML
     void goToReclamations(ActionEvent event) {
-        // N-3aytou lel fonction elli t-badel el center
+
         changeCenter("/gui/AdminReclamation.fxml", event);
     }
 
@@ -28,7 +28,7 @@ public class SideBarController {
     void goTogestionuser(ActionEvent event) {
         changeCenter("/gui/AdminUsers.fxml", event);
     }
-    @FXML
+   @FXML
     void handleLogout(ActionEvent event) { // ✅ Thabbet f'ism el méthode
         try {
             Entities.Session.logout();
@@ -43,13 +43,12 @@ public class SideBarController {
 
     private void changeCenter(String fxmlPath, ActionEvent event) {
         try {
-            // 1. Njibou el Stage
+
             Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
-            // 2. Njibou el Root mta3 el Scene (elli houwa el BorderPane l-kbir)
             Scene scene = stage.getScene();
 
             if (scene.getRoot() instanceof BorderPane mainPane) {
-                // Njibou el ficher el jdid
+
                 URL url = getClass().getResource(fxmlPath);
                 if (url == null) {
                     System.out.println("❌ Erreur: Ficher introuvable -> " + fxmlPath);
@@ -61,5 +60,9 @@ public class SideBarController {
         } catch (IOException e) {
             e.printStackTrace();
         }
+    }
+    @FXML
+    void goToProfil(ActionEvent event) {
+        changeCenter("/gui/Profile.fxml", event);
     }
 }

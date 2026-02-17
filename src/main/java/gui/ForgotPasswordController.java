@@ -24,7 +24,7 @@ public class ForgotPasswordController implements Initializable {
     @FXML private TextField f1, f2, f3, f4;
 
     private String correctCode;
-    private UserApp currentUser; // ✅ Behr n-asta3mlouh fil handleAction
+    private UserApp currentUser;
     private UserService us = new UserService();
 
     @Override
@@ -46,9 +46,9 @@ public class ForgotPasswordController implements Initializable {
         });
     }
 
-    // ✅ HEDHI EL METHODE EL MOHEMMA
+
     public void initData(UserApp user, String code) {
-        this.currentUser = user;  // 👈 Salla7na hedhi (bech maykounch null)
+        this.currentUser = user;
         this.correctCode = code;
 
         if (lblEmailDisplay != null && user != null) {
@@ -68,7 +68,7 @@ public class ForgotPasswordController implements Initializable {
 
                 ResetPasswordController controller = loader.getController();
 
-                // ✅ Tawa currentUser ma3adech null
+
                 controller.setUserEmail(currentUser.getEmail());
 
                 Stage stage = (Stage) btnAction.getScene().getWindow();

@@ -23,7 +23,7 @@ public class ReclamationService {
     public List<Reclamation> afficher() throws SQLException {
         List<Reclamation> list = new ArrayList<>();
 
-        // ✅ Baddelna 'u.id' b 'u.id_user' (Wala thabbet chnoua ismha fil base)
+
         String req = "SELECT r.*, u.nom FROM reclamation r " +
                 "JOIN user_app u ON r.id_user = u.id_user";
 
@@ -38,7 +38,7 @@ public class ReclamationService {
                 r.setStatut(StatutReclamation.valueOf(rs.getString("statut")));
                 r.setReponse(rs.getString("reponse"));
 
-                // ✅ Njibu el ism mel user_app
+
                 r.setUserName(rs.getString("nom"));
 
                 list.add(r);
@@ -48,7 +48,7 @@ public class ReclamationService {
     }
     public List<Reclamation> afficherParUser(int userId) throws SQLException {
         List<Reclamation> list = new ArrayList<>();
-        // SQL simple men ghir JOIN khaterna na3rfou el User
+
         String req = "SELECT * FROM reclamation WHERE id_user = ?";
         PreparedStatement ps = cnx.prepareStatement(req);
         ps.setInt(1, userId);
@@ -59,7 +59,7 @@ public class ReclamationService {
             r.setType(rs.getString("type"));
             r.setContenu(rs.getString("contenu"));
             r.setStatut(StatutReclamation.valueOf(rs.getString("statut")));
-            r.setReponse(rs.getString("reponse")); // ✅ Lezem ychouf el reponse
+            r.setReponse(rs.getString("reponse"));
             list.add(r);
         }
         return list;
@@ -72,7 +72,7 @@ public class ReclamationService {
         ps.executeUpdate();
     }
 
-    // ✅ Jdid: Modifier contenu (CRUD User)
+
     public void modifier(Reclamation r) throws SQLException {
         String req = "UPDATE reclamation SET type = ?, contenu = ? WHERE id_reclamation = ?";
         PreparedStatement ps = cnx.prepareStatement(req);
@@ -82,7 +82,7 @@ public class ReclamationService {
         ps.executeUpdate();
     }
 
-    // ✅ Jdid: Supprimer (CRUD User/Admin)
+
     public void supprimer(int id) throws SQLException {
         String req = "DELETE FROM reclamation WHERE id_reclamation = ?";
         PreparedStatement ps = cnx.prepareStatement(req);
@@ -90,7 +90,7 @@ public class ReclamationService {
         ps.executeUpdate();
     }
     public void repondre(int id, String reponse) throws SQLException {
-        // Ki yjaweb, el statut ywalli TRAITEE auto
+
         String req = "UPDATE reclamation SET reponse = ?, statut = 'TRAITEE' WHERE id_reclamation = ?";
         PreparedStatement ps = cnx.prepareStatement(req);
         ps.setString(1, reponse);

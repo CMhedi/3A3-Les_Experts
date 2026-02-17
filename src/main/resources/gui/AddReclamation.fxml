@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import java.net.URL?>
+
+<AnchorPane prefHeight="650.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1" fx:controller="gui.UserReclamationController">
+    <stylesheets>
+        <URL value="@style_reclamation.css" />
+    </stylesheets>
+    <children>
+        <VBox alignment="CENTER" spacing="20.0" AnchorPane.leftAnchor="50.0" AnchorPane.rightAnchor="50.0" AnchorPane.topAnchor="20.0">
+            <children>
+                <Label text="Nouvelle Réclamation" style="-fx-font-size: 28; -fx-font-weight: 800; -fx-text-fill: #143D30;"/>
+
+                <VBox spacing="15.0" styleClass="card" maxWidth="450.0" style="-fx-background-color: white; -fx-padding: 30; -fx-background-radius: 20;">
+                    <children>
+                        <VBox spacing="5">
+                            <Label text="Type de problème" style="-fx-font-weight: bold; -fx-text-fill: #64748b;"/>
+                            <ComboBox fx:id="comboType" maxWidth="Infinity" promptText="Choisir un type..."/>
+                        </VBox>
+                        <VBox spacing="5">
+                            <Label text="Description" style="-fx-font-weight: bold; -fx-text-fill: #64748b;"/>
+                            <TextArea fx:id="txtContenu" prefHeight="200.0" promptText="Détaillez votre demande..." wrapText="true"/>
+                        </VBox>
+                        <HBox spacing="10">
+                            <Button fx:id="btnEnvoyer" onAction="#handleEnvoyer" maxWidth="Infinity" HBox.hgrow="ALWAYS" text="Envoyer" style="-fx-background-color: #143D30; -fx-text-fill: white; -fx-font-weight: bold; -fx-background-radius: 10; -fx-padding: 12;"/>
+
+                        </HBox>
+
+                    </children>
+                </VBox>
+
+                <Button onAction="#switchToList" text="📂 Voir l'historique de mes demandes" style="-fx-background-color: transparent; -fx-text-fill: #143D30; -fx-font-weight: bold; -fx-underline: true;"/>
+            </children>
+        </VBox>
+    </children>
+</AnchorPane>

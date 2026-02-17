@@ -12,17 +12,17 @@ import Utiles.MyDB;
 public class UserService implements IGenericService<UserApp> {
     private Connection cnx = MyDB.getInstance().getConnection();
 
-    // F wast UserService.java
+
 
     @Override
     public void add(UserApp u) throws SQLException {
-        // 7atit 'telephone' f blast 'tel' kima f el base mte3ek
+
         String req = "INSERT INTO user_app (nom, prenom, email, telephone, image_url, role, mot_de_passe) VALUES (?, ?, ?, ?, ?, ?, ?)";
         PreparedStatement ps = cnx.prepareStatement(req);
         ps.setString(1, u.getNom());
         ps.setString(2, u.getPrenom());
         ps.setString(3, u.getEmail());
-        ps.setString(4, u.getTelephone()); // Hada jay mel field 'telephone' mta3 UserApp
+        ps.setString(4, u.getTelephone());
         ps.setString(5, u.getImageUrl());
         ps.setString(6, u.getRole().name());
         ps.setString(7, u.getMotDePasse());
@@ -41,7 +41,7 @@ public class UserService implements IGenericService<UserApp> {
             u.setNom(rs.getString("nom"));
             u.setPrenom(rs.getString("prenom"));
             u.setEmail(rs.getString("email"));
-            u.setTelephone(rs.getString("telephone")); // Hna zeda 'telephone'
+            u.setTelephone(rs.getString("telephone"));
             u.setMotDePasse(rs.getString("mot_de_passe"));
             u.setRole(RoleUser.valueOf(rs.getString("role")));
             list.add(u);
@@ -51,7 +51,7 @@ public class UserService implements IGenericService<UserApp> {
 
     @Override
     public void update(UserApp u) throws SQLException {
-        // 1. Zid 'mot_de_passe=?' fil-list mta3 el SET
+
         String req = "UPDATE user_app SET nom=?, prenom=?, email=?, telephone=?, image_url=?, mot_de_passe=? ,role=? WHERE id_user=?";
 
         PreparedStatement ps = cnx.prepareStatement(req);
@@ -61,7 +61,7 @@ public class UserService implements IGenericService<UserApp> {
         ps.setString(4, u.getTelephone());
         ps.setString(5, u.getImageUrl());
         ps.setString(6, u.getMotDePasse());
-        ps.setString(7, u.getRole().name()); // ✅ Zid hedhi!
+        ps.setString(7, u.getRole().name());
         ps.setInt(8, u.getIdUser());
 
         ps.executeUpdate();
@@ -98,8 +98,7 @@ public class UserService implements IGenericService<UserApp> {
         return null;
     }
     public void updatePassword(String email, String newPassword) throws SQLException {
-        // ✅ Baddel 'user' b 'user_app' w 'motDePasse' b 'mot_de_passe'
-        // bech ykounou s7a7 hasb el base mte3ek
+
         String sql = "UPDATE user_app SET mot_de_passe = ? WHERE email = ?";
 
         try (PreparedStatement ps = cnx.prepareStatement(sql)) {

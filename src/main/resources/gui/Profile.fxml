@@ -14,7 +14,7 @@
         <StackPane fx:id="mainStackPane" alignment="CENTER" style="-fx-background-color: #f0f2f5;" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
             <children>
 
-                <VBox alignment="TOP_CENTER" maxHeight="600.0" maxWidth="750.0" spacing="0.0" style="-fx-background-color: white; -fx-background-radius: 20; -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.15), 25, 0, 0, 10);">
+                <VBox alignment="TOP_CENTER"  maxWidth="750.0" spacing="0.0" style="-fx-background-color: white; -fx-background-radius: 20; -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.15), 25, 0, 0, 10);">
                     <children>
 
                         <VBox alignment="CENTER" spacing="8.0" style="-fx-background-color: #1B4D3E; -fx-background-radius: 20 20 0 0; -fx-padding: 25;">

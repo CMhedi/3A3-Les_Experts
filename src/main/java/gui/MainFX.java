@@ -15,8 +15,9 @@ public class MainFX extends Application {
         Scene scene = new Scene(root);
 
         stage.setScene(scene);
-        stage.setMaximized(true); // Hna t7allha l-kol dharba wa7da
+        stage.setMaximized(true);
         stage.setTitle("EcoAdventure - Gestion Utilisateurs");
+        stage.getIcons().add(new javafx.scene.image.Image(getClass().getResourceAsStream("logo_eco.png")));
         stage.show();
     }
 

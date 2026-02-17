@@ -6,12 +6,12 @@
     <children>
         <Label text="EcoAdventure" style="-fx-text-fill: white; -fx-font-size: 20; -fx-font-weight: bold; -fx-padding: 0 0 30 0;"/>
 
-        <Button onAction="#goToProfil" maxWidth="Infinity" text="👤 Mon Profil" styleClass="nav-btn-user" style="-fx-background-color: transparent; -fx-text-fill: white; -fx-alignment: CENTER_LEFT; -fx-cursor: hand;"/>
-        <Button onAction="#goToMyReclamations" maxWidth="Infinity" text="✉ Mes Réclamations" styleClass="nav-btn-user" style="-fx-background-color: transparent; -fx-text-fill: white; -fx-alignment: CENTER_LEFT; -fx-cursor: hand;"/>
-        <Button onAction="#goToActivities" maxWidth="Infinity" text="🏃 Mes Activités" styleClass="nav-btn-user" style="-fx-background-color: transparent; -fx-text-fill: white; -fx-alignment: CENTER_LEFT; -fx-cursor: hand;"/>
+        <Button onAction="#goToProfil" maxWidth="Infinity" text=" Mon Profil" styleClass="nav-btn-user" style="-fx-background-color: transparent; -fx-text-fill: white; -fx-alignment: CENTER_LEFT; -fx-cursor: hand;"/>
+        <Button onAction="#goToMyReclamations" maxWidth="Infinity" text=" Réclamations" styleClass="nav-btn-user" style="-fx-background-color: transparent; -fx-text-fill: white; -fx-alignment: CENTER_LEFT; -fx-cursor: hand;"/>
+        <Button onAction="#goToActivities" maxWidth="Infinity" text=" Mes Activités" styleClass="nav-btn-user" style="-fx-background-color: transparent; -fx-text-fill: white; -fx-alignment: CENTER_LEFT; -fx-cursor: hand;"/>
 
         <Region VBox.vgrow="ALWAYS" />
 
-        <Button onAction="#handleLogout" maxWidth="Infinity" text="🚪 Déconnexion" style="-fx-background-color: #ef4444; -fx-text-fill: white; -fx-font-weight: bold; -fx-background-radius: 8;"/>
+        <Button onAction="#handleLogout" maxWidth="Infinity" text=" Déconnexion" style="-fx-background-color: #ef4444; -fx-text-fill: white; -fx-font-weight: bold; -fx-background-radius: 8;"/>
     </children>
 </VBox>

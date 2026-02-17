@@ -14,12 +14,12 @@ public class SideBarUserController {
 
     @FXML
     void goToMyReclamations(ActionEvent event) {
-        changeCenter("/gui/UserReclamation.fxml", event);
+            changeCenter("/gui/AddReclamation.fxml", event);
     }
 
     @FXML
     void goToProfil(ActionEvent event) {
-        changeCenter("/gui/Profile.fxml", event); // Ken 3andek page profil
+        changeCenter("/gui/Profile.fxml", event);
     }
 
     @FXML
@@ -29,14 +29,14 @@ public class SideBarUserController {
 
     private void changeCenter(String fxmlPath, ActionEvent event) {
         try {
-            // Njibou el BorderPane kbir mel Scene
+
             BorderPane mainPane = (BorderPane) ((Node) event.getSource()).getScene().lookup("#mainPaneUser");
 
             if (mainPane != null) {
                 Parent page = FXMLLoader.load(getClass().getResource(fxmlPath));
                 mainPane.setCenter(page);
             } else {
-                // Ken mal9ach el ID, n-jarbou el root
+
                 Parent root = ((Node) event.getSource()).getScene().getRoot();
                 if (root instanceof BorderPane) {
                     ((BorderPane) root).setCenter(FXMLLoader.load(getClass().getResource(fxmlPath)));

@@ -25,14 +25,14 @@ public class AdminReclamationController {
     @FXML private TableColumn<Reclamation, String> colType;
     @FXML private TableColumn<Reclamation, StatutReclamation> colStatut;
     @FXML private TableColumn<Reclamation, String> colReponse; // ✅
-    @FXML private TextArea areaContenu;
+
     @FXML private TextField txtSearch;
     @FXML private Label lblPending;
     @FXML private Label lblDone;
 
     private ReclamationService rs = new ReclamationService();
     private ObservableList<Reclamation> masterData = FXCollections.observableArrayList();
-
+    @FXML private TextArea areaContenu;
     @FXML public void initialize() {
         // 1. Liaison des colonnes
         colUser.setCellValueFactory(new PropertyValueFactory<>("userName"));
@@ -60,24 +60,60 @@ public class AdminReclamationController {
             }
         });
 
-        // 3. Listener pour afficher Contenu + Réponse
-        tableReclamations.getSelectionModel().selectedItemProperty().addListener((obs, old, newVal) -> {
-            if (newVal != null) {
-                String details = "📝 MESSAGE CLIENT:\n" + newVal.getContenu();
-                if (newVal.getReponse() != null && !newVal.getReponse().isEmpty()) {
-                    details += "\n\n--------------------------\n✉️ RÉPONSE ADMIN:\n" + newVal.getReponse();
+        tableReclamations.setRowFactory(tv -> {
+            TableRow<Reclamation> row = new TableRow<>();
+            row.setOnMouseClicked(event -> {
+
+                if (event.getClickCount() == 2 && (!row.isEmpty())) {
+                    Reclamation rowData = row.getItem();
+                    showDetailsPopup(rowData);
                 }
-                areaContenu.setText(details);
-            }
+            });
+            return row;
         });
+
 
         // 4. Activation de la recherche
         txtSearch.textProperty().addListener((obs, old, val) -> filterData(val));
 
         refresh();
     }
+    private void showDetailsPopup(Reclamation r) {
+        Alert alert = new Alert(Alert.AlertType.INFORMATION);
+        alert.setTitle("Détails de la Réclamation");
+        alert.setHeaderText("Message de : " + r.getUserName());
 
-    // ✅ Methode kharjet mel initialize
+        // El klem el kol y-ji hna
+        TextArea textArea = new TextArea(
+                "👤 CLIENT : " + r.getUserName() + "\n" +
+                        "📂 TYPE : " + r.getType() + "\n\n" +
+                        "📝 MESSAGE :\n" + r.getContenu()
+        );
+
+        textArea.setEditable(false);
+        textArea.setWrapText(true); // Bech el klem may-okhrojsh 3al jnab
+        textArea.setPrefHeight(250);
+
+        alert.getDialogPane().setContent(textArea);
+
+        // N-zidou el CSS mta3ek bech el popup mat-jish sghira w "Windows"
+        alert.getDialogPane().getStylesheets().add(getClass().getResource("/gui/style_admin.css").toExternalForm());
+        alert.getDialogPane().getStyleClass().add("my-custom-dialog");
+
+        alert.showAndWait();
+    }
+
+    private void updateStatutLocal(StatutReclamation s) throws SQLException {
+        Reclamation sel = tableReclamations.getSelectionModel().getSelectedItem();
+        if (sel != null) {
+            rs.modifierStatut(sel.getIdReclamation(), s);
+            refresh();
+        } else {
+            new Alert(Alert.AlertType.WARNING, "Veuillez sélectionner une ligne").show();
+        }
+    }
+
+
     private void cleanOldRejections() {
         try {
             List<Reclamation> all = rs.afficher();
@@ -121,6 +157,7 @@ public class AdminReclamationController {
         }
     }
 
+
     @FXML
     void handleOpenResponse() {
         Reclamation selected = tableReclamations.getSelectionModel().getSelectedItem();
@@ -131,7 +168,9 @@ public class AdminReclamationController {
         try {
             FXMLLoader loader = new FXMLLoader(getClass().getResource("/gui/ReponsePopup.fxml"));
             Parent root = loader.load();
+
             ReponsePopupController popupCtrl = loader.getController();
+
             popupCtrl.setData(selected, this::refresh);
 
             Stage stage = new Stage();
@@ -139,11 +178,16 @@ public class AdminReclamationController {
             stage.initStyle(StageStyle.UNDECORATED);
             stage.setScene(new Scene(root));
             stage.show();
-        } catch (IOException e) { e.printStackTrace(); }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
     @FXML void handleRejeter() throws SQLException { updateStatutLocal(StatutReclamation.REJETEE); }
-
+    @FXML
+    void handleTraitee() throws SQLException {
+        updateStatutLocal(StatutReclamation.TRAITEE);
+    }
     @FXML void handleDelete() throws SQLException {
         Reclamation sel = tableReclamations.getSelectionModel().getSelectedItem();
         if (sel != null) {
@@ -153,12 +197,5 @@ public class AdminReclamationController {
         }
     }
 
-    private void updateStatutLocal(StatutReclamation s) throws SQLException {
-        Reclamation sel = tableReclamations.getSelectionModel().getSelectedItem();
-        if (sel != null) {
-            rs.modifierStatut(sel.getIdReclamation(), s);
-            refresh();
-            areaContenu.clear();
-        }
-    }
+
 }

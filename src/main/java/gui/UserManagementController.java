@@ -27,7 +27,7 @@ public class UserManagementController {
     @FXML private ComboBox<RoleUser> comboRole;
     @FXML private Button btnAjouter;
 
-    // Zid el Labels hedhom (lezem tzidhom fil FXML zeda)
+
     @FXML private Label errorNom, errorPrenom, errorEmail, errorTel, errorMdp;
 
     private UserService us = new UserService();
@@ -38,7 +38,7 @@ public class UserManagementController {
 
         String emailRegex = "^[A-Za-z0-9+_.-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,6}$";
 
-        // ✅ 1. Validation Logic (Bordure rouge + Label error)
+        // 1. Validation Logic (Bordure rouge + Label error)
         txtNom.textProperty().addListener((o, old, n) -> {
             boolean valid = !n.isEmpty();
             errorNom.setVisible(!valid);
@@ -95,7 +95,7 @@ public class UserManagementController {
             txtMdp.setStyle(valid ? "" : "-fx-border-color: red;");
         });
 
-        // ✅ 2. Disable Button ken el formulaire mouch s7i7
+        //  2. Disable Button ken el formulaire mouch s7i7
         btnAjouter.disableProperty().bind(
                 txtNom.textProperty().isEmpty()
                         .or(txtEmail.textProperty().isEmpty())
@@ -111,7 +111,6 @@ public class UserManagementController {
 
     @FXML
     void handleAjouter(ActionEvent event) {
-        // Ma dam 3malna Binding, el bouton mayekhdem ken ki yabda kol chay s7i7!
         UserApp u = new UserApp();
         u.setNom(txtNom.getText());
         u.setPrenom(txtPrenom.getText());
@@ -135,15 +134,15 @@ public class UserManagementController {
     }
 
     @FXML
-    void handleGoToLogin(MouseEvent event) { // Thabbet l-import lezem javafx.scene.input.MouseEvent
+    void handleGoToLogin(MouseEvent event) {
         try {
-            // 1. Load el page jdida
+
             Parent root = FXMLLoader.load(getClass().getResource("/gui/Login.fxml"));
 
-            // 2. Nakhou el Stage (el fenetre) el 7ali
+
             Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
 
-            // 3. Nbadlou el Scene
+
             stage.setScene(new Scene(root));
             stage.show();
 

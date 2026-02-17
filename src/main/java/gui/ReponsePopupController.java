@@ -3,7 +3,9 @@ package gui;
 import Entities.Reclamation;
 import Services.interfaces.ReclamationService;
 import enums.StatutReclamation;
+import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
+import javafx.scene.control.Alert;
 import javafx.scene.control.TextArea;
 import javafx.stage.Stage;
 import java.sql.SQLException;
@@ -13,24 +15,35 @@ public class ReponsePopupController {
 
     private Reclamation selectedRec;
     private ReclamationService rs = new ReclamationService();
-    private Runnable onRefresh; // Bach na3mlou refresh lel table ba3d el reponse
+
+    // 1. Khalli esm wa7ed barka bech ma t-enghalatch
+    private Runnable onSuccess;
 
     public void setData(Reclamation r, Runnable callback) {
         this.selectedRec = r;
-        this.onRefresh = callback;
+        this.onSuccess = callback; // Hna t-3abbi el onSuccess s7i7
     }
 
     @FXML
-    void handleEnvoyer() {
-        if (txtReponse.getText().trim().isEmpty()) return;
+    void handleEnvoyer(ActionEvent event) {
+        if (txtReponse.getText().trim().isEmpty()) {
+            new Alert(Alert.AlertType.ERROR, "La réponse ne peut pas être vide").show();
+            return;
+        }
         try {
-            // ✅ On utilise la méthode repondre du service
+
             rs.repondre(selectedRec.getIdReclamation(), txtReponse.getText());
 
-            onRefresh.run(); // Refreshes the TableView in Admin Controller
-            handleAnnuler(); // Closes the popup
-        } catch (SQLException e) { e.printStackTrace(); }
+            if (onSuccess != null) {
+                onSuccess.run();
+            }
+
+            ((Stage)txtReponse.getScene().getWindow()).close();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
     }
+
     @FXML
     void handleAnnuler() {
         ((Stage) txtReponse.getScene().getWindow()).close();

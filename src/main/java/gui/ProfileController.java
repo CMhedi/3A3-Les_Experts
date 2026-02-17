@@ -33,7 +33,7 @@ import javafx.scene.control.*;
 
 
 
-import java.sql.SQLException; // ✅ Import SQLException
+import java.sql.SQLException;
 
 
 public class ProfileController implements Initializable {
@@ -152,7 +152,7 @@ public class ProfileController implements Initializable {
         Alert alert = new Alert(Alert.AlertType.CONFIRMATION, "Supprimer définitivement votre compte ?");
         if (alert.showAndWait().get() == ButtonType.OK) {
             try {
-                us.delete(currentUser.getIdUser()); // ✅ Géré avec try-catch
+                us.delete(currentUser.getIdUser());
                 handleLogout(null);
             } catch (SQLException e) {
                 new Alert(Alert.AlertType.ERROR, "Erreur SQL: " + e.getMessage()).show();
@@ -197,12 +197,12 @@ public class ProfileController implements Initializable {
             // 3. Update l'interface visuelle
             profileCircle.setFill(new ImagePattern(new Image(newImagePath)));
 
-            // 4. ✅ AHAM KHOTWA: Sajjel fil Base de données direct
+
             try {
                 us.update(currentUser);
                 showToast("✅ Photo de profil mise à jour !");
 
-                // Mise à jour de la session pour être sur
+
                 Session.setConnectedUser(currentUser);
 
             } catch (SQLException e) {

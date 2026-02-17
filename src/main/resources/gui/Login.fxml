@@ -8,7 +8,7 @@
 <HBox prefHeight="600.0" prefWidth="1000.0" stylesheets="@styleuser.css" xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1" fx:controller="gui.LoginController">
 
 <children>
-    <AnchorPane prefWidth="500.0" style="-fx-background-color: #1B4D3E; -fx-background-radius: 0 50 50 0;">
+    <AnchorPane prefWidth="500.0" style="-fx-background-color: #2a7760; -fx-background-radius: 0 50 50 0;">
         <children>
             <Circle fill="#ffffff11" radius="200.0" AnchorPane.bottomAnchor="-50.0" AnchorPane.leftAnchor="-50.0" />
             <VBox alignment="CENTER" spacing="15.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">

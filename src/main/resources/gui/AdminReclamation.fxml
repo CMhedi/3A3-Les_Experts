@@ -66,38 +66,24 @@
 
                                 <TableView fx:id="tableReclamations" VBox.vgrow="ALWAYS">
                                     <columns>
-                                        <TableColumn fx:id="colUser" prefWidth="80.0" text="Utilisateur" />
-                                        <TableColumn fx:id="colType" prefWidth="120.0" text="Type" />
-                                        <TableColumn fx:id="colStatut" prefWidth="100.0" text="État" />
-                                        <TableColumn fx:id="colReponse" prefWidth="250.0" text="Réponse Admin" />
+                                        <TableColumn fx:id="colUser" prefWidth="120.0" text="Utilisateur" />
+                                        <TableColumn fx:id="colType" prefWidth="150.0" text="Type" />
+                                        <TableColumn fx:id="colStatut" prefWidth="120.0" text="État" />
+                                        <TableColumn fx:id="colReponse" prefWidth="350.0" text="Réponse Admin" />
                                     </columns>
                                     <columnResizePolicy>
                                         <TableView fx:constant="CONSTRAINED_RESIZE_POLICY" />
                                     </columnResizePolicy>
                                 </TableView>
-                            </children>
-                        </VBox>
 
-                        <VBox prefWidth="380.0" spacing="20.0" styleClass="content-card">
-                            <children>
-                                <Label styleClass="card-title" text="Détails du message" />
-                                <VBox spacing="15.0" VBox.vgrow="ALWAYS">
+                                <HBox spacing="15" alignment="CENTER_RIGHT" style="-fx-padding: 10 0 0 0;">
                                     <children>
-                                        <TextArea fx:id="areaContenu" editable="false" prefHeight="350.0" styleClass="modern-textarea" wrapText="true" />
-
-                                        <VBox spacing="10.0" alignment="BOTTOM_CENTER">
-                                            <children>
-                                                <Button maxWidth="Infinity" onAction="#handleOpenResponse" styleClass="btn, btn-success" text="✉ Répondre au Client" />
-                                                <HBox spacing="10">
-                                                    <children>
-                                                        <Button maxWidth="Infinity" onAction="#handleRejeter" HBox.hgrow="ALWAYS" styleClass="btn, btn-warning" text="Rejeter" />
-                                                        <Button maxWidth="Infinity" onAction="#handleDelete" HBox.hgrow="ALWAYS" styleClass="btn, btn-danger" text="Supprimer" />
-                                                    </children>
-                                                </HBox>
-                                            </children>
-                                        </VBox>
+                                        <Button onAction="#handleOpenResponse" styleClass="btn, btn-success" text="✉ Répondre" />
+                                        <Button onAction="#handleTraitee" style="-fx-background-color: #DCFCE7; -fx-text-fill: #166534; -fx-font-weight: bold; -fx-background-radius: 8;" text="Traitée" />
+                                        <Button onAction="#handleRejeter" styleClass="btn, btn-warning" text="Rejeter" />
+                                        <Button onAction="#handleDelete" styleClass="btn, btn-danger" text="Supprimer" />
                                     </children>
-                                </VBox>
+                                </HBox>
                             </children>
                         </VBox>
                     </children>

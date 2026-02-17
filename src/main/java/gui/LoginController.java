@@ -25,7 +25,7 @@ public class LoginController {
     @FXML private TextField txtEmail;
     @FXML private PasswordField txtMdp;
 
-    private UserService us = new UserService(); // El service mte3ek elli fih el khedma mta3 el DB
+    private UserService us = new UserService();
 
     @FXML
     void handleLogin(ActionEvent event) {
@@ -43,7 +43,7 @@ public class LoginController {
             UserApp user = us.findByEmail(email);
 
             if (user != null && user.getMotDePasse().equals(mdp)) {
-                // ✅ Stocker l'utilisateur dans la session
+                //  Stocker l'utilisateur dans la session
                 Session.setConnectedUser(user);
                 System.out.println("✅ Login success: " + user.getNom() + " (Role: " + user.getRole() + ")");
 
@@ -51,36 +51,35 @@ public class LoginController {
                 String fxmlPath = "";
                 switch (user.getRole()) {
                     case ADMIN:
-                        // ⚠️ L'Admin yemchi lil MainLayout (elli fih el SideBar)
+
                         fxmlPath = "/gui/MainLayout.fxml";
                         break;
                     case USER_SIMPLE:
-                        // L'utilisateur simple yemchi lel page mte3ou toul
+
                         fxmlPath = "/gui/MainLayoutUser.fxml";
                         break;
                     case COACH:
-                        fxmlPath = "/gui/GuidePage.fxml";
+                        fxmlPath = "/gui/MainLayoutcoach.fxml";
                         break;
                     default:
                         fxmlPath = "/gui/SuccessPage.fxml";
                 }
 
-                // 4. Chargement de l'interface
+
                 FXMLLoader loader = new FXMLLoader(getClass().getResource(fxmlPath));
                 Parent root = loader.load();
 
-                // 5. Injection de données (Optionnel - Ken 3andek méthode setUserData)
                 Object controller = loader.getController();
                 if (controller instanceof SuccessController) {
                     ((SuccessController) controller).setUserData(user);
                 }
 
-                // 6. Changement de la Scene
+
                 Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
                 Scene scene = new Scene(root);
                 stage.setScene(scene);
 
-                // Centrer la fenêtre après le changement de taille
+
                 stage.centerOnScreen();
                 stage.show();
 
@@ -95,7 +94,7 @@ public class LoginController {
     @FXML
     void goToRegister(MouseEvent event) {
         try {
-            // Rajja3 el user lel page d'inscription (UserManagement.fxml)
+
             Parent root = FXMLLoader.load(getClass().getResource("/gui/UserManagement.fxml"));
             Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
             stage.setScene(new Scene(root));
@@ -128,7 +127,7 @@ public class LoginController {
                 Parent root = loader.load();
 
                 ForgotPasswordController controller = loader.getController();
-                // ✅ Passi el User wel Code s7i7
+                // Passi el User wel Code s7i7
                 controller.initData(user, generatedOTP);
 
                 Stage stage = (Stage) txtEmail.getScene().getWindow();

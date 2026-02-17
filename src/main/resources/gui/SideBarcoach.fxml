@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<VBox prefWidth="230.0" spacing="15.0" style="-fx-background-color: #143D30; -fx-padding: 30 15 15 15;" xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1" fx:controller="gui.SideBarcoachController">
+    <children>
+        <Label text="EcoAdventure" style="-fx-text-fill: white; -fx-font-size: 20; -fx-font-weight: bold; -fx-padding: 0 0 30 0;"/>
+
+        <Button onAction="#goToProfil" maxWidth="Infinity" text=" Mon Profil" styleClass="nav-btn-user" style="-fx-background-color: transparent; -fx-text-fill: white; -fx-alignment: CENTER_LEFT; -fx-cursor: hand;"/>
+        <Button onAction="#goToevenement" maxWidth="Infinity" text="Evenement" styleClass="nav-btn-user" style="-fx-background-color: transparent; -fx-text-fill: white; -fx-alignment: CENTER_LEFT; -fx-cursor: hand;"/>
+        <Button onAction="#goToActivities" maxWidth="Infinity" text="Mes Activités" styleClass="nav-btn-user" style="-fx-background-color: transparent; -fx-text-fill: white; -fx-alignment: CENTER_LEFT; -fx-cursor: hand;"/>
+        <Button onAction="#goToplanning" maxWidth="Infinity" text="Planning" styleClass="nav-btn-user" style="-fx-background-color: transparent; -fx-text-fill: white; -fx-alignment: CENTER_LEFT; -fx-cursor: hand;"/>
+
+        <Region VBox.vgrow="ALWAYS" />
+
+        <Button onAction="#handleLogout" maxWidth="Infinity" text=" Déconnexion" style="-fx-background-color: #ef4444; -fx-text-fill: white; -fx-font-weight: bold; -fx-background-radius: 8;"/>
+    </children>
+</VBox>

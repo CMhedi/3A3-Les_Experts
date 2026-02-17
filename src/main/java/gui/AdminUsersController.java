@@ -51,7 +51,6 @@ public class AdminUsersController {
         txtSearch.textProperty().addListener((obs, old, newVal) -> filterData(newVal));
     }
 
-    // 🆕 Baddeltha PUBLIC bech el UserUpdateController ynajem y-nadilha ba3d el save
     public void loadUserData() {
         try {
             userList.setAll(userService.getAll());
@@ -122,7 +121,7 @@ public class AdminUsersController {
             // 2. Tawa nadi el controller
             UserUpdateController controller = loader.getController();
 
-            // 3. Tawa nab3ath el data (haka txtPrenom ma3adech ykoun null)
+            // 3. Tawa nab3ath el data
             controller.initData(user, this);
 
             mainContent.getChildren().setAll(updateView);
@@ -176,14 +175,5 @@ public class AdminUsersController {
     }
 
 
-    // El Logout na7ih m-el Controller hedha khater walla fil SideBarController!
-    // Ama ken t-7eb t-khallih safety:
-    @FXML
-    void handleLogout(ActionEvent event) {
-        try {
-            Parent root = FXMLLoader.load(getClass().getResource("/gui/Login.fxml"));
-            Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
-            stage.setScene(new Scene(root));
-        } catch (IOException e) { e.printStackTrace(); }
-    }
+
 }
