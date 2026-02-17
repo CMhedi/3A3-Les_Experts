@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<BorderPane xmlns="http://javafx.com/javafx/17"
+            xmlns:fx="http://javafx.com/fxml/1"
+            fx:controller="controllers.EvenementClientController"
+            stylesheets="/styles/app.css"
+            styleClass="root">
+
+    <left>
+        <VBox styleClass="sidebar" spacing="14" prefWidth="230">
+            <VBox spacing="6" styleClass="sidebarHeader">
+                <Label text="EcoAdventure" styleClass="brand"/>
+                <Label text="Client" styleClass="mutedSidebar"/>
+            </VBox>
+
+            <VBox spacing="6" styleClass="nav">
+                <Button text="🎫  Événements" styleClass="navItem navItemActive" onAction="#goToEvenements"/>
+                <Button text="📅  Réservations" styleClass="navItem" onAction="#goToReservations"/>
+            </VBox>
+
+            <Region VBox.vgrow="ALWAYS"/>
+            <Separator/>
+            <Button text="⎋  Déconnexion" styleClass="navItem danger" onAction="#logout"/>
+        </VBox>
+    </left>
+
+    <top>
+        <HBox styleClass="topbar" spacing="12" alignment="CENTER_LEFT">
+            <Button text="← Accueil" onAction="#goHome" styleClass="ghostBtn"/>
+
+            <Label text="Événements" styleClass="pageTitle"/>
+            <Region HBox.hgrow="ALWAYS"/>
+
+            <HBox spacing="8" styleClass="searchBox" alignment="CENTER_LEFT">
+                <Label text="🔎" styleClass="muted"/>
+                <TextField fx:id="searchField" promptText="Rechercher (titre/lieu/catégorie/statut)..." styleClass="searchInput"/>
+            </HBox>
+
+            <Button text="Rechercher" onAction="#onSearch" styleClass="secondaryBtn"/>
+            <Button text="Actualiser" onAction="#onRefresh" styleClass="ghostBtn"/>
+        </HBox>
+    </top>
+
+    <center>
+        <VBox spacing="14">
+            <padding>
+                <Insets top="18" right="18" bottom="18" left="18"/>
+            </padding>
+
+            <VBox styleClass="card" spacing="12">
+                <HBox alignment="CENTER_LEFT">
+                    <Label text="Liste des événements" styleClass="cardTitle"/>
+                    <Region HBox.hgrow="ALWAYS"/>
+                    <Label fx:id="lblInfo" text="" styleClass="mutedText"/>
+                </HBox>
+
+                <TableView fx:id="tableEvents" styleClass="table" prefHeight="560" editable="false">
+                    <columns>
+                        <TableColumn fx:id="colId" text="ID" prefWidth="70"/>
+                        <TableColumn fx:id="colTitre" text="Titre" prefWidth="220"/>
+                        <TableColumn fx:id="colCategorie" text="Catégorie" prefWidth="160"/>
+                        <TableColumn fx:id="colDate" text="Date" prefWidth="170"/>
+                        <TableColumn fx:id="colLieu" text="Lieu" prefWidth="170"/>
+                        <TableColumn fx:id="colPlaces" text="Places" prefWidth="90"/>
+                        <TableColumn fx:id="colStatut" text="Statut" prefWidth="120"/>
+                    </columns>
+                </TableView>
+            </VBox>
+        </VBox>
+    </center>
+
+</BorderPane>

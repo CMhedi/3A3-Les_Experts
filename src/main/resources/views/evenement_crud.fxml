@@ -1,0 +1,117 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<BorderPane xmlns="http://javafx.com/javafx/17"
+            xmlns:fx="http://javafx.com/fxml/1"
+            fx:controller="controllers.EvenementCrudController"
+            style="-fx-background-color: white; -fx-background-radius: 14; -fx-padding: 18;">
+
+    <top>
+        <VBox spacing="12">
+            <Label text="Gestion des Événements"
+                   style="-fx-font-size: 20; -fx-font-weight: bold; -fx-text-fill: #2D4A3E;" />
+
+            <HBox spacing="10" alignment="CENTER_LEFT">
+                <TextField fx:id="searchField" promptText="Rechercher (titre / lieu)..." prefWidth="320"/>
+                <Button text="🔎 Rechercher" onAction="#onSearch"
+                        style="-fx-background-color: #2D4A3E; -fx-text-fill: white; -fx-cursor: hand;"/>
+                <Button text="♻ Actualiser" onAction="#onRefresh"
+                        style="-fx-background-color: #E9ECEF; -fx-cursor: hand;"/>
+                <Region HBox.hgrow="ALWAYS"/>
+                <Button text="➕ Nouveau" onAction="#onNew"
+                        style="-fx-background-color: #2ecc71; -fx-text-fill: white; -fx-cursor: hand;"/>
+            </HBox>
+        </VBox>
+    </top>
+
+    <center>
+        <SplitPane dividerPositions="0.62" prefHeight="560" style="-fx-background-color: transparent;">
+            <items>
+
+                <!-- TABLE -->
+                <VBox spacing="10">
+                    <padding>
+                        <Insets top="10" right="10" bottom="10" left="10"/>
+                    </padding>
+
+                    <TableView fx:id="tableEvents" prefHeight="520">
+                        <columns>
+                            <TableColumn fx:id="colId" text="ID" prefWidth="70"/>
+                            <TableColumn fx:id="colTitre" text="Titre" prefWidth="200"/>
+                            <TableColumn fx:id="colCategorie" text="Catégorie" prefWidth="150"/>
+                            <TableColumn fx:id="colDate" text="Date" prefWidth="180"/>
+                            <TableColumn fx:id="colLieu" text="Lieu" prefWidth="180"/>
+                            <TableColumn fx:id="colPlaces" text="Places" prefWidth="90"/>
+                        </columns>
+                    </TableView>
+
+                    <HBox spacing="10">
+                        <Button text="✏ Modifier" onAction="#onEdit"
+                                style="-fx-background-color: #f1c40f; -fx-text-fill: black; -fx-cursor: hand;"/>
+                        <Button text="🗑 Supprimer" onAction="#onDelete"
+                                style="-fx-background-color: #e74c3c; -fx-text-fill: white; -fx-cursor: hand;"/>
+                    </HBox>
+                </VBox>
+
+                <!-- FORM -->
+                <VBox spacing="12" style="-fx-background-color: #F8F9FA; -fx-background-radius: 12;">
+                    <padding>
+                        <Insets top="10" right="10" bottom="10" left="10"/>
+                    </padding>
+
+                    <Label text="Formulaire Événement"
+                           style="-fx-font-size: 16; -fx-font-weight: bold; -fx-text-fill: #2D4A3E;" />
+
+                    <GridPane hgap="10" vgap="10">
+                        <columnConstraints>
+                            <ColumnConstraints minWidth="110" prefWidth="120"/>
+                            <ColumnConstraints hgrow="ALWAYS"/>
+                        </columnConstraints>
+
+                        <Label text="ID :" GridPane.rowIndex="0" GridPane.columnIndex="0"/>
+                        <TextField fx:id="idField" GridPane.rowIndex="0" GridPane.columnIndex="1" editable="false"/>
+
+                        <Label text="Titre :" GridPane.rowIndex="1" GridPane.columnIndex="0"/>
+                        <TextField fx:id="titreField" GridPane.rowIndex="1" GridPane.columnIndex="1"/>
+
+                        <Label text="Lieu :" GridPane.rowIndex="2" GridPane.columnIndex="0"/>
+                        <TextField fx:id="lieuField" GridPane.rowIndex="2" GridPane.columnIndex="1"/>
+
+                        <Label text="Catégorie :" GridPane.rowIndex="3" GridPane.columnIndex="0"/>
+                        <ComboBox fx:id="categorieCombo" GridPane.rowIndex="3" GridPane.columnIndex="1"/>
+
+                        <Label text="Date :" GridPane.rowIndex="4" GridPane.columnIndex="0"/>
+                        <HBox spacing="8" GridPane.rowIndex="4" GridPane.columnIndex="1">
+                            <DatePicker fx:id="datePicker" prefWidth="170"/>
+                            <TextField fx:id="heureField" promptText="HH" prefWidth="55"/>
+                            <Label text=":"/>
+                            <TextField fx:id="minuteField" promptText="MM" prefWidth="55"/>
+                        </HBox>
+
+                        <Label text="Places :" GridPane.rowIndex="5" GridPane.columnIndex="0"/>
+                        <TextField fx:id="placesField" GridPane.rowIndex="5" GridPane.columnIndex="1" promptText="ex: 50"/>
+
+                        <Label text="Prix :" GridPane.rowIndex="6" GridPane.columnIndex="0"/>
+                        <TextField fx:id="prixField" GridPane.rowIndex="6" GridPane.columnIndex="1" promptText="ex: 20.0"/>
+
+                        <Label text="Description :" GridPane.rowIndex="7" GridPane.columnIndex="0"/>
+                        <TextArea fx:id="descriptionArea" GridPane.rowIndex="7" GridPane.columnIndex="1" prefRowCount="5"/>
+                    </GridPane>
+
+                    <HBox spacing="10" alignment="CENTER_RIGHT">
+                        <Button text="💾 Enregistrer" onAction="#onSave"
+                                style="-fx-background-color: #2D4A3E; -fx-text-fill: white; -fx-cursor: hand;"/>
+                        <Button text="🧹 Vider" onAction="#onClear"
+                                style="-fx-background-color: #E9ECEF; -fx-cursor: hand;"/>
+                    </HBox>
+
+                    <Label fx:id="statusLabel" text="" style="-fx-text-fill: #6c757d;"/>
+                </VBox>
+
+            </items>
+        </SplitPane>
+    </center>
+
+</BorderPane>

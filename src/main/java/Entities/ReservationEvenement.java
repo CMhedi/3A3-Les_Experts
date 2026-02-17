@@ -9,12 +9,9 @@ public class ReservationEvenement {
     private LocalDateTime dateReservation;
     private StatutReservation statutRes;
     private int nbBillets;
-    private int idUser;
     private int idEvenement;
 
     public ReservationEvenement() {}
-
-    // ===== Getters & Setters =====
 
     public int getIdResEvt() {
         return idResEvt;
@@ -48,14 +45,6 @@ public class ReservationEvenement {
         this.nbBillets = nbBillets;
     }
 
-    public int getIdUser() {
-        return idUser;
-    }
-
-    public void setIdUser(int idUser) {
-        this.idUser = idUser;
-    }
-
     public int getIdEvenement() {
         return idEvenement;
     }
@@ -64,7 +53,6 @@ public class ReservationEvenement {
         this.idEvenement = idEvenement;
     }
 
-    // ===== toString =====
     @Override
     public String toString() {
         return "ResEvt #" + idResEvt + " | " + statutRes;

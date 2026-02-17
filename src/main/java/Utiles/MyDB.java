@@ -6,9 +6,9 @@ import java.sql.SQLException;
 
 public class MyDB {
 
-    private final String URL = "jdbc:mysql://localhost:3306/ecoadventure";
-    private final String USER = "root";
-    private final String PASSWORD = "";
+    private static final String URL = "jdbc:mysql://localhost:3306/ecoadventure";
+    private static final String USER = "root";
+    private static final String PASSWORD = "";
 
     private static Connection connection;
     private static MyDB instance;
@@ -33,6 +33,9 @@ public class MyDB {
 
     // retourner la connexion
     public static Connection getConnection() {
+        if (instance == null) {
+            instance = new MyDB();
+        }
         return connection;
     }
 }

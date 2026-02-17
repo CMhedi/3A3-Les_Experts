@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<VBox xmlns="http://javafx.com/javafx/17"
+      xmlns:fx="http://javafx.com/fxml/1"
+      fx:controller="controllers.ReservationEvenementFormController"
+      spacing="14"
+      style="-fx-background-color: white; -fx-padding: 18; -fx-background-radius: 12;">
+
+    <Label fx:id="titleLabel"
+           text="Nouvelle réservation"
+           style="-fx-font-size: 18; -fx-font-weight: bold;" />
+
+    <GridPane hgap="10" vgap="10">
+        <columnConstraints>
+            <ColumnConstraints minWidth="110" prefWidth="120"/>
+            <ColumnConstraints hgrow="ALWAYS"/>
+        </columnConstraints>
+
+        <Label text="ID :" GridPane.rowIndex="0" GridPane.columnIndex="0"/>
+        <TextField fx:id="idField" editable="false" GridPane.rowIndex="0" GridPane.columnIndex="1"/>
+
+        <Label text="Date :" GridPane.rowIndex="1" GridPane.columnIndex="0"/>
+        <HBox spacing="8" GridPane.rowIndex="1" GridPane.columnIndex="1">
+            <DatePicker fx:id="datePicker" prefWidth="170"/>
+            <TextField fx:id="heureField" promptText="HH" prefWidth="55"/>
+            <Label text=":"/>
+            <TextField fx:id="minuteField" promptText="MM" prefWidth="55"/>
+        </HBox>
+
+        <Label text="Statut :" GridPane.rowIndex="2" GridPane.columnIndex="0"/>
+        <ComboBox fx:id="statutCombo" GridPane.rowIndex="2" GridPane.columnIndex="1" prefWidth="220"/>
+
+        <Label text="Billets :" GridPane.rowIndex="3" GridPane.columnIndex="0"/>
+        <TextField fx:id="billetsField" GridPane.rowIndex="3" GridPane.columnIndex="1" promptText="ex: 2"/>
+
+        <Label text="Event ID :" GridPane.rowIndex="4" GridPane.columnIndex="0"/>
+        <TextField fx:id="eventIdField" GridPane.rowIndex="4" GridPane.columnIndex="1" promptText="ex: 3"/>
+    </GridPane>
+
+    <Label fx:id="errorLabel" text="" style="-fx-text-fill: #c0392b;"/>
+
+    <HBox spacing="10" alignment="CENTER_RIGHT">
+        <Button text="Annuler" onAction="#onCancel"/>
+        <Button text="Enregistrer" onAction="#onSave"
+                style="-fx-background-color: #2D4A3E; -fx-text-fill: white; -fx-cursor: hand;"/>
+    </HBox>
+
+</VBox>

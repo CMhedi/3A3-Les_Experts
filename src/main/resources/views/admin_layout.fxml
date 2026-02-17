@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<HBox prefHeight="750.0" prefWidth="1200.0"
+      xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1"
+      fx:controller="controllers.admin.AdminLayoutController"
+      style="-fx-background-color: #F8F9FA;">
+
+    <VBox prefWidth="260.0" spacing="15.0" style="-fx-background-color: #1B3022;">
+        <padding><Insets top="40" right="20" bottom="20" left="20"/></padding>
+
+        <Label text="EcoAdventure" style="-fx-text-fill: white; -fx-font-size: 24; -fx-font-weight: bold;"/>
+        <Separator opacity="0.15"/>
+
+        <Button text="📅 Événements"
+                onAction="#goEvents"
+                maxWidth="Infinity"
+                style="-fx-background-color: #2D4A3E; -fx-text-fill: white; -fx-alignment: CENTER_LEFT;"/>
+
+        <Button text="🎟 Réservations clients"
+                onAction="#goReservations"
+                maxWidth="Infinity"
+                style="-fx-background-color: transparent; -fx-text-fill: #A0A0A0; -fx-alignment: CENTER_LEFT;"/>
+
+        <Region VBox.vgrow="ALWAYS"/>
+        <Button text="🚪 Déconnexion"
+                onAction="#logout"
+                maxWidth="Infinity"
+                style="-fx-background-color: transparent; -fx-text-fill: #E0E0E0; -fx-alignment: CENTER_LEFT;"/>
+    </VBox>
+
+    <StackPane fx:id="contentPane" HBox.hgrow="ALWAYS">
+        <padding><Insets top="25" right="30" bottom="25" left="30"/></padding>
+    </StackPane>
+</HBox>
