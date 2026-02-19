@@ -985,4 +985,111 @@
     -fx-letter-spacing: 0.5px;
 }
 
+/* =========================
+   SEANCE CARD PRO STARTUP
+   ========================= */
+
+.seance-card-pro {
+    -fx-background-color: white;
+    -fx-background-radius: 22;
+    -fx-padding: 26;
+    -fx-pref-width: 320;
+    -fx-spacing: 10;
+
+    -fx-effect: dropshadow(
+            gaussian,
+            rgba(0,0,0,0.15),
+            25, 0.25, 0, 8
+    );
+
+    -fx-border-radius: 22;
+
+    -fx-transition: all 0.3s ease;
+}
+
+.seance-card-pro:hover {
+    -fx-translate-y: -6;
+    -fx-effect: dropshadow(
+            gaussian,
+            rgba(0,0,0,0.3),
+            35, 0.35, 0, 12
+    );
+}
+
+/* LEFT BORDER COLORS */
+.border-green {
+    -fx-border-color: #2ecc71;
+    -fx-border-width: 0 0 0 6;
+}
+
+.border-red {
+    -fx-border-color: #e74c3c;
+    -fx-border-width: 0 0 0 6;
+}
+
+.border-grey {
+    -fx-border-color: #9ca3af;
+    -fx-border-width: 0 0 0 6;
+}
+
+/* TITLE */
+.seance-title-pro {
+    -fx-font-size: 18px;
+    -fx-font-weight: 800;
+    -fx-text-fill: #111827;
+}
+
+/* INFO */
+.seance-info-pro {
+    -fx-font-size: 13px;
+    -fx-text-fill: #4b5563;
+}
+
+/* PROGRESS BAR */
+.places-progress {
+    -fx-accent: #f28c00;
+    -fx-pref-height: 8;
+    -fx-background-radius: 20;
+}
+
+.places-label {
+    -fx-font-size: 12px;
+    -fx-text-fill: #6b7280;
+}
+
+/* BADGES */
+.badge-pro {
+    -fx-padding: 6 16;
+    -fx-background-radius: 30;
+    -fx-font-size: 11px;
+    -fx-font-weight: 700;
+}
+
+.badge-green {
+    -fx-background-color: #ecfdf5;
+    -fx-text-fill: #065f46;
+}
+
+.badge-red {
+    -fx-background-color: #fef2f2;
+    -fx-text-fill: #991b1b;
+}
+
+.badge-grey {
+    -fx-background-color: #f3f4f6;
+    -fx-text-fill: #374151;
+}
+
+/* BUTTON PRO */
+.btn-pro {
+    -fx-background-color: #f28c00;
+    -fx-text-fill: white;
+    -fx-background-radius: 30;
+    -fx-padding: 8 22;
+    -fx-font-weight: 700;
+}
+
+.btn-pro:hover {
+    -fx-background-color: #ff9d1f;
+}
 

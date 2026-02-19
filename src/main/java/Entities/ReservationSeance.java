@@ -5,7 +5,7 @@ import enums.StatutReservationSeance;
 import java.time.LocalDateTime;
 
 public class ReservationSeance {
-
+    private String google_event_id;
     private int idReservation;
     private LocalDateTime dateReservation;
     private StatutReservationSeance statut;
@@ -83,7 +83,14 @@ public class ReservationSeance {
         this.idSeance = idSeance;
     }
 
-    // =====================
+    public String getGoogle_event_id() {
+        return google_event_id;
+    }
+
+    public void setGoogle_event_id(String google_event_id) {
+        this.google_event_id = google_event_id;
+    }
+// =====================
     // toString
     // =====================
 

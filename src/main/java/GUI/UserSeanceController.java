@@ -4,43 +4,27 @@ import Entities.Seance;
 import Entities.UserApp;
 import GUI.utils.DialogUtils;
 import GUI.utils.SceneUtils;
+import Services.interfaces.GoogleCalendarService;
 import Services.interfaces.ReservationSeanceService;
 import Services.interfaces.SeanceService;
 import Services.interfaces.UserService;
 import exceptions.ValidationException;
 
-import javafx.beans.property.*;
-import javafx.collections.FXCollections;
-import javafx.collections.ObservableList;
-import javafx.collections.transformation.FilteredList;
-import javafx.collections.transformation.SortedList;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
+import javafx.scene.layout.*;
 
 import java.time.LocalDate;
-import java.time.LocalTime;
+import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 public class UserSeanceController {
 
-    // ================= TABLE =================
-    @FXML private TableView<Seance> seanceTable;
-    @FXML private TableColumn<Seance, LocalDate> colDate;
-    @FXML private TableColumn<Seance, LocalTime> colDebut;
-    @FXML private TableColumn<Seance, LocalTime> colFin;
-    @FXML private TableColumn<Seance, String> colCoach;
-    @FXML private TableColumn<Seance, Integer> colPlaces;
-    @FXML private TableColumn<Seance, String> colStatut;
+    // ================= UI =================
+    @FXML private FlowPane cardContainer;
     @FXML private TextField searchField;
-    @FXML private Button btnReserver;
-    @FXML private TableColumn<Seance, String> colNom;
-
-    private final ObservableList<Seance> masterData =
-            FXCollections.observableArrayList();
-
-    private FilteredList<Seance> filteredData;
 
     // ================= SERVICES =================
     private final SeanceService seanceService = new SeanceService();
@@ -48,7 +32,9 @@ public class UserSeanceController {
             new ReservationSeanceService();
     private final UserService userService = new UserService();
 
-    private final int USER_TEST_ID = 1;
+    private final int USER_TEST_ID = 1; // ⚠️ login plus tard
+
+    private List<Seance> masterData;
 
     private final Map<Integer, String> coachMap = new HashMap<>();
 
@@ -58,200 +44,22 @@ public class UserSeanceController {
     @FXML
     public void initialize() {
 
-        seanceTable.setColumnResizePolicy(
-                TableView.CONSTRAINED_RESIZE_POLICY
-        );
-
         loadCoachs();
-        configureColumns();
-        configureSearch();
 
-        btnReserver.disableProperty().bind(
-                seanceTable.getSelectionModel()
-                        .selectedItemProperty().isNull()
-        );
+        searchField.textProperty().addListener((obs, o, n) -> refreshCards());
 
-        refreshTable();
+        loadData();
     }
 
     // =================================================
-    // CONFIG COLUMNS
+    // LOAD DATA
     // =================================================
-    private void configureColumns() {
-        colNom.setCellValueFactory(d ->
-                new SimpleStringProperty(d.getValue().getNom())
-        );
-
-        colNom.setCellFactory(col -> new TableCell<>() {
-            @Override
-            protected void updateItem(String item, boolean empty) {
-                super.updateItem(item, empty);
-
-                if (empty || item == null) {
-                    setText(null);
-                    return;
-                }
-
-                setText(item);
-                setStyle("-fx-font-weight: bold; -fx-text-fill: #1f4d36;");
-            }
-        });
-
-
-        colDate.setCellValueFactory(d ->
-                new SimpleObjectProperty<>(d.getValue().getDateSeance()));
-
-        colDebut.setCellValueFactory(d ->
-                new SimpleObjectProperty<>(d.getValue().getHeureDebut()));
-
-        colFin.setCellValueFactory(d ->
-                new SimpleObjectProperty<>(d.getValue().getHeureFin()));
-
-        colCoach.setCellValueFactory(d ->
-                new SimpleStringProperty(
-                        coachMap.getOrDefault(
-                                d.getValue().getIdCoach(),
-                                "Inconnu"
-                        )
-                )
-        );
-
-        colPlaces.setCellValueFactory(d -> {
-            try {
-                int reserved = reservationService
-                        .countReservations(d.getValue().getIdSeance());
-                return new SimpleIntegerProperty(
-                        d.getValue().getCapacite() - reserved
-                ).asObject();
-            } catch (Exception e) {
-                return new SimpleIntegerProperty(0).asObject();
-            }
-        });
-
-        // ===== STATUT BADGE
-        colStatut.setCellValueFactory(data -> {
-
-            Seance s = data.getValue();
-
-            if (s.getDateSeance().isBefore(LocalDate.now()))
-                return new SimpleStringProperty("Terminée");
-
-            try {
-                int reserved = reservationService
-                        .countReservations(s.getIdSeance());
-
-                if (s.getCapacite() - reserved <= 0)
-                    return new SimpleStringProperty("Complète");
-
-            } catch (Exception e) {
-                return new SimpleStringProperty("Indisponible");
-            }
-
-            return new SimpleStringProperty("Disponible");
-        });
-
-        colStatut.setCellFactory(col -> new TableCell<>() {
-
-            private final Label badge = new Label();
-
-            @Override
-            protected void updateItem(String statut, boolean empty) {
-                super.updateItem(statut, empty);
-
-                if (empty || statut == null) {
-                    setGraphic(null);
-                    return;
-                }
-
-                badge.setText(statut);
-                badge.getStyleClass().removeAll(
-                        "badge-disponible",
-                        "badge-complete",
-                        "badge-terminee"
-                );
-
-                switch (statut) {
-                    case "Disponible" ->
-                            badge.getStyleClass().add("badge-disponible");
-                    case "Complète" ->
-                            badge.getStyleClass().add("badge-complete");
-                    case "Terminée" ->
-                            badge.getStyleClass().add("badge-terminee");
-                }
-
-                setGraphic(badge);
-                setContentDisplay(ContentDisplay.GRAPHIC_ONLY);
-            }
-        });
-    }
-
-    // =================================================
-    // SEARCH SYSTEM PRO
-    // =================================================
-    private void configureSearch() {
-
-        filteredData = new FilteredList<>(masterData, s -> true);
-
-        searchField.textProperty().addListener((obs, oldVal, newVal) -> {
-
-            filteredData.setPredicate(seance -> {
-
-                if (newVal == null || newVal.isBlank())
-                    return true;
-
-                String keyword = newVal.toLowerCase();
-
-                return seance.getNom().toLowerCase().contains(keyword)
-                        || seance.getDateSeance().toString().contains(keyword)
-                        || seance.getHeureDebut().toString().contains(keyword)
-                        || seance.getHeureFin().toString().contains(keyword)
-                        || coachMap.getOrDefault(
-                        seance.getIdCoach(), ""
-                ).toLowerCase().contains(keyword);
-
-            });
-        });
-
-        SortedList<Seance> sorted =
-                new SortedList<>(filteredData);
-
-        sorted.comparatorProperty()
-                .bind(seanceTable.comparatorProperty());
-
-        seanceTable.setItems(sorted);
-    }
-
-    // =================================================
-    // LOAD COACHS
-    // =================================================
-    private void loadCoachs() {
-        try {
-            List<UserApp> coachs = userService.getAllCoachs();
-            coachs.forEach(c ->
-                    coachMap.put(
-                            c.getIdUser(),
-                            c.getNom() + " " + c.getPrenom()
-                    )
-            );
-        } catch (Exception e) {
-            DialogUtils.showError(
-                    "Erreur",
-                    "Impossible de charger les coachs."
-            );
-        }
-    }
-
-    // =================================================
-    // REFRESH TABLE
-    // =================================================
-    private void refreshTable() {
+    private void loadData() {
 
         try {
-            masterData.setAll(seanceService.getAll());
 
-            seanceTable.setPlaceholder(
-                    new Label("Aucune séance disponible")
-            );
+            masterData = seanceService.getAll();
+            refreshCards();
 
         } catch (Exception e) {
 
@@ -262,39 +70,164 @@ public class UserSeanceController {
         }
     }
 
-    // =================================================
-    // RESERVER
-    // =================================================
-    @FXML
-    private void handleReserver() {
-
-        Seance selected =
-                seanceTable.getSelectionModel().getSelectedItem();
-
-        if (selected == null) return;
+    private void loadCoachs() {
 
         try {
+            List<UserApp> coachs = userService.getAllCoachs();
 
-            if (selected.getDateSeance().isBefore(LocalDate.now())) {
-                DialogUtils.showWarning(
-                        "Séance terminée",
-                        "Vous ne pouvez pas réserver une séance passée."
+            for (UserApp c : coachs) {
+                coachMap.put(
+                        c.getIdUser(),
+                        c.getNom() + " " + c.getPrenom()
                 );
-                return;
             }
 
-            int reserved =
-                    reservationService.countReservations(
-                            selected.getIdSeance()
-                    );
+        } catch (Exception e) {
 
-            if (selected.getCapacite() - reserved <= 0) {
-                DialogUtils.showWarning(
-                        "Séance complète",
-                        "Il n'y a plus de places disponibles."
-                );
-                return;
+            DialogUtils.showError(
+                    "Erreur",
+                    "Impossible de charger les coachs."
+            );
+        }
+    }
+
+    // =================================================
+    // CARD SYSTEM
+    // =================================================
+    private void refreshCards() {
+
+        cardContainer.getChildren().clear();
+
+        if (masterData == null) return;
+
+        String search = searchField.getText() == null
+                ? ""
+                : searchField.getText().toLowerCase();
+
+        for (Seance s : masterData) {
+
+            boolean matchesSearch =
+                    s.getNom().toLowerCase().contains(search)
+                            || s.getDateSeance().toString().contains(search)
+                            || coachMap.getOrDefault(
+                            s.getIdCoach(), ""
+                    ).toLowerCase().contains(search);
+
+            if (matchesSearch) {
+                cardContainer.getChildren().add(createCard(s));
             }
+        }
+    }
+
+    private VBox createCard(Seance s) {
+
+        VBox card = new VBox(18);
+        card.getStyleClass().add("seance-card-pro");
+
+        // ================= TITLE =================
+        Label title = new Label(s.getNom());
+        title.getStyleClass().add("seance-title-pro");
+
+        // ================= DATE =================
+        Label date = new Label("📅  " + s.getDateSeance());
+        date.getStyleClass().add("seance-info-pro");
+
+        Label time = new Label("⏰  "
+                + s.getHeureDebut() + " - " + s.getHeureFin());
+        time.getStyleClass().add("seance-info-pro");
+
+        Label coach = new Label("👤  "
+                + coachMap.getOrDefault(
+                s.getIdCoach(), "Inconnu"));
+        coach.getStyleClass().add("seance-info-pro");
+
+        // ================= PLACES =================
+        int reserved = 0;
+        try {
+            reserved = reservationService
+                    .countReservations(s.getIdSeance());
+        } catch (Exception ignored) {}
+
+        int capacite = s.getCapacite();
+        int restantes = capacite - reserved;
+
+        double progressValue =
+                (double) reserved / capacite;
+
+        ProgressBar progressBar = new ProgressBar(progressValue);
+        progressBar.getStyleClass().add("places-progress");
+
+        Label placesLabel = new Label(
+                restantes + " places restantes"
+        );
+        placesLabel.getStyleClass().add("places-label");
+
+        // ================= BADGE + BUTTON =================
+        HBox footer = new HBox(15);
+        footer.setStyle("-fx-alignment: CENTER_LEFT;");
+
+        Label badge = new Label();
+        badge.getStyleClass().add("badge-pro");
+
+        Button actionBtn = new Button();
+        actionBtn.getStyleClass().add("btn-pro");
+
+        if (s.getDateSeance().isBefore(LocalDate.now())) {
+
+            badge.setText("Terminée");
+            badge.getStyleClass().add("badge-grey");
+
+            actionBtn.setText("Terminée");
+            actionBtn.setDisable(true);
+
+            card.getStyleClass().add("border-grey");
+        }
+        else if (restantes <= 0) {
+
+            badge.setText("Complet");
+            badge.getStyleClass().add("badge-red");
+
+            actionBtn.setText("Complet");
+            actionBtn.setDisable(true);
+
+            card.getStyleClass().add("border-red");
+        }
+        else {
+
+            badge.setText("Disponible");
+            badge.getStyleClass().add("badge-green");
+
+            actionBtn.setText("Réserver");
+            actionBtn.setOnAction(e -> reserver(s));
+
+            card.getStyleClass().add("border-green");
+        }
+
+        footer.getChildren().addAll(badge, actionBtn);
+
+        card.getChildren().addAll(
+                title,
+                date,
+                time,
+                coach,
+                progressBar,
+                placesLabel,
+                footer
+        );
+
+        return card;
+    }
+
+
+    // =================================================
+    // RESERVATION
+    // =================================================
+    // =================================================
+// RESERVATION
+// =================================================
+    private void reserver(Seance s) {
+
+        try {
 
             boolean confirmed =
                     DialogUtils.showConfirmation(
@@ -304,17 +237,69 @@ public class UserSeanceController {
 
             if (!confirmed) return;
 
+            // 🔎 Vérifier si déjà réservé
+            if (reservationService.exists(
+                    USER_TEST_ID,
+                    s.getIdSeance()
+            )) {
+                DialogUtils.showWarning(
+                        "Déjà réservé",
+                        "Vous avez déjà réservé cette séance."
+                );
+                return;
+            }
+
+            // ✅ Réservation en base
             reservationService.reserver(
                     USER_TEST_ID,
-                    selected.getIdSeance()
+                    s.getIdSeance()
             );
+
+            // ================= GOOGLE CALENDAR =================
+            try {
+
+                LocalDateTime start =
+                        LocalDateTime.of(
+                                s.getDateSeance(),
+                                s.getHeureDebut()
+                        );
+
+                LocalDateTime end =
+                        LocalDateTime.of(
+                                s.getDateSeance(),
+                                s.getHeureFin()
+                        );
+
+                // 🔥 Google génère l'ID
+                String googleEventId =
+                        GoogleCalendarService.addEvent(
+                                "Séance : " + s.getNom(),
+                                "Séance EcoAdventure avec votre coach",
+                                start,
+                                end
+                        );
+
+                // ✅ Sauvegarder l'eventId en base
+                reservationService.saveGoogleEventId(
+                        USER_TEST_ID,
+                        s.getIdSeance(),
+                        googleEventId
+                );
+
+            } catch (Exception googleError) {
+
+                System.out.println("Erreur Google Calendar : "
+                        + googleError.getMessage());
+
+                // On ne bloque pas la réservation
+            }
 
             DialogUtils.showInfo(
                     "Succès",
                     "Séance réservée avec succès."
             );
 
-            refreshTable();
+            loadData();
 
         } catch (ValidationException e) {
 
@@ -329,8 +314,11 @@ public class UserSeanceController {
                     "Erreur",
                     "Impossible de réserver."
             );
+
+            e.printStackTrace();
         }
     }
+
 
     // =================================================
     // NAVIGATION

@@ -3,38 +3,30 @@ package GUI;
 import Entities.Seance;
 import GUI.utils.DialogUtils;
 import GUI.utils.SceneUtils;
+import Services.interfaces.GoogleCalendarService;
 import Services.interfaces.ReservationSeanceService;
 import Services.interfaces.SeanceService;
 import Services.interfaces.UserService;
 
-import javafx.beans.property.*;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.Node;
-import javafx.scene.control.*;
+import javafx.scene.control.Button;
+import javafx.scene.control.Label;
+import javafx.scene.layout.FlowPane;
+import javafx.scene.layout.HBox;
+import javafx.scene.layout.VBox;
 
 import java.time.LocalDate;
-import java.time.LocalTime;
-import java.util.*;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 public class UserDashboardController {
 
-    // ================= TABLES =================
-    @FXML private TableView<Seance> tablePlanifiees;
-    @FXML private TableView<Seance> tableTerminees;
-    @FXML private Button btnAnnuler;
-    @FXML private TableColumn<Seance, String> colNomP;
-    @FXML private TableColumn<Seance, String> colNomT;
-
-    @FXML private TableColumn<Seance, LocalDate> colDateP;
-    @FXML private TableColumn<Seance, LocalTime> colDebutP;
-    @FXML private TableColumn<Seance, LocalTime> colFinP;
-    @FXML private TableColumn<Seance, String> colCoachP;
-
-    @FXML private TableColumn<Seance, LocalDate> colDateT;
-    @FXML private TableColumn<Seance, LocalTime> colDebutT;
-    @FXML private TableColumn<Seance, LocalTime> colFinT;
-    @FXML private TableColumn<Seance, String> colCoachT;
+    // ================= UI =================
+    @FXML private FlowPane planifieesContainer;
+    @FXML private FlowPane termineesContainer;
 
     // ================= SERVICES =================
     private final SeanceService seanceService = new SeanceService();
@@ -52,103 +44,33 @@ public class UserDashboardController {
     @FXML
     public void initialize() {
 
-        btnAnnuler.disableProperty().bind(
-                tablePlanifiees.getSelectionModel()
-                        .selectedItemProperty().isNull()
-        );
-
-        tablePlanifiees.setColumnResizePolicy(
-                TableView.CONSTRAINED_RESIZE_POLICY
-        );
-
-        tableTerminees.setColumnResizePolicy(
-                TableView.CONSTRAINED_RESIZE_POLICY
-        );
-
         loadCoachs();
-        setupColumns();
-        refreshTables();
+        refreshCards();
     }
 
     // =================================================
-    // CONFIG TABLE COLUMNS
+    // REFRESH CARDS
     // =================================================
-    private void setupColumns() {
+    private void refreshCards() {
 
-        // 🔥 OBLIGATOIRE
-        colNomP.setCellValueFactory(d ->
-                new SimpleStringProperty(d.getValue().getNom())
-        );
-
-        colNomP.setCellFactory(col -> new TableCell<>() {
-            @Override
-            protected void updateItem(String item, boolean empty) {
-                super.updateItem(item, empty);
-
-                if (empty || item == null) {
-                    setText(null);
-                    return;
-                }
-
-                setText(item);
-                setStyle("-fx-font-weight: bold; -fx-text-fill: #1f4d36;");
-            }
-        });
-
-
-        colNomT.setCellFactory(colNomP.getCellFactory());
-
-        colNomT.setCellValueFactory(colNomP.getCellValueFactory());
-
-        colDateP.setCellValueFactory(d ->
-                new SimpleObjectProperty<>(d.getValue().getDateSeance()));
-
-        colDebutP.setCellValueFactory(d ->
-                new SimpleObjectProperty<>(d.getValue().getHeureDebut()));
-
-        colFinP.setCellValueFactory(d ->
-                new SimpleObjectProperty<>(d.getValue().getHeureFin()));
-
-        colCoachP.setCellValueFactory(d ->
-                new SimpleStringProperty(
-                        coachMap.getOrDefault(
-                                d.getValue().getIdCoach(),
-                                "Inconnu"
-                        )
-                )
-        );
-
-        // Réutilisation pour table terminées
-        colDateT.setCellValueFactory(colDateP.getCellValueFactory());
-        colDebutT.setCellValueFactory(colDebutP.getCellValueFactory());
-        colFinT.setCellValueFactory(colFinP.getCellValueFactory());
-        colCoachT.setCellValueFactory(colCoachP.getCellValueFactory());
-    }
-
-    // =================================================
-    // REFRESH TABLES
-    // =================================================
-    private void refreshTables() {
+        planifieesContainer.getChildren().clear();
+        termineesContainer.getChildren().clear();
 
         try {
 
             List<Seance> all =
                     seanceService.getSeancesByUser(USER_TEST_ID);
 
-            List<Seance> planifiees = all.stream()
-                    .filter(s ->
-                            !s.getDateSeance().isBefore(LocalDate.now())
-                    )
-                    .toList();
+            for (Seance s : all) {
 
-            List<Seance> terminees = all.stream()
-                    .filter(s ->
-                            s.getDateSeance().isBefore(LocalDate.now())
-                    )
-                    .toList();
-
-            tablePlanifiees.getItems().setAll(planifiees);
-            tableTerminees.getItems().setAll(terminees);
+                if (!s.getDateSeance().isBefore(LocalDate.now())) {
+                    planifieesContainer.getChildren()
+                            .add(createPlanifieeCard(s));
+                } else {
+                    termineesContainer.getChildren()
+                            .add(createTermineeCard(s));
+                }
+            }
 
         } catch (Exception e) {
 
@@ -160,7 +82,127 @@ public class UserDashboardController {
     }
 
     // =================================================
-    // LOAD COACHS CACHE
+    // CREATE PLANIFIEE CARD
+    // =================================================
+    private VBox createPlanifieeCard(Seance s) {
+
+        VBox card = baseCard(s);
+
+        Button btnAnnuler = new Button("Annuler");
+        btnAnnuler.getStyleClass().add("btn-danger");
+
+        btnAnnuler.setOnAction(e -> handleAnnuler(s));
+
+        card.getChildren().add(btnAnnuler);
+
+        return card;
+    }
+
+    // =================================================
+    // CREATE TERMINEE CARD
+    // =================================================
+    private VBox createTermineeCard(Seance s) {
+
+        VBox card = baseCard(s);
+
+        Label badge = new Label("Terminée");
+        badge.getStyleClass().add("badge-terminee");
+
+        card.getChildren().add(badge);
+
+        return card;
+    }
+
+    // =================================================
+    // BASE CARD STRUCTURE
+    // =================================================
+    private VBox baseCard(Seance s) {
+
+        VBox card = new VBox(10);
+        card.getStyleClass().add("coach-card");
+
+        Label title = new Label(s.getNom());
+        title.getStyleClass().add("coach-card-title");
+
+        Label date = new Label("📅 " + s.getDateSeance());
+        date.getStyleClass().add("coach-card-info");
+
+        Label time = new Label("⏰ " +
+                s.getHeureDebut() + " - " + s.getHeureFin());
+        time.getStyleClass().add("coach-card-info");
+
+        Label coach = new Label("👤 " +
+                coachMap.getOrDefault(
+                        s.getIdCoach(),
+                        "Inconnu"
+                ));
+        coach.getStyleClass().add("coach-card-info");
+
+        card.getChildren().addAll(title, date, time, coach);
+
+        return card;
+    }
+
+    // =================================================
+    // ANNULER RESERVATION
+    // =================================================
+    private void handleAnnuler(Seance selected) {
+
+        if (selected == null) return;
+
+        boolean confirmed =
+                DialogUtils.showConfirmation(
+                        "Annulation",
+                        "Voulez-vous vraiment annuler cette réservation ?"
+                );
+
+        if (!confirmed) return;
+
+        try {
+
+            // 🔹 1️⃣ Récupérer l’ID Google AVANT suppression
+            String googleEventId =
+                    reservationService.getGoogleEventId(
+                            USER_TEST_ID,
+                            selected.getIdSeance()
+                    );
+
+            // 🔹 2️⃣ Supprimer en base
+            reservationService.annuler(
+                    USER_TEST_ID,
+                    selected.getIdSeance()
+            );
+
+            // 🔹 3️⃣ Supprimer du Google Calendar si existant
+            if (googleEventId != null && !googleEventId.isBlank()) {
+
+                try {
+                    GoogleCalendarService.deleteEvent(googleEventId);
+                } catch (Exception e) {
+                    System.out.println("Event Google non trouvé ou déjà supprimé.");
+                }
+            }
+
+            DialogUtils.showInfo(
+                    "Succès",
+                    "Réservation annulée et supprimée du calendrier."
+            );
+
+            refreshCards();
+
+        } catch (Exception e) {
+
+            DialogUtils.showError(
+                    "Erreur",
+                    "Impossible d'annuler la réservation."
+            );
+
+            e.printStackTrace();
+        }
+    }
+
+    // =================================================
+    // LOAD COACHS
     // =================================================
     private void loadCoachs() {
 
@@ -174,49 +216,6 @@ public class UserDashboardController {
             );
 
         } catch (Exception ignored) {}
-    }
-
-    // =================================================
-    // ANNULER RESERVATION
-    // =================================================
-    @FXML
-    private void handleAnnuler() {
-
-        Seance selected =
-                tablePlanifiees.getSelectionModel()
-                        .getSelectedItem();
-
-        if (selected == null) return;
-
-        boolean confirmed =
-                DialogUtils.showConfirmation(
-                        "Annulation de réservation",
-                        "Voulez-vous vraiment annuler cette réservation ?"
-                );
-
-        if (!confirmed) return;
-
-        try {
-
-            reservationService.annuler(
-                    USER_TEST_ID,
-                    selected.getIdSeance()
-            );
-
-            DialogUtils.showInfo(
-                    "Succès",
-                    "Réservation annulée avec succès."
-            );
-
-            refreshTables();
-
-        } catch (Exception e) {
-
-            DialogUtils.showError(
-                    "Erreur",
-                    "Impossible d'annuler la réservation."
-            );
-        }
     }
 
     // =================================================

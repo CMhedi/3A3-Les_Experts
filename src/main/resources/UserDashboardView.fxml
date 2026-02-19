@@ -36,99 +36,63 @@
                                          fill="WHITE"/>
                 </graphic>
             </Button>
+
             <Button styleClass="menu-btn"
                     onAction="#handleSeances">
-
                 <graphic>
                     <FontAwesomeIconView glyphName="CALENDAR"
                                          size="14"
                                          fill="WHITE"/>
                 </graphic>
-
-                <text> Séances Disponibles </text>
+                <text>Séances Disponibles</text>
             </Button>
-
 
         </HBox>
     </top>
 
     <!-- ================= CENTER ================= -->
     <center>
-        <VBox spacing="20"
+
+        <VBox spacing="30"
               alignment="TOP_CENTER"
-              style="-fx-padding:25;">
+              style="-fx-padding:35;">
 
-            <!-- CARD STYLE -->
-            <VBox styleClass="card"
-                  spacing="15"
-                  prefWidth="950"
-                  VBox.vgrow="ALWAYS">
-                <TabPane fx:id="tabPane"
-                         tabClosingPolicy="UNAVAILABLE"
-                         VBox.vgrow="ALWAYS">
+            <!-- SECTION PLANIFIEES -->
+            <Label text="Séances Planifiées"
+                   styleClass="section-title-accent"/>
 
+            <ScrollPane fitToWidth="true"
+                        styleClass="card-scroll"
+                        prefHeight="280">
 
+                <FlowPane fx:id="planifieesContainer"
+                          hgap="20"
+                          vgap="20"
+                          prefWrapLength="950"
+                          alignment="TOP_LEFT"
+                          style="-fx-padding: 10;"/>
 
-                    <tabs>
+            </ScrollPane>
 
-                        <!-- PLANIFIEES -->
-                        <Tab text="Planifiées" closable="false">
-                            <VBox spacing="15" style="-fx-padding:15;">
+            <!-- SECTION TERMINEES -->
+            <Label text="Séances Terminées"
+                   styleClass="section-title-accent"/>
 
-                                <TableView fx:id="tablePlanifiees"
-                                           VBox.vgrow="ALWAYS">
-                                    <columns>
-                                        <TableColumn fx:id="colNomP" text="Séance"/>
+            <ScrollPane fitToWidth="true"
+                        styleClass="card-scroll"
+                        VBox.vgrow="ALWAYS">
 
-                                        <TableColumn fx:id="colDateP" text="Date"/>
-                                        <TableColumn fx:id="colDebutP" text="Début"/>
-                                        <TableColumn fx:id="colFinP" text="Fin"/>
-                                        <TableColumn fx:id="colCoachP" text="Coach"/>
-                                    </columns>
-                                </TableView>
+                <FlowPane fx:id="termineesContainer"
+                          hgap="20"
+                          vgap="20"
+                          prefWrapLength="950"
+                          alignment="TOP_LEFT"
+                          style="-fx-padding: 10;"/>
 
-                                <HBox alignment="CENTER_RIGHT">
-                                    <Button fx:id="btnAnnuler"
-                                            text="Annuler réservation"
-                                            onAction="#handleAnnuler"
-                                            styleClass="btn-danger"/>
-                                </HBox>
-
-                            </VBox>
-                        </Tab>
-
-
-                        <!-- TERMINEES -->
-                        <Tab text="Terminées"
-                             closable="false">
-
-                            <TableView fx:id="tableTerminees"
-                                       VBox.vgrow="ALWAYS">
-
-                                <columns>
-                                    <TableColumn fx:id="colNomT" text="Séance"/>
-
-
-                                    <TableColumn fx:id="colDateT"
-                                                 text="Date"/>
-                                    <TableColumn fx:id="colDebutT"
-                                                 text="Début"/>
-                                    <TableColumn fx:id="colFinT"
-                                                 text="Fin"/>
-                                    <TableColumn fx:id="colCoachT"
-                                                 text="Coach"/>
-                                </columns>
-                            </TableView>
-
-                        </Tab>
-
-                    </tabs>
-
-                </TabPane>
-
-            </VBox>
+            </ScrollPane>
 
         </VBox>
+
     </center>
 
 </BorderPane>

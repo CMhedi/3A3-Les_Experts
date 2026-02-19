@@ -22,6 +22,11 @@ target/
 .springBeans
 .sts4-cache
 
+
+src/main/resources/credentials.json
+tokens/
+
+
 ### NetBeans ###
 /nbproject/private/
 /nbbuild/

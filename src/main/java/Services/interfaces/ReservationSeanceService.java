@@ -206,6 +206,70 @@ public class ReservationSeanceService {
         rs.next();
         return rs.getInt(1);
     }
+    public boolean exists(int userId, int seanceId){
+        String sql = """
+                SELECT COUNT(*) 
+                FROM reservation_seance
+                WHERE id_user = ?
+                AND id_seance = ?
+                AND statut = 'CONFIRMEE'
+                """;
+
+        try {
+            PreparedStatement ps = conx.prepareStatement(sql);
+            ps.setInt(1, userId);
+            ps.setInt(2, seanceId);
+
+            ResultSet rs = ps.executeQuery();
+            rs.next();
+            return rs.getInt(1) > 0;
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+    };
+
+    public void saveGoogleEventId(int userId, int seanceId, String eventId){
+        String sql = """
+                UPDATE reservation_seance
+                SET google_event_id = ?
+                WHERE id_user = ? AND id_seance = ?
+                """;
+
+        try {
+            PreparedStatement ps = conx.prepareStatement(sql);
+            ps.setString(1, eventId);
+            ps.setInt(2, userId);
+            ps.setInt(3, seanceId);
+
+            ps.executeUpdate();
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+    };
+
+    public String getGoogleEventId(int userId, int seanceId){
+        String sql = """
+                SELECT google_event_id
+                FROM reservation_seance
+                WHERE id_user = ?
+                AND id_seance = ?
+                AND statut = 'CONFIRMEE'
+                """;
+
+        try {
+            PreparedStatement ps = conx.prepareStatement(sql);
+            ps.setInt(1, userId);
+            ps.setInt(2, seanceId);
+
+            ResultSet rs = ps.executeQuery();
+            if (rs.next()) {
+                return rs.getString("google_event_id");
+            }
+            return null;
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+    };
 
 
 }
