@@ -2,115 +2,97 @@ package controllers;
 
 import Entities.ReservationEvenement;
 import Services.ReservationEvenementService;
-import javafx.beans.property.SimpleIntegerProperty;
-import javafx.beans.property.SimpleStringProperty;
-import javafx.collections.FXCollections;
-import javafx.collections.ObservableList;
+import Utiles.SceneNavigator;
+import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
-import javafx.fxml.FXMLLoader;
-import javafx.scene.Parent;
-import javafx.scene.Scene;
+import javafx.scene.Node;
 import javafx.scene.control.*;
+import javafx.scene.layout.*;
 import javafx.stage.Stage;
-
-import java.time.format.DateTimeFormatter;
 import java.util.List;
-import java.util.Locale;
 import java.util.stream.Collectors;
 
 public class ReservationClientController {
 
-    @FXML private TextField searchField;
+    @FXML private VBox cardsContainer;
     @FXML private Label lblInfo;
-
-    @FXML private TableView<ReservationEvenement> tableReservations;
-    @FXML private TableColumn<ReservationEvenement, Number> colId;
-    @FXML private TableColumn<ReservationEvenement, String> colDate;
-    @FXML private TableColumn<ReservationEvenement, String> colStatut;
-    @FXML private TableColumn<ReservationEvenement, Number> colBillets;
-    @FXML private TableColumn<ReservationEvenement, Number> colEvent;
+    @FXML private TextField searchField;
 
     private final ReservationEvenementService service = new ReservationEvenementService();
-    private final ObservableList<ReservationEvenement> data = FXCollections.observableArrayList();
-    private final DateTimeFormatter dtf = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
-
-    private Integer currentEventId = null;
 
     @FXML
     public void initialize() {
-        colId.setCellValueFactory(c -> new SimpleIntegerProperty(c.getValue().getIdResEvt()));
-        colDate.setCellValueFactory(c -> new SimpleStringProperty(
-                c.getValue().getDateReservation() == null ? "" : c.getValue().getDateReservation().format(dtf)
-        ));
-        colStatut.setCellValueFactory(c -> new SimpleStringProperty(
-                c.getValue().getStatutRes() == null ? "" : c.getValue().getStatutRes().name()
-        ));
-        colBillets.setCellValueFactory(c -> new SimpleIntegerProperty(c.getValue().getNbBillets()));
-        colEvent.setCellValueFactory(c -> new SimpleIntegerProperty(c.getValue().getIdEvenement()));
-
-        tableReservations.setItems(data);
-        loadAll();
+        loadData();
     }
 
+    // El méthode elli kenet t-9ala9 fik fil EvenementClientController
     public void loadReservationsByEventId(int eventId) {
-        this.currentEventId = eventId;
-        if (searchField != null) searchField.clear();
-        loadAll();
-        if (lblInfo != null) lblInfo.setText("Événement ID: " + eventId + " | Total: " + data.size());
-    }
-
-    private void loadAll() {
         try {
-            List<ReservationEvenement> list = service.getAll();
-            if (currentEventId != null) {
-                list = list.stream().filter(r -> r.getIdEvenement() == currentEventId).collect(Collectors.toList());
-            }
-            data.setAll(list);
-            if (lblInfo != null && currentEventId == null) lblInfo.setText("Total: " + data.size());
-        } catch (Exception e) {
-            if (lblInfo != null) lblInfo.setText("Erreur chargement: " + e.getMessage());
-        }
-    }
-    @FXML private void onRefresh() {
-        if (searchField != null) searchField.clear();
-        loadAll();
-    }
-
-    @FXML private void onSearch() {
-        String q = searchField.getText() == null ? "" : searchField.getText().trim().toLowerCase(Locale.ROOT);
-        if (q.isEmpty()) { loadAll(); return; }
-
-        try {
-            List<ReservationEvenement> list = service.getAll();
-            if (currentEventId != null) {
-                list = list.stream().filter(r -> r.getIdEvenement() == currentEventId).collect(Collectors.toList());
-            }
-
-            data.setAll(list.stream()
-                    .filter(r -> (r.getStatutRes() != null && r.getStatutRes().name().toLowerCase(Locale.ROOT).contains(q))
-                            || String.valueOf(r.getIdEvenement()).contains(q))
-                    .collect(Collectors.toList()));
-            if (lblInfo != null) lblInfo.setText("Résultats: " + data.size());
-        } catch (Exception e) {
-            if (lblInfo != null) lblInfo.setText("Erreur recherche: " + e.getMessage());
-        }
-    }
-
-    @FXML private void goHome() { switchScene("/views/HomeClient.fxml"); }
-    @FXML private void goToReservations() { switchScene("/views/reservation_list_client.fxml"); }
-    @FXML private void goToEvenements() { switchScene("/views/evenement_list_client.fxml"); }
-    @FXML private void logout() { switchScene("/views/Login.fxml"); }
-
-    private void switchScene(String fxmlPath) {
-        try {
-            Parent root = FXMLLoader.load(getClass().getResource(fxmlPath));
-            Stage stage = (Stage) tableReservations.getScene().getWindow();
-            stage.setScene(new Scene(root));
-            stage.setMaximized(true);
-            stage.show();
+            List<ReservationEvenement> filtered = service.getAll().stream()
+                    .filter(r -> r.getIdEvenement() == eventId)
+                    .collect(Collectors.toList());
+            renderCards(filtered);
+            if (lblInfo != null) lblInfo.setText("Filtre: " + filtered.size() + " réservation(s)");
         } catch (Exception e) {
             e.printStackTrace();
-            if (lblInfo != null) lblInfo.setText("Erreur navigation: " + e.getMessage());
         }
+    }
+
+    private void loadData() {
+        try {
+            List<ReservationEvenement> list = service.getAll();
+            renderCards(list);
+            if (lblInfo != null) lblInfo.setText("Total: " + list.size() + " réservation(s)");
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    private void renderCards(List<ReservationEvenement> list) {
+        cardsContainer.getChildren().clear();
+        if (list.isEmpty()) {
+            cardsContainer.getChildren().add(new Label("Aucune réservation trouvée."));
+            return;
+        }
+        for (ReservationEvenement res : list) {
+            cardsContainer.getChildren().add(createCard(res));
+        }
+    }
+
+    private VBox createCard(ReservationEvenement res) {
+        VBox card = new VBox(10);
+        card.getStyleClass().add("card");
+
+        HBox header = new HBox(15);
+        Label title = new Label("Réservation #" + res.getIdResEvt());
+        title.setStyle("-fx-font-weight: bold; -fx-font-size: 15px; -fx-text-fill: #143D30;");
+
+        Region spacer = new Region();
+        HBox.setHgrow(spacer, Priority.ALWAYS);
+
+        // Fix lel Enum error (toUpperCase/equalsIgnoreCase)
+        String statusName = (res.getStatutRes() != null) ? res.getStatutRes().name() : "INCONNU";
+        Label statusLabel = new Label(statusName.toUpperCase());
+
+        if (statusName.equalsIgnoreCase("CONFIRME") || statusName.equalsIgnoreCase("PAYEE")) {
+            statusLabel.setStyle("-fx-background-color: #d1fae5; -fx-text-fill: #065f46; -fx-padding: 5 10; -fx-background-radius: 10;");
+        } else {
+            statusLabel.setStyle("-fx-background-color: #fee2e2; -fx-text-fill: #991b1b; -fx-padding: 5 10; -fx-background-radius: 10;");
+        }
+
+        header.getChildren().addAll(title, spacer, statusLabel);
+        Label details = new Label("📅 Date: " + res.getDateReservation() + "  |  🎫 Billets: " + res.getNbBillets());
+        details.getStyleClass().add("mutedText");
+
+        card.getChildren().addAll(header, details);
+        return card;
+    }
+
+    @FXML void onRefresh() { loadData(); }
+
+    @FXML
+    void goHome(ActionEvent event) {
+        Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
+        SceneNavigator.go(stage, "/views/Home.fxml", "EcoAdventure - Accueil");
     }
 }

@@ -8,7 +8,7 @@
       fx:controller="controllers.EvenementFormController"
       spacing="14"
       styleClass="formPage"
-      stylesheets="@styles/app.css">
+      stylesheets="/styles/app.css">
 
     <VBox spacing="16" styleClass="formCard">
 

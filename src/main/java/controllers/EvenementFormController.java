@@ -39,7 +39,7 @@ public class EvenementFormController {
         clearValidation();
     }
 
-    // appelé depuis EvenementController
+    // ====== appelé depuis EvenementController ======
     public void setData(Evenement e) {
         this.editing = e;
         hideInfo();
@@ -59,7 +59,7 @@ public class EvenementFormController {
         }
 
         txtLieu.setText(nvl(e.getLieu()));
-        txtPlaces.setText(String.valueOf(e.getNbPlaces()));
+        txtPlaces.setText(String.valueOf(e.getNbPlaces())); // ✅ int => jamais null
         cbStatut.setValue(nvl(e.getStatut()));
         txtDescription.setText(nvl(e.getDescription()));
     }
@@ -96,7 +96,7 @@ public class EvenementFormController {
             LocalDateTime dateEvent = LocalDateTime.of(d, t);
 
             e.setTitre(txtTitre.getText().trim());
-            e.setCategorieEvt(cbCategorie.getValue());
+            e.setCategorieEvt(cbCategorie.getValue()); // ✅ enum
             e.setDateEvent(dateEvent);
             e.setLieu(txtLieu.getText().trim());
             e.setNbPlaces(Integer.parseInt(txtPlaces.getText().trim()));
@@ -125,7 +125,7 @@ public class EvenementFormController {
         txtTitre.getScene().getWindow().hide();
     }
 
-    // ================= Helpers UI =================
+    // ================= Helpers validation / UI =================
 
     private void clearValidation() {
         reset(txtTitre);

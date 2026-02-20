@@ -1,77 +1,61 @@
 <?xml version="1.0" encoding="UTF-8"?>
-
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
 
 <BorderPane xmlns="http://javafx.com/javafx/17"
             xmlns:fx="http://javafx.com/fxml/1"
-            fx:controller="controllers.ReservationEvenementController"
-            stylesheets="/styles/app.css"
+            fx:controller="controllers.ReservationClientController"
+            stylesheets="@/styles/app.css"
             styleClass="root">
 
     <left>
-        <VBox styleClass="sidebar" spacing="14" prefWidth="230">
-            <VBox spacing="6">
+        <VBox styleClass="sidebar" spacing="16" prefWidth="240">
+            <VBox spacing="6" styleClass="sidebarHeader">
                 <Label text="EcoAdventure" styleClass="brand"/>
-                <Label text="Admin" styleClass="mutedSidebar"/>
+                <Label text="Espace Client" styleClass="mutedSidebar"/>
             </VBox>
 
-            <VBox spacing="6">
-                <Button text="🎫  Événements" styleClass="navItem"/>
-                <Button text="📅  Réservations" styleClass="navItem navItemActive"/>
+            <VBox spacing="8" styleClass="sidebarNav">
+                <Button text="🏠  Accueil" onAction="#goHome" styleClass="navItem"/>
+                <Button text="🎫  Mes Réservations" styleClass="navItem navItemActive"/>
             </VBox>
 
             <Region VBox.vgrow="ALWAYS"/>
-            <Separator/>
+            <Separator styleClass="sidebarSep"/>
             <Button text="⎋  Déconnexion" styleClass="navItem danger"/>
         </VBox>
     </left>
 
-    <top>
-        <HBox styleClass="topbar" spacing="12" alignment="CENTER_LEFT">
-            <Button text="← Accueil" onAction="#goHome" styleClass="ghostBtn"/>
-            <Label text="Réservations" styleClass="pageTitle"/>
-
-            <Region HBox.hgrow="ALWAYS"/>
-
-            <HBox styleClass="searchBox" spacing="8" alignment="CENTER_LEFT">
-                <Label text="🔎" styleClass="muted"/>
-                <TextField fx:id="searchField" promptText="Rechercher (statut / event)..." styleClass="searchInput"/>
+    <center>
+        <VBox spacing="0">
+            <HBox styleClass="topbar" spacing="12" alignment="CENTER_LEFT">
+                <Label text="Mes Réservations" styleClass="pageTitle"/>
+                <Region HBox.hgrow="ALWAYS"/>
+                <HBox styleClass="searchBox" spacing="8" alignment="CENTER_LEFT">
+                    <Label text="🔎" styleClass="muted"/>
+                    <TextField fx:id="searchField" promptText="Filtrer mes billets..." styleClass="searchInput"/>
+                </HBox>
+                <Button text="Actualiser" onAction="#onRefresh" styleClass="secondaryBtn"/>
             </HBox>
 
-            <Button text="Rechercher" onAction="#onSearch" styleClass="secondaryBtn"/>
-            <Button text="Actualiser" onAction="#onRefresh" styleClass="ghostBtn"/>
-            <Button text="＋ Nouveau" onAction="#onAdd" styleClass="primaryBtn"/>
-        </HBox>
-    </top>
+            <VBox styleClass="page" spacing="14" VBox.vgrow="ALWAYS">
+                <padding><Insets top="18" right="18" bottom="18" left="18"/></padding>
 
-    <center>
-        <VBox spacing="14">
-            <padding>
-                <Insets top="18" right="18" bottom="18" left="18"/>
-            </padding>
-
-            <VBox styleClass="card" spacing="12" VBox.vgrow="ALWAYS">
-                <HBox alignment="CENTER_LEFT">
-                    <Label text="Liste des réservations" styleClass="cardTitle"/>
-                    <Region HBox.hgrow="ALWAYS"/>
-                    <Label fx:id="lblInfo" text="Chargement..." styleClass="mutedText"/>
+                <HBox alignment="CENTER_LEFT" spacing="10">
+                    <Label text="Vos billets réservés" styleClass="cardTitle" style="-fx-font-size: 16px;"/>
+                    <Label fx:id="lblInfo" text="(0)" styleClass="mutedText"/>
                 </HBox>
 
                 <ScrollPane fitToWidth="true" hbarPolicy="NEVER" vbarPolicy="AS_NEEDED"
-                            style="-fx-background-color: transparent; -fx-background: transparent;"
-                            VBox.vgrow="ALWAYS">
+                            styleClass="transparentScroll" VBox.vgrow="ALWAYS">
                     <content>
-                        <VBox fx:id="cardsContainer" spacing="12">
-                            <padding>
-                                <Insets top="5" right="10" bottom="5" left="5"/>
-                            </padding>
+                        <VBox fx:id="cardsContainer" spacing="15" styleClass="cardsContainer">
+                            <padding><Insets top="10" right="15" bottom="10" left="5"/></padding>
                         </VBox>
                     </content>
                 </ScrollPane>
             </VBox>
         </VBox>
     </center>
-
 </BorderPane>

@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<BorderPane xmlns="http://javafx.com/javafx/17"
+            xmlns:fx="http://javafx.com/fxml/1"
+            fx:controller="controllers.ReservationClientController"
+            stylesheets="@/styles/app.css"
+            styleClass="root">
+    <center>
+        <VBox styleClass="page" spacing="14">
+            <TableView fx:id="table" VBox.vgrow="ALWAYS" styleClass="pro-table">
+                <columns>
+                    <TableColumn fx:id="colIdEvent" text="ID Événement" prefWidth="120"/>
+                    <TableColumn fx:id="colNbBillets" text="Billets" prefWidth="90"/>
+                    <TableColumn fx:id="colStatut" text="Statut" prefWidth="130"/>
+                    <TableColumn fx:id="colDateRes" text="Date Réservation" prefWidth="170"/>
+                </columns>
+            </TableView>
+        </VBox>
+    </center>
+</BorderPane>
