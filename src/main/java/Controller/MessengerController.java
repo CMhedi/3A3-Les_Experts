@@ -1,17 +1,42 @@
 package Controller;
 
 import Services.interfaces.GeminiService;
+import Services.interfaces.GifService;
+import javafx.scene.*;
+import javafx.scene.web.WebView;
+import javafx.stage.Stage;
 import javafx.application.Platform;
-import javafx.scene.Node;
+import javafx.scene.control.ScrollPane;
+import javafx.scene.layout.FlowPane;
+import javafx.scene.layout.VBox;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
+import javafx.geometry.Insets;
+import Services.interfaces.MessageDAO;
+
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 import javafx.stage.FileChooser;
+import org.json.JSONObject;
 import org.vosk.Model;
 import org.vosk.Recognizer;
 import javax.sound.sampled.AudioInputStream;
 import javax.sound.sampled.AudioSystem;
 
 
+
+import javafx.scene.control.*;
+import javafx.scene.layout.*;
+import javafx.scene.image.*;
+import javafx.geometry.Insets;
+import org.json.JSONArray;
+import javafx.scene.Scene;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
+import javafx.scene.control.ScrollPane;
+import javafx.scene.control.TextField;
+import Services.interfaces.GifService;
+import org.json.JSONArray;
 import java.io.File;
 import java.io.InputStream;
 import java.io.FileInputStream;
@@ -51,6 +76,16 @@ import java.net.http.HttpResponse;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import java.util.Map;
 import Utiles.AudioRecorder;
+import javafx.stage.Stage;
+import javafx.scene.Scene;
+import javafx.scene.layout.VBox;
+import javafx.scene.layout.FlowPane;
+import javafx.geometry.Insets;
+import javafx.geometry.Pos;
+import javafx.scene.control.Button;
+import javafx.scene.control.TextField;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
 
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -73,32 +108,39 @@ public class MessengerController implements Initializable {
     private AudioRecorder recorder;
     private boolean isRecording = false;
     private AudioRecorder aiRecorder;
-    @FXML private HBox chatHeader;
-    @FXML private TextField searchField;
-    @FXML private ListView<Conversation> conversationsList;
-    @FXML private ListView<Message> messagesList;
-    @FXML private TextField messageInput;
-    @FXML private Label chatUserName;
-    @FXML private Label chatStatus;
-    @FXML private VBox botMessagesContainer;
-    @FXML private TextField botInput;
+    @FXML
+    private HBox chatHeader;
+    @FXML
+    private TextField searchField;
+    @FXML
+    private ListView<Conversation> conversationsList;
+    @FXML
+    private ListView<Message> messagesList;
+    @FXML
+    private TextField messageInput;
+    @FXML
+    private Label chatUserName;
+    @FXML
+    private Label chatStatus;
+    @FXML
+    private VBox botMessagesContainer;
+    @FXML
+    private TextField botInput;
     @FXML
     private VBox aiPanel;
-    @FXML private ProgressIndicator aiLoader;
+    @FXML
+    private ProgressIndicator aiLoader;
 
     private boolean aiVisible = true;
 
-    private MessageDAO messageDAO;
+    public Services.interfaces.MessageDAO messageDAO;
     private ConversationDAO conversationDAO;
     private List<Conversation> allConversations;
     private int selectedConversationId = -1;
-    private final int currentUserId = 4;
+    private final int currentUserId = 3;
 
 
     private ObservableList<Message> chatMessages = FXCollections.observableArrayList();
-
-
-
 
 
     @Override
@@ -114,6 +156,7 @@ public class MessengerController implements Initializable {
         loadConversations();
         setupSearchListener();
         startAutoRefresh();
+        gifService = new GifService("Filp4GHzXpQubEthmUu744ozFrXl464m");
     }
 
 
@@ -265,6 +308,7 @@ public class MessengerController implements Initializable {
             textFlow.setOnContextMenuRequested(e -> menu.show(textFlow, e.getScreenX(), e.getScreenY()));
         }
     }
+
     @FXML
     private void askBot() {
         String query = botInput.getText().trim();
@@ -316,6 +360,7 @@ public class MessengerController implements Initializable {
             System.out.println("Fichier sélectionné : " + selectedFile.getAbsolutePath());
         }
     }
+
     // Hadhi bech tzid el "Bulle" mte3 el message fel Assistant AI
     private void addBotBubble(String text, boolean isUser) {
         if (botMessagesContainer == null) return;
@@ -350,6 +395,7 @@ public class MessengerController implements Initializable {
             sp.setVvalue(1.0);
         }
     }
+
     // Logic sghira mte3 réponsat (Tnajem tzid feha kima t7eb)
     private String getBotResponse(String input) {
         input = input.toLowerCase();
@@ -443,7 +489,7 @@ public class MessengerController implements Initializable {
                 ChoiceDialog<String> dialog = new ChoiceDialog<>(filteredUsers.get(0), filteredUsers);
                 dialog.showAndWait().ifPresent(selectedUser -> {
                     String email = selectedUser.substring(selectedUser.lastIndexOf("|") + 2).trim();
-                    if(conversationDAO.addMemberToConversation(selectedConversationId, email)) {
+                    if (conversationDAO.addMemberToConversation(selectedConversationId, email)) {
                         new Alert(Alert.AlertType.INFORMATION, "Ajouté !").show();
                     }
                 });
@@ -560,6 +606,7 @@ public class MessengerController implements Initializable {
     private void handleKeyPress(KeyEvent event) {
         if (event.getCode() == KeyCode.ENTER) sendMessage();
     }
+
     private void loadConversationHistory(int conversationId) {
         // Clear old messages
         chatMessages.clear();
@@ -581,6 +628,7 @@ public class MessengerController implements Initializable {
             }
         }
     }
+
     @FXML
     private void handleRecordButton() {
         try {
@@ -611,6 +659,7 @@ public class MessengerController implements Initializable {
             e.printStackTrace();
         }
     }
+
     private void processVoiceToText(String audioFilePath) {
         try {
             Model model = new Model("models/vosk-model-small-fr");
@@ -644,7 +693,6 @@ public class MessengerController implements Initializable {
     }
 
 
-
     private void stopRecordingAndSave(String audioPath) {
         try {
             recorder.stopRecording();
@@ -665,7 +713,6 @@ public class MessengerController implements Initializable {
             e.printStackTrace();
         }
     }
-
 
 
     @FXML
@@ -751,6 +798,7 @@ public class MessengerController implements Initializable {
             e.printStackTrace();
         }
     }
+
     private String getAIResponse(String userText) {
         try {
             // Use your existing Gemini service instead of the failing localhost API
@@ -833,7 +881,107 @@ public class MessengerController implements Initializable {
     }
 
 
+    private GifService gifService;
 
+    @FXML
+    private void openGifPicker() {
+        Stage stage = new Stage();
+        stage.setTitle("Search GIF");
 
+        // Layout principal
+        VBox root = new VBox(15);
+        root.setPadding(new Insets(15));
+        root.setAlignment(Pos.TOP_CENTER);
 
+        // Barre de recherche
+        HBox searchBox = new HBox(10);
+        TextField searchField = new TextField();
+        searchField.setPromptText("Tapez votre recherche ici...");
+        searchField.setPrefWidth(320);
+
+        Button searchButton = new Button("Rechercher");
+        searchButton.setDefaultButton(true);
+        searchBox.getChildren().addAll(searchField, searchButton);
+
+        // Indicateur de chargement
+        ProgressIndicator progress = new ProgressIndicator();
+        progress.setVisible(false);
+        progress.setMaxSize(40, 40);
+
+        // Zone d'affichage des GIFs
+        FlowPane gifsPane = new FlowPane();
+        gifsPane.setHgap(15);
+        gifsPane.setVgap(15);
+        gifsPane.setPadding(new Insets(10));
+        gifsPane.setAlignment(Pos.CENTER);
+
+        // ScrollPane
+        ScrollPane scrollPane = new ScrollPane(gifsPane);
+        scrollPane.setFitToWidth(true);
+        scrollPane.setPrefHeight(350);
+        scrollPane.setStyle("-fx-background-color:transparent;");
+
+        root.getChildren().addAll(searchBox, progress, scrollPane);
+
+        // Action du bouton recherche
+        searchButton.setOnAction(e -> {
+            String query = searchField.getText().trim();
+            if (query.isEmpty()) return;
+
+            gifsPane.getChildren().clear();
+            progress.setVisible(true);
+
+            new Thread(() -> {
+                try {
+                    GifService gifService = new GifService("Filp4GHzXpQubEthmUu744ozFrXl464m");
+                    JSONArray gifs = gifService.searchGifs(query, 12);
+
+                    Platform.runLater(() -> {
+                        progress.setVisible(false);
+
+                        if (gifs.length() == 0) {
+                            gifsPane.getChildren().add(new Label("Aucun GIF trouvé pour : " + query));
+                            return;
+                        }
+
+                        for (int i = 0; i < gifs.length(); i++) {
+                            try {
+                                JSONObject gifObj = gifs.getJSONObject(i);
+                                String gifUrl = gifObj.getString("url");
+
+                                // Affichage du GIF animé avec WebView
+                                WebView web = new WebView();
+                                web.setPrefSize(120, 120);
+                                web.getEngine().load(gifUrl);
+                                web.setCursor(Cursor.HAND);
+
+                                // Sélection du GIF
+                                String finalUrl = gifUrl;
+                                web.setOnMouseClicked(ev -> {
+                                    if (messageInput != null) {
+                                        messageInput.appendText(" " + finalUrl);
+                                    }
+                                    stage.close();
+                                });
+
+                                gifsPane.getChildren().add(web);
+                            } catch (Exception ex) {
+                                System.err.println("Erreur sur le GIF #" + i + " : " + ex.getMessage());
+                            }
+                        }
+                    });
+                } catch (Exception ex) {
+                    ex.printStackTrace();
+                    Platform.runLater(() -> {
+                        progress.setVisible(false);
+                        new Alert(Alert.AlertType.ERROR, "Erreur API : " + ex.getMessage()).show();
+                    });
+                }
+            }).start();
+        });
+
+        Scene scene = new Scene(root, 500, 500);
+        stage.setScene(scene);
+        stage.show();
+    }
 }

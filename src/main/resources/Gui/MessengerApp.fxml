@@ -45,6 +45,7 @@
 
     <center>
         <HBox>
+            <!-- LEFT SIDEBAR: Conversations List Only -->
             <VBox style="-fx-border-color: #efefef; -fx-border-width: 0 1 0 0; -fx-min-width: 300; -fx-max-width: 300;">
                 <VBox style="-fx-padding: 15;">
                     <TextField fx:id="searchField" promptText="Rechercher..."
@@ -52,12 +53,9 @@
                 </VBox>
                 <ListView fx:id="conversationsList" VBox.vgrow="ALWAYS"
                           style="-fx-background-color: transparent; -fx-selection-bar: #f0f2f5;"/>
-                <ListView fx:id="messagesList" VBox.vgrow="ALWAYS"
-                          style="-fx-background-color: transparent; -fx-selection-bar: #f0f2f5;"/>
             </VBox>
 
-
-
+            <!-- CENTER: Chat Messages Display -->
             <VBox HBox.hgrow="ALWAYS">
                 <HBox fx:id="chatHeader" alignment="CENTER_LEFT" spacing="15"
                       style="-fx-padding: 15; -fx-border-color: #efefef; -fx-border-width: 0 0 1 0;">
@@ -71,16 +69,19 @@
                     </Button>
                 </HBox>
 
-                <ScrollPane fitToWidth="true" hbarPolicy="NEVER" VBox.vgrow="ALWAYS">
-                    <content>
-                        <VBox fx:id="chatVBox" spacing="15" style="-fx-padding: 20; -fx-background-color: white;" />
-                    </content>
-                </ScrollPane>
+                <!-- Messages will display here using ListView -->
+                <ListView fx:id="messagesList" VBox.vgrow="ALWAYS"
+                          style="-fx-background-color: white; -fx-selection-bar: #f0f2f5;"/>
 
+                <!-- Message Input Area -->
                 <HBox alignment="CENTER_LEFT" spacing="12"
                       style="-fx-padding: 15; -fx-border-color: #efefef; -fx-border-width: 1 0 0 0;">
 
                     <Button onAction="#showEmojiPicker" style="-fx-background-color: transparent; -fx-text-fill: #ffcc00;" text="😊">
+                        <font><Font name="Segoe UI Emoji" size="22.0" /></font>
+                    </Button>
+
+                    <Button onAction="#openGifPicker" style="-fx-background-color: transparent; -fx-text-fill: #ff6b9d; -fx-cursor: hand;" text="🎬">
                         <font><Font name="Segoe UI Emoji" size="22.0" /></font>
                     </Button>
 
