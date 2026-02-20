@@ -30,10 +30,9 @@
 
     <top>
         <HBox styleClass="topbar" spacing="12" alignment="CENTER_LEFT">
-
             <Button text="← Accueil" onAction="#goHome" styleClass="ghostBtn"/>
-
             <Label text="Réservations" styleClass="pageTitle"/>
+
             <Region HBox.hgrow="ALWAYS"/>
 
             <HBox styleClass="searchBox" spacing="8" alignment="CENTER_LEFT">
@@ -53,27 +52,24 @@
                 <Insets top="18" right="18" bottom="18" left="18"/>
             </padding>
 
-            <VBox styleClass="card" spacing="12">
+            <VBox styleClass="card" spacing="12" VBox.vgrow="ALWAYS">
                 <HBox alignment="CENTER_LEFT">
                     <Label text="Liste des réservations" styleClass="cardTitle"/>
                     <Region HBox.hgrow="ALWAYS"/>
-                    <Label fx:id="lblInfo" text="" styleClass="mutedText"/>
+                    <Label fx:id="lblInfo" text="Chargement..." styleClass="mutedText"/>
                 </HBox>
 
-                <TableView fx:id="tableReservations" styleClass="table" prefHeight="560">
-                    <columns>
-                        <TableColumn fx:id="colId" text="ID" prefWidth="80"/>
-                        <TableColumn fx:id="colDate" text="Date" prefWidth="220"/>
-                        <TableColumn fx:id="colStatut" text="Statut" prefWidth="160"/>
-                        <TableColumn fx:id="colBillets" text="Billets" prefWidth="120"/>
-                        <TableColumn fx:id="colEvent" text="Event ID" prefWidth="120"/>
-                    </columns>
-                </TableView>
-
-                <HBox spacing="10" alignment="CENTER_RIGHT">
-                    <Button text="✏ Modifier" onAction="#onEdit" styleClass="secondaryBtn"/>
-                    <Button text="🗑 Supprimer" onAction="#onDelete" styleClass="dangerBtn"/>
-                </HBox>
+                <ScrollPane fitToWidth="true" hbarPolicy="NEVER" vbarPolicy="AS_NEEDED"
+                            style="-fx-background-color: transparent; -fx-background: transparent;"
+                            VBox.vgrow="ALWAYS">
+                    <content>
+                        <VBox fx:id="cardsContainer" spacing="12">
+                            <padding>
+                                <Insets top="5" right="10" bottom="5" left="5"/>
+                            </padding>
+                        </VBox>
+                    </content>
+                </ScrollPane>
             </VBox>
         </VBox>
     </center>

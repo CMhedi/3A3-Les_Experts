@@ -197,3 +197,151 @@
 .dangerBtn:hover{
     -fx-background-color: #fecaca;
 }
+
+/* =========================
+   EVENT FORM – UI PRO
+   ========================= */
+
+.formPage{
+    -fx-padding: 18 20;
+}
+
+.formCard{
+    -fx-background-color: white;
+    -fx-background-radius: 18;
+    -fx-padding: 18;
+    -fx-border-color: rgba(0,0,0,0.06);
+    -fx-border-radius: 18;
+    -fx-effect: dropshadow(gaussian, rgba(17,24,39,0.10), 20, 0.18, 0, 6);
+}
+
+.formTitle{
+    -fx-text-fill: #102a25;
+    -fx-font-size: 18px;
+    -fx-font-weight: 900;
+}
+
+.formLabel{
+    -fx-text-fill: #374151;
+    -fx-font-size: 12px;
+    -fx-font-weight: 900;
+}
+
+.formField{
+    -fx-background-color: #f3f4f6;
+    -fx-border-color: #e5e7eb;
+    -fx-background-radius: 14;
+    -fx-border-radius: 14;
+    -fx-padding: 8 10;
+    -fx-font-size: 13px;
+}
+
+.formField:focused{
+    -fx-background-color: white;
+    -fx-border-color: #1f8b4c;
+    -fx-effect: dropshadow(gaussian, rgba(31,139,76,0.18), 14, 0.25, 0, 2);
+}
+
+.combo-box.formField,
+.date-picker.formField{
+    -fx-background-color: transparent;
+}
+
+.combo-box.formField > .list-cell{
+    -fx-background-color: #f3f4f6;
+    -fx-background-radius: 14;
+    -fx-padding: 8 10;
+}
+
+.combo-box.formField:focused > .list-cell{
+    -fx-background-color: white;
+}
+
+.date-picker.formField > .text-field{
+    -fx-background-color: #f3f4f6;
+    -fx-border-color: #e5e7eb;
+    -fx-background-radius: 14;
+    -fx-border-radius: 14;
+    -fx-padding: 8 10;
+}
+
+.date-picker.formField:focused > .text-field{
+    -fx-background-color: white;
+    -fx-border-color: #1f8b4c;
+}
+
+.timeField{
+    -fx-pref-width: 90;
+}
+
+.dateField{
+    -fx-pref-width: 170;
+}
+
+.formArea{
+    -fx-background-color: #f3f4f6;
+    -fx-border-color: #e5e7eb;
+    -fx-background-radius: 14;
+    -fx-border-radius: 14;
+    -fx-padding: 8 10;
+    -fx-font-size: 13px;
+}
+
+.formArea:focused{
+    -fx-background-color: white;
+    -fx-border-color: #1f8b4c;
+    -fx-effect: dropshadow(gaussian, rgba(31,139,76,0.18), 14, 0.25, 0, 2);
+}
+
+/* Message info (success / error) */
+.formInfo{
+    -fx-background-radius: 12;
+    -fx-border-radius: 12;
+    -fx-padding: 8 10;
+    -fx-font-weight: 900;
+    -fx-font-size: 12px;
+}
+
+.formInfo.error{
+    -fx-text-fill: #991b1b;
+    -fx-background-color: #fee2e2;
+    -fx-border-color: #fecaca;
+}
+
+.formInfo.success{
+    -fx-text-fill: #065f46;
+    -fx-background-color: #d1fae5;
+    -fx-border-color: #a7f3d0;
+}
+
+/* =========================
+   VALIDATION + BUTTON UX
+   ========================= */
+
+.formField.error,
+.formArea.error{
+    -fx-border-color: #dc2626;
+    -fx-background-color: #fef2f2;
+}
+
+.formField.valid{
+    -fx-border-color: #16a34a;
+}
+
+.primaryBtn:disabled{
+    -fx-background-color: #9ca3af;
+    -fx-cursor: default;
+}.formField.error,
+ .formArea.error{
+     -fx-border-color: #dc2626;
+     -fx-background-color: #fef2f2;
+ }
+
+.formField.valid{
+    -fx-border-color: #16a34a;
+}
+
+.primaryBtn:disabled{
+    -fx-background-color: #9ca3af;
+    -fx-cursor: default;
+}

@@ -2,142 +2,178 @@ package controllers;
 
 import Entities.Evenement;
 import Services.EvenementService;
-import javafx.beans.property.SimpleIntegerProperty;
-import javafx.beans.property.SimpleStringProperty;
-import javafx.collections.FXCollections;
-import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
-import javafx.fxml.FXMLLoader;
-import javafx.scene.Parent;
-import javafx.scene.Scene;
 import javafx.scene.control.*;
-import javafx.stage.Modality;
-import javafx.stage.Stage;
 
+import java.sql.Timestamp;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
 
-public class EvenementController {
+public class EvenementFormController {
 
-    // ===== Table =====
-    @FXML private TableView<Evenement> tableEvents;
-
-    @FXML private TableColumn<Evenement, Number> colId;
-    @FXML private TableColumn<Evenement, String> colTitre;
-    @FXML private TableColumn<Evenement, String> colCategorie;
-    @FXML private TableColumn<Evenement, String> colDate;
-    @FXML private TableColumn<Evenement, String> colLieu;
-    @FXML private TableColumn<Evenement, Number> colPlaces;
-    @FXML private TableColumn<Evenement, String> colStatut;
-
+    @FXML private TextField txtTitre;
+    @FXML private ComboBox<String> cbCategorie;
+    @FXML private DatePicker dpDate;
+    @FXML private TextField txtHeure;
+    @FXML private TextField txtLieu;
+    @FXML private TextField txtPlaces;
+    @FXML private ComboBox<String> cbStatut;
+    @FXML private TextArea txtDescription;
     @FXML private Label lblInfo;
 
     private final EvenementService evenementService = new EvenementService();
-    private final ObservableList<Evenement> data = FXCollections.observableArrayList();
 
-    private final DateTimeFormatter dtf = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
+    private Evenement editing;          // null => création, sinon édition
+    private Runnable onSaved;           // callback refresh
+
+    private static final DateTimeFormatter TIME_FMT = DateTimeFormatter.ofPattern("HH:mm");
 
     @FXML
     public void initialize() {
-        colId.setCellValueFactory(c -> new SimpleIntegerProperty(c.getValue().getIdEvenement()));
-        colTitre.setCellValueFactory(c -> new SimpleStringProperty(nvl(c.getValue().getTitre())));
-        colCategorie.setCellValueFactory(c ->
-                new SimpleStringProperty(
-                        c.getValue().getCategorieEvt() == null ? "" : c.getValue().getCategorieEvt().name())
-        );
-        colDate.setCellValueFactory(c ->
-                new SimpleStringProperty(
-                        c.getValue().getDateEvent() == null ? "" : c.getValue().getDateEvent().format(dtf))
-        );
-        colLieu.setCellValueFactory(c -> new SimpleStringProperty(nvl(c.getValue().getLieu())));
-        colPlaces.setCellValueFactory(c -> new SimpleIntegerProperty(c.getValue().getNbPlaces()));
-        colStatut.setCellValueFactory(c -> new SimpleStringProperty(nvl(c.getValue().getStatut())));
+        cbCategorie.getItems().setAll("Randonnée", "Camping", "Kayak", "Escalade");
+        cbStatut.getItems().setAll("PLANIFIE", "OUVERT", "COMPLET", "ANNULE");
 
-        tableEvents.setItems(data);
-
-        loadEvents();
+        lblInfo.setVisible(false);
+        lblInfo.setManaged(false);
     }
 
-    // ===== Load =====
-    public void loadEvents() {
-        try {
-            data.setAll(evenementService.getAll());
-            if (lblInfo != null)
-                lblInfo.setText("Total événements : " + data.size());
-        } catch (Exception e) {
-            e.printStackTrace();
-            alert(Alert.AlertType.ERROR, "Erreur", "Chargement impossible", e.getMessage());
-        }
-    }
+    // ====== appelé depuis EvenementController ======
+    public void setData(Evenement e) {
+        this.editing = e;
 
-    // ===== Buttons =====
-    @FXML
-    private void onAdd() {
-        openForm(null);
-    }
-
-    @FXML
-    private void onEdit() {
-        Evenement selected = tableEvents.getSelectionModel().getSelectedItem();
-        if (selected == null) {
-            alert(Alert.AlertType.WARNING, "Info", "Sélection requise", "Choisis un événement.");
-            return;
-        }
-        openForm(selected);
-    }
-
-    @FXML
-    private void onDelete() {
-        Evenement selected = tableEvents.getSelectionModel().getSelectedItem();
-        if (selected == null) {
-            alert(Alert.AlertType.WARNING, "Info", "Sélection requise", "Choisis un événement.");
+        if (e == null) {
             return;
         }
 
-        Alert confirm = new Alert(Alert.AlertType.CONFIRMATION);
-        confirm.setTitle("Confirmation");
-        confirm.setHeaderText("Supprimer cet événement ?");
-        confirm.setContentText(selected.getTitre());
+        // --- ADAPTE ces getters/setters selon ton entity ---
+        txtTitre.setText(nvl(e.getTitre()));
+        cbCategorie.setValue(e.getCategorieEvt() == null ? null : e.getCategorieEvt().toString());
 
-        if (confirm.showAndWait().orElse(ButtonType.CANCEL) != ButtonType.OK) return;
+        LocalDateTime dt = e.getDateEvent();
+        if (dt != null) {
+            dpDate.setValue(dt.toLocalDate());
+            txtHeure.setText(dt.toLocalTime().format(TIME_FMT));
+        }
+
+        txtLieu.setText(nvl(e.getLieu()));
+        txtPlaces.setText(e.getNbPlaces() == null ? "" : String.valueOf(e.getNbPlaces()));
+        cbStatut.setValue(nvl(e.getStatut()));
+        txtDescription.setText(nvl(e.getDescription()));
+    }
+
+    public void setOnSaved(Runnable callback) {
+        this.onSaved = callback;
+    }
+
+    @FXML
+    private void onSave() {
+        clearValidation();
+
+        boolean ok = true;
+
+        if (isBlank(txtTitre.getText())) { markError(txtTitre); ok = false; }
+        if (cbCategorie.getValue() == null) { markError(cbCategorie); ok = false; }
+        if (dpDate.getValue() == null) { markError(dpDate); ok = false; }
+        if (!isValidTime(txtHeure.getText())) { markError(txtHeure); ok = false; }
+        if (isBlank(txtLieu.getText())) { markError(txtLieu); ok = false; }
+        if (!isPositiveInt(txtPlaces.getText())) { markError(txtPlaces); ok = false; }
+        if (cbStatut.getValue() == null) { markError(cbStatut); ok = false; }
+
+        if (!ok) {
+            showError("Veuillez corriger les champs en rouge.");
+            return;
+        }
 
         try {
-            evenementService.delete(selected.getIdEvenement());
-            loadEvents();
-        } catch (Exception e) {
-            alert(Alert.AlertType.ERROR, "Erreur", "Suppression impossible", e.getMessage());
+            Evenement e = (editing == null) ? new Evenement() : editing;
+
+            LocalDate d = dpDate.getValue();
+            LocalTime t = LocalTime.parse(txtHeure.getText().trim(), TIME_FMT);
+            LocalDateTime dateEvent = LocalDateTime.of(d, t);
+
+            // --- ADAPTE ces setters selon ton entity ---
+            e.setTitre(txtTitre.getText().trim());
+            e.setCategorieEvt(cbCategorie.getValue()); // si ton type est enum -> convertis ici
+            e.setDateEvent(dateEvent);
+            e.setLieu(txtLieu.getText().trim());
+            e.setNbPlaces(Integer.parseInt(txtPlaces.getText().trim()));
+            e.setStatut(cbStatut.getValue());
+            e.setDescription(txtDescription.getText() == null ? "" : txtDescription.getText().trim());
+
+            if (editing == null) {
+                evenementService.add(e);      // ou creer(...)
+                showSuccess("Événement ajouté avec succès.");
+            } else {
+                evenementService.update(e);   // ou modifier(...)
+                showSuccess("Événement modifié avec succès.");
+            }
+
+            if (onSaved != null) onSaved.run();
+
+            // fermer la fenêtre
+            txtTitre.getScene().getWindow().hide();
+
+        } catch (Exception ex) {
+            showError("Erreur lors de l'enregistrement : " + ex.getMessage());
         }
     }
 
-    // ===== Popup =====
-    private void openForm(Evenement existing) {
-        try {
-            FXMLLoader loader = new FXMLLoader(getClass().getResource("/views/evenement_form.fxml"));
-            Parent root = loader.load();
-
-            EvenementFormController formCtrl = loader.getController();
-            formCtrl.setData(existing);
-            formCtrl.setOnSaved(this::loadEvents);
-
-            Stage stage = new Stage();
-            stage.initModality(Modality.APPLICATION_MODAL);
-            stage.setTitle(existing == null ? "Ajouter événement" : "Modifier événement");
-            stage.setScene(new Scene(root));
-            stage.setResizable(false);
-            stage.showAndWait();
-
-        } catch (Exception e) {
-            e.printStackTrace();
-            alert(Alert.AlertType.ERROR, "Erreur", "Impossible d’ouvrir le formulaire", e.getMessage());
-        }
+    @FXML
+    private void onCancel() {
+        txtTitre.getScene().getWindow().hide();
     }
 
-    // ===== Utils =====
-    private void alert(Alert.AlertType type, String title, String header, String msg) {
-        Alert a = new Alert(type);
-        a.setTitle(title);
-        a.setHeaderText(header);
-        a.setContentText(msg);
-        a.showAndWait();
+    // ================= Helpers validation =================
+
+    private void clearValidation() {
+        reset(txtTitre);
+        reset(cbCategorie);
+        reset(dpDate);
+        reset(txtHeure);
+        reset(txtLieu);
+        reset(txtPlaces);
+        reset(cbStatut);
+        reset(txtDescription);
+    }
+
+    private void reset(Control c) {
+        c.getStyleClass().removeAll("error", "valid");
+    }
+
+    private void markError(Control c) {
+        c.getStyleClass().removeAll("valid");
+        if (!c.getStyleClass().contains("error")) c.getStyleClass().add("error");
+    }
+
+    private void showError(String msg) {
+        lblInfo.setText(msg);
+        lblInfo.setManaged(true);
+        lblInfo.setVisible(true);
+        lblInfo.getStyleClass().setAll("formInfo", "error");
+    }
+
+    private void showSuccess(String msg) {
+        lblInfo.setText(msg);
+        lblInfo.setManaged(true);
+        lblInfo.setVisible(true);
+        lblInfo.getStyleClass().setAll("formInfo", "success");
+    }
+
+    private boolean isBlank(String s) {
+        return s == null || s.trim().isEmpty();
+    }
+
+    private boolean isPositiveInt(String s) {
+        try { return Integer.parseInt(s.trim()) > 0; }
+        catch (Exception e) { return false; }
+    }
+
+    private boolean isValidTime(String s) {
+        if (isBlank(s)) return false;
+        try { LocalTime.parse(s.trim(), TIME_FMT); return true; }
+        catch (Exception e) { return false; }
     }
 
     private String nvl(String s) {

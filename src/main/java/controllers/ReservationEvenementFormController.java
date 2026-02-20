@@ -4,10 +4,8 @@ import Entities.ReservationEvenement;
 import Services.ReservationEvenementService;
 import enums.StatutReservation;
 import javafx.fxml.FXML;
-import javafx.scene.Node;
 import javafx.scene.control.*;
 import javafx.stage.Stage;
-
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
@@ -15,17 +13,12 @@ import java.time.LocalTime;
 public class ReservationEvenementFormController {
 
     @FXML private Label titleLabel;
-
-    @FXML private TextField idField;
     @FXML private DatePicker datePicker;
     @FXML private TextField heureField;
     @FXML private TextField minuteField;
-
     @FXML private ComboBox<StatutReservation> statutCombo;
-
     @FXML private TextField billetsField;
     @FXML private TextField eventIdField;
-
     @FXML private Label errorLabel;
 
     private final ReservationEvenementService service = new ReservationEvenementService();
@@ -36,83 +29,85 @@ public class ReservationEvenementFormController {
     public void initialize() {
         statutCombo.getItems().setAll(StatutReservation.values());
 
+        // Valeurs par défaut pour faciliter la saisie
+        datePicker.setValue(LocalDate.now());
         heureField.setText("12");
         minuteField.setText("00");
-        datePicker.setValue(LocalDate.now());
     }
 
     public void setData(ReservationEvenement existing) {
         this.existing = existing;
-
         if (existing == null) {
             titleLabel.setText("Nouvelle réservation");
-            idField.clear();
             return;
         }
+        titleLabel.setText("Modifier la réservation");
 
-        titleLabel.setText("Modifier réservation");
-        idField.setText(String.valueOf(existing.getIdResEvt()));
-
+        // Remplissage des champs pour la modification
         if (existing.getDateReservation() != null) {
             datePicker.setValue(existing.getDateReservation().toLocalDate());
             heureField.setText(String.format("%02d", existing.getDateReservation().getHour()));
             minuteField.setText(String.format("%02d", existing.getDateReservation().getMinute()));
         }
-
-        if (existing.getStatutRes() != null) {
-            statutCombo.getSelectionModel().select(existing.getStatutRes());
-        }
-
+        statutCombo.setValue(existing.getStatutRes());
         billetsField.setText(String.valueOf(existing.getNbBillets()));
         eventIdField.setText(String.valueOf(existing.getIdEvenement()));
     }
 
-    public boolean isSaved() {
-        return saved;
-    }
+    public boolean isSaved() { return saved; }
 
     @FXML
     private void onSave() {
-        errorLabel.setText("");
+        errorLabel.setText(""); // Reset du message d'erreur
+        errorLabel.setStyle("-fx-text-fill: #e74c3c;");
 
         try {
-            LocalDate d = datePicker.getValue();
-            if (d == null) {
-                errorLabel.setText("Date obligatoire.");
+            // --- CONTRÔLE DE SAISIE ---
+
+            // 1. Vérification de la Date
+            LocalDate date = datePicker.getValue();
+            if (date == null) {
+                showError("Veuillez sélectionner une date.");
                 return;
             }
 
-            int hh = parseInt(heureField.getText(), "Heure invalide.");
-            int mm = parseInt(minuteField.getText(), "Minute invalide.");
+            // 2. Vérification Heure/Minute (doivent être des entiers valides)
+            int hh = validateInt(heureField.getText(), "L'heure doit être un nombre.");
+            int mm = validateInt(minuteField.getText(), "Les minutes doivent être un nombre.");
+
             if (hh < 0 || hh > 23 || mm < 0 || mm > 59) {
-                errorLabel.setText("Heure/Minute invalide.");
+                showError("Heure (0-23) ou Minute (0-59) invalide.");
                 return;
             }
 
+            // 3. Vérification du Statut
             StatutReservation statut = statutCombo.getValue();
             if (statut == null) {
-                errorLabel.setText("Statut obligatoire.");
+                showError("Veuillez choisir un statut.");
                 return;
             }
 
-            int billets = parseInt(billetsField.getText(), "Nb billets invalide.");
-            if (billets <= 0) {
-                errorLabel.setText("Nb billets doit être > 0.");
+            // 4. Vérification du nombre de billets
+            int nbBillets = validateInt(billetsField.getText(), "Le nombre de billets doit être un nombre entier.");
+            if (nbBillets <= 0) {
+                showError("Le nombre de billets doit être supérieur à 0.");
                 return;
             }
 
-            int eventId = parseInt(eventIdField.getText(), "Event ID invalide.");
+            // 5. Vérification de l'ID Event
+            int eventId = validateInt(eventIdField.getText(), "L'ID Événement doit être un nombre.");
             if (eventId <= 0) {
-                errorLabel.setText("Event ID doit être > 0.");
+                showError("ID Événement invalide.");
                 return;
             }
 
-            LocalDateTime dateRes = LocalDateTime.of(d, LocalTime.of(hh, mm));
+            // --- TRAITEMENT SI TOUT EST VALIDE ---
+            LocalDateTime dateComplete = LocalDateTime.of(date, LocalTime.of(hh, mm));
 
             ReservationEvenement r = (existing == null) ? new ReservationEvenement() : existing;
-            r.setDateReservation(dateRes);
+            r.setDateReservation(dateComplete);
             r.setStatutRes(statut);
-            r.setNbBillets(billets);
+            r.setNbBillets(nbBillets);
             r.setIdEvenement(eventId);
 
             if (existing == null) {
@@ -125,25 +120,28 @@ public class ReservationEvenementFormController {
             close();
 
         } catch (Exception e) {
-            errorLabel.setText("Erreur enregistrement: " + e.getMessage());
+            showError("Erreur de base de données : " + e.getMessage());
         }
     }
 
-    @FXML
-    private void onCancel() {
-        close();
+    // Méthode utilitaire pour valider les entiers
+    private int validateInt(String text, String errorMsg) {
+        try {
+            return Integer.parseInt(text.trim());
+        } catch (NumberFormatException e) {
+            showError(errorMsg);
+            throw new RuntimeException("Validation failed"); // Interrompt l'exécution
+        }
     }
+
+    private void showError(String msg) {
+        errorLabel.setText(msg);
+    }
+
+    @FXML private void onCancel() { close(); }
 
     private void close() {
         Stage stage = (Stage) titleLabel.getScene().getWindow();
         stage.close();
-    }
-
-    private int parseInt(String s, String message) {
-        try {
-            return Integer.parseInt(s == null ? "" : s.trim());
-        } catch (Exception e) {
-            throw new IllegalArgumentException(message);
-        }
     }
 }
