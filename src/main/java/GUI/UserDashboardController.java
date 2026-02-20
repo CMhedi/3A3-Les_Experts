@@ -10,12 +10,12 @@ import Services.interfaces.UserService;
 
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
+import javafx.geometry.Pos;
 import javafx.scene.Node;
-import javafx.scene.control.Button;
-import javafx.scene.control.Label;
-import javafx.scene.layout.FlowPane;
-import javafx.scene.layout.HBox;
-import javafx.scene.layout.VBox;
+import javafx.scene.control.*;
+import javafx.scene.layout.*;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
 
 import java.time.LocalDate;
 import java.util.HashMap;
@@ -24,11 +24,9 @@ import java.util.Map;
 
 public class UserDashboardController {
 
-    // ================= UI =================
     @FXML private FlowPane planifieesContainer;
     @FXML private FlowPane termineesContainer;
 
-    // ================= SERVICES =================
     private final SeanceService seanceService = new SeanceService();
     private final UserService userService = new UserService();
     private final ReservationSeanceService reservationService =
@@ -38,18 +36,14 @@ public class UserDashboardController {
 
     private final Map<Integer, String> coachMap = new HashMap<>();
 
-    // =================================================
-    // INITIALISATION
-    // =================================================
     @FXML
     public void initialize() {
-
         loadCoachs();
         refreshCards();
     }
 
     // =================================================
-    // REFRESH CARDS
+    // REFRESH
     // =================================================
     private void refreshCards() {
 
@@ -82,24 +76,51 @@ public class UserDashboardController {
     }
 
     // =================================================
-    // CREATE PLANIFIEE CARD
+    // PLANIFIEE CARD (Design amélioré)
     // =================================================
     private VBox createPlanifieeCard(Seance s) {
 
         VBox card = baseCard(s);
 
+        HBox actions = new HBox(12);
+        actions.setAlignment(Pos.CENTER_LEFT);
+
+        // 🔥 Bouton Google
+        Button btnVoir = new Button(" Voir dans Google Calendar");
+        btnVoir.setPrefHeight(36);
+        btnVoir.setMinWidth(230);
+        btnVoir.getStyleClass().add("btn-google");
+
+        ImageView googleIcon = new ImageView(
+                new Image(getClass()
+                        .getResourceAsStream("/images/google.png"))
+        );
+        googleIcon.setFitWidth(16);
+        googleIcon.setFitHeight(16);
+
+        btnVoir.setGraphic(googleIcon);
+        btnVoir.setContentDisplay(ContentDisplay.LEFT);
+        btnVoir.setGraphicTextGap(8);
+
+        btnVoir.setOnAction(e -> handleVoirGoogle(s));
+
+        // 🔥 Bouton Annuler
         Button btnAnnuler = new Button("Annuler");
+        btnAnnuler.setPrefHeight(36);
+        btnAnnuler.setMinWidth(120);
         btnAnnuler.getStyleClass().add("btn-danger");
 
         btnAnnuler.setOnAction(e -> handleAnnuler(s));
 
-        card.getChildren().add(btnAnnuler);
+        actions.getChildren().addAll(btnVoir, btnAnnuler);
+
+        card.getChildren().add(actions);
 
         return card;
     }
 
     // =================================================
-    // CREATE TERMINEE CARD
+    // TERMINEE CARD
     // =================================================
     private VBox createTermineeCard(Seance s) {
 
@@ -118,7 +139,7 @@ public class UserDashboardController {
     // =================================================
     private VBox baseCard(Seance s) {
 
-        VBox card = new VBox(10);
+        VBox card = new VBox(8);
         card.getStyleClass().add("coach-card");
 
         Label title = new Label(s.getNom());
@@ -144,7 +165,41 @@ public class UserDashboardController {
     }
 
     // =================================================
-    // ANNULER RESERVATION
+    // VOIR GOOGLE
+    // =================================================
+    private void handleVoirGoogle(Seance s) {
+
+        try {
+
+            String link = reservationService.getGoogleEventLink(
+                    USER_TEST_ID,
+                    s.getIdSeance()
+            );
+
+            if (link == null || link.isBlank()) {
+
+                DialogUtils.showWarning(
+                        "Google Calendar",
+                        "Aucun événement Google associé."
+                );
+                return;
+            }
+
+            java.awt.Desktop.getDesktop().browse(
+                    new java.net.URI(link)
+            );
+
+        } catch (Exception e) {
+
+            DialogUtils.showError(
+                    "Erreur",
+                    "Impossible d’ouvrir Google Calendar."
+            );
+        }
+    }
+
+    // =================================================
+    // ANNULER
     // =================================================
     private void handleAnnuler(Seance selected) {
 
@@ -160,27 +215,22 @@ public class UserDashboardController {
 
         try {
 
-            // 🔹 1️⃣ Récupérer l’ID Google AVANT suppression
             String googleEventId =
                     reservationService.getGoogleEventId(
                             USER_TEST_ID,
                             selected.getIdSeance()
                     );
 
-            // 🔹 2️⃣ Supprimer en base
             reservationService.annuler(
                     USER_TEST_ID,
                     selected.getIdSeance()
             );
 
-            // 🔹 3️⃣ Supprimer du Google Calendar si existant
             if (googleEventId != null && !googleEventId.isBlank()) {
 
                 try {
                     GoogleCalendarService.deleteEvent(googleEventId);
-                } catch (Exception e) {
-                    System.out.println("Event Google non trouvé ou déjà supprimé.");
-                }
+                } catch (Exception ignored) {}
             }
 
             DialogUtils.showInfo(
@@ -196,8 +246,6 @@ public class UserDashboardController {
                     "Erreur",
                     "Impossible d'annuler la réservation."
             );
-
-            e.printStackTrace();
         }
     }
 
@@ -207,14 +255,12 @@ public class UserDashboardController {
     private void loadCoachs() {
 
         try {
-
             userService.getAllCoachs().forEach(c ->
                     coachMap.put(
                             c.getIdUser(),
                             c.getNom() + " " + c.getPrenom()
                     )
             );
-
         } catch (Exception ignored) {}
     }
 

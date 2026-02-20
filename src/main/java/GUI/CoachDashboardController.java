@@ -2,16 +2,42 @@ package GUI;
 
 import Entities.Planning;
 import Entities.Seance;
+import Entities.UserApp;
 import GUI.utils.DialogUtils;
 import GUI.utils.SceneUtils;
 import Services.interfaces.PlanningService;
+import Services.interfaces.ReservationSeanceService;
 import Services.interfaces.SeanceService;
+import Services.interfaces.UserService;
+import com.itextpdf.text.*;
+import com.itextpdf.text.Font;
+import com.itextpdf.text.Image;
+import com.itextpdf.text.Rectangle;
+import com.itextpdf.text.pdf.*;
 import enums.StatutSeance;
 
+import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
+import javafx.geometry.Insets;
+import javafx.scene.Node;
+import javafx.scene.Parent;
+import javafx.scene.Scene;
 import javafx.scene.control.*;
+import javafx.scene.control.Label;
+import javafx.scene.control.TextField;
 import javafx.scene.layout.*;
+import javafx.geometry.Pos;
+import javafx.scene.shape.Circle;
 
+import javafx.scene.control.Button;
+import javafx.stage.Modality;
+import javafx.stage.Stage;
+
+import java.awt.*;
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.InputStream;
 import java.time.LocalDate;
 import java.util.HashMap;
 import java.util.List;
@@ -147,64 +173,119 @@ public class CoachDashboardController {
 
     private VBox createCard(Seance s) {
 
-        VBox card = new VBox(14);
-        card.getStyleClass().add("coach-card");
-        card.setStyle("-fx-padding: 24;");
+        VBox card = new VBox(16);
+        card.getStyleClass().add("coach-card-modern");
+        card.setPrefWidth(300);
+        card.setPadding(new Insets(18));
 
-        // ===== TITLE
+        // ================= HEADER =================
+        HBox header = new HBox();
+        header.setAlignment(Pos.CENTER_LEFT);
+
         Label title = new Label(s.getNom());
-        title.getStyleClass().add("coach-card-title");
-        title.setStyle("-fx-wrap-text: true;");
+        title.getStyleClass().add("card-title-modern");
 
-        // ===== INFO CONTAINER
-        VBox infoContainer = new VBox(10);
-        infoContainer.setStyle("-fx-spacing: 10;");
+        Region spacer = new Region();
+        HBox.setHgrow(spacer, Priority.ALWAYS);
 
-        // Date info
-        HBox dateRow = new HBox(10);
-        dateRow.setStyle("-fx-alignment: CENTER_LEFT;");
-        Label dateLabel = new Label("📅  " + s.getDateSeance());
-        dateLabel.getStyleClass().add("coach-card-info");
-        dateRow.getChildren().add(dateLabel);
-
-        // Time info
-        HBox timeRow = new HBox(10);
-        timeRow.setStyle("-fx-alignment: CENTER_LEFT;");
-        Label timeLabel = new Label("⏰  " + s.getHeureDebut() + " - " + s.getHeureFin());
-        timeLabel.getStyleClass().add("coach-card-info");
-        timeRow.getChildren().add(timeLabel);
-
-        // Planning info
-        HBox planningRow = new HBox(10);
-        planningRow.setStyle("-fx-alignment: CENTER_LEFT;");
-        Label planningLabel = new Label("📁  " + planningMap.getOrDefault(
-                s.getIdPlanning(), "Inconnu"));
-        planningLabel.getStyleClass().add("coach-card-info");
-        planningRow.getChildren().add(planningLabel);
-
-        infoContainer.getChildren().addAll(dateRow, timeRow, planningRow);
-
-        // ===== FOOTER WITH BADGE
-        VBox footer = new VBox();
-        footer.getStyleClass().add("coach-card-footer");
-        footer.setStyle("-fx-padding: 16 0 0 0; -fx-alignment: CENTER_LEFT;");
-
-        Label badge = new Label(s.getStatutSeance().name());
-        badge.setStyle("-fx-padding: 8 18; -fx-font-weight: 700; -fx-font-size: 11;");
+        Circle statusDot = new Circle(6);
 
         switch (s.getStatutSeance()) {
-            case PLANIFIEE -> badge.getStyleClass().add("badge-planifiee");
-            case TERMINEE -> badge.getStyleClass().add("badge-terminee");
-            case ANNULEE -> badge.getStyleClass().add("badge-annulee");
+            case PLANIFIEE -> statusDot.setStyle("-fx-fill: #1565c0;");
+            case TERMINEE -> statusDot.setStyle("-fx-fill: #43a047;");
+            case ANNULEE -> statusDot.setStyle("-fx-fill: #e53935;");
         }
 
-        footer.getChildren().add(badge);
+        header.getChildren().addAll(title, spacer, statusDot);
 
-        card.getChildren().addAll(title, infoContainer, footer);
+        // ================= INFO =================
+        VBox infoBox = new VBox(6);
+
+        Label dateLabel = new Label("📅  " + s.getDateSeance());
+        dateLabel.getStyleClass().add("card-info-modern");
+
+        Label timeLabel = new Label("⏰  "
+                + s.getHeureDebut() + " - " + s.getHeureFin());
+        timeLabel.getStyleClass().add("card-info-modern");
+
+        Label planningLabel = new Label("📁  "
+                + planningMap.getOrDefault(
+                s.getIdPlanning(), "Inconnu"));
+        planningLabel.getStyleClass().add("card-info-modern");
+
+        infoBox.getChildren().addAll(dateLabel, timeLabel, planningLabel);
+
+        // ================= PARTICIPANTS =================
+        int reserved = 0;
+        try {
+            ReservationSeanceService reservationService = new ReservationSeanceService();
+            reserved = reservationService
+                    .countReservations(s.getIdSeance());
+        } catch (Exception ignored) {}
+
+        int capacite = s.getCapacite();
+        double taux = capacite == 0 ? 0 :
+                (double) reserved / capacite;
+
+        ProgressBar progressBar = new ProgressBar(taux);
+        progressBar.setPrefHeight(8);
+        progressBar.setMaxWidth(Double.MAX_VALUE);
+        progressBar.getStyleClass().add("progress-modern");
+
+        Label participantsLabel =
+                new Label(reserved + " / " + capacite + " participants");
+        participantsLabel.getStyleClass().add("participants-label");
+
+        // ================= BADGE =================
+        Label badge = new Label(s.getStatutSeance().name());
+        badge.getStyleClass().add("badge-modern");
+
+        switch (s.getStatutSeance()) {
+            case PLANIFIEE -> badge.getStyleClass().add("badge-blue-modern");
+            case TERMINEE -> badge.getStyleClass().add("badge-grey-modern");
+            case ANNULEE -> badge.getStyleClass().add("badge-red-modern");
+        }
+
+        // ================= ACTIONS =================
+        HBox actions = new HBox(10);
+        actions.setAlignment(Pos.CENTER_LEFT);
+
+        boolean isFuture = s.getDateSeance().isAfter(LocalDate.now());
+
+        if (s.getStatutSeance() == StatutSeance.ANNULEE) {
+
+            Label info = new Label("Séance annulée");
+            info.setStyle("-fx-text-fill: #999;");
+            actions.getChildren().add(info);
+
+        }
+        else if (isFuture) {
+
+            Button btnPresence = new Button("Appel (indisponible)");
+            btnPresence.setDisable(true);
+            btnPresence.getStyleClass().add("btn-disabled");
+
+            actions.getChildren().add(btnPresence);
+
+        }
+        else {
+
+            Button btnPresence = new Button("Faire l'appel");
+            btnPresence.getStyleClass().add("btn-presence-modern");
+
+            btnPresence.setOnAction(e -> ouvrirFenetrePresence(s));
+
+            actions.getChildren().add(btnPresence);
+        }
+
+        // ================= FOOTER =================
+        VBox footer = new VBox(8);
+        footer.getChildren().addAll(progressBar, participantsLabel, badge, actions);
+
+        card.getChildren().addAll(header, infoBox, footer);
 
         return card;
     }
-
     // =================================================
     // STATS
     // =================================================
@@ -229,12 +310,398 @@ public class CoachDashboardController {
     // NAVIGATION
     // =================================================
     @FXML
-    private void handleRetour(javafx.event.ActionEvent event) {
+    private void handleRetour(ActionEvent event) {
 
         SceneUtils.loadScene(
                 "/Menu.fxml",
                 "/menu.css",
-                (javafx.scene.Node) event.getSource()
+                (Node) event.getSource()
         );
+    }
+    @FXML
+    private void handleExportPDF() {
+
+        try {
+
+            List<Seance> seances = seanceService.getByCoach(coachId);
+
+            if (seances.isEmpty()) {
+                DialogUtils.showWarning(
+                        "Export PDF",
+                        "Aucune séance à exporter."
+                );
+                return;
+            }
+
+            String filePath = "seances_coach.pdf";
+
+            generatePDF(seances, filePath);
+
+            DialogUtils.showInfo(
+                    "Succès",
+                    "PDF généré avec succès !"
+            );
+
+            Desktop.getDesktop().open(
+                    new File(filePath)
+            );
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            DialogUtils.showError(
+                    "Erreur",
+                    "Impossible de générer le PDF."
+            );
+        }
+    }
+    private void generatePDF(List<Seance> seances, String filePath) throws Exception {
+
+        Document document = new Document(PageSize.A4, 40, 40, 110, 60);
+
+        PdfWriter writer = PdfWriter.getInstance(
+                document,
+                new FileOutputStream(filePath)
+        );
+
+        writer.setPageEvent(new PdfPageEventHelperCustom());
+        document.open();
+
+        // ================= HEADER VERTE =================
+        PdfPTable header = new PdfPTable(1);
+        header.setWidthPercentage(100);
+
+        PdfPCell headerCell = new PdfPCell(
+                new Phrase("  RAPPORT ECOADVENTURE",
+                        new Font(Font.FontFamily.HELVETICA, 16, Font.BOLD, BaseColor.WHITE))
+        );
+
+        headerCell.setBackgroundColor(new BaseColor(25, 95, 60));
+        headerCell.setPadding(18);
+        headerCell.setBorder(Rectangle.NO_BORDER);
+
+        header.addCell(headerCell);
+        document.add(header);
+
+        // ================= LOGO =================
+        try {
+            InputStream logoStream =
+                    getClass().getResourceAsStream("/images/logo_pdf.png");
+
+            if (logoStream != null) {
+                Image logo = Image.getInstance(logoStream.readAllBytes());
+                logo.scaleToFit(180, 60);
+                logo.setAlignment(Image.ALIGN_CENTER);
+                logo.setSpacingBefore(15);
+                document.add(logo);
+            }
+        } catch (Exception ignored) {}
+
+        // ================= SLOGAN =================
+        Font sloganFont = new Font(
+                Font.FontFamily.HELVETICA,
+                12,
+                Font.ITALIC,
+                new BaseColor(255, 140, 0)
+        );
+
+        Paragraph slogan = new Paragraph(
+                "Explore. Train. Evolve.",
+                sloganFont
+        );
+
+        slogan.setAlignment(Element.ALIGN_CENTER);
+        slogan.setSpacingAfter(20);
+        document.add(slogan);
+
+        // ================= COACH + DATE =================
+        UserService userService = new UserService();
+        UserApp coach = userService.getUserById(coachId);
+        String coachName = coach.getNom() + " " + coach.getPrenom();
+        String today = LocalDate.now().toString();
+
+        Paragraph coachInfo = new Paragraph(
+                "Coach : " + coachName + "\n"
+                        + "Date de génération : " + today,
+                new Font(Font.FontFamily.HELVETICA, 11)
+        );
+
+        coachInfo.setSpacingAfter(20);
+        document.add(coachInfo);
+
+        // ================= TITRE =================
+        Font titleFont = new Font(
+                Font.FontFamily.HELVETICA,
+                22,
+                Font.BOLD,
+                new BaseColor(25, 95, 60)
+        );
+
+        Paragraph title = new Paragraph("Rapport des Séances", titleFont);
+        title.setAlignment(Element.ALIGN_CENTER);
+        title.setSpacingAfter(20);
+        document.add(title);
+
+// ================= TABLE =================
+        PdfPTable table = new PdfPTable(8);
+        table.setWidthPercentage(100);
+        table.setSpacingBefore(10);
+
+        float[] columnWidths = {2f, 2f, 2f, 2f, 1.5f, 1.5f, 1.5f, 1.5f};
+        table.setWidths(columnWidths);
+
+        String[] headers = {
+                "Nom",
+                "Date",
+                "Heure",
+                "Statut",
+                "Capacité",
+                "Participants",
+                "Restantes",
+                "Taux (%)"
+        };
+
+        Font headerFont = new Font(
+                Font.FontFamily.HELVETICA,
+                11,
+                Font.BOLD,
+                BaseColor.WHITE
+        );
+
+        for (String h : headers) {
+
+            PdfPCell cell = new PdfPCell(new Phrase(h, headerFont));
+            cell.setBackgroundColor(new BaseColor(41, 128, 185));
+            cell.setPadding(8);
+            cell.setHorizontalAlignment(Element.ALIGN_CENTER);
+            table.addCell(cell);
+        }
+
+        int totalParticipants = 0;
+        int totalCapacite = 0;
+
+        boolean alternate = false;
+
+        for (Seance s : seances) {
+
+            ReservationSeanceService reservationService = new ReservationSeanceService();
+            int reserved = reservationService.countReservations(s.getIdSeance());
+            int capacite = s.getCapacite();
+            int restantes = capacite - reserved;
+            double taux = capacite == 0 ? 0 : (double) reserved / capacite * 100;
+
+            totalParticipants += reserved;
+            totalCapacite += capacite;
+
+            BaseColor rowColor = alternate
+                    ? new BaseColor(245, 245, 245)
+                    : BaseColor.WHITE;
+
+            table.addCell(createCell(s.getNom(), rowColor));
+            table.addCell(createCell(s.getDateSeance().toString(), rowColor));
+            table.addCell(createCell(
+                    s.getHeureDebut() + " - " + s.getHeureFin(), rowColor));
+
+            // ===== Statut coloré =====
+            Font statutFont;
+
+            switch (s.getStatutSeance()) {
+                case PLANIFIEE ->
+                        statutFont = new Font(Font.FontFamily.HELVETICA, 10, Font.BOLD, new BaseColor(52, 152, 219));
+                case TERMINEE ->
+                        statutFont = new Font(Font.FontFamily.HELVETICA, 10, Font.BOLD, new BaseColor(39, 174, 96));
+                case ANNULEE ->
+                        statutFont = new Font(Font.FontFamily.HELVETICA, 10, Font.BOLD, new BaseColor(231, 76, 60));
+                default ->
+                        statutFont = new Font(Font.FontFamily.HELVETICA, 10);
+            }
+
+            PdfPCell statutCell =
+                    new PdfPCell(new Phrase(s.getStatutSeance().name(), statutFont));
+            statutCell.setBackgroundColor(rowColor);
+            statutCell.setHorizontalAlignment(Element.ALIGN_CENTER);
+            table.addCell(statutCell);
+
+            table.addCell(createCenterCell(String.valueOf(capacite), rowColor));
+            table.addCell(createCenterCell(String.valueOf(reserved), rowColor));
+            table.addCell(createCenterCell(String.valueOf(restantes), rowColor));
+            table.addCell(createCenterCell(String.format("%.1f %%", taux), rowColor));
+
+            alternate = !alternate;
+        }
+
+        document.add(table);
+
+        // ================= STATISTIQUES =================
+        document.add(new Paragraph("\n"));
+
+        double tauxGlobal = totalCapacite == 0
+                ? 0
+                : (double) totalParticipants / totalCapacite * 100;
+
+        PdfPTable statsTable = new PdfPTable(1);
+        statsTable.setWidthPercentage(100);
+
+        PdfPCell statsCell = new PdfPCell(
+                new Phrase(
+                        "STATISTIQUES GLOBALES\n\n" +
+                                "Total Séances : " + seances.size() + "\n" +
+                                "Total Participants : " + totalParticipants + "\n" +
+                                "Capacité Totale : " + totalCapacite + "\n" +
+                                "Taux Global de Remplissage : "
+                                + String.format("%.1f %%", tauxGlobal),
+                        new Font(Font.FontFamily.HELVETICA, 11)
+                )
+        );
+
+        statsCell.setPadding(15);
+        statsCell.setBackgroundColor(new BaseColor(230, 240, 230));
+        statsCell.setBorderColor(new BaseColor(25, 95, 60));
+        statsCell.setBorderWidth(1.5f);
+
+        statsTable.addCell(statsCell);
+        document.add(statsTable);
+
+        document.close();
+    }
+    class PdfPageEventHelperCustom extends PdfPageEventHelper {
+
+        private Image watermark;
+
+        public PdfPageEventHelperCustom() {
+            try {
+
+                InputStream stream =
+                        getClass().getResourceAsStream("/images/logo_pdf.png");
+
+                if (stream != null) {
+
+                    watermark = Image.getInstance(stream.readAllBytes());
+
+                    // 🔥 Taille watermark
+                    watermark.scaleToFit(350, 180);
+
+                    // 🔥 Transparence élégante
+                    watermark.setTransparency(new int[]{30, 30});
+                }
+
+            } catch (Exception ignored) {}
+        }
+
+        @Override
+        public void onEndPage(PdfWriter writer, Document document) {
+
+            // ================= WATERMARK =================
+            if (watermark != null) {
+
+                try {
+
+                    PdfContentByte canvas =
+                            writer.getDirectContentUnder();
+
+                    float x = (document.getPageSize().getWidth()
+                            - watermark.getScaledWidth()) / 2;
+
+                    float y = (document.getPageSize().getHeight()
+                            - watermark.getScaledHeight()) / 2;
+
+                    watermark.setAbsolutePosition(x, y);
+
+                    canvas.addImage(watermark);
+
+                } catch (Exception ignored) {}
+            }
+
+            // ================= FOOTER =================
+            Font footerFont =
+                    new Font(
+                            Font.FontFamily.HELVETICA,
+                            9,
+                            Font.ITALIC,
+                            new BaseColor(120, 120, 120)
+                    );
+
+            Phrase footer =
+                    new Phrase(
+                            "EcoAdventure © 2026   |   Rapport Confidentiel   |   Page "
+                                    + writer.getPageNumber(),
+                            footerFont
+                    );
+
+            ColumnText.showTextAligned(
+                    writer.getDirectContent(),
+                    Element.ALIGN_CENTER,
+                    footer,
+                    (document.right() - document.left()) / 2 + document.leftMargin(),
+                    document.bottom() - 20,
+                    0
+            );
+        }
+    }
+    private PdfPCell createCell(String text, BaseColor bg) {
+
+        PdfPCell cell = new PdfPCell(new Phrase(text));
+        cell.setBackgroundColor(bg);
+        cell.setPadding(6);
+        return cell;
+    }
+
+    private PdfPCell createCenterCell(String text, BaseColor bg) {
+
+        PdfPCell cell = new PdfPCell(new Phrase(text));
+        cell.setBackgroundColor(bg);
+        cell.setHorizontalAlignment(Element.ALIGN_CENTER);
+        cell.setPadding(6);
+        return cell;
+    }
+    private void ouvrirFenetrePresence(Seance s) {
+
+        // 🔒 1️⃣ Bloquer si annulée
+        if (s.getStatutSeance() == StatutSeance.ANNULEE) {
+
+            DialogUtils.showWarning(
+                    "Présence",
+                    "Impossible de faire l'appel pour une séance annulée."
+            );
+            return;
+        }
+
+        // 🔒 2️⃣ Bloquer si séance future
+        if (s.getDateSeance().isAfter(LocalDate.now())) {
+
+            DialogUtils.showWarning(
+                    "Présence",
+                    "L'appel de présence est disponible uniquement le jour J."
+            );
+            return;
+        }
+
+        try {
+
+            FXMLLoader loader = new FXMLLoader(
+                    getClass().getResource("/PresenceView.fxml")
+            );
+
+            Parent root = loader.load();
+
+            PresenceController controller = loader.getController();
+            controller.setSeance(s);
+
+            Stage stage = new Stage();
+            stage.setTitle("Appel de présence - " + s.getNom());
+            stage.setScene(new Scene(root));
+            stage.initModality(Modality.APPLICATION_MODAL); // 🔥 bloque arrière-plan
+            stage.setResizable(false);
+            stage.showAndWait();
+
+            // 🔄 Refresh après fermeture
+            refreshCards();
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            DialogUtils.showError(
+                    "Erreur",
+                    "Impossible d'ouvrir la fenêtre de présence."
+            );
+        }
     }
 }

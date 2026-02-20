@@ -73,4 +73,27 @@ public class UserService {
         }
         return list;
     }
+
+    public UserApp getUserById(int coachId) {
+        String sql = "SELECT * FROM user_app WHERE id_user=?";
+        try {
+            PreparedStatement ps = conx.prepareStatement(sql);
+            ps.setInt(1, coachId);
+
+            ResultSet rs = ps.executeQuery();
+            if (rs.next()) {
+                UserApp u = new UserApp();
+                u.setIdUser(rs.getInt("id_user"));
+                u.setNom(rs.getString("nom"));
+                u.setPrenom(rs.getString("prenom"));
+                u.setEmail(rs.getString("email"));
+                u.setTelephone(rs.getString("telephone"));
+                u.setRole(RoleUser.valueOf(rs.getString("role")));
+                return u;
+            }
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+        return null;
+    }
 }

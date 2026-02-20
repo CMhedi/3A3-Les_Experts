@@ -1,17 +1,21 @@
 package Entities;
 
+import enums.StatutPresence;
 import enums.StatutReservationSeance;
-
 import java.time.LocalDateTime;
 
 public class ReservationSeance {
-    private String google_event_id;
+
     private int idReservation;
     private LocalDateTime dateReservation;
     private StatutReservationSeance statut;
-
+    private UserApp user;
     private int idUser;
     private int idSeance;
+    private StatutPresence statutPresence;
+    // 🔥 Google Calendar
+    private String googleEventId;
+    private String googleEventLink;
 
     // =====================
     // Constructors
@@ -31,17 +35,29 @@ public class ReservationSeance {
                              LocalDateTime dateReservation,
                              StatutReservationSeance statut,
                              int idUser,
-                             int idSeance) {
+                             int idSeance,
+                             String googleEventId,
+                             String googleEventLink) {
+
         this.idReservation = idReservation;
         this.dateReservation = dateReservation;
         this.statut = statut;
         this.idUser = idUser;
         this.idSeance = idSeance;
+        this.googleEventId = googleEventId;
+        this.googleEventLink = googleEventLink;
     }
 
     // =====================
     // Getters & Setters
     // =====================
+    public UserApp getUser() {
+        return user;
+    }
+
+    public void setUser(UserApp user) {
+        this.user = user;
+    }
 
     public int getIdReservation() {
         return idReservation;
@@ -83,14 +99,31 @@ public class ReservationSeance {
         this.idSeance = idSeance;
     }
 
-    public String getGoogle_event_id() {
-        return google_event_id;
+    // 🔥 Google Event ID
+    public String getGoogleEventId() {
+        return googleEventId;
     }
 
-    public void setGoogle_event_id(String google_event_id) {
-        this.google_event_id = google_event_id;
+    public void setGoogleEventId(String googleEventId) {
+        this.googleEventId = googleEventId;
     }
-// =====================
+
+    // 🔥 Google Event Link
+    public String getGoogleEventLink() {
+        return googleEventLink;
+    }
+
+    public void setGoogleEventLink(String googleEventLink) {
+        this.googleEventLink = googleEventLink;
+    }
+    public StatutPresence getStatutPresence() {
+        return statutPresence;
+    }
+
+    public void setStatutPresence(StatutPresence statutPresence) {
+        this.statutPresence = statutPresence;
+    }
+    // =====================
     // toString
     // =====================
 
@@ -102,6 +135,10 @@ public class ReservationSeance {
                 ", statut=" + statut +
                 ", idUser=" + idUser +
                 ", idSeance=" + idSeance +
+                ", googleEventId='" + googleEventId + '\'' +
+                ", googleEventLink='" + googleEventLink + '\'' +
                 '}';
     }
+
+
 }

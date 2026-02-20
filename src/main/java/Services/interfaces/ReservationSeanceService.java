@@ -1,13 +1,14 @@
 package Services.interfaces;
 
 import Entities.ReservationSeance;
+import Entities.UserApp;
+import enums.StatutPresence;
 import enums.StatutReservationSeance;
 import exceptions.ValidationException;
 import Utiles.MyDB;
 import Services.interfaces.validation.ReservationSeanceValidator;
 
 import java.sql.*;
-import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -19,6 +20,7 @@ public class ReservationSeanceService {
         MyDB.getInstance();
         conx = MyDB.getConnection();
     }
+
     private boolean userExiste(int idUser) throws SQLException {
 
         String sql = "SELECT id_user FROM user_app WHERE id_user = ?";
@@ -34,23 +36,20 @@ public class ReservationSeanceService {
     // =========================
     public void reserver(int idUser, int idSeance)
             throws ValidationException, SQLException {
+
         if (!userExiste(idUser)) {
             throw new ValidationException("Utilisateur inexistant.");
         }
 
-
         try {
 
-            // 🔍 vérifier si réservation existe
             String checkSql = """
                 SELECT statut
                 FROM reservation_seance
                 WHERE id_user = ? AND id_seance = ?
                 """;
 
-            PreparedStatement check =
-                    conx.prepareStatement(checkSql);
-
+            PreparedStatement check = conx.prepareStatement(checkSql);
             check.setInt(1, idUser);
             check.setInt(2, idSeance);
 
@@ -60,7 +59,6 @@ public class ReservationSeanceService {
 
                 String statut = rs.getString("statut");
 
-                // 🔥 si annulée → on réactive
                 if (statut.equals(
                         StatutReservationSeance.ANNULEE.name())) {
 
@@ -75,7 +73,6 @@ public class ReservationSeanceService {
 
                     update.setString(1,
                             StatutReservationSeance.CONFIRMEE.name());
-
                     update.setInt(2, idUser);
                     update.setInt(3, idSeance);
 
@@ -83,19 +80,16 @@ public class ReservationSeanceService {
                     return;
                 }
 
-                // sinon déjà réservée
                 throw new ValidationException(
                         "Vous avez déjà réservé cette séance.");
             }
 
-            // 🔐 Validation métier (capacité etc.)
             ReservationSeance reservation =
                     new ReservationSeance(idUser, idSeance);
 
             ReservationSeanceValidator
                     .validateReservation(conx, reservation);
 
-            // ➕ INSERT
             String insertSql = """
                 INSERT INTO reservation_seance
                 (date_reservation, statut, id_user, id_seance)
@@ -117,14 +111,11 @@ public class ReservationSeanceService {
 
             insert.executeUpdate();
 
-        }
-        catch (SQLException e) {
+        } catch (SQLException e) {
             throw new RuntimeException(
                     "Erreur base de données.", e);
         }
     }
-
-
 
     // =========================
     // 2️⃣ Annuler réservation
@@ -162,73 +153,12 @@ public class ReservationSeanceService {
         }
     }
 
-
     // =========================
-    // 3️⃣ Mes séances réservées
+    // Google Calendar
     // =========================
-    public List<Integer> getSeancesReserveesByUser(int idUser) throws SQLException {
 
-        String sql = """
-                SELECT id_seance
-                FROM reservation_seance
-                WHERE id_user = ?
-                AND statut = 'CONFIRMEE'
-                """;
+    public void saveGoogleEventId(int userId, int seanceId, String eventId) {
 
-        PreparedStatement ps = conx.prepareStatement(sql);
-        ps.setInt(1, idUser);
-
-        ResultSet rs = ps.executeQuery();
-        List<Integer> seances = new ArrayList<>();
-
-        while (rs.next()) {
-            seances.add(rs.getInt("id_seance"));
-        }
-        return seances;
-    }
-
-    // =========================
-    // 4️⃣ Nombre de réservations
-    // =========================
-    public int countReservations(int idSeance) throws SQLException {
-
-        String sql = """
-                SELECT COUNT(*) 
-                FROM reservation_seance
-                WHERE id_seance = ?
-                AND statut = 'CONFIRMEE'
-                """;
-
-        PreparedStatement ps = conx.prepareStatement(sql);
-        ps.setInt(1, idSeance);
-
-        ResultSet rs = ps.executeQuery();
-        rs.next();
-        return rs.getInt(1);
-    }
-    public boolean exists(int userId, int seanceId){
-        String sql = """
-                SELECT COUNT(*) 
-                FROM reservation_seance
-                WHERE id_user = ?
-                AND id_seance = ?
-                AND statut = 'CONFIRMEE'
-                """;
-
-        try {
-            PreparedStatement ps = conx.prepareStatement(sql);
-            ps.setInt(1, userId);
-            ps.setInt(2, seanceId);
-
-            ResultSet rs = ps.executeQuery();
-            rs.next();
-            return rs.getInt(1) > 0;
-        } catch (SQLException e) {
-            throw new RuntimeException(e);
-        }
-    };
-
-    public void saveGoogleEventId(int userId, int seanceId, String eventId){
         String sql = """
                 UPDATE reservation_seance
                 SET google_event_id = ?
@@ -240,14 +170,33 @@ public class ReservationSeanceService {
             ps.setString(1, eventId);
             ps.setInt(2, userId);
             ps.setInt(3, seanceId);
-
             ps.executeUpdate();
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }
-    };
+    }
 
-    public String getGoogleEventId(int userId, int seanceId){
+    public void saveGoogleEventLink(int userId, int seanceId, String eventLink) {
+
+        String sql = """
+                UPDATE reservation_seance
+                SET google_event_link = ?
+                WHERE id_user = ? AND id_seance = ?
+                """;
+
+        try {
+            PreparedStatement ps = conx.prepareStatement(sql);
+            ps.setString(1, eventLink);
+            ps.setInt(2, userId);
+            ps.setInt(3, seanceId);
+            ps.executeUpdate();
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    public String getGoogleEventId(int userId, int seanceId) {
+
         String sql = """
                 SELECT google_event_id
                 FROM reservation_seance
@@ -266,10 +215,184 @@ public class ReservationSeanceService {
                 return rs.getString("google_event_id");
             }
             return null;
+
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    public String getGoogleEventLink(int userId, int seanceId) {
+
+        String sql = """
+                SELECT google_event_link
+                FROM reservation_seance
+                WHERE id_user = ?
+                AND id_seance = ?
+                AND statut = 'CONFIRMEE'
+                """;
+
+        try {
+            PreparedStatement ps = conx.prepareStatement(sql);
+            ps.setInt(1, userId);
+            ps.setInt(2, seanceId);
+
+            ResultSet rs = ps.executeQuery();
+            if (rs.next()) {
+                return rs.getString("google_event_link");
+            }
+            return null;
+
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    // =========================
+    // Utilitaires
+    // =========================
+
+    public boolean exists(int userId, int seanceId){
+
+        String sql = """
+                SELECT COUNT(*)
+                FROM reservation_seance
+                WHERE id_user = ?
+                AND id_seance = ?
+                AND statut = 'CONFIRMEE'
+                """;
+
+        try {
+            PreparedStatement ps = conx.prepareStatement(sql);
+            ps.setInt(1, userId);
+            ps.setInt(2, seanceId);
+
+            ResultSet rs = ps.executeQuery();
+            rs.next();
+            return rs.getInt(1) > 0;
+
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    public int countReservations(int idSeance) {
+        String sql = """
+                SELECT COUNT(*)
+                FROM reservation_seance
+                WHERE id_seance = ?
+                AND statut = 'CONFIRMEE'
+                """;
+
+        try {
+            PreparedStatement ps = conx.prepareStatement(sql);
+            ps.setInt(1, idSeance);
+
+            ResultSet rs = ps.executeQuery();
+            rs.next();
+            return rs.getInt(1);
+
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }
     };
+    public void updatePresence(int idReservation,
+                               StatutPresence statut) {
 
+        String sql =
+                "UPDATE reservation_seance " +
+                        "SET statut_presence=? " +
+                        "WHERE id_reservation=?";
 
+        try {
+            PreparedStatement ps = conx.prepareStatement(sql);
+            ps.setString(1, statut.name());
+            ps.setInt(2, idReservation);
+            ps.executeUpdate();
+
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+    }
+    public StatutPresence getPresence(int userId, int seanceId) {
+
+        String sql = """
+        SELECT statut_presence
+        FROM reservation_seance
+        WHERE id_user = ? AND id_seance = ?
+    """;
+
+        try {
+            PreparedStatement ps = conx.prepareStatement(sql);
+            ps.setInt(1, userId);
+            ps.setInt(2, seanceId);
+
+            ResultSet rs = ps.executeQuery();
+
+            if (rs.next()) {
+                return StatutPresence.valueOf(
+                        rs.getString("statut_presence")
+                );
+            }
+
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+
+        return StatutPresence.NON_MARQUE;
+    }
+
+    public List<ReservationSeance> getReservationsBySeance(int seanceId) {
+
+        List<ReservationSeance> list = new ArrayList<>();
+
+        String sql = """
+        SELECT r.id_reservation,
+               r.id_user,
+               r.statut_presence,
+               u.nom,
+               u.prenom,
+               u.email
+        FROM reservation_seance r
+        JOIN user_app u ON r.id_user = u.id_user
+        WHERE r.id_seance = ?
+        AND r.statut = 'CONFIRMEE'
+    """;
+
+        try {
+
+            PreparedStatement ps = conx.prepareStatement(sql);
+            ps.setInt(1, seanceId);
+
+            ResultSet rs = ps.executeQuery();
+
+            while (rs.next()) {
+
+                // 🔹 Créer User
+                UserApp user = new UserApp();
+                user.setIdUser(rs.getInt("id_user"));
+                user.setNom(rs.getString("nom"));
+                user.setPrenom(rs.getString("prenom"));
+                user.setEmail(rs.getString("email"));
+
+                // 🔹 Créer Reservation
+                ReservationSeance r = new ReservationSeance();
+                r.setIdReservation(rs.getInt("id_reservation"));
+                r.setIdUser(rs.getInt("id_user"));
+                r.setStatutPresence(
+                        StatutPresence.valueOf(
+                                rs.getString("statut_presence")
+                        )
+                );
+
+                r.setUser(user); // 🔥 LIGNE IMPORTANTE
+
+                list.add(r);
+            }
+
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+
+        return list;
+    }
 }

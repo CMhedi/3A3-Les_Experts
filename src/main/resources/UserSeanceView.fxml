@@ -19,10 +19,10 @@
     <!-- ================= SIDEBAR ================= -->
     <left>
         <VBox styleClass="sidebar"
-              spacing="20"
+              spacing="25"
               alignment="TOP_LEFT">
 
-            <HBox spacing="4" alignment="CENTER_LEFT">
+            <HBox spacing="6" alignment="CENTER_LEFT">
                 <Label text="Eco" styleClass="logo"/>
                 <Label text="Adventure" styleClass="logo-accent"/>
             </HBox>
@@ -35,31 +35,30 @@
 
                 <graphic>
                     <FontAwesomeIconView glyphName="ARROW_LEFT"
-                                         size="15"
+                                         size="14"
                                          fill="WHITE"/>
                 </graphic>
                 <text>Retour Menu</text>
             </Button>
-            <Button styleClass="menu-btn "
+
+            <Button styleClass="menu-btn"
                     maxWidth="Infinity"
                     onAction="#handleDashboard">
 
                 <graphic>
-                    <FontAwesomeIconView glyphName="DASHBOARD"
+                    <FontAwesomeIconView glyphName="CALENDAR"
                                          size="14"
                                          fill="WHITE"/>
                 </graphic>
-
                 <text>Mes Séances</text>
             </Button>
-
 
         </VBox>
     </left>
 
     <!-- ================= TOP BAR ================= -->
     <top>
-        <HBox spacing="12"
+        <HBox spacing="15"
               alignment="CENTER_LEFT"
               styleClass="top-bar">
 
@@ -68,6 +67,7 @@
 
             <Region HBox.hgrow="ALWAYS"/>
 
+            <!-- USER CHIP -->
             <HBox spacing="8"
                   alignment="CENTER"
                   styleClass="user-chip">
@@ -87,7 +87,7 @@
 
         <VBox spacing="30"
               alignment="TOP_CENTER"
-              style="-fx-padding:35;">
+              styleClass="content-wrapper">
 
             <!-- ===== TITLE + SEARCH ===== -->
             <HBox alignment="CENTER_LEFT"
@@ -99,10 +99,18 @@
 
                 <Region HBox.hgrow="ALWAYS"/>
 
-                <TextField fx:id="searchField"
-                           promptText="Rechercher une séance..."
-                           styleClass="search-field-pro"
-                           prefWidth="280"/>
+                <!-- Search avec icône -->
+                <HBox alignment="CENTER_LEFT"
+                      styleClass="search-container">
+
+                    <FontAwesomeIconView glyphName="SEARCH"
+                                         size="13"
+                                         fill="#777"/>
+
+                    <TextField fx:id="searchField"
+                               promptText="Rechercher une séance..."
+                               styleClass="search-field-pro"/>
+                </HBox>
 
             </HBox>
 
@@ -112,11 +120,11 @@
                         VBox.vgrow="ALWAYS">
 
                 <FlowPane fx:id="cardContainer"
-                          hgap="22"
-                          vgap="22"
-                          prefWrapLength="950"
+                          hgap="25"
+                          vgap="25"
+                          prefWrapLength="1000"
                           alignment="TOP_LEFT"
-                          style="-fx-padding: 10 20 20 0;"/>
+                          styleClass="cards-container"/>
 
             </ScrollPane>
 

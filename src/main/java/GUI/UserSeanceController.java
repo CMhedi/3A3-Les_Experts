@@ -11,8 +11,12 @@ import Services.interfaces.UserService;
 import exceptions.ValidationException;
 
 import javafx.fxml.FXML;
+import javafx.geometry.Pos;
 import javafx.scene.control.*;
 import javafx.scene.layout.*;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
+import javafx.scene.control.ContentDisplay;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -32,10 +36,9 @@ public class UserSeanceController {
             new ReservationSeanceService();
     private final UserService userService = new UserService();
 
-    private final int USER_TEST_ID = 1; // ⚠️ login plus tard
+    private final int USER_TEST_ID = 1;
 
     private List<Seance> masterData;
-
     private final Map<Integer, String> coachMap = new HashMap<>();
 
     // =================================================
@@ -46,7 +49,9 @@ public class UserSeanceController {
 
         loadCoachs();
 
-        searchField.textProperty().addListener((obs, o, n) -> refreshCards());
+        searchField.textProperty().addListener((obs, oldVal, newVal) -> {
+            refreshCards();
+        });
 
         loadData();
     }
@@ -57,12 +62,9 @@ public class UserSeanceController {
     private void loadData() {
 
         try {
-
             masterData = seanceService.getAll();
             refreshCards();
-
         } catch (Exception e) {
-
             DialogUtils.showError(
                     "Erreur",
                     "Impossible de charger les séances."
@@ -83,7 +85,6 @@ public class UserSeanceController {
             }
 
         } catch (Exception e) {
-
             DialogUtils.showError(
                     "Erreur",
                     "Impossible de charger les coachs."
@@ -92,7 +93,7 @@ public class UserSeanceController {
     }
 
     // =================================================
-    // CARD SYSTEM
+    // REFRESH CARDS
     // =================================================
     private void refreshCards() {
 
@@ -106,72 +107,75 @@ public class UserSeanceController {
 
         for (Seance s : masterData) {
 
-            boolean matchesSearch =
+            boolean matches =
                     s.getNom().toLowerCase().contains(search)
                             || s.getDateSeance().toString().contains(search)
                             || coachMap.getOrDefault(
                             s.getIdCoach(), ""
                     ).toLowerCase().contains(search);
 
-            if (matchesSearch) {
+            if (matches) {
                 cardContainer.getChildren().add(createCard(s));
             }
         }
     }
 
+    // =================================================
+    // CREATE CARD
+    // =================================================
     private VBox createCard(Seance s) {
 
-        VBox card = new VBox(18);
+        VBox card = new VBox(15);
         card.getStyleClass().add("seance-card-pro");
 
         // ================= TITLE =================
         Label title = new Label(s.getNom());
         title.getStyleClass().add("seance-title-pro");
 
-        // ================= DATE =================
-        Label date = new Label("📅  " + s.getDateSeance());
-        date.getStyleClass().add("seance-info-pro");
+        // ================= INFOS =================
+        VBox infoBox = new VBox(6);
 
+        Label date = new Label("📅  " + s.getDateSeance());
         Label time = new Label("⏰  "
                 + s.getHeureDebut() + " - " + s.getHeureFin());
-        time.getStyleClass().add("seance-info-pro");
-
         Label coach = new Label("👤  "
                 + coachMap.getOrDefault(
                 s.getIdCoach(), "Inconnu"));
+
+        date.getStyleClass().add("seance-info-pro");
+        time.getStyleClass().add("seance-info-pro");
         coach.getStyleClass().add("seance-info-pro");
 
-        // ================= PLACES =================
+        infoBox.getChildren().addAll(date, time, coach);
+
+        // ================= CAPACITE =================
         int reserved = 0;
         try {
-            reserved = reservationService
-                    .countReservations(s.getIdSeance());
+            reserved = reservationService.countReservations(s.getIdSeance());
         } catch (Exception ignored) {}
 
-        int capacite = s.getCapacite();
-        int restantes = capacite - reserved;
+        int restantes = s.getCapacite() - reserved;
 
-        double progressValue =
-                (double) reserved / capacite;
+        ProgressBar progress =
+                new ProgressBar((double) reserved / s.getCapacite());
+        progress.setPrefHeight(8);
+        progress.getStyleClass().add("places-progress");
 
-        ProgressBar progressBar = new ProgressBar(progressValue);
-        progressBar.getStyleClass().add("places-progress");
+        Label places =
+                new Label(restantes + " places restantes");
+        places.getStyleClass().add("places-label");
 
-        Label placesLabel = new Label(
-                restantes + " places restantes"
-        );
-        placesLabel.getStyleClass().add("places-label");
-
-        // ================= BADGE + BUTTON =================
-        HBox footer = new HBox(15);
-        footer.setStyle("-fx-alignment: CENTER_LEFT;");
+        // ================= FOOTER =================
+        VBox footer = new VBox(8);
 
         Label badge = new Label();
         badge.getStyleClass().add("badge-pro");
 
         Button actionBtn = new Button();
-        actionBtn.getStyleClass().add("btn-pro");
+        actionBtn.setMaxWidth(Double.MAX_VALUE);
+        actionBtn.setPrefHeight(38);
 
+        // ================= LOGIQUE =================
         if (s.getDateSeance().isBefore(LocalDate.now())) {
 
             badge.setText("Terminée");
@@ -179,8 +183,6 @@ public class UserSeanceController {
 
             actionBtn.setText("Terminée");
             actionBtn.setDisable(true);
-
-            card.getStyleClass().add("border-grey");
         }
         else if (restantes <= 0) {
 
@@ -189,42 +191,98 @@ public class UserSeanceController {
 
             actionBtn.setText("Complet");
             actionBtn.setDisable(true);
-
-            card.getStyleClass().add("border-red");
         }
         else {
 
-            badge.setText("Disponible");
-            badge.getStyleClass().add("badge-green");
+            boolean dejaReserve =
+                    reservationService.exists(
+                            USER_TEST_ID,
+                            s.getIdSeance()
+                    );
 
-            actionBtn.setText("Réserver");
-            actionBtn.setOnAction(e -> reserver(s));
+            if (dejaReserve) {
 
-            card.getStyleClass().add("border-green");
+                badge.setText("Réservée");
+                badge.getStyleClass().add("badge-blue");
+
+                actionBtn.setText(" Voir dans Google Calendar");
+                actionBtn.getStyleClass().add("btn-google");
+
+                ImageView googleIcon = new ImageView(
+                        new Image(getClass()
+                                .getResource("/images/google.png")
+                                .toExternalForm())
+                );
+                googleIcon.setFitWidth(16);
+                googleIcon.setFitHeight(16);
+
+                actionBtn.setGraphic(googleIcon);
+                actionBtn.setContentDisplay(ContentDisplay.LEFT);
+                actionBtn.setGraphicTextGap(8);
+
+                actionBtn.setOnAction(e -> ouvrirGoogleCalendar(s));
+
+            } else {
+
+                badge.setText("Disponible");
+                badge.getStyleClass().add("badge-green");
+
+                actionBtn.setText("Réserver");
+                actionBtn.getStyleClass().add("btn-primary");
+
+                actionBtn.setOnAction(e -> reserver(s));
+            }
         }
 
         footer.getChildren().addAll(badge, actionBtn);
 
         card.getChildren().addAll(
                 title,
-                date,
-                time,
-                coach,
-                progressBar,
-                placesLabel,
+                infoBox,
+                progress,
+                places,
                 footer
         );
 
         return card;
     }
 
+    // =================================================
+    // GOOGLE
+    // =================================================
+    private void ouvrirGoogleCalendar(Seance s) {
+
+        try {
+
+            String link =
+                    reservationService.getGoogleEventLink(
+                            USER_TEST_ID,
+                            s.getIdSeance()
+                    );
+
+            if (link == null || link.isBlank()) {
+                DialogUtils.showWarning(
+                        "Google Calendar",
+                        "Aucun événement associé."
+                );
+                return;
+            }
+
+            java.awt.Desktop.getDesktop().browse(
+                    new java.net.URI(link)
+            );
+
+        } catch (Exception e) {
+            DialogUtils.showError(
+                    "Erreur",
+                    "Impossible d’ouvrir Google Calendar."
+            );
+        }
+    }
 
     // =================================================
-    // RESERVATION
+    // RESERVER
     // =================================================
-    // =================================================
-// RESERVATION
-// =================================================
     private void reserver(Seance s) {
 
         try {
@@ -237,66 +295,46 @@ public class UserSeanceController {
 
             if (!confirmed) return;
 
-            // 🔎 Vérifier si déjà réservé
-            if (reservationService.exists(
-                    USER_TEST_ID,
-                    s.getIdSeance()
-            )) {
-                DialogUtils.showWarning(
-                        "Déjà réservé",
-                        "Vous avez déjà réservé cette séance."
-                );
-                return;
-            }
-
-            // ✅ Réservation en base
             reservationService.reserver(
                     USER_TEST_ID,
                     s.getIdSeance()
             );
 
-            // ================= GOOGLE CALENDAR =================
-            try {
+            LocalDateTime start =
+                    LocalDateTime.of(
+                            s.getDateSeance(),
+                            s.getHeureDebut()
+                    );
 
-                LocalDateTime start =
-                        LocalDateTime.of(
-                                s.getDateSeance(),
-                                s.getHeureDebut()
-                        );
+            LocalDateTime end =
+                    LocalDateTime.of(
+                            s.getDateSeance(),
+                            s.getHeureFin()
+                    );
 
-                LocalDateTime end =
-                        LocalDateTime.of(
-                                s.getDateSeance(),
-                                s.getHeureFin()
-                        );
+            GoogleCalendarService.GoogleEventData data =
+                    GoogleCalendarService.addEvent(
+                            "Séance : " + s.getNom(),
+                            "Séance EcoAdventure",
+                            start,
+                            end
+                    );
 
-                // 🔥 Google génère l'ID
-                String googleEventId =
-                        GoogleCalendarService.addEvent(
-                                "Séance : " + s.getNom(),
-                                "Séance EcoAdventure avec votre coach",
-                                start,
-                                end
-                        );
+            reservationService.saveGoogleEventId(
+                    USER_TEST_ID,
+                    s.getIdSeance(),
+                    data.id
+            );
 
-                // ✅ Sauvegarder l'eventId en base
-                reservationService.saveGoogleEventId(
-                        USER_TEST_ID,
-                        s.getIdSeance(),
-                        googleEventId
-                );
-
-            } catch (Exception googleError) {
-
-                System.out.println("Erreur Google Calendar : "
-                        + googleError.getMessage());
-
-                // On ne bloque pas la réservation
-            }
+            reservationService.saveGoogleEventLink(
+                    USER_TEST_ID,
+                    s.getIdSeance(),
+                    data.htmlLink
+            );
 
             DialogUtils.showInfo(
                     "Succès",
-                    "Séance réservée avec succès."
+                    "Séance réservée."
             );
 
             loadData();
@@ -314,11 +352,8 @@ public class UserSeanceController {
                     "Erreur",
                     "Impossible de réserver."
             );
-
-            e.printStackTrace();
         }
     }
-
 
     // =================================================
     // NAVIGATION

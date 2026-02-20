@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<?import java.net.URL?>
+<BorderPane xmlns="http://javafx.com/javafx"
+            xmlns:fx="http://javafx.com/fxml"
+            fx:controller="GUI.PresenceController"
+            styleClass="presence-root">
+    <stylesheets>
+        <URL value="@admin.css"/>
+    </stylesheets>
+    <!-- HEADER -->
+    <top>
+        <VBox spacing="8" styleClass="presence-header">
+
+            <Label fx:id="lblSeanceTitle"
+                   styleClass="presence-title"/>
+
+            <HBox spacing="20" alignment="CENTER_LEFT">
+
+                <Label fx:id="lblStats"
+                       styleClass="presence-stats"/>
+
+                <Region HBox.hgrow="ALWAYS"/>
+
+                <Label fx:id="lblTaux"
+                       styleClass="presence-taux"/>
+
+            </HBox>
+
+        </VBox>
+    </top>
+
+    <!-- TABLE -->
+    <center>
+        <TableView fx:id="tablePresence"
+                   styleClass="presence-table">
+            <columns>
+                <TableColumn fx:id="colNom"
+                             text="Nom"
+                             prefWidth="200"/>
+                <TableColumn fx:id="colEmail"
+                             text="Email"
+                             prefWidth="250"/>
+                <TableColumn fx:id="colStatut"
+                             text="Statut"
+                             prefWidth="180"/>
+            </columns>
+
+        </TableView>
+    </center>
+
+    <!-- FOOTER -->
+    <bottom>
+        <HBox styleClass="presence-footer">
+
+            <Button text="Fermer"
+                    styleClass="btn-secondary-modern"
+                    onAction="#handleClose"/>
+
+            <Button text="Sauvegarder"
+                    styleClass="btn-presence-modern"
+                    onAction="#handleSave"/>
+
+        </HBox>
+    </bottom>
+
+</BorderPane>

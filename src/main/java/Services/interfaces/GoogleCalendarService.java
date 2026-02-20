@@ -68,6 +68,7 @@ public class GoogleCalendarService {
     }
 
     private static Calendar getService() throws Exception {
+
         final NetHttpTransport HTTP_TRANSPORT =
                 GoogleNetHttpTransport.newTrustedTransport();
 
@@ -80,7 +81,18 @@ public class GoogleCalendarService {
     }
 
     // ================= ADD EVENT =================
-    public static String addEvent(
+    // 🔥 Retourne les deux : id + htmlLink
+    public static class GoogleEventData {
+        public String id;
+        public String htmlLink;
+
+        public GoogleEventData(String id, String htmlLink) {
+            this.id = id;
+            this.htmlLink = htmlLink;
+        }
+    }
+
+    public static GoogleEventData addEvent(
             String summary,
             String description,
             LocalDateTime start,
@@ -94,22 +106,17 @@ public class GoogleCalendarService {
 
         EventDateTime startDateTime = new EventDateTime()
                 .setDateTime(new com.google.api.client.util.DateTime(
-                        Date.from(start.atZone(
-                                ZoneId.systemDefault()).toInstant())))
-                .setTimeZone(
-                        ZoneId.systemDefault().toString());
+                        Date.from(start.atZone(ZoneId.of("Africa/Tunis")).toInstant())))
+                .setTimeZone("Africa/Tunis");
 
         EventDateTime endDateTime = new EventDateTime()
                 .setDateTime(new com.google.api.client.util.DateTime(
-                        Date.from(end.atZone(
-                                ZoneId.systemDefault()).toInstant())))
-                .setTimeZone(
-                        ZoneId.systemDefault().toString());
+                        Date.from(end.atZone(ZoneId.of("Africa/Tunis")).toInstant())))
+                .setTimeZone("Africa/Tunis");
 
         event.setStart(startDateTime);
         event.setEnd(endDateTime);
 
-        // 🔔 Notification 30 minutes
         Event.Reminders reminders =
                 new Event.Reminders()
                         .setUseDefault(false)
@@ -121,15 +128,17 @@ public class GoogleCalendarService {
 
         event.setReminders(reminders);
 
-        // ✅ Google génère l'ID
         Event createdEvent =
                 service.events()
                         .insert("primary", event)
                         .execute();
 
-        System.out.println("Event ajouté : " + createdEvent.getId());
+        System.out.println("Event créé : " + createdEvent.getHtmlLink());
 
-        return createdEvent.getId(); // 🔥 IMPORTANT
+        return new GoogleEventData(
+                createdEvent.getId(),
+                createdEvent.getHtmlLink()
+        );
     }
 
     // ================= DELETE EVENT =================
@@ -143,10 +152,10 @@ public class GoogleCalendarService {
                     .delete("primary", eventId)
                     .execute();
 
-            System.out.println("Event supprimé.");
+            System.out.println("Event supprimé : " + eventId);
 
         } catch (Exception e) {
-            System.out.println("Event non trouvé.");
+            System.out.println("Event non trouvé ou déjà supprimé.");
         }
     }
 }

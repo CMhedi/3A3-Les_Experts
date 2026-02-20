@@ -86,34 +86,38 @@
               VBox.vgrow="ALWAYS">
 
             <!-- ================= STAT CARDS ================= -->
-            <HBox spacing="30"
-                  alignment="CENTER">
+            <HBox spacing="35"
+                  alignment="CENTER"
+                  styleClass="stats-wrapper">
 
-                <VBox styleClass="stat-card-pro">
+                <VBox styleClass="stat-card-modern">
                     <FontAwesomeIconView glyphName="CALENDAR"
                                          size="22"
                                          styleClass="stat-icon"/>
-                    <Label text="Total Séances" styleClass="stat-title"/>
+                    <Label text="Total Séances"
+                           styleClass="stat-title"/>
                     <Label fx:id="lblTotal"
                            text="0"
                            styleClass="stat-value"/>
                 </VBox>
 
-                <VBox styleClass="stat-card-pro">
+                <VBox styleClass="stat-card-modern">
                     <FontAwesomeIconView glyphName="CLOCK_ALT"
                                          size="22"
                                          styleClass="stat-icon"/>
-                    <Label text="Aujourd'hui" styleClass="stat-title"/>
+                    <Label text="Aujourd'hui"
+                           styleClass="stat-title"/>
                     <Label fx:id="lblToday"
                            text="0"
                            styleClass="stat-value"/>
                 </VBox>
 
-                <VBox styleClass="stat-card-pro">
+                <VBox styleClass="stat-card-modern">
                     <FontAwesomeIconView glyphName="CHECK_CIRCLE"
                                          size="22"
                                          styleClass="stat-icon"/>
-                    <Label text="Terminées" styleClass="stat-title"/>
+                    <Label text="Terminées"
+                           styleClass="stat-title"/>
                     <Label fx:id="lblTerminee"
                            text="0"
                            styleClass="stat-value"/>
@@ -123,23 +127,32 @@
 
             <!-- ================= TOOLBAR ================= -->
             <HBox alignment="CENTER_LEFT"
-                  spacing="25"
-                  styleClass="dashboard-toolbar">
+                  spacing="20"
+                  styleClass="dashboard-toolbar-modern">
 
                 <Label text="Mes Séances"
                        styleClass="section-title-accent"/>
 
                 <Region HBox.hgrow="ALWAYS"/>
 
-                <TextField fx:id="searchField"
-                           promptText="Rechercher une séance..."
-                           styleClass="search-field-pro"
-                           prefWidth="300"/>
+                <HBox alignment="CENTER_LEFT"
+                      styleClass="search-container">
+
+                    <FontAwesomeIconView glyphName="SEARCH"
+                                         size="13"
+                                         fill="#777"/>
+
+                    <TextField fx:id="searchField"
+                               promptText="Rechercher une séance..."
+                               styleClass="search-field-pro"/>
+                </HBox>
 
                 <ComboBox fx:id="statutFilter"
-                          prefWidth="180"
-                          styleClass="combo-pro"/>
-
+                          prefWidth="160"
+                          styleClass="combo-modern"/>
+                <Button text="Exporter PDF"
+                        onAction="#handleExportPDF"
+                        styleClass="btn-primary"/>
             </HBox>
 
             <!-- ================= CARDS CONTAINER ================= -->
