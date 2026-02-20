@@ -1,0 +1,237 @@
+/* =====================================================
+   ROOT
+===================================================== */
+
+.presence-root {
+    -fx-background-color: #f4f6f8;
+    -fx-font-family: "Segoe UI", "Inter", sans-serif;
+}
+
+
+/* =====================================================
+   HEADER
+===================================================== */
+
+.presence-header {
+    -fx-background-color: #1F4D36;
+    -fx-padding: 22 30;
+    -fx-background-radius: 0 0 20 20;
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.15), 25, 0.3, 0, 6);
+}
+
+.presence-title {
+    -fx-font-size: 20px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #ff9800; /* Orange premium */
+}
+
+.presence-stats {
+    -fx-text-fill: #ff9800;
+    -fx-font-weight: bold;
+}
+
+.presence-taux {
+    -fx-text-fill: #ffb74d;
+    -fx-font-weight: bold;
+}
+
+
+/* =====================================================
+   TABLE CONTAINER
+===================================================== */
+
+.presence-table {
+    -fx-background-color: white;
+    -fx-background-radius: 20;
+    -fx-border-radius: 20;
+    -fx-padding: 10;
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.08), 25, 0.2, 0, 6);
+}
+
+
+/* =====================================================
+   TABLE HEADER
+===================================================== */
+
+.table-view .column-header-background {
+    -fx-background-color: #f8fafc;
+    -fx-background-radius: 16 16 0 0;
+}
+
+.table-view .column-header .label {
+    -fx-text-fill: #374151;
+    -fx-font-weight: bold;
+    -fx-font-size: 13px;
+}
+
+
+/* =====================================================
+   TABLE ROWS
+===================================================== */
+
+.table-row-cell {
+    -fx-background-color: white;
+    -fx-border-color: #f1f5f9;
+    -fx-border-width: 0 0 1 0;
+}
+
+.table-row-cell:hover {
+    -fx-background-color: #f9fafb;
+}
+
+/* Sélection soft orange */
+.table-row-cell:selected {
+    -fx-background-color: #fff3e0;
+}
+
+.table-row-cell:selected .text {
+    -fx-fill: #1f2937;
+}
+
+/* Supprimer lignes vides */
+.table-row-cell:empty {
+    -fx-background-color: transparent;
+    -fx-border-color: transparent;
+}
+
+/* Supprimer focus bleu */
+.table-view {
+    -fx-focus-color: transparent;
+    -fx-faint-focus-color: transparent;
+}
+
+
+/* =====================================================
+   CELLULES
+===================================================== */
+
+.table-cell {
+    -fx-border-color: transparent;
+    -fx-padding: 10 12;
+    -fx-text-fill: #374151;
+}
+
+
+/* =====================================================
+   BADGES STATUT
+===================================================== */
+
+.status-badge {
+    -fx-padding: 4 14;
+    -fx-background-radius: 100;
+    -fx-font-size: 11px;
+    -fx-font-weight: bold;
+}
+
+/* PRESENT */
+.badge-present {
+    -fx-background-color: rgba(34,197,94,0.15);
+    -fx-text-fill: #22c55e;
+}
+
+/* ABSENT */
+.badge-absent {
+    -fx-background-color: rgba(239,68,68,0.15);
+    -fx-text-fill: #ef4444;
+}
+
+/* NON MARQUE */
+.badge-neutral {
+    -fx-background-color: rgba(100,116,139,0.15);
+    -fx-text-fill: #64748b;
+}
+
+
+/* =====================================================
+   ACTION BUTTONS (✔ ✖)
+===================================================== */
+
+.btn-present {
+    -fx-background-color: #1F4D36;
+    -fx-text-fill: white;
+    -fx-background-radius: 20;
+    -fx-padding: 5 16;
+    -fx-font-weight: bold;
+    -fx-cursor: hand;
+}
+
+.btn-present:hover {
+    -fx-background-color: #256447;
+}
+
+.btn-absent {
+    -fx-background-color: #ef4444;
+    -fx-text-fill: white;
+    -fx-background-radius: 20;
+    -fx-padding: 5 16;
+    -fx-font-weight: bold;
+    -fx-cursor: hand;
+}
+
+.btn-absent:hover {
+    -fx-background-color: #dc2626;
+}
+
+
+/* =====================================================
+   FOOTER BUTTONS
+===================================================== */
+
+.presence-footer {
+    -fx-background-color: transparent;
+}
+
+/* Bouton secondaire */
+.btn-secondary-modern {
+    -fx-background-color: #e5e7eb;
+    -fx-text-fill: #374151;
+    -fx-background-radius: 25;
+    -fx-padding: 8 22;
+    -fx-font-weight: bold;
+    -fx-cursor: hand;
+}
+
+.btn-secondary-modern:hover {
+    -fx-background-color: #d1d5db;
+}
+
+/* Bouton principal */
+.btn-presence-modern {
+    -fx-background-color: #1F4D36;
+    -fx-text-fill: white;
+    -fx-background-radius: 25;
+    -fx-padding: 8 24;
+    -fx-font-weight: bold;
+    -fx-cursor: hand;
+}
+
+.btn-presence-modern:hover {
+    -fx-background-color: #256447;
+}
+
+/* Clôturer séance */
+.btn-close-seance {
+    -fx-background-color: #111827;
+    -fx-text-fill: white;
+    -fx-background-radius: 25;
+    -fx-padding: 8 24;
+    -fx-font-weight: bold;
+    -fx-cursor: hand;
+}
+
+.btn-close-seance:hover {
+    -fx-background-color: #1f2937;
+}
+
+
+/* =====================================================
+   PROGRESS BAR
+===================================================== */
+
+.progress-bar {
+    -fx-accent: #1F4D36;
+    -fx-background-radius: 10;
+}
+.presence-container {
+    -fx-padding: 30;
+}

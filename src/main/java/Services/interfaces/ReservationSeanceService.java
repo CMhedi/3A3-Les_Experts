@@ -395,4 +395,27 @@ public class ReservationSeanceService {
 
         return list;
     }
+    public int countByPresence(int idSeance, StatutPresence statut) {
+
+        String sql = """
+            SELECT COUNT(*)
+            FROM reservation_seance
+            WHERE id_seance = ?
+            AND statut_presence = ?
+            """;
+
+        try {
+
+            PreparedStatement ps = conx.prepareStatement(sql);
+            ps.setInt(1, idSeance);
+            ps.setString(2, statut.name());
+
+            ResultSet rs = ps.executeQuery();
+            rs.next();
+            return rs.getInt(1);
+
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+    }
 }

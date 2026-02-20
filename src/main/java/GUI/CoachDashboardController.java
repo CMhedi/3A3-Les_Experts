@@ -14,6 +14,7 @@ import com.itextpdf.text.Font;
 import com.itextpdf.text.Image;
 import com.itextpdf.text.Rectangle;
 import com.itextpdf.text.pdf.*;
+import enums.StatutPresence;
 import enums.StatutSeance;
 
 import javafx.event.ActionEvent;
@@ -366,7 +367,7 @@ public class CoachDashboardController {
         writer.setPageEvent(new PdfPageEventHelperCustom());
         document.open();
 
-        // ================= HEADER VERTE =================
+        // ================= HEADER =================
         PdfPTable header = new PdfPTable(1);
         header.setWidthPercentage(100);
 
@@ -378,86 +379,41 @@ public class CoachDashboardController {
         headerCell.setBackgroundColor(new BaseColor(25, 95, 60));
         headerCell.setPadding(18);
         headerCell.setBorder(Rectangle.NO_BORDER);
-
         header.addCell(headerCell);
+
         document.add(header);
-
-        // ================= LOGO =================
-        try {
-            InputStream logoStream =
-                    getClass().getResourceAsStream("/images/logo_pdf.png");
-
-            if (logoStream != null) {
-                Image logo = Image.getInstance(logoStream.readAllBytes());
-                logo.scaleToFit(180, 60);
-                logo.setAlignment(Image.ALIGN_CENTER);
-                logo.setSpacingBefore(15);
-                document.add(logo);
-            }
-        } catch (Exception ignored) {}
-
-        // ================= SLOGAN =================
-        Font sloganFont = new Font(
-                Font.FontFamily.HELVETICA,
-                12,
-                Font.ITALIC,
-                new BaseColor(255, 140, 0)
-        );
-
-        Paragraph slogan = new Paragraph(
-                "Explore. Train. Evolve.",
-                sloganFont
-        );
-
-        slogan.setAlignment(Element.ALIGN_CENTER);
-        slogan.setSpacingAfter(20);
-        document.add(slogan);
-
-        // ================= COACH + DATE =================
-        UserService userService = new UserService();
-        UserApp coach = userService.getUserById(coachId);
-        String coachName = coach.getNom() + " " + coach.getPrenom();
-        String today = LocalDate.now().toString();
-
-        Paragraph coachInfo = new Paragraph(
-                "Coach : " + coachName + "\n"
-                        + "Date de génération : " + today,
-                new Font(Font.FontFamily.HELVETICA, 11)
-        );
-
-        coachInfo.setSpacingAfter(20);
-        document.add(coachInfo);
 
         // ================= TITRE =================
         Font titleFont = new Font(
                 Font.FontFamily.HELVETICA,
-                22,
+                20,
                 Font.BOLD,
                 new BaseColor(25, 95, 60)
         );
 
         Paragraph title = new Paragraph("Rapport des Séances", titleFont);
         title.setAlignment(Element.ALIGN_CENTER);
+        title.setSpacingBefore(20);
         title.setSpacingAfter(20);
         document.add(title);
 
-// ================= TABLE =================
+        // ================= TABLE =================
         PdfPTable table = new PdfPTable(8);
         table.setWidthPercentage(100);
         table.setSpacingBefore(10);
 
-        float[] columnWidths = {2f, 2f, 2f, 2f, 1.5f, 1.5f, 1.5f, 1.5f};
+        float[] columnWidths = {2.5f, 2f, 2f, 1.8f, 1.2f, 1.2f, 2f, 1.5f};
         table.setWidths(columnWidths);
 
         String[] headers = {
-                "Nom",
+                "Séance",
                 "Date",
-                "Heure",
+                "Horaire",
                 "Statut",
                 "Capacité",
-                "Participants",
-                "Restantes",
-                "Taux (%)"
+                "Inscrits",
+                "Présence (P/A/N)",
+                "Taux Présence"
         };
 
         Font headerFont = new Font(
@@ -481,13 +437,37 @@ public class CoachDashboardController {
 
         boolean alternate = false;
 
+        ReservationSeanceService reservationService =
+                new ReservationSeanceService();
+
         for (Seance s : seances) {
 
-            ReservationSeanceService reservationService = new ReservationSeanceService();
-            int reserved = reservationService.countReservations(s.getIdSeance());
+            int reserved =
+                    reservationService.countReservations(s.getIdSeance());
+
             int capacite = s.getCapacite();
-            int restantes = capacite - reserved;
-            double taux = capacite == 0 ? 0 : (double) reserved / capacite * 100;
+
+            int presents =
+                    reservationService.countByPresence(
+                            s.getIdSeance(),
+                            StatutPresence.PRESENT
+                    );
+
+            int absents =
+                    reservationService.countByPresence(
+                            s.getIdSeance(),
+                            StatutPresence.ABSENT
+                    );
+
+            int nonMarques =
+                    reservationService.countByPresence(
+                            s.getIdSeance(),
+                            StatutPresence.NON_MARQUE
+                    );
+
+            double tauxPresence = reserved == 0
+                    ? 0
+                    : (double) presents / reserved * 100;
 
             totalParticipants += reserved;
             totalCapacite += capacite;
@@ -496,12 +476,19 @@ public class CoachDashboardController {
                     ? new BaseColor(245, 245, 245)
                     : BaseColor.WHITE;
 
+            // Séance
             table.addCell(createCell(s.getNom(), rowColor));
-            table.addCell(createCell(s.getDateSeance().toString(), rowColor));
-            table.addCell(createCell(
-                    s.getHeureDebut() + " - " + s.getHeureFin(), rowColor));
 
-            // ===== Statut coloré =====
+            // Date
+            table.addCell(createCell(s.getDateSeance().toString(), rowColor));
+
+            // Horaire
+            table.addCell(createCell(
+                    s.getHeureDebut() + " - " + s.getHeureFin(),
+                    rowColor
+            ));
+
+            // Statut coloré
             Font statutFont;
 
             switch (s.getStatutSeance()) {
@@ -516,15 +503,55 @@ public class CoachDashboardController {
             }
 
             PdfPCell statutCell =
-                    new PdfPCell(new Phrase(s.getStatutSeance().name(), statutFont));
+                    new PdfPCell(new Phrase(
+                            s.getStatutSeance().name(),
+                            statutFont
+                    ));
+
             statutCell.setBackgroundColor(rowColor);
             statutCell.setHorizontalAlignment(Element.ALIGN_CENTER);
             table.addCell(statutCell);
 
-            table.addCell(createCenterCell(String.valueOf(capacite), rowColor));
-            table.addCell(createCenterCell(String.valueOf(reserved), rowColor));
-            table.addCell(createCenterCell(String.valueOf(restantes), rowColor));
-            table.addCell(createCenterCell(String.format("%.1f %%", taux), rowColor));
+            // Capacité
+            table.addCell(createCenterCell(
+                    String.valueOf(capacite),
+                    rowColor
+            ));
+
+            // Inscrits
+            table.addCell(createCenterCell(
+                    String.valueOf(reserved),
+                    rowColor
+            ));
+
+            // Présence regroupée
+            String presenceResume =
+                    presents + " / " + absents + " / " + nonMarques;
+
+            table.addCell(createCenterCell(
+                    presenceResume,
+                    rowColor
+            ));
+
+            // Taux présence coloré
+            Font tauxFont;
+
+            if (tauxPresence >= 80)
+                tauxFont = new Font(Font.FontFamily.HELVETICA, 10, Font.BOLD, new BaseColor(39,174,96));
+            else if (tauxPresence >= 50)
+                tauxFont = new Font(Font.FontFamily.HELVETICA, 10, Font.BOLD, new BaseColor(243,156,18));
+            else
+                tauxFont = new Font(Font.FontFamily.HELVETICA, 10, Font.BOLD, new BaseColor(231,76,60));
+
+            PdfPCell tauxCell =
+                    new PdfPCell(new Phrase(
+                            String.format("%.1f %%", tauxPresence),
+                            tauxFont
+                    ));
+
+            tauxCell.setBackgroundColor(rowColor);
+            tauxCell.setHorizontalAlignment(Element.ALIGN_CENTER);
+            table.addCell(tauxCell);
 
             alternate = !alternate;
         }

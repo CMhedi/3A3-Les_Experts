@@ -2,51 +2,64 @@
 
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
-
 <?import java.net.URL?>
-<BorderPane xmlns="http://javafx.com/javafx"
-            xmlns:fx="http://javafx.com/fxml"
+
+<BorderPane xmlns="http://javafx.com/javafx/21"
+            xmlns:fx="http://javafx.com/fxml/1"
             fx:controller="GUI.PresenceController"
             styleClass="presence-root">
+
     <stylesheets>
-        <URL value="@admin.css"/>
+        <URL value="@presence.css"/>
     </stylesheets>
+
     <!-- HEADER -->
     <top>
-        <VBox spacing="8" styleClass="presence-header">
+        <VBox spacing="12" styleClass="presence-header">
 
             <Label fx:id="lblSeanceTitle"
-                   styleClass="presence-title"/>
+                   styleClass="presence-title"
+                   text="Appel de présence"/>
 
-            <HBox spacing="20" alignment="CENTER_LEFT">
+            <HBox alignment="CENTER_LEFT">
 
                 <Label fx:id="lblStats"
-                       styleClass="presence-stats"/>
+                       styleClass="presence-stats"
+                       text="Présents: 0 | Absents: 0 | Total: 0"/>
 
                 <Region HBox.hgrow="ALWAYS"/>
 
                 <Label fx:id="lblTaux"
-                       styleClass="presence-taux"/>
+                       styleClass="presence-taux"
+                       text="Taux de présence: 0%"/>
 
             </HBox>
 
         </VBox>
     </top>
 
-    <!-- TABLE -->
+    <!-- TABLE (PLEINE LARGEUR) -->
     <center>
         <TableView fx:id="tablePresence"
-                   styleClass="presence-table">
+                   styleClass="presence-table"
+                   BorderPane.alignment="CENTER">
+
             <columns>
                 <TableColumn fx:id="colNom"
                              text="Nom"
                              prefWidth="200"/>
+
                 <TableColumn fx:id="colEmail"
                              text="Email"
-                             prefWidth="250"/>
+                             prefWidth="260"/>
+
                 <TableColumn fx:id="colStatut"
                              text="Statut"
                              prefWidth="180"/>
+
+                <TableColumn fx:id="colAction"
+                             text="Action"
+                             prefWidth="200"/>
             </columns>
 
         </TableView>
@@ -54,7 +67,10 @@
 
     <!-- FOOTER -->
     <bottom>
-        <HBox styleClass="presence-footer">
+        <HBox spacing="15"
+              alignment="CENTER_RIGHT"
+              styleClass="presence-footer"
+              style="-fx-padding: 20 40;">
 
             <Button text="Fermer"
                     styleClass="btn-secondary-modern"
@@ -63,6 +79,10 @@
             <Button text="Sauvegarder"
                     styleClass="btn-presence-modern"
                     onAction="#handleSave"/>
+
+            <Button text="Clôturer séance"
+                    styleClass="btn-close-seance"
+                    onAction="#handleCloturer"/>
 
         </HBox>
     </bottom>

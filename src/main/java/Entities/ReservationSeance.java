@@ -29,6 +29,7 @@ public class ReservationSeance {
         this.idSeance = idSeance;
         this.statut = StatutReservationSeance.CONFIRMEE;
         this.dateReservation = LocalDateTime.now();
+        this.statutPresence = StatutPresence.NON_MARQUE;
     }
 
     public ReservationSeance(int idReservation,
@@ -46,6 +47,7 @@ public class ReservationSeance {
         this.idSeance = idSeance;
         this.googleEventId = googleEventId;
         this.googleEventLink = googleEventLink;
+        this.statutPresence = StatutPresence.NON_MARQUE;
     }
 
     // =====================
