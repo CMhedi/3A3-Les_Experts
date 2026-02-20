@@ -122,7 +122,6 @@ public class LoginController {
             MailService.sendOTP(email, generatedOTP);
 
             try {
-                // 3. Hezzo lel interface mta3 el Verification (ForgotPassword.fxml)
                 FXMLLoader loader = new FXMLLoader(getClass().getResource("/gui/ForgotPassword.fxml"));
                 Parent root = loader.load();
 

@@ -22,8 +22,6 @@ public class UserAddController {
     @FXML private PasswordField txtPassword;
     @FXML private ComboBox<String> comboRole;
     @FXML private Button btnEnregistrer;
-
-
     @FXML private Label errorNom, errorPrenom, errorEmail, errorPassword;
 
     private UserService userService = new UserService();
@@ -39,42 +37,44 @@ public class UserAddController {
         // 1. Validation Nom & Prenom
         txtNom.textProperty().addListener((o, old, n) -> {
             boolean valid = !n.trim().isEmpty();
-            errorNom.setVisible(!valid);
+            if (errorNom != null) errorNom.setVisible(!valid);
             txtNom.setStyle(valid ? "" : "-fx-border-color: red;");
         });
 
         txtPrenom.textProperty().addListener((o, old, n) -> {
             boolean valid = !n.trim().isEmpty();
-            errorPrenom.setVisible(!valid);
+            if (errorPrenom != null) errorPrenom.setVisible(!valid);
             txtPrenom.setStyle(valid ? "" : "-fx-border-color: red;");
         });
 
         // 2. Validation Email
         txtEmail.textProperty().addListener((obs, oldV, newV) -> {
-            if (newV.isEmpty()) {
-                errorEmail.setText("⚠️ L'email est obligatoire");
-                errorEmail.setVisible(true);
-                txtEmail.setStyle("-fx-border-color: red;");
-            } else if (!newV.matches(emailRegex)) {
-                errorEmail.setText("⚠️ Format invalide (ex: nom@domaine.com)");
-                errorEmail.setVisible(true);
-                txtEmail.setStyle("-fx-border-color: red;");
-            } else {
-                errorEmail.setVisible(false);
-                txtEmail.setStyle("");
+            boolean isValid = newV.matches(emailRegex);
+            if (errorEmail != null) {
+                if (newV.isEmpty()) {
+                    errorEmail.setText("⚠️ L'email est obligatoire");
+                    errorEmail.setVisible(true);
+                } else if (!isValid) {
+                    errorEmail.setText("⚠️ Format invalide");
+                    errorEmail.setVisible(true);
+                } else {
+                    errorEmail.setVisible(false);
+                }
             }
+            txtEmail.setStyle(isValid || newV.isEmpty() ? "" : "-fx-border-color: red;");
         });
 
-        //  3. Validation Password
+        // 3. Validation Password
         txtPassword.textProperty().addListener((o, old, n) -> {
             boolean valid = n.length() >= 6;
-            errorPassword.setText("⚠️ Minimum 6 caractères");
-            errorPassword.setVisible(!valid);
+            if (errorPassword != null) {
+                errorPassword.setText("⚠️ Minimum 6 caractères");
+                errorPassword.setVisible(!valid);
+            }
             txtPassword.setStyle(valid ? "" : "-fx-border-color: red;");
         });
 
         // 4. Disable Button (Binding)
-        // El bouton "Enregistrer" mayekhdem ken ki yabda kol chay mrigel
         btnEnregistrer.disableProperty().bind(
                 txtNom.textProperty().isEmpty()
                         .or(txtPrenom.textProperty().isEmpty())
@@ -99,7 +99,6 @@ public class UserAddController {
             userService.add(newUser);
             new Alert(Alert.AlertType.INFORMATION, "✅ Utilisateur ajouté avec succès!").showAndWait();
             handleCancel();
-
         } catch (Exception e) {
             new Alert(Alert.AlertType.ERROR, "❌ Erreur: " + e.getMessage()).show();
         }
@@ -108,11 +107,8 @@ public class UserAddController {
     @FXML
     void handleCancel() {
         try {
-            // 1. Njibou el root mta3 el Scene (elli houwa el BorderPane l-kbir)
             Parent layout = txtNom.getScene().getRoot();
-
             if (layout instanceof BorderPane mainPane) {
-
                 Parent root = FXMLLoader.load(getClass().getResource("/gui/AdminUsers.fxml"));
                 mainPane.setCenter(root);
             } else {

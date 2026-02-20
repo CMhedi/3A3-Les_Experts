@@ -31,6 +31,7 @@
                                     <Label text="PRÉNOM" style="-fx-font-weight: 800; -fx-font-size: 11; -fx-text-fill: #64748b;"/>
                                     <TextField fx:id="txtPrenom" prefHeight="45" style="-fx-background-color: #f8fafc; -fx-border-color: #e2e8f0; -fx-border-radius: 8;"/>
                                 </VBox>
+
                                 <VBox spacing="8" GridPane.columnIndex="0" GridPane.rowIndex="1">
                                     <Label text="EMAIL" style="-fx-font-weight: 800; -fx-font-size: 11; -fx-text-fill: #64748b;"/>
                                     <TextField fx:id="txtEmail" prefHeight="45" style="-fx-background-color: #f8fafc; -fx-border-color: #e2e8f0; -fx-border-radius: 8;"/>
@@ -38,6 +39,12 @@
                                 <VBox spacing="8" GridPane.columnIndex="1" GridPane.rowIndex="1">
                                     <Label text="RÔLE" style="-fx-font-weight: 800; -fx-font-size: 11; -fx-text-fill: #64748b;"/>
                                     <ComboBox fx:id="comboRole" maxWidth="Infinity" prefHeight="45" style="-fx-background-color: #f8fafc; -fx-border-color: #e2e8f0; -fx-border-radius: 8;"/>
+                                </VBox>
+
+
+                                <VBox spacing="8" GridPane.columnIndex="0" GridPane.rowIndex="2" GridPane.columnSpan="2">
+                                    <Label text="NOUVEAU MOT DE PASSE (LAISSER VIDE SI PAS DE CHANGEMENT)" style="-fx-font-weight: 800; -fx-font-size: 11; -fx-text-fill: #64748b;"/>
+                                    <PasswordField fx:id="txtPassword" prefHeight="45" style="-fx-background-color: #f8fafc; -fx-border-color: #e2e8f0; -fx-border-radius: 8;"/>
                                 </VBox>
                             </children>
                         </GridPane>

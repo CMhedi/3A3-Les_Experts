@@ -16,7 +16,7 @@
                     <ImageView fitHeight="120.0" fitWidth="120.0" pickOnBounds="true" preserveRatio="true">
                         <image><Image url="@logo_eco.png" /></image>
                     </ImageView>
-                    <Label text="EcoAdventure" textFill="#E67E22" style="-fx-font-weight: bold; -fx-font-size: 32;" />
+
                     <Label text="Bon retour parmi nous !" textFill="WHITE" style="-fx-font-style: italic; -fx-font-size: 16;" />
                 </children>
             </VBox>

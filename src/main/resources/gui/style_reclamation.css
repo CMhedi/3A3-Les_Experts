@@ -11,45 +11,18 @@
     /* Shadow akther Pro: y-khalli el card tban tal3a chwaya */
     -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.08), 20, 0, 0, 10);
 }
-
-/* 3. Styling el TableView (Modern & Clear) */
-.table-view {
-    -fx-background-color: white;
-    -fx-background-radius: 8;
-    -fx-border-color: #143d30;
-    -fx-border-radius: 8;
-    -fx-padding: 5;
+.list-view .list-cell:filled:selected {
+    -fx-background-color: transparent; /* Na77i el-bleu */
 }
 
-/* Header mta3 el Table: N-rodouh dhaher b-loun a8me9 */
-.table-view .column-header {
-    -fx-background-color: #143d30;
-    -fx-border-color: transparent transparent #cbd5e1 transparent;
-    -fx-border-width: 0 0 1 0;
+.list-view .list-cell:filled:selected VBox {
+    -fx-border-color: #143D30; /* 7ot cadre sghir fil selection */
+    -fx-border-radius: 10;
+    -fx-border-width: 2;
 }
 
-.table-view .column-header .label {
-    -fx-text-fill: #ffffff; /* Loun k-7ali a8me9 */
-    -fx-font-weight: bold;
-}
-
-/* Les Lignes (Rows) */
-.table-row-cell {
-    -fx-background-color: white;
-    -fx-border-color: transparent transparent #f1f5f9 transparent;
-}
-
-.table-row-cell:even {
-    -fx-background-color: #f8fafc; /* Alternance sghira bech el 3in ma tat3abch */
-}
-
-/* Selection: Loun "Eco" (Vert Forêt) */
-.table-row-cell:selected {
-    -fx-background-color: #143D30;
-}
-
-.table-row-cell:selected .label {
-    -fx-text-fill: white;
+.list-view {
+    -fx-background-color: transparent;
 }
 
 /* 4. Les Inputs (TextArea w ComboBox) */

@@ -4,95 +4,226 @@ import Entities.Reclamation;
 import Entities.Session;
 import Services.interfaces.ReclamationService;
 import enums.StatutReclamation;
+import javafx.application.Platform;
 import javafx.collections.FXCollections;
+import javafx.concurrent.Task;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
+import javafx.geometry.Pos;
 import javafx.scene.Node;
 import javafx.scene.Parent;
-import javafx.scene.Scene;
 import javafx.scene.control.*;
-import javafx.scene.control.cell.PropertyValueFactory;
-import javafx.scene.layout.BorderPane;
-import javafx.scene.layout.VBox;
-import javafx.stage.Stage;
+import javafx.scene.layout.*;
 
 import java.io.IOException;
 import java.sql.SQLException;
 import java.util.List;
 
 public class UserReclamationController {
+
+    // --- Components FXML ---
     @FXML private ComboBox<String> comboType;
     @FXML private TextArea txtContenu;
-    @FXML private TableView<Reclamation> tableMyRecs;
-    @FXML private TableColumn<Reclamation, String> colMyType, colMyContenu, colMyReponse;
-    @FXML private TableColumn<Reclamation, StatutReclamation> colMyStatut;
-    @FXML private Button btnModifier, btnEnvoyer;
+    @FXML private Button btnEnvoyer;
+    @FXML private ListView<Reclamation> listMyRecs;
 
     private ReclamationService rs = new ReclamationService();
-    private Reclamation selectedRec = null;
     private int currentUserId = Session.getConnectedUser().getIdUser();
 
     @FXML
     public void initialize() {
-
+        // 1. Setup Form
         if (comboType != null) {
             comboType.setItems(FXCollections.observableArrayList("TECHNIQUE", "SERVICE", "PAIEMENT", "AUTRE"));
         }
 
-        // --- Partia mta3 el TABLE ---
-        if (tableMyRecs != null) {
-            colMyType.setCellValueFactory(new PropertyValueFactory<>("type"));
-            colMyContenu.setCellValueFactory(new PropertyValueFactory<>("contenu"));
-            colMyStatut.setCellValueFactory(new PropertyValueFactory<>("statut"));
-            colMyReponse.setCellValueFactory(new PropertyValueFactory<>("reponse"));
-
-            // CellFactory lel loun mta3 el Statut
-            colMyStatut.setCellFactory(column -> new TableCell<>() {
-                @Override
-                protected void updateItem(StatutReclamation item, boolean empty) {
-                    super.updateItem(item, empty);
-                    if (empty || item == null) {
-                        setText(null);
-                        setStyle("");
-                    } else {
-                        setText(item.toString());
-                        switch (item) {
-                            case EN_ATTENTE -> setStyle("-fx-text-fill: #F37021; -fx-font-weight: bold;");
-                            case TRAITEE -> setStyle("-fx-text-fill: #143D30; -fx-font-weight: bold;");
-                            case REJETEE -> setStyle("-fx-text-fill: #ff4d4d; -fx-font-weight: bold;");
-                        }
-                    }
-                }
-            });
-
-            // Listener bech ki t-selecti 7aja mel Table temchi lel Form (kenek fi page okhra)
-            tableMyRecs.getSelectionModel().selectedItemProperty().addListener((obs, old, newVal) -> {
-                if (newVal != null) {
-                    selectedRec = newVal;
-                    // Ken thamma TextArea (ma3neha rna fil Form), n-3abiwha
-                    if (txtContenu != null) {
-                        txtContenu.setText(newVal.getContenu());
-                        comboType.setValue(newVal.getType());
-                        btnModifier.setDisable(newVal.getStatut() != StatutReclamation.EN_ATTENTE);
-                        btnEnvoyer.setDisable(true);
-                    }
-                }
-            });
+        // 2. Setup List
+        if (listMyRecs != null) {
+            setupListView();
             loadData();
         }
     }
 
-    private void loadData() {
-        try {
-            List<Reclamation> data = rs.afficherParUser(currentUserId);
-            if (tableMyRecs != null) {
-                tableMyRecs.setItems(FXCollections.observableArrayList(data));
+    private void setupListView() {
+        listMyRecs.setCellFactory(param -> new ListCell<Reclamation>() {
+            @Override
+            protected void updateItem(Reclamation item, boolean empty) {
+                super.updateItem(item, empty);
+                if (empty || item == null) {
+                    setText(null);
+                    setGraphic(null);
+                } else {
+                    // 1. الحاوية الكبيرة (Card)
+                    VBox card = new VBox(10);
+                    card.setStyle("-fx-padding: 15; -fx-background-color: white; -fx-background-radius: 12; " +
+                            "-fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.1), 10, 0, 0, 5); -fx-border-color: #e2e8f0;");
+
+                    // 2. الهيدر (Type + Status)
+                    HBox header = new HBox();
+                    Label type = new Label(item.getType());
+                    type.setStyle("-fx-font-weight: bold; -fx-font-size: 16px; -fx-text-fill: #143D30;");
+
+                    Region spacer = new Region();
+                    HBox.setHgrow(spacer, Priority.ALWAYS);
+
+                    Label statut = new Label(item.getStatut().toString());
+                    String color = item.getStatut().toString().equals("TRAITEE") ? "#143D30" : (item.getStatut().toString().equals("REJETEE") ? "#ef4444" : "#F37021");
+                    statut.setStyle("-fx-text-fill: white; -fx-background-color: " + color + "; -fx-padding: 3 10; -fx-background-radius: 15; -fx-font-size: 11px;");
+
+                    header.getChildren().addAll(type, spacer, statut);
+
+                    // 3. المحتوى
+                    Label contenu = new Label(item.getContenu());
+                    contenu.setWrapText(true);
+                    contenu.setStyle("-fx-text-fill: #475569;");
+
+                    // 4. أزرار التحكم (Modifier / Supprimer) داخل الـ Card
+                    HBox actions = new HBox(10);
+                    actions.setAlignment(Pos.CENTER_RIGHT);
+
+                    Button btnModif = new Button("✏️");
+                    btnModif.setStyle("-fx-background-color: #e0f2fe; -fx-text-fill: #0284c7; -fx-cursor: hand; -fx-background-radius: 5;");
+                    btnModif.setOnAction(event -> handleUpdateFromCard(item)); // ميثود جديدة
+
+                    Button btnSupp = new Button("🗑");
+                    btnSupp.setStyle("-fx-background-color: #fee2e2; -fx-text-fill: #ef4444; -fx-cursor: hand; -fx-background-radius: 5;");
+                    btnSupp.setOnAction(event -> handleDeleteFromCard(item)); // ميثود جديدة
+
+                    // التعديل مسموح به فقط إذا كانت الريكلاماسيون في الانتظار (اختياري)
+                    if (item.getStatut().toString().equals("EN_ATTENTE")) {
+                        actions.getChildren().addAll(btnModif, btnSupp);
+                    }
+
+                    card.getChildren().addAll(header, contenu);
+
+                    // إذا فما إجابة
+                    if (item.getReponse() != null && !item.getReponse().isEmpty()) {
+                        Label rep = new Label("💬 " + item.getReponse());
+                        rep.setStyle("-fx-font-style: italic; -fx-text-fill: #64748b; -fx-background-color: #f8fafc; -fx-padding: 8; -fx-background-radius: 5;");
+                        card.getChildren().add(rep);
+                    }
+
+                    card.getChildren().add(actions);
+                    setGraphic(card);
+                }
             }
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
+        });
     }
+
+    // ميثودات مساعدة للأزرار داخل الكارد
+    private void handleDeleteFromCard(Reclamation rec) {
+        listMyRecs.getSelectionModel().select(rec); // نختاروها باش نخدمو بالماكرو القديم
+        handleDelete();
+    }
+
+    private void handleUpdateFromCard(Reclamation rec) {
+        listMyRecs.getSelectionModel().select(rec);
+        handleUpdate(null);
+    }
+    private void loadData() {
+        Task<List<Reclamation>> loadTask = new Task<>() {
+            @Override
+            protected List<Reclamation> call() throws Exception {
+                return rs.afficherParUser(currentUserId);
+            }
+        };
+
+        loadTask.setOnSucceeded(e -> {
+            if (listMyRecs != null) {
+                listMyRecs.setItems(FXCollections.observableArrayList(loadTask.getValue()));
+            }
+        });
+
+        new Thread(loadTask).start();
+    }
+
+    @FXML
+    void handleEnvoyer(ActionEvent event) {
+        String typeValue = (comboType != null) ? comboType.getValue() : null;
+        String contenuValue = (txtContenu != null) ? txtContenu.getText() : "";
+
+        if (typeValue == null || contenuValue.trim().isEmpty()) {
+            new Alert(Alert.AlertType.WARNING, "Veuillez remplir les champs !").show();
+            return;
+        }
+
+        Reclamation r = new Reclamation();
+        r.setType(typeValue);
+        r.setContenu(contenuValue);
+        r.setStatut(StatutReclamation.EN_ATTENTE);
+        r.setIdUser(currentUserId);
+
+        // نثبتو قبل ما نبعثو
+        System.out.println("Tentative d'envoi de la réclamation...");
+
+        Task<Void> sendTask = new Task<>() {
+            @Override
+            protected Void call() throws Exception {
+                // هوني المشكلة: إذا الـ MySQL مسكر، باش يخرج Erreur
+                rs.ajouter(r);
+                return null;
+            }
+        };
+
+        sendTask.setOnSucceeded(e -> {
+            System.out.println("Réclamation envoyée avec succès !");
+            Platform.runLater(() -> switchToList(event));
+        });
+
+        sendTask.setOnFailed(e -> {
+            // هوني وين يظهر مساج الـ "Connection Closed"
+            Throwable ex = sendTask.getException();
+            ex.printStackTrace(); // شوف الـ Console متاع الـ IDE
+            Platform.runLater(() -> {
+                Alert alert = new Alert(Alert.AlertType.ERROR, "Erreur Database: " + ex.getMessage());
+                alert.show();
+            });
+        });
+
+        new Thread(sendTask).start();
+    }
+    @FXML
+    void handleDelete() {
+        Reclamation sel = listMyRecs.getSelectionModel().getSelectedItem();
+        if (sel == null) return;
+
+        try {
+            rs.supprimer(sel.getIdReclamation());
+            loadData();
+        } catch (SQLException e) { e.printStackTrace(); }
+    }
+
+    @FXML
+    void handleUpdate(ActionEvent event) {
+        Reclamation sel = listMyRecs.getSelectionModel().getSelectedItem();
+        if (sel == null) return;
+
+        Dialog<ButtonType> dialog = new Dialog<>();
+        dialog.setTitle("Modifier");
+        VBox content = new VBox(10);
+        content.setStyle("-fx-padding: 20;");
+        ComboBox<String> editType = new ComboBox<>(FXCollections.observableArrayList("TECHNIQUE", "SERVICE", "PAIEMENT", "AUTRE"));
+        editType.setValue(sel.getType());
+        TextArea editContenu = new TextArea(sel.getContenu());
+        content.getChildren().addAll(new Label("Type:"), editType, new Label("Description:"), editContenu);
+        dialog.getDialogPane().setContent(content);
+        dialog.getDialogPane().getButtonTypes().addAll(ButtonType.OK, ButtonType.CANCEL);
+
+        dialog.showAndWait().ifPresent(res -> {
+            if (res == ButtonType.OK) {
+                try {
+                    sel.setType(editType.getValue());
+                    sel.setContenu(editContenu.getText());
+                    rs.modifier(sel);
+                    loadData();
+                } catch (SQLException e) { e.printStackTrace(); }
+            }
+        });
+    }
+
+    @FXML void switchToList(ActionEvent event) { navigateTo("/gui/ListReclamation.fxml", event); }
+    @FXML void switchToForm(ActionEvent event) { navigateTo("/gui/AddReclamation.fxml", event); }
 
     private void navigateTo(String fxmlPath, ActionEvent event) {
         try {
@@ -101,142 +232,6 @@ public class UserReclamationController {
                 Parent page = FXMLLoader.load(getClass().getResource(fxmlPath));
                 mainPane.setCenter(page);
             }
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-    }
-
-    @FXML
-    void switchToList(ActionEvent event) {
-        try {
-            BorderPane mainPane = (BorderPane) ((Node) event.getSource()).getScene().lookup("#mainPaneUser");
-            if (mainPane != null) {
-                Parent page = FXMLLoader.load(getClass().getResource("/gui/ListReclamation.fxml"));
-                mainPane.setCenter(page);
-            }
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-    }
-
-    @FXML
-    void switchToForm(ActionEvent event) {
-        try {
-            BorderPane mainPane = (BorderPane) ((Node) event.getSource()).getScene().lookup("#mainPaneUser");
-            if (mainPane != null) {
-                Parent page = FXMLLoader.load(getClass().getResource("/gui/AddReclamation.fxml"));
-                mainPane.setCenter(page);
-            }
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-    }
-
-
-    @FXML
-    void handleEnvoyer(ActionEvent event) throws SQLException {
-        Reclamation r = new Reclamation();
-        r.setType(comboType.getValue());
-        r.setContenu(txtContenu.getText());
-        r.setStatut(StatutReclamation.EN_ATTENTE);
-        r.setIdUser(currentUserId);
-
-        rs.ajouter(r);
-
-
-        switchToList(event);
-    }
-
-    @FXML
-    void handleUpdate(ActionEvent event) {
-        Reclamation sel = tableMyRecs.getSelectionModel().getSelectedItem();
-
-        // 1. Thabbet elli famma 7aja selectionnée
-        if (sel == null) {
-            Alert alert = new Alert(Alert.AlertType.WARNING, "Veuillez sélectionner une réclamation !");
-            alert.show();
-            return;
-        }
-
-        // 2. Sna3 el Dialog kima tfahemna
-        Dialog<ButtonType> dialog = new Dialog<>();
-        dialog.setTitle("Modification");
-        dialog.setHeaderText("Mettre à jour votre demande");
-
-        VBox content = new VBox(15);
-        content.setStyle("-fx-background-color: white; -fx-padding: 20;");
-
-        ComboBox<String> editType = new ComboBox<>(FXCollections.observableArrayList("TECHNIQUE", "SERVICE", "PAIEMENT", "AUTRE"));
-        editType.setValue(sel.getType());
-        editType.setMaxWidth(Double.MAX_VALUE);
-
-        TextArea editContenu = new TextArea(sel.getContenu());
-        editContenu.setWrapText(true);
-        editContenu.setPrefHeight(150);
-
-        // Label erreur sghir (may-ben ken ki tebda fergha)
-        Label lblError = new Label("La description ne peut pas être vide !");
-        lblError.setStyle("-fx-text-fill: #ef4444; -fx-font-size: 11px;");
-        lblError.setVisible(false);
-
-        content.getChildren().addAll(
-                new Label("Type de problème :"), editType,
-                new Label("Description :"), editContenu,
-                lblError
-        );
-
-        dialog.getDialogPane().setContent(content);
-
-        // 3. Zid el Boutonnet
-        ButtonType saveButtonType = new ButtonType("Enregistrer", ButtonBar.ButtonData.OK_DONE);
-        dialog.getDialogPane().getButtonTypes().addAll(saveButtonType, ButtonType.CANCEL);
-
-        // 4. EL SÉCURITÉ HONI: Bloqui el bouton Enregistrer
-        Node saveButton = dialog.getDialogPane().lookupButton(saveButtonType);
-
-
-        editContenu.textProperty().addListener((obs, oldVal, newVal) -> {
-            boolean isInvalid = newVal.trim().isEmpty();
-            saveButton.setDisable(isInvalid);
-            lblError.setVisible(isInvalid);
-        });
-
-
-        saveButton.setDisable(sel.getContenu().trim().isEmpty());
-
-
-        dialog.getDialogPane().getStylesheets().add(getClass().getResource("/gui/style_reclamation.css").toExternalForm());
-        dialog.getDialogPane().getStyleClass().add("my-custom-dialog");
-
-
-        dialog.showAndWait().ifPresent(response -> {
-            if (response == saveButtonType) {
-                try {
-                    sel.setType(editType.getValue());
-                    sel.setContenu(editContenu.getText());
-                    rs.modifier(sel);
-                    loadData(); // Refresh el Tableau
-                } catch (SQLException e) {
-                    e.printStackTrace();
-                }
-            }
-        });
-    }
-    @FXML void handleDelete() throws SQLException {
-        Reclamation sel = tableMyRecs.getSelectionModel().getSelectedItem();
-        if (sel != null) {
-            rs.supprimer(sel.getIdReclamation());
-            loadData();
-        }
-    }
-
-    @FXML void clearFields() {
-        if (comboType != null) {
-            comboType.setValue(null);
-            txtContenu.clear();
-            btnModifier.setDisable(true);
-            btnEnvoyer.setDisable(false);
-        }
-        selectedRec = null;
+        } catch (IOException e) { e.printStackTrace(); }
     }
 }

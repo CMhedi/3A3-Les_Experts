@@ -7,47 +7,78 @@
 
 <HBox fx:id="mainContainer" prefHeight="600.0" prefWidth="1000.0" stylesheets="@styleuser.css" xmlns="http://javafx.com/javafx/17.0.12" xmlns:fx="http://javafx.com/fxml/1" fx:controller="gui.UserManagementController">
     <children>
-        <VBox alignment="CENTER_LEFT" prefWidth="450.0" spacing="12.0" style="-fx-background-color: white; -fx-padding: 40;">
+
+        <VBox alignment="CENTER_LEFT" prefWidth="450.0" spacing="10.0" style="-fx-background-color: white; -fx-padding: 30;">
             <children>
-                <Label style="-fx-font-weight: bold; -fx-font-size: 28px;" text="Inscrivez-vous" textFill="#1B4D3E" />
+                <Label style="-fx-font-weight: bold; -fx-font-size: 26px;" text="Inscrivez-vous" textFill="#1B4D3E" />
 
-                <VBox spacing="2">
-                    <TextField fx:id="txtNom" promptText="Nom" styleClass="modern-input" />
-                    <Label fx:id="errorNom" text="⚠️ Nom obligatoire" textFill="RED" visible="false" style="-fx-font-size: 10;" />
+                <ScrollPane fitToWidth="true" prefHeight="420.0" style="-fx-background-color: transparent; -fx-background: white; -fx-border-color: transparent;">
+                    <content>
+                        <VBox spacing="10" style="-fx-background-color: white; -fx-padding: 5;">
+                            <children>
+                                <VBox spacing="2">
+                                    <TextField fx:id="txtNom" promptText="Nom" styleClass="modern-input" />
+                                    <Label fx:id="errorNom" text="⚠️ Nom obligatoire" textFill="RED" visible="false" style="-fx-font-size: 10;" />
+                                </VBox>
+
+                                <VBox spacing="2">
+                                    <TextField fx:id="txtPrenom" promptText="Prénom" styleClass="modern-input" />
+                                    <Label fx:id="errorPrenom" text="⚠️ Prénom obligatoire" textFill="RED" visible="false" style="-fx-font-size: 10;" />
+                                </VBox>
+
+                                <VBox spacing="2">
+                                    <TextField fx:id="txtEmail" promptText="Email" styleClass="modern-input" />
+                                    <Label fx:id="errorEmail" text="" textFill="RED" visible="false" style="-fx-font-size: 10;" />
+                                </VBox>
+
+                                <VBox spacing="2">
+                                    <TextField fx:id="txtTel" promptText="Téléphone" styleClass="modern-input" />
+                                    <Label fx:id="errorTel" text="⚠️ 8 chiffres requis" textFill="RED" visible="false" style="-fx-font-size: 10;" />
+                                </VBox>
+
+                                <VBox spacing="2">
+                                    <PasswordField fx:id="txtMdp" promptText="Mot de passe" styleClass="modern-input" />
+                                    <Label fx:id="errorMdp" text="⚠️ Minimum 6 caractères" textFill="RED" visible="false" style="-fx-font-size: 10;" />
+                                </VBox>
+
+                                <VBox spacing="2">
+                                    <ComboBox fx:id="comboRole" prefHeight="40.0" prefWidth="350.0" promptText="Choisir un Rôle" styleClass="modern-combo" />
+                                </VBox>
+
+                                <VBox fx:id="paneCoach" managed="false" spacing="12.0" visible="false">
+                                    <children>
+                                        <HBox spacing="10">
+                                            <VBox spacing="2" HBox.hgrow="ALWAYS">
+                                                <TextField fx:id="txtAge" promptText="Âge" styleClass="modern-input" />
+                                                <Label fx:id="errorAge" text="⚠️ Âge requis (18+)" textFill="RED" visible="false" style="-fx-font-size: 10;" />
+                                            </VBox>
+                                            <VBox spacing="2" HBox.hgrow="ALWAYS">
+                                                <TextField fx:id="txtExperience" promptText="Expérience" styleClass="modern-input" />
+                                                <Label fx:id="errorExperience" text="⚠️ Requis" textFill="RED" visible="false" style="-fx-font-size: 10;" />
+                                            </VBox>
+                                        </HBox>
+
+                                        <ComboBox fx:id="comboSpecialite" prefWidth="350.0" promptText="Spécialité" styleClass="modern-combo" />
+
+                                        <ComboBox fx:id="comboDispo" prefWidth="350.0" promptText="Disponibilité" styleClass="modern-combo" />
+
+                                        <TextArea fx:id="txtBio" prefHeight="80.0" promptText="Certifications et Biographie..." styleClass="modern-input" wrapText="true" />
+                                    </children>
+                                </VBox>
+                            </children>
+                        </VBox>
+                    </content>
+                </ScrollPane>
+
+                <VBox alignment="CENTER" spacing="10">
+                    <Button fx:id="btnAjouter" onAction="#handleAjouter" prefHeight="45.0" prefWidth="350.0" styleClass="main-button" text="REGISTER" />
+                    <HBox alignment="CENTER" spacing="5.0">
+                        <children>
+                            <Label text="Vous avez déjà un compte ?" textFill="#7f8c8d" />
+                            <Label onMouseClicked="#handleGoToLogin" style="-fx-cursor: hand; -fx-font-weight: bold;" text="Se connecter" textFill="#3498DB" />
+                        </children>
+                    </HBox>
                 </VBox>
-
-                <VBox spacing="2">
-                    <TextField fx:id="txtPrenom" promptText="Prénom" styleClass="modern-input" />
-                    <Label fx:id="errorPrenom" text="⚠️ Prénom obligatoire" textFill="RED" visible="false" style="-fx-font-size: 10;" />
-                </VBox>
-
-                <VBox spacing="2">
-                    <TextField fx:id="txtEmail" promptText="Email" styleClass="modern-input" />
-                    <Label fx:id="errorEmail" text="" textFill="RED" visible="false" style="-fx-font-size: 10;" />
-                </VBox>
-
-                <VBox spacing="2">
-                    <TextField fx:id="txtTel" promptText="Téléphone" styleClass="modern-input" />
-                    <Label fx:id="errorTel" text="⚠️ 8 chiffres requis" textFill="RED" visible="false" style="-fx-font-size: 10;" />
-                </VBox>
-
-                <VBox spacing="2">
-                    <PasswordField fx:id="txtMdp" promptText="Mot de passe" styleClass="modern-input" />
-                    <Label fx:id="errorMdp" text="⚠️ Minimum 6 caractères" textFill="RED" visible="false" style="-fx-font-size: 10;" />
-                </VBox>
-
-                <VBox spacing="2">
-                    <ComboBox fx:id="comboRole" prefHeight="40.0" prefWidth="350.0" promptText="Choisir un Rôle" styleClass="modern-combo" />
-                </VBox>
-
-                <Button fx:id="btnAjouter" onAction="#handleAjouter" prefHeight="45.0" prefWidth="350.0" styleClass="main-button" text="REGISTER" />
-
-                <HBox alignment="CENTER" spacing="5.0">
-                    <children>
-                        <Label text="Vous avez déjà un compte ?" textFill="#7f8c8d" />
-                        <Label onMouseClicked="#handleGoToLogin" style="-fx-cursor: hand; -fx-font-weight: bold;" text="Se connecter" textFill="#3498DB" />
-                    </children>
-                </HBox>
             </children>
         </VBox>
 
@@ -62,5 +93,6 @@
                 </VBox>
             </children>
         </AnchorPane>
+
     </children>
 </HBox>

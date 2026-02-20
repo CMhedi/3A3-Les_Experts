@@ -15,85 +15,64 @@ public class UserApp {
     private String motDePasse;
     private LocalDateTime dateCreation;
 
+    // ===== Jdid: Attributs Spécifiques Coach =====
+    private int age;
+    private String experience;
+    private String specialite; // Tnajem t-rod'ha Enum ba3d ken t-7eb
+    private String bioCertifs;
+    private String disponibilite;
+
     public UserApp() {}
 
-    // ===== Getters & Setters =====
+    // ===== Getters & Setters Standard =====
 
-    public int getIdUser() {
-        return idUser;
-    }
+    public int getIdUser() { return idUser; }
+    public void setIdUser(int idUser) { this.idUser = idUser; }
 
-    public void setIdUser(int idUser) {
-        this.idUser = idUser;
-    }
+    public String getNom() { return nom; }
+    public void setNom(String nom) { this.nom = nom; }
 
-    public String getNom() {
-        return nom;
-    }
+    public String getPrenom() { return prenom; }
+    public void setPrenom(String prenom) { this.prenom = prenom; }
 
-    public void setNom(String nom) {
-        this.nom = nom;
-    }
+    public String getEmail() { return email; }
+    public void setEmail(String email) { this.email = email; }
 
-    public String getPrenom() {
-        return prenom;
-    }
+    public String getTelephone() { return telephone; }
+    public void setTelephone(String telephone) { this.telephone = telephone; }
 
-    public void setPrenom(String prenom) {
-        this.prenom = prenom;
-    }
+    public String getImageUrl() { return imageUrl; }
+    public void setImageUrl(String imageUrl) { this.imageUrl = imageUrl; }
 
-    public String getEmail() {
-        return email;
-    }
+    public RoleUser getRole() { return role; }
+    public void setRole(RoleUser role) { this.role = role; }
 
-    public void setEmail(String email) {
-        this.email = email;
-    }
+    public String getMotDePasse() { return motDePasse; }
+    public void setMotDePasse(String motDePasse) { this.motDePasse = motDePasse; }
 
-    public String getTelephone() {
-        return telephone;
-    }
+    public LocalDateTime getDateCreation() { return dateCreation; }
+    public void setDateCreation(LocalDateTime dateCreation) { this.dateCreation = dateCreation; }
 
-    public void setTelephone(String telephone) {
-        this.telephone = telephone;
-    }
+    // ===== Jdid: Getters & Setters Coach =====
 
-    public String getImageUrl() {
-        return imageUrl;
-    }
+    public int getAge() { return age; }
+    public void setAge(int age) { this.age = age; }
 
-    public void setImageUrl(String imageUrl) {
-        this.imageUrl = imageUrl;
-    }
+    public String getExperience() { return experience; }
+    public void setExperience(String experience) { this.experience = experience; }
 
-    public RoleUser getRole() {
-        return role;
-    }
+    public String getSpecialite() { return specialite; }
+    public void setSpecialite(String specialite) { this.specialite = specialite; }
 
-    public void setRole(RoleUser role) {
-        this.role = role;
-    }
+    public String getBioCertifs() { return bioCertifs; }
+    public void setBioCertifs(String bioCertifs) { this.bioCertifs = bioCertifs; }
 
-    public String getMotDePasse() {
-        return motDePasse;
-    }
-
-    public void setMotDePasse(String motDePasse) {
-        this.motDePasse = motDePasse;
-    }
-
-    public LocalDateTime getDateCreation() {
-        return dateCreation;
-    }
-
-    public void setDateCreation(LocalDateTime dateCreation) {
-        this.dateCreation = dateCreation;
-    }
+    public String getDisponibilite() { return disponibilite; }
+    public void setDisponibilite(String disponibilite) { this.disponibilite = disponibilite; }
 
     // ===== toString =====
     @Override
     public String toString() {
-        return prenom + " " + nom + " | " + role;
+        return prenom + " " + nom + " | " + role + (role == RoleUser.COACH ? " (" + specialite + ")" : "");
     }
 }
