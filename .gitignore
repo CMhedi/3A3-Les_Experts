@@ -1,0 +1,53 @@
+target/
+!.mvn/wrapper/maven-wrapper.jar
+!**/src/main/**/target/
+!**/src/test/**/target/
+.kotlin
+
+### IntelliJ IDEA ###
+.idea/modules.xml
+.idea/jarRepositories.xml
+.idea/compiler.xml
+.idea/libraries/
+*.iws
+*.iml
+*.ipr
+
+### Eclipse ###
+.apt_generated
+.classpath
+.factorypath
+.project
+.settings
+.springBeans
+.sts4-cache
+
+### NetBeans ###
+/nbproject/private/
+/nbbuild/
+/dist/
+/nbdist/
+/.nb-gradle/
+build/
+!**/src/main/**/build/
+!**/src/test/**/build/
+
+### VS Code ###
+.vscode/
+
+### Mac OS ###
+.DS_Store/ s r c / m a i n / r e s o u r c e s / u p l o a d s / a u d i o / 
+ 
+ / s r c / m a i n / r e s o u r c e s / m o d e l s / v o s k - m o d e l - s m a l l - e n - u s - 0 . 1 5 / 
+ 
+ / s r c / m a i n / r e s o u r c e s / u p l o a d s / a u d i o / 
+ 
+ / s r c / m a i n / r e s o u r c e s / m o d e l s / 
+ 
+ 
+target/
+.idea/
+*.log
+*.class
+*.wav
+*.mp3
