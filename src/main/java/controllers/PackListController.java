@@ -2,17 +2,28 @@ package controllers;
 
 import Entities.Pack;
 import Services.PackService;
+import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
+import javafx.scene.input.Clipboard;
+import javafx.scene.input.ClipboardContent;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 
+import java.awt.Desktop;
+import java.io.ByteArrayInputStream;
+import java.net.URI;
+import java.net.http.HttpClient;
+import java.net.http.HttpRequest;
+import java.net.http.HttpResponse;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
@@ -25,6 +36,10 @@ public class PackListController {
     @FXML private TextField txtSearch;
     @FXML private Label lblTotal;
 
+    // ✅ (OPTIONNEL) QR/PDF nodes (ajoute-les dans FXML si tu veux l’affichage)
+    @FXML private ImageView imgQr;
+    @FXML private Label lblQrHint;
+
     private final PackService service = new PackService();
     private final ObservableList<Pack> master = FXCollections.observableArrayList();
 
@@ -32,10 +47,28 @@ public class PackListController {
     private Pack selectedPack = null;
     private HBox selectedRow = null;
 
+    /* =========================================================
+       QR/PDF API CONFIG
+       =========================================================
+       - EA_QR_API_BASE : base URL pour appeler ton QrPdfApiServer depuis PC
+         ex: http://localhost:8086
+       - IMPORTANT: dans QrPdfApiServer, utilise EA_PUBLIC_BASE_URL = http://IP_PC:8086
+         pour que le téléphone puisse télécharger le PDF après scan.
+       ========================================================= */
+    private final String API_BASE = System.getenv().getOrDefault("EA_QR_API_BASE", "http://localhost:8086");
+    private final HttpClient http = HttpClient.newHttpClient();
+    private String currentKind = "both";
+    private String currentPdfUrl = API_BASE + "/api/export/pdf?kind=" + currentKind;
+
     @FXML
     private void initialize() {
         txtSearch.textProperty().addListener((obs, o, n) -> render());
         refresh();
+
+        // ✅ si QR bloc موجود في FXML، نولّد QR افتراضياً
+        if (imgQr != null) {
+            loadQr("both");
+        }
     }
 
     @FXML
@@ -137,7 +170,7 @@ public class PackListController {
                 -fx-padding: 10;
                 """);
 
-        row.setOnMouseClicked(e -> selectRow(row, p));
+        // hover
         row.setOnMouseEntered(e -> {
             if (row != selectedRow) row.setStyle(row.getStyle() + "-fx-background-color: rgba(255,255,255,0.65);");
         });
@@ -151,7 +184,7 @@ public class PackListController {
                 """);
         });
 
-        // double click = edit
+        // click + double click
         row.setOnMouseClicked(e -> {
             selectRow(row, p);
             if (e.getClickCount() == 2) onEdit();
@@ -214,6 +247,88 @@ public class PackListController {
         } catch (Exception e) {
             showError(e);
         }
+    }
+
+    /* =========================================================
+       QR/PDF ACTIONS (bind in FXML)
+       ========================================================= */
+    @FXML
+    private void onQrPacks() {
+        loadQr("packs");
+    }
+
+    @FXML
+    private void onQrInscriptions() {
+        loadQr("inscriptions");
+    }
+
+    @FXML
+    private void onQrBoth() {
+        loadQr("both");
+    }
+
+    @FXML
+    private void onOpenPdfLink() {
+        try {
+            Desktop.getDesktop().browse(URI.create(currentPdfUrl));
+        } catch (Exception e) {
+            showError(e);
+        }
+    }
+
+    @FXML
+    private void onCopyPdfLink() {
+        ClipboardContent cc = new ClipboardContent();
+        cc.putString(currentPdfUrl);
+        Clipboard.getSystemClipboard().setContent(cc);
+
+        if (lblQrHint != null) {
+            lblQrHint.setText("✅ Lien copié: " + currentPdfUrl);
+        }
+    }
+
+    private void loadQr(String kind) {
+        this.currentKind = kind;
+        this.currentPdfUrl = API_BASE + "/api/export/pdf?kind=" + kind;
+
+        if (lblQrHint != null) {
+            lblQrHint.setText("Génération du QR (" + kind + ") ...");
+        }
+
+        // si imgQr مش موجودة في FXML، ما نعمل شيء
+        if (imgQr == null) return;
+
+        String qrUrl = API_BASE + "/api/qr?kind=" + kind;
+
+        HttpRequest req = HttpRequest.newBuilder()
+                .uri(URI.create(qrUrl))
+                .GET()
+                .build();
+
+        http.sendAsync(req, HttpResponse.BodyHandlers.ofByteArray())
+                .thenAccept(res -> {
+                    if (res.statusCode() != 200) {
+                        Platform.runLater(() -> showInfo("QR/PDF", "QR API error: HTTP " + res.statusCode()));
+                        return;
+                    }
+
+                    Image img = new Image(new ByteArrayInputStream(res.body()));
+                    Platform.runLater(() -> {
+                        imgQr.setImage(img);
+                        if (lblQrHint != null) {
+                            lblQrHint.setText("✅ Scan QR avec ton téléphone → PDF download (" + kind + ")");
+                        }
+                    });
+                })
+                .exceptionally(ex -> {
+                    Platform.runLater(() -> showInfo(
+                            "QR/PDF",
+                            "Impossible de contacter l’API QR.\n" +
+                                    "Vérifie que QrPdfApiServer tourne sur: " + API_BASE + "\n\n" +
+                                    ex.getMessage()
+                    ));
+                    return null;
+                });
     }
 
     private String safe(String s) {
