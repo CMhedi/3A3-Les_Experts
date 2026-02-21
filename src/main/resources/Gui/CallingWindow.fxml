@@ -22,17 +22,17 @@
     </StackPane>
 
     <VBox alignment="CENTER" spacing="10">
-        <Label fx:id="contactName" text="Nom du Contact" textFill="WHITE">
+        <Label fx:id="callerName" text="Nom du Contact" textFill="WHITE">
             <font><Font name="System Bold" size="22.0" /></font>
         </Label>
-        <Label text="Appel audio en cours..." textFill="#b3b3b3">
+        <Label fx:id="callStatus" text="Appel audio en cours..." textFill="#b3b3b3">
             <font><Font size="14.0" /></font>
         </Label>
     </VBox>
 
     <Region VBox.vgrow="ALWAYS" />
 
-    <Button onAction="#handleCancelCall" prefHeight="65" prefWidth="65"
+    <Button onAction="#handleReject" prefHeight="65" prefWidth="65"
             style="-fx-background-color: #ff3b30; -fx-background-radius: 50; -fx-cursor: hand; -fx-effect: dropshadow(three-pass-box, rgba(255,59,48,0.4), 10, 0, 0, 0);"
             text="📴" textFill="WHITE">
         <font><Font size="24.0" /></font>

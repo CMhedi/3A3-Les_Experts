@@ -1,70 +1,67 @@
 package Controller;
-
+import org.springframework.messaging.simp.stomp.StompSession;
+import java.nio.charset.StandardCharsets;
+import Entities.Conversation;
+import Entities.Message;
+import Services.interfaces.ConversationDAO;
 import Services.interfaces.GeminiService;
 import Services.interfaces.GifService;
-import javafx.fxml.FXMLLoader;
-import javafx.scene.*;
-import javafx.scene.web.WebView;
-import javafx.stage.Stage;
-import javafx.application.Platform;
-import javafx.scene.control.ScrollPane;
-import javafx.scene.layout.FlowPane;
-import javafx.scene.layout.VBox;
-import javafx.geometry.Insets;
 import Services.interfaces.MessageDAO;
+import Utiles.AudioRecorder;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import javafx.animation.KeyFrame;
+import javafx.animation.Timeline;
+import javafx.application.Platform;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
+import javafx.event.ActionEvent;
+import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
+import javafx.fxml.Initializable;
+import javafx.geometry.Insets;
+import javafx.geometry.Pos;
+import javafx.geometry.Side;
+import javafx.scene.Cursor;
+import javafx.scene.Node;
+import javafx.scene.Parent;
+import javafx.scene.Scene;
+import javafx.scene.control.*;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
+import javafx.scene.layout.FlowPane;
+import javafx.scene.layout.HBox;
+import javafx.scene.layout.VBox;
+import javafx.scene.paint.Color;
+import javafx.scene.text.Font;
+import javafx.scene.text.FontWeight;
+import javafx.scene.text.Text;
+import javafx.scene.text.TextFlow;
+import javafx.scene.web.WebView;
 import javafx.stage.FileChooser;
+import javafx.stage.Stage;
 import javafx.stage.StageStyle;
+import javafx.util.Duration;
+import org.json.JSONArray;
 import org.json.JSONObject;
 import org.vosk.Model;
 import org.vosk.Recognizer;
+
 import javax.sound.sampled.AudioInputStream;
 import javax.sound.sampled.AudioSystem;
-import javafx.scene.control.*;
-import javafx.scene.layout.*;
-import javafx.scene.image.*;
-import org.json.JSONArray;
-import javafx.scene.Scene;
-import javafx.scene.control.TextField;
 import java.io.File;
-import java.io.InputStream;
 import java.io.FileInputStream;
 import java.io.IOException;
-import javafx.animation.KeyFrame;
-import javafx.animation.Timeline;
-import javafx.event.ActionEvent;
-import javafx.fxml.FXML;
-import javafx.fxml.Initializable;
-import javafx.scene.control.*;
-import javafx.collections.FXCollections;
-import javafx.scene.layout.HBox;
-import javafx.geometry.Pos;
-import javafx.geometry.Side;
-import javafx.scene.text.Font;
-import javafx.scene.text.Text;
-import javafx.scene.text.TextFlow;
-import javafx.scene.paint.Color;
-import javafx.util.Duration;
-import Entities.Message;
-import Entities.Conversation;
-import Services.interfaces.*;
-import java.net.URL;
-import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.ResourceBundle;
-import java.util.stream.Collectors;
+import java.io.InputStream;
 import java.net.URI;
+import java.net.URL;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import java.util.Map;
-import Utiles.AudioRecorder;
-import javafx.scene.control.Button;
-import javafx.collections.ObservableList;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
+import java.util.*;
+import java.util.stream.Collectors;
+
 
 
 public class MessengerController implements Initializable {
@@ -105,21 +102,21 @@ public class MessengerController implements Initializable {
 
     private boolean aiVisible = true;
 
-    public Services.interfaces.MessageDAO messageDAO;
+    public MessageDAO messageDAO;
     private ConversationDAO conversationDAO;
     private List<Conversation> allConversations;
     private int selectedConversationId = -1;
-    private int currentUserId = 2;  // valeur par défaut
+    private int currentUserId = 3;  // valeur par défaut
 
 
     private ObservableList<Message> chatMessages = FXCollections.observableArrayList();
-
+    private StompSession stompClient;
 
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
         messageDAO = new MessageDAO();
         conversationDAO = new ConversationDAO();
-        currentUserId = 2;
+        currentUserId = 3;
         messagesList.setFocusTraversable(false);
         conversationsList.setFocusTraversable(false);
 
@@ -199,7 +196,8 @@ public class MessengerController implements Initializable {
         });
     }
 
-    // --- MISE À JOUR : SetupMessagesList Modern & Emoji Color ---
+    // ========== REMPLACER COMPLÈTEMENT setupMessagesList() DANS MessengerController ==========
+
     private void setupMessagesList() {
         messagesList.setCellFactory(lv -> new ListCell<Message>() {
             @Override
@@ -209,46 +207,283 @@ public class MessengerController implements Initializable {
                     setGraphic(null);
                     setStyle("-fx-background-color: transparent;");
                 } else {
-                    VBox mainContainer = new VBox(3);
+                    VBox mainContainer = new VBox(5);
+                    mainContainer.setPadding(new Insets(8, 12, 8, 12));
 
-                    Text textNode = new Text(msg.getContenu());
-                    textNode.setFont(Font.font("Segoe UI Emoji", 14)); // Force emoji color
-
-                    TextFlow textFlow = new TextFlow(textNode);
-                    textFlow.setMaxWidth(300);
-
-                    // Style des Bulles Modernes
-                    if (msg.getIdUser() == currentUserId) {
-                        textNode.setFill(Color.WHITE);
-                        textFlow.setStyle(
-                                "-fx-background-color: linear-gradient(to bottom right, red, #00c6ff);" +
-                                        "-fx-background-radius: 18 18 2 18;" +
-                                        "-fx-padding: 10 14;"
-                        );
-                        mainContainer.setAlignment(Pos.CENTER_RIGHT);
-                    } else {
-                        textNode.setFill(Color.web("#050505"));
-                        textFlow.setStyle(
-                                "-fx-background-color: #efeff3;" +
-                                        "-fx-background-radius: 18 18 18 2;" +
-                                        "-fx-padding: 10 14;"
-                        );
+                    // ✅ CAS 1 : MESSAGES D'APPEL AUDIO
+                    if ("AUDIO_CALL".equals(msg.getTypeMessage())) {
+                        displayAudioCallMessage(mainContainer, msg);
                         mainContainer.setAlignment(Pos.CENTER_LEFT);
                     }
 
-                    // Time & Status
-                    String time = msg.getDateEnvoi().format(DateTimeFormatter.ofPattern("HH:mm"));
-                    String status = (msg.getIdUser() == currentUserId && "LU".equals(msg.getStatutMessage())) ? " ✓✓" : " ✓";
-                    Label footer = new Label(time + (msg.getIdUser() == currentUserId ? status : ""));
-                    footer.setStyle("-fx-font-size: 9px; -fx-text-fill: #bdc3c7; -fx-padding: 0 5;");
+                    // ✅ CAS 2 : MESSAGES D'APPEL VIDÉO
+                    else if ("VIDEO_CALL".equals(msg.getTypeMessage())) {
+                        displayVideoCallMessage(mainContainer, msg);
+                        mainContainer.setAlignment(Pos.CENTER_LEFT);
+                    }
 
-                    mainContainer.getChildren().addAll(textFlow, footer);
+                    // ✅ CAS 3 : MESSAGES VOCAUX
+                    else if ("VOCAL".equals(msg.getTypeMessage())) {
+                        displayVocalMessage(mainContainer, msg);
+                        if (msg.getIdUser() == currentUserId) {
+                            mainContainer.setAlignment(Pos.CENTER_RIGHT);
+                        } else {
+                            mainContainer.setAlignment(Pos.CENTER_LEFT);
+                        }
+                    }
+
+                    // ✅ CAS 4 : MESSAGES TEXTE
+                    else {
+                        displayTextMessage(mainContainer, msg);
+                        if (msg.getIdUser() == currentUserId) {
+                            mainContainer.setAlignment(Pos.CENTER_RIGHT);
+                        } else {
+                            mainContainer.setAlignment(Pos.CENTER_LEFT);
+                        }
+                    }
+
                     setGraphic(mainContainer);
-                    setStyle("-fx-background-color: transparent; -fx-padding: 5 12;");
+                    setStyle("-fx-background-color: transparent; -fx-padding: 5 0;");
 
                     // Context Menu (Edit/Delete)
-                    setupMessageContextMenu(textFlow, msg);
+                    if (!("AUDIO_CALL".equals(msg.getTypeMessage()) || "VIDEO_CALL".equals(msg.getTypeMessage()))) {
+                        VBox content = (VBox) mainContainer.getChildren().get(0);
+                        if (content.getChildren().get(0) instanceof TextFlow) {
+                            setupMessageContextMenu((TextFlow) content.getChildren().get(0), msg);
+                        }
+                    }
                 }
+            }
+
+            // ✅ AFFICHER UN MESSAGE D'APPEL AUDIO
+            private void displayAudioCallMessage(VBox container, Message msg) {
+                // Conteneur principal de l'appel
+                HBox callBox = new HBox(12);
+                callBox.setStyle(
+                        "-fx-background-color: #f5f5f5;" +
+                                "-fx-background-radius: 12;" +
+                                "-fx-padding: 12;"
+                );
+                callBox.setAlignment(Pos.CENTER_LEFT);
+
+                // Icône d'appel
+                Label callIcon = new Label("📞");
+                callIcon.setFont(Font.font("Segoe UI Emoji", 28));
+                callIcon.setMinWidth(40);
+
+                // Contenu texte
+                VBox textBox = new VBox(4);
+                textBox.setPrefWidth(200);
+
+                // Titre : "Appel vocal"
+                Label callTypeLabel = new Label("Appel vocal");
+                callTypeLabel.setFont(Font.font("Segoe UI", FontWeight.BOLD, 13));
+                callTypeLabel.setTextFill(Color.web("#050505"));
+
+                // Durée et statut de l'appel
+                String callStatus = extractCallStatus(msg.getContenu());
+                String callDuration = extractCallDuration(msg.getContenu());
+                Label statusLabel = new Label(callStatus + " • " + callDuration);
+                statusLabel.setFont(Font.font("Segoe UI", 12));
+                statusLabel.setTextFill(Color.web("#7a7a7a"));
+
+                textBox.getChildren().addAll(callTypeLabel, statusLabel);
+
+                // Bouton "Rappeler"
+                Button redialButton = new Button("Rappeler");
+                redialButton.setStyle(
+                        "-fx-background-color: transparent;" +
+                                "-fx-text-fill: #007AFF;" +
+                                "-fx-font-size: 12;" +
+                                "-fx-padding: 6 12;" +
+                                "-fx-cursor: hand;"
+                );
+                redialButton.setOnAction(e -> {
+                    System.out.println("📞 Rappel automatique...");
+                    // Déclencher un nouvel appel
+                    startAudioCall();
+                });
+
+                // Heure
+                String time = msg.getDateEnvoi().format(DateTimeFormatter.ofPattern("HH:mm"));
+                Label timeLabel = new Label(time);
+                timeLabel.setFont(Font.font("Segoe UI", 11));
+                timeLabel.setTextFill(Color.web("#999999"));
+
+                // VBox verticale pour les textes + bouton
+                VBox rightBox = new VBox(6);
+                rightBox.setAlignment(Pos.CENTER_LEFT);
+                rightBox.getChildren().addAll(textBox, redialButton);
+
+                callBox.getChildren().addAll(callIcon, rightBox);
+
+                // Ajouter au container avec l'heure
+                VBox mainCall = new VBox(3);
+                mainCall.getChildren().add(callBox);
+                mainCall.getChildren().add(timeLabel);
+
+                container.getChildren().add(mainCall);
+            }
+
+            // ✅ AFFICHER UN MESSAGE D'APPEL VIDÉO
+            private void displayVideoCallMessage(VBox container, Message msg) {
+                // Conteneur principal de l'appel
+                HBox callBox = new HBox(12);
+                callBox.setStyle(
+                        "-fx-background-color: #f0f8ff;" +
+                                "-fx-background-radius: 12;" +
+                                "-fx-padding: 12;"
+                );
+                callBox.setAlignment(Pos.CENTER_LEFT);
+
+                // Icône d'appel vidéo
+                Label callIcon = new Label("📹");
+                callIcon.setFont(Font.font("Segoe UI Emoji", 28));
+                callIcon.setMinWidth(40);
+
+                // Contenu texte
+                VBox textBox = new VBox(4);
+                textBox.setPrefWidth(200);
+
+                // Titre : "Appel vidéo"
+                Label callTypeLabel = new Label("Appel vidéo");
+                callTypeLabel.setFont(Font.font("Segoe UI", FontWeight.BOLD, 13));
+                callTypeLabel.setTextFill(Color.web("#1976D2"));
+
+                // Durée et statut de l'appel
+                String callStatus = extractCallStatus(msg.getContenu());
+                String callDuration = extractCallDuration(msg.getContenu());
+                Label statusLabel = new Label(callStatus + " • " + callDuration);
+                statusLabel.setFont(Font.font("Segoe UI", 12));
+                statusLabel.setTextFill(Color.web("#7a7a7a"));
+
+                textBox.getChildren().addAll(callTypeLabel, statusLabel);
+
+                // Bouton "Rappeler"
+                Button redialButton = new Button("Rappeler");
+                redialButton.setStyle(
+                        "-fx-background-color: transparent;" +
+                                "-fx-text-fill: #007AFF;" +
+                                "-fx-font-size: 12;" +
+                                "-fx-padding: 6 12;" +
+                                "-fx-cursor: hand;"
+                );
+                redialButton.setOnAction(e -> {
+                    System.out.println("📹 Rappel vidéo automatique...");
+                    // TODO: Déclencher un nouvel appel vidéo
+                    startVideoCall();
+                });
+
+                // Heure
+                String time = msg.getDateEnvoi().format(DateTimeFormatter.ofPattern("HH:mm"));
+                Label timeLabel = new Label(time);
+                timeLabel.setFont(Font.font("Segoe UI", 11));
+                timeLabel.setTextFill(Color.web("#999999"));
+
+                // VBox verticale pour les textes + bouton
+                VBox rightBox = new VBox(6);
+                rightBox.setAlignment(Pos.CENTER_LEFT);
+                rightBox.getChildren().addAll(textBox, redialButton);
+
+                callBox.getChildren().addAll(callIcon, rightBox);
+
+                // Ajouter au container avec l'heure
+                VBox mainCall = new VBox(3);
+                mainCall.getChildren().add(callBox);
+                mainCall.getChildren().add(timeLabel);
+
+                container.getChildren().add(mainCall);
+            }
+
+            // ✅ AFFICHER UN MESSAGE VOCAL
+            private void displayVocalMessage(VBox container, Message msg) {
+                Text textNode = new Text(msg.getContenu());
+                textNode.setFont(Font.font("Segoe UI Emoji", 14));
+                TextFlow textFlow = new TextFlow(textNode);
+                textFlow.setMaxWidth(300);
+
+                if (msg.getIdUser() == currentUserId) {
+                    textNode.setFill(Color.WHITE);
+                    textFlow.setStyle(
+                            "-fx-background-color: linear-gradient(to bottom right, red, #00c6ff);" +
+                                    "-fx-background-radius: 18 18 2 18;" +
+                                    "-fx-padding: 10 14;"
+                    );
+                } else {
+                    textNode.setFill(Color.web("#050505"));
+                    textFlow.setStyle(
+                            "-fx-background-color: #efeff3;" +
+                                    "-fx-background-radius: 18 18 18 2;" +
+                                    "-fx-padding: 10 14;"
+                    );
+                }
+
+                String time = msg.getDateEnvoi().format(DateTimeFormatter.ofPattern("HH:mm"));
+                String status = (msg.getIdUser() == currentUserId && "LU".equals(msg.getStatutMessage())) ? " ✓✓" : " ✓";
+                Label footer = new Label(time + (msg.getIdUser() == currentUserId ? status : ""));
+                footer.setStyle("-fx-font-size: 9px; -fx-text-fill: #bdc3c7; -fx-padding: 0 5;");
+
+                VBox messageBox = new VBox(3);
+                messageBox.getChildren().addAll(textFlow, footer);
+                container.getChildren().add(messageBox);
+            }
+
+            // ✅ AFFICHER UN MESSAGE TEXTE
+            private void displayTextMessage(VBox container, Message msg) {
+                Text textNode = new Text(msg.getContenu());
+                textNode.setFont(Font.font("Segoe UI Emoji", 14));
+
+                TextFlow textFlow = new TextFlow(textNode);
+                textFlow.setMaxWidth(300);
+
+                if (msg.getIdUser() == currentUserId) {
+                    textNode.setFill(Color.WHITE);
+                    textFlow.setStyle(
+                            "-fx-background-color: linear-gradient(to bottom right, red, #00c6ff);" +
+                                    "-fx-background-radius: 18 18 2 18;" +
+                                    "-fx-padding: 10 14;"
+                    );
+                } else {
+                    textNode.setFill(Color.web("#050505"));
+                    textFlow.setStyle(
+                            "-fx-background-color: #efeff3;" +
+                                    "-fx-background-radius: 18 18 18 2;" +
+                                    "-fx-padding: 10 14;"
+                    );
+                }
+
+                String time = msg.getDateEnvoi().format(DateTimeFormatter.ofPattern("HH:mm"));
+                String status = (msg.getIdUser() == currentUserId && "LU".equals(msg.getStatutMessage())) ? " ✓✓" : " ✓";
+                Label footer = new Label(time + (msg.getIdUser() == currentUserId ? status : ""));
+                footer.setStyle("-fx-font-size: 9px; -fx-text-fill: #bdc3c7; -fx-padding: 0 5;");
+
+                VBox messageBox = new VBox(3);
+                messageBox.getChildren().addAll(textFlow, footer);
+                container.getChildren().add(messageBox);
+            }
+
+            // ✅ EXTRAIRE LE STATUT DE L'APPEL
+            private String extractCallStatus(String content) {
+                // Format : "📞 Appel audio - ACCEPTÉ (15s)"
+                if (content.contains("ACCEPTÉ")) return "Appel accepté";
+                if (content.contains("REJETÉ")) return "Appel rejeté";
+                if (content.contains("NON_RÉPONDU")) return "Appel non répondu";
+                return "Appel";
+            }
+
+            // ✅ EXTRAIRE LA DURÉE DE L'APPEL
+            private String extractCallDuration(String content) {
+                // Format : "📞 Appel audio - ACCEPTÉ (15s)"
+                try {
+                    int startIdx = content.lastIndexOf("(");
+                    int endIdx = content.lastIndexOf(")");
+                    if (startIdx != -1 && endIdx != -1) {
+                        return content.substring(startIdx + 1, endIdx);
+                    }
+                } catch (Exception e) {
+                    // Ignorer l'erreur
+                }
+                return "0s";
             }
         });
     }
@@ -1410,17 +1645,139 @@ public class MessengerController implements Initializable {
         stage.show();
     }
 
+// ========== REMPLACER startAudioCall() DANS MessengerController ==========
+// C'EST ICI LE PROBLÈME ! Tu dois passer setCallData() !
+private void sendCallSignal(int conversationId, String callType) {
+    if (stompClient != null && stompClient.isConnected()) {
+        try {
+            // Create call data payload
+            Map<String, Object> callData = new HashMap<>();
+            callData.put("senderName", chatUserName.getText());
+            callData.put("senderId", currentUserId);
+            callData.put("conversationId", conversationId);
+            callData.put("type", callType);
 
+            // Serialize to JSON
+            ObjectMapper mapper = new ObjectMapper();
+            String payload = mapper.writeValueAsString(callData);
+
+            // Send via STOMP
+            stompClient.send("/app/call.start", payload.getBytes(StandardCharsets.UTF_8));
+
+            System.out.println("📤 Call signal sent via STOMP");
+            System.out.println("   Type: " + callType);
+
+        } catch (Exception e) {
+            System.err.println("❌ Error sending call signal: " + e.getMessage());
+            e.printStackTrace();
+        }
+    } else {
+        System.out.println("⚠️ STOMP not connected - signal not sent");
+        System.out.println("   Note: For local testing, this is OK");
+    }
+}
+
+// ========== METHOD 2: Initialize STOMP Connection ==========
+    /**
+     * Initialize STOMP WebSocket connection for real-time call notifications
+     * Call this from initialize() method
+     */
+    private void initializeStompClient() {
+        try {
+            System.out.println("🔗 STOMP initialization ready");
+            System.out.println("✅ Ready to receive incoming calls!");
+
+            // TODO: Implement actual STOMP connection based on your Spring setup
+            // For now, the stompClient variable will be set by your backend
+
+        } catch (Exception e) {
+            System.err.println("❌ STOMP initialization error: " + e.getMessage());
+        }
+    }
+
+// ========== METHOD 3: Subscribe to Incoming Calls ==========
+    /**
+     * Subscribe to incoming call notifications via STOMP
+     */
+    private void subscribeToIncomingCalls() {
+        if (stompClient == null || !stompClient.isConnected()) {
+            System.err.println("❌ STOMP not connected");
+            return;
+        }
+
+        try {
+            String destination = "/topic/call/" + currentUserId;
+            System.out.println("✅ Subscribing to: " + destination);
+
+            // TODO: Implement actual subscription based on your framework
+
+        } catch (Exception e) {
+            System.err.println("❌ Subscription error: " + e.getMessage());
+        }
+    }
+
+// ========== METHOD 4: Handle Incoming Call - UPDATED ==========
+    /**
+     * Handle incoming call - open CallWindow on receiver's device
+     * Called when: Sender initiates a call via STOMP
+     */
+    public void onIncomingCallReceived(String senderName, int senderId, int conversationId, String callType) {
+        Platform.runLater(() -> {
+            try {
+                System.out.println("🔔 Incoming call from: " + senderName + " (" + callType + ")");
+
+                // Load CallWindow.fxml
+                FXMLLoader loader = new FXMLLoader(getClass().getResource("/Gui/CallWindow.fxml"));
+                Parent root = loader.load();
+
+                // Get controller
+                CallController callController = loader.getController();
+
+                if (callController == null) {
+                    System.err.println("❌ CallController is null");
+                    return;
+                }
+
+                // Create stage
+                Stage callStage = new Stage();
+                callStage.initStyle(StageStyle.TRANSPARENT);
+                Scene scene = new Scene(root);
+                scene.setFill(null);
+                callStage.setScene(scene);
+
+                // ✅ Pass data to controller - CRITICAL
+                callController.setCallerData(senderName, callStage);
+                callController.setCallData(conversationId, currentUserId, callType, messageDAO);
+
+                // Make draggable
+                makeStageDraggable(root, callStage);
+
+                // Show window
+                callStage.show();
+                callStage.toFront();
+
+                System.out.println("✅ Incoming call window displayed");
+
+            } catch (Exception e) {
+                System.err.println("❌ Error opening CallWindow: " + e.getMessage());
+                e.printStackTrace();
+            }
+        });
+    }
+
+    // ========== UPDATED: startAudioCall() ==========
     @FXML
-    private void startAudioCall() {
+    public void startAudioCall() {
         String name = chatUserName.getText();
-        if ("Sélectionnez un chat".equals(name)) return;
+
+        if ("Sélectionnez un chat".equals(name) || selectedConversationId == -1) {
+            showAlert("Attention", "Veuillez sélectionner un contact pour l'appeler.");
+            return;
+        }
 
         try {
             FXMLLoader loader = new FXMLLoader(getClass().getResource("/Gui/CallingWindow.fxml"));
             Parent root = loader.load();
-
-            // Nakhou el controller mte3 el window jdida
             CallingController controller = loader.getController();
 
             Stage callStage = new Stage();
@@ -1429,49 +1786,114 @@ public class MessengerController implements Initializable {
             scene.setFill(null);
             callStage.setScene(scene);
 
-            // N’passiw el data
             controller.setContactData(name, callStage);
+            controller.setCallData(selectedConversationId, currentUserId, "AUDIO_CALL", messageDAO);
 
-            // Faza beich tnejem t'hark el window b souris
-            final double[] xOffset = {0};
-            final double[] yOffset = {0};
-            root.setOnMousePressed(event -> {
-                xOffset[0] = event.getSceneX();
-                yOffset[0] = event.getSceneY();
-            });
-            root.setOnMouseDragged(event -> {
-                callStage.setX(event.getScreenX() - xOffset[0]);
-                callStage.setY(event.getScreenY() - yOffset[0]);
-            });
+            // ✅ Send signal to receiver
+            sendCallSignal(selectedConversationId, "AUDIO_CALL");
 
+            makeStageDraggable(root, callStage);
             callStage.show();
 
         } catch (IOException e) {
             e.printStackTrace();
+            showAlert("Erreur", "Impossible de charger la fenêtre d'appel.");
         }
     }
 
+    // ========== UPDATED: startVideoCall() ==========
     @FXML
     private void startVideoCall() {
-        // Get the selected conversation/contact
         String contactName = chatUserName.getText();
 
-        if ("Sélectionnez un chat".equals(contactName)) {
-            showAlert("Erreur", "Veuillez sélectionner un contact");
+        if ("Sélectionnez un chat".equals(contactName) || selectedConversationId == -1) {
+            Alert alert = new Alert(Alert.AlertType.WARNING);
+            alert.setTitle("Attention");
+            alert.setHeaderText("Aucune conversation sélectionnée");
+            alert.setContentText("Veuillez sélectionner un contact pour l'appeler.");
+            alert.showAndWait();
             return;
         }
 
-        // TODO: Implement video call logic
-        // - Initialize video call connection
-        // - Show video call UI (camera preview, etc.)
-        // - Handle audio and video streaming
-        System.out.println("Video call started with: " + contactName);
-        showAlert("Appel Vidéo", "Appel vidéo en cours avec " + contactName);
+        try {
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/Gui/CallingWindow.fxml"));
+            Parent root = loader.load();
+            CallingController controller = loader.getController();
+
+            Stage callStage = new Stage();
+            callStage.initStyle(StageStyle.TRANSPARENT);
+            Scene scene = new Scene(root);
+            scene.setFill(null);
+            callStage.setScene(scene);
+
+            controller.setContactData(contactName, callStage);
+            controller.setCallData(selectedConversationId, currentUserId, "VIDEO_CALL", messageDAO);
+
+            // ✅ Send signal to receiver
+            sendCallSignal(selectedConversationId, "VIDEO_CALL");
+
+            makeStageDraggable(root, callStage);
+            callStage.show();
+
+            System.out.println("📹 Video call initiated to: " + contactName);
+
+        } catch (IOException e) {
+            e.printStackTrace();
+            Alert errorAlert = new Alert(Alert.AlertType.ERROR);
+            errorAlert.setTitle("Erreur");
+            errorAlert.setHeaderText("Impossible de démarrer l'appel vidéo");
+            errorAlert.setContentText("Erreur : " + e.getMessage());
+            errorAlert.showAndWait();
+        }
+    }
+// ========== BONUS : startVideoCall() AVEC ENREGISTREMENT ==========
+private void makeStageDraggable(Parent root, Stage stage) {
+    final double[] xOffset = {0};
+    final double[][] yOffset = {{0}};
+    root.setOnMousePressed(event -> {
+        xOffset[0] = event.getSceneX();
+        yOffset[0][0] = event.getSceneY();
+    });
+    root.setOnMouseDragged(event -> {
+        stage.setX(event.getScreenX() - xOffset[0]);
+        stage.setY(event.getScreenY() - yOffset[0][0]);
+    });
+}
+
+// Dans MessengerController.java
+
+    private CallController currentIncomingCallController; // Pour stocker l'instance du récepteur
+
+    public void onIncomingCallReceived(String senderName) {
+        Platform.runLater(() -> {
+            try {
+                // ⚠️ Verifie bien le nom du fichier (CallWindow.fxml vs CallingWindow.fxml)
+                FXMLLoader loader = new FXMLLoader(getClass().getResource("/Gui/CallWindow.fxml"));
+                Parent root = loader.load();
+
+                CallController controller = loader.getController();
+                Stage incomingStage = new Stage();
+
+                // Passer les données
+                controller.setCallerData(senderName, incomingStage);
+
+                incomingStage.setScene(new Scene(root));
+                incomingStage.setTitle("Appel entrant");
+                incomingStage.show();
+
+                System.out.println("📞 Fenêtre d'appel affichée pour: " + senderName);
+            } catch (Exception e) {
+                System.err.println("❌ Erreur chargement CallWindow: " + e.getMessage());
+                e.printStackTrace(); // Hédhi bech nchoufou el ghalta mnin bedabt
+            }
+        });
+    }
+    public void onCallCancelledBySender() {
+        if (currentIncomingCallController != null) {
+            currentIncomingCallController.forceClose();
+        }
     }
 
-    /**
-     * Helper method to show alerts
-     */
     private void showAlert(String title, String message) {
         Alert alert = new Alert(Alert.AlertType.INFORMATION);
         alert.setTitle(title);
