@@ -5,7 +5,7 @@
 <?import javafx.scene.layout.*?>
 <?import javafx.scene.shape.*?>
 
-<HBox fx:id="mainContainer" prefHeight="600.0" prefWidth="1000.0" stylesheets="@styleuser.css" xmlns="http://javafx.com/javafx/17.0.12" xmlns:fx="http://javafx.com/fxml/1" fx:controller="gui.UserManagementController">
+<HBox fx:id="mainContainer" prefHeight="600.0" prefWidth="1000.0" stylesheets="@styleuser.css" xmlns="http://javafx.com/javafx/17.0.12" xmlns:fx="http://javafx.com/fxml/1" fx:controller="GUI.UserManagementController">
     <children>
 
         <VBox alignment="CENTER_LEFT" prefWidth="450.0" spacing="10.0" style="-fx-background-color: white; -fx-padding: 30;">

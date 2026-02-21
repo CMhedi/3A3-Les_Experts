@@ -1,11 +1,12 @@
 package GUI;
-
+import Entities.Session;
+import Entities.UserApp;
+import enums.RoleUser;
 import Entities.Planning;
 import GUI.utils.DialogUtils;
 import GUI.utils.SceneUtils;
 import Services.interfaces.PlanningService;
 import Services.interfaces.SeanceService;
-
 import javafx.beans.property.SimpleStringProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -17,7 +18,6 @@ import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.stage.Stage;
-
 import java.util.List;
 
 public class AdminPlanningController {
@@ -40,20 +40,44 @@ public class AdminPlanningController {
     // ================= SERVICES =================
     private final PlanningService planningService = new PlanningService();
     private final SeanceService seanceService = new SeanceService();
-
+    private UserApp connectedUser;
     // ==================================================
     // INITIALISATION
     // ==================================================
     @FXML
     public void initialize() {
 
+        connectedUser = Session.getConnectedUser();
+
+        if (connectedUser == null) {
+            DialogUtils.showError(
+                    "Erreur",
+                    "Utilisateur non connecté."
+            );
+            closeWindow();
+            return;
+        }
+
+        if (connectedUser.getRole() != RoleUser.ADMIN) {
+            DialogUtils.showError(
+                    "Accès refusé",
+                    "Cette page est réservée aux administrateurs."
+            );
+            closeWindow();
+            return;
+        }
+
         configureTable();
         configureSearch();
         configureButtons();
-
         loadData();
     }
-
+    private void closeWindow() {
+        if (planningTable != null && planningTable.getScene() != null) {
+            Stage stage = (Stage) planningTable.getScene().getWindow();
+            stage.close();
+        }
+    }
     // ==================================================
     // CONFIGURATION
     // ==================================================
@@ -282,8 +306,7 @@ public class AdminPlanningController {
     private void handleRetour(javafx.event.ActionEvent event) {
 
         SceneUtils.loadScene(
-                "/Menu.fxml",
-                "/menu.css",
+                "/gui/AdminDashboard.fxml",
                 (javafx.scene.Node) event.getSource()
         );
     }

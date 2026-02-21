@@ -1,4 +1,4 @@
-package gui;
+package GUI;
 
 import Entities.Inscription;
 import Utiles.MyDB;

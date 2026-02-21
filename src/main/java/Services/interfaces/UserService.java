@@ -149,4 +149,17 @@ public class UserService implements IGenericService<UserApp> {
 
         return u;
     }
+
+    public List<UserApp> getAllCoachs() {
+        List<UserApp> list = new ArrayList<>();
+        String req = "SELECT * FROM user_app WHERE role = 'COACH'";
+        try (Statement st = cnx.createStatement(); ResultSet rs = st.executeQuery(req)) {
+            while (rs.next()) {
+                list.add(mapResultSetToUser(rs));
+            }
+        } catch (SQLException e) {
+            System.out.println("❌ Erreur getAllCoachs: " + e.getMessage());
+        }
+        return list;
+    }
 }

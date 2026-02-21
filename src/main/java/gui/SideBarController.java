@@ -1,5 +1,5 @@
-package gui;
-
+package GUI;
+import GUI.utils.SceneUtils;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -65,4 +65,15 @@ public class SideBarController {
     void goToProfil(ActionEvent event) {
         changeCenter("/gui/Profile.fxml", event);
     }
-}
+
+
+        @FXML
+        private void goToPlanning(ActionEvent event) {
+
+            SceneUtils.loadScene(
+                    "/AdminPlanningView.fxml",   // adapte si besoin
+                    "/admin.css",
+                    (Node) event.getSource()
+            );
+        }
+    }

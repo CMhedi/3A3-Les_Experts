@@ -2,7 +2,7 @@
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
 
-<VBox spacing="0.0" xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1" fx:controller="gui.UserUpdateController" style="-fx-background-color: #f1f5f9;">
+<VBox spacing="0.0" xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1" fx:controller="GUI.UserUpdateController" style="-fx-background-color: #f1f5f9;">
     <children>
         <HBox spacing="10" style="-fx-background-color: #143d30; -fx-padding: 30;" alignment="CENTER_LEFT">
             <children>

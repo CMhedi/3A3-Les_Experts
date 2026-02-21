@@ -3,7 +3,7 @@
 <?import javafx.scene.layout.*?>
 <?import javafx.geometry.Insets?>
 
-<VBox spacing="0.0" xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1" fx:controller="gui.UserAddController" style="-fx-background-color: #f1f5f9;">
+<VBox spacing="0.0" xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1" fx:controller="GUI.UserAddController" style="-fx-background-color: #f1f5f9;">
     <children>
         <HBox spacing="10" style="-fx-background-color: #1B4D3E; -fx-padding: 30;" alignment="CENTER_LEFT">
             <children>

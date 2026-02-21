@@ -1,8 +1,9 @@
-package gui;
+package GUI;
 
 import Utiles.MailService;
 import Entities.UserApp;
 import Services.interfaces.UserService;
+import GUI.ResetPasswordController;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;

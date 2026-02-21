@@ -1,7 +1,8 @@
-package gui;
+package GUI;
 
 import Entities.UserApp;
 import Services.interfaces.UserService;
+import GUI.UserUpdateController;
 import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -130,7 +131,7 @@ public class AdminUsersController {
             Parent updateView = loader.load();
 
             // 2. Tawa nadi el controller
-            UserUpdateController controller = loader.getController();
+            GUI.UserUpdateController controller = loader.getController();
 
             // 3. Tawa nab3ath el data
             controller.initData(user, this);

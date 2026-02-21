@@ -8,7 +8,9 @@ import exceptions.ValidationException;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
 import javafx.stage.Stage;
-
+import Entities.Session;
+import Entities.UserApp;
+import enums.RoleUser;
 public class PlanningFormController {
 
     // ================= UI =================
@@ -22,13 +24,33 @@ public class PlanningFormController {
             new PlanningService();
 
     private Planning planning;
-
+    private UserApp connectedUser;
     // =================================================
     // INITIALIZATION
     // =================================================
     @FXML
     public void initialize() {
+
         errorLabel.setVisible(false);
+
+        connectedUser = Session.getConnectedUser();
+
+        if (connectedUser == null) {
+            DialogUtils.showError(
+                    "Erreur",
+                    "Utilisateur non connecté."
+            );
+            closeWindow();
+            return;
+        }
+
+        if (connectedUser.getRole() != RoleUser.ADMIN) {
+            DialogUtils.showError(
+                    "Accès refusé",
+                    "Cette page est réservée aux administrateurs."
+            );
+            closeWindow();
+        }
     }
 
     // =================================================

@@ -47,4 +47,8 @@ public class SceneUtils {
             return null;
         }
     }
+    public static FXMLLoader loadScene(String fxml,
+                                       Node source) {
+        return loadScene(fxml, null, source);
+    }
 }

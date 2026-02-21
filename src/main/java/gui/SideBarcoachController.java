@@ -1,6 +1,6 @@
 
-package gui;
-
+package GUI;
+import GUI.utils.DialogUtils;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -29,7 +29,39 @@ public class SideBarcoachController{
     }
     @FXML
     void goToplanning(ActionEvent event) {
-        // changeCenter("/gui/planning.fxml", event);
+
+        try {
+
+            FXMLLoader loader = new FXMLLoader(
+                    getClass().getResource("/CoachDashboard.fxml")
+            );
+
+            Parent root = loader.load();
+
+            Scene scene = new Scene(root);
+
+            scene.getStylesheets().add(
+                    getClass().getResource("/admin.css")
+                            .toExternalForm()
+            );
+
+            Stage stage = (Stage) ((Node) event.getSource())
+                    .getScene()
+                    .getWindow();
+
+            stage.setScene(scene);
+            stage.centerOnScreen();
+            stage.show();
+
+        } catch (Exception e) {
+
+            e.printStackTrace();
+
+            DialogUtils.showError(
+                    "Erreur",
+                    "Impossible d’ouvrir le Dashboard Coach."
+            );
+        }
     }
 
     private void changeCenter(String fxmlPath, ActionEvent event) {

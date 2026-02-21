@@ -24,7 +24,9 @@ import java.time.LocalTime;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
+import Entities.Session;
+import Entities.UserApp;
+import enums.RoleUser;
 public class AdminSeanceController {
 
     // ================= UI =================
@@ -50,7 +52,7 @@ public class AdminSeanceController {
     // ================= SERVICES =================
     private final SeanceService seanceService = new SeanceService();
     private final UserService userService = new UserService();
-
+    private UserApp connectedUser;
     private int planningId;
 
     private final Map<Integer, String> coachMap = new HashMap<>();
@@ -61,12 +63,37 @@ public class AdminSeanceController {
     @FXML
     public void initialize() {
 
+        connectedUser = Session.getConnectedUser();
+
+        if (connectedUser == null) {
+            DialogUtils.showError(
+                    "Erreur",
+                    "Utilisateur non connecté."
+            );
+            closeWindow();
+            return;
+        }
+
+        if (connectedUser.getRole() != RoleUser.ADMIN) {
+            DialogUtils.showError(
+                    "Accès refusé",
+                    "Cette page est réservée aux administrateurs."
+            );
+            closeWindow();
+            return;
+        }
+
         configureTable();
         configureSearch();
         configureButtons();
         loadCoachs();
     }
-
+    private void closeWindow() {
+        if (seanceTable != null && seanceTable.getScene() != null) {
+            Stage stage = (Stage) seanceTable.getScene().getWindow();
+            stage.close();
+        }
+    }
     // =================================================
     // CONFIGURATION
     // =================================================

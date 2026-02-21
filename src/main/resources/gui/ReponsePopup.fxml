@@ -2,7 +2,7 @@
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
 
-<VBox spacing="20" style="-fx-padding: 25; -fx-background-color: white; -fx-background-radius: 15; -fx-border-color: #143D30; -fx-border-radius: 15; -fx-border-width: 2;" xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1" fx:controller="gui.ReponsePopupController">
+<VBox spacing="20" style="-fx-padding: 25; -fx-background-color: white; -fx-background-radius: 15; -fx-border-color: #143D30; -fx-border-radius: 15; -fx-border-width: 2;" xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1" fx:controller="GUI.ReponsePopupController">
     <children>
         <Label text="Répondre à la Réclamation" style="-fx-font-size: 18; -fx-font-weight: bold; -fx-text-fill: #143D30;"/>
 

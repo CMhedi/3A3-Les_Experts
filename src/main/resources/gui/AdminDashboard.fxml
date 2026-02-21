@@ -5,7 +5,7 @@
 <?import javafx.geometry.Insets?>
 <?import java.net.URL?>
 
-<ScrollPane fitToWidth="true" style="-fx-background-color: transparent;" xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1" fx:controller="gui.AdminDashboardController">
+<ScrollPane fitToWidth="true" style="-fx-background-color: transparent;" xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1" fx:controller="GUI.AdminDashboardController">
     <stylesheets>
         <URL value="@styleuser.css" />
     </stylesheets>

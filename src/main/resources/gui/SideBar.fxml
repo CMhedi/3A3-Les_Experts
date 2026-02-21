@@ -6,7 +6,7 @@
       style="-fx-background-color: #143D30; -fx-padding: 30 15 15 15;"
       xmlns="http://javafx.com/javafx/17"
       xmlns:fx="http://javafx.com/fxml/1"
-      fx:controller="gui.SideBarController">
+      fx:controller="GUI.SideBarController">
 
     <children>
         <Label text="EcoAdventure" style="-fx-text-fill: white; -fx-font-size: 20; -fx-font-weight: bold;"/>
@@ -15,7 +15,13 @@
         <Button onAction="#goToReclamations" maxWidth="Infinity" text="Réclamations" style="-fx-background-color: transparent; -fx-text-fill: white;"/>
         <Button onAction="#goTogestionuser" maxWidth="Infinity" text="Gestion des utilisateurs" style="-fx-background-color: transparent; -fx-text-fill: white;"/>
         <Button onAction="#goToProfil" maxWidth="Infinity" text="Mon Profil" style="-fx-background-color: transparent; -fx-text-fill: white;"/>
-
+        <Button onAction="#goToPlanning"
+                maxWidth="Infinity"
+                text="Gestion Planning"
+                style="-fx-background-color: transparent;
+               -fx-text-fill: white;
+               -fx-alignment: CENTER_LEFT;
+               -fx-cursor: hand;"/>
 
         <Region VBox.vgrow="ALWAYS" />
         <Button onAction="#handleLogout" maxWidth="Infinity" text="🚪 Déconnexion" style="-fx-background-color: #ef4444; -fx-text-fill: white;"/>

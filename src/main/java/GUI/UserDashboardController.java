@@ -7,7 +7,9 @@ import Services.interfaces.GoogleCalendarService;
 import Services.interfaces.ReservationSeanceService;
 import Services.interfaces.SeanceService;
 import Services.interfaces.UserService;
-
+import Entities.Session;
+import Entities.UserApp;
+import enums.RoleUser;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.geometry.Pos;
@@ -16,6 +18,7 @@ import javafx.scene.control.*;
 import javafx.scene.layout.*;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import javafx.stage.Stage;
 
 import java.time.LocalDate;
 import java.util.HashMap;
@@ -32,16 +35,49 @@ public class UserDashboardController {
     private final ReservationSeanceService reservationService =
             new ReservationSeanceService();
 
-    private final int USER_TEST_ID = 1;
+    private UserApp connectedUser;
+    private int userId;
 
     private final Map<Integer, String> coachMap = new HashMap<>();
 
     @FXML
     public void initialize() {
+
+        connectedUser = Session.getConnectedUser();
+
+        if (connectedUser == null) {
+            DialogUtils.showError(
+                    "Erreur",
+                    "Utilisateur non connecté."
+            );
+            closeWindow();
+            return;
+        }
+
+        if (connectedUser.getRole() != RoleUser.USER_SIMPLE) {
+            DialogUtils.showError(
+                    "Accès refusé",
+                    "Cette page est réservée aux utilisateurs."
+            );
+            closeWindow();
+            return;
+        }
+
+        userId = connectedUser.getIdUser();
+
         loadCoachs();
         refreshCards();
     }
+    private void closeWindow() {
+        if (planifieesContainer != null &&
+                planifieesContainer.getScene() != null) {
 
+            Stage stage = (Stage)
+                    planifieesContainer.getScene().getWindow();
+
+            stage.close();
+        }
+    }
     // =================================================
     // REFRESH
     // =================================================
@@ -53,7 +89,7 @@ public class UserDashboardController {
         try {
 
             List<Seance> all =
-                    seanceService.getSeancesByUser(USER_TEST_ID);
+                    seanceService.getSeancesByUser(userId);
 
             for (Seance s : all) {
 
@@ -172,7 +208,7 @@ public class UserDashboardController {
         try {
 
             String link = reservationService.getGoogleEventLink(
-                    USER_TEST_ID,
+                    userId,
                     s.getIdSeance()
             );
 
@@ -217,12 +253,12 @@ public class UserDashboardController {
 
             String googleEventId =
                     reservationService.getGoogleEventId(
-                            USER_TEST_ID,
+                            userId,
                             selected.getIdSeance()
                     );
 
             reservationService.annuler(
-                    USER_TEST_ID,
+                    userId,
                     selected.getIdSeance()
             );
 

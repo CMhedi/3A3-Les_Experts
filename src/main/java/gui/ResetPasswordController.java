@@ -1,5 +1,4 @@
-package gui;
-
+package GUI;
 import Services.interfaces.UserService;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;

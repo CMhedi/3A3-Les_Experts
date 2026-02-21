@@ -1,5 +1,6 @@
-package gui;
+package GUI;
 
+import GUI.utils.SceneUtils;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -52,5 +53,13 @@ public class SideBarUserController {
         Parent root = FXMLLoader.load(getClass().getResource("/gui/Login.fxml"));
         Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
         stage.setScene(new Scene(root));
+    }
+
+    public void goToSeancesDisponibles(ActionEvent event) {
+        SceneUtils.loadScene(
+                "/gui/UserSeanceView.fxml",   // adapte le chemin si besoin
+                "/admin.css",                 // ou user.css si tu en as un
+                (Node) event.getSource()
+        );
     }
 }

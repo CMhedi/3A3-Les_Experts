@@ -5,7 +5,7 @@
 <?import java.net.URL?>
 <?import javafx.geometry.Insets?>
 
-<AnchorPane prefHeight="650.0" prefWidth="850.0" xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1" fx:controller="gui.ProfileController">
+<AnchorPane prefHeight="650.0" prefWidth="850.0" xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1" fx:controller="GUI.ProfileController">
     <stylesheets>
         <URL value="@styleuser.css" />
     </stylesheets>

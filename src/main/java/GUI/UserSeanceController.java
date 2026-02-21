@@ -23,6 +23,9 @@ import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import Entities.Session;
+import enums.RoleUser;
+import javafx.stage.Stage;
 
 public class UserSeanceController {
 
@@ -36,7 +39,8 @@ public class UserSeanceController {
             new ReservationSeanceService();
     private final UserService userService = new UserService();
 
-    private final int USER_TEST_ID = 1;
+    private UserApp connectedUser;
+    private int userId;
 
     private List<Seance> masterData;
     private final Map<Integer, String> coachMap = new HashMap<>();
@@ -47,6 +51,28 @@ public class UserSeanceController {
     @FXML
     public void initialize() {
 
+        connectedUser = Session.getConnectedUser();
+
+        if (connectedUser == null) {
+            DialogUtils.showError(
+                    "Erreur",
+                    "Utilisateur non connecté."
+            );
+            closeWindow();
+            return;
+        }
+
+        if (connectedUser.getRole() != RoleUser.USER_SIMPLE) {
+            DialogUtils.showError(
+                    "Accès refusé",
+                    "Cette page est réservée aux utilisateurs."
+            );
+            closeWindow();
+            return;
+        }
+
+        userId = connectedUser.getIdUser();
+
         loadCoachs();
 
         searchField.textProperty().addListener((obs, oldVal, newVal) -> {
@@ -54,6 +80,12 @@ public class UserSeanceController {
         });
 
         loadData();
+    }
+    private void closeWindow() {
+        if (cardContainer != null && cardContainer.getScene() != null) {
+            Stage stage = (Stage) cardContainer.getScene().getWindow();
+            stage.close();
+        }
     }
 
     // =================================================
@@ -196,7 +228,7 @@ public class UserSeanceController {
 
             boolean dejaReserve =
                     reservationService.exists(
-                            USER_TEST_ID,
+                            userId,
                             s.getIdSeance()
                     );
 
@@ -256,7 +288,7 @@ public class UserSeanceController {
 
             String link =
                     reservationService.getGoogleEventLink(
-                            USER_TEST_ID,
+                            userId,
                             s.getIdSeance()
                     );
 
@@ -296,10 +328,9 @@ public class UserSeanceController {
             if (!confirmed) return;
 
             reservationService.reserver(
-                    USER_TEST_ID,
+                    userId,
                     s.getIdSeance()
             );
-
             LocalDateTime start =
                     LocalDateTime.of(
                             s.getDateSeance(),
@@ -321,13 +352,13 @@ public class UserSeanceController {
                     );
 
             reservationService.saveGoogleEventId(
-                    USER_TEST_ID,
+                    userId,
                     s.getIdSeance(),
                     data.id
             );
 
             reservationService.saveGoogleEventLink(
-                    USER_TEST_ID,
+                    userId,
                     s.getIdSeance(),
                     data.htmlLink
             );
@@ -362,8 +393,7 @@ public class UserSeanceController {
     private void handleRetour(javafx.event.ActionEvent event) {
 
         SceneUtils.loadScene(
-                "/Menu.fxml",
-                "/menu.css",
+                "/gui/MainLayoutUser.fxml",
                 (javafx.scene.Node) event.getSource()
         );
     }

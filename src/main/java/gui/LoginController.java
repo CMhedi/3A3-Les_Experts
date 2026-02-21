@@ -1,4 +1,4 @@
-package gui;
+package GUI;
 
 import Entities.Session;
 import Entities.UserApp;
@@ -29,66 +29,87 @@ public class LoginController {
 
     @FXML
     void handleLogin(ActionEvent event) {
+
         String email = txtEmail.getText();
         String mdp = txtMdp.getText();
 
-        // 1. Validation de saisie
         if (email.isEmpty() || mdp.isEmpty()) {
-            new Alert(Alert.AlertType.WARNING, "Veuillez remplir tous les champs !").show();
+            new Alert(Alert.AlertType.WARNING,
+                    "Veuillez remplir tous les champs !").show();
             return;
         }
 
         try {
-            // 2. Recherche de l'utilisateur dans la base
+
             UserApp user = us.findByEmail(email);
 
-            if (user != null && user.getMotDePasse().equals(mdp)) {
-                //  Stocker l'utilisateur dans la session
+            if (user != null &&
+                    user.getMotDePasse().equals(mdp)) {
+
+                // ✅ Stocker session
                 Session.setConnectedUser(user);
-                System.out.println("✅ Login success: " + user.getNom() + " (Role: " + user.getRole() + ")");
 
-                // 3. Déterminer la page de destination selon le Role
+                System.out.println("✅ Login success: "
+                        + user.getNom()
+                        + " (Role: "
+                        + user.getRole() + ")");
+
                 String fxmlPath = "";
-                switch (user.getRole()) {
-                    case ADMIN:
+                String cssPath = null;
 
+                switch (user.getRole()) {
+
+                    case ADMIN:
                         fxmlPath = "/gui/MainLayout.fxml";
                         break;
-                    case USER_SIMPLE:
 
+                    case USER_SIMPLE:
                         fxmlPath = "/gui/MainLayoutUser.fxml";
                         break;
+
                     case COACH:
                         fxmlPath = "/gui/MainLayoutcoach.fxml";
                         break;
+
                     default:
                         fxmlPath = "/gui/SuccessPage.fxml";
                 }
 
+                FXMLLoader loader =
+                        new FXMLLoader(getClass().getResource(fxmlPath));
 
-                FXMLLoader loader = new FXMLLoader(getClass().getResource(fxmlPath));
                 Parent root = loader.load();
 
-                Object controller = loader.getController();
-                if (controller instanceof SuccessController) {
-                    ((SuccessController) controller).setUserData(user);
+                Scene scene = new Scene(root);
+
+                if (cssPath != null) {
+                    scene.getStylesheets().add(
+                            getClass().getResource(cssPath)
+                                    .toExternalForm()
+                    );
                 }
 
+                Stage stage =
+                        (Stage) ((Node) event.getSource())
+                                .getScene().getWindow();
 
-                Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
-                Scene scene = new Scene(root);
                 stage.setScene(scene);
-
-
                 stage.centerOnScreen();
                 stage.show();
 
             } else {
-                new Alert(Alert.AlertType.ERROR, "Email ou Mot de passe incorrect !").show();
+
+                new Alert(Alert.AlertType.ERROR,
+                        "Email ou Mot de passe incorrect !").show();
             }
+
         } catch (Exception e) {
+
             e.printStackTrace();
-            new Alert(Alert.AlertType.ERROR, "Erreur lors du login: " + e.getMessage()).show();
+
+            new Alert(Alert.AlertType.ERROR,
+                    "Erreur lors du login: "
+                            + e.getMessage()).show();
         }
     }
     @FXML
@@ -125,7 +146,7 @@ public class LoginController {
                 FXMLLoader loader = new FXMLLoader(getClass().getResource("/gui/ForgotPassword.fxml"));
                 Parent root = loader.load();
 
-                ForgotPasswordController controller = loader.getController();
+                GUI.ForgotPasswordController controller = loader.getController();
                 // Passi el User wel Code s7i7
                 controller.initData(user, generatedOTP);
 

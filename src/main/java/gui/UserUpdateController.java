@@ -1,6 +1,7 @@
-package gui;
+package GUI;
 
 import Entities.UserApp;
+import GUI.AdminUsersController;
 import Services.interfaces.UserService;
 import enums.RoleUser;
 import javafx.collections.FXCollections;
@@ -83,4 +84,6 @@ public class UserUpdateController {
             parentController.showUserTable();
         }
     }
-}
+
+
+    }

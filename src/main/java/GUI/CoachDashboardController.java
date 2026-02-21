@@ -14,9 +14,10 @@ import com.itextpdf.text.Font;
 import com.itextpdf.text.Image;
 import com.itextpdf.text.Rectangle;
 import com.itextpdf.text.pdf.*;
+import enums.RoleUser;
 import enums.StatutPresence;
 import enums.StatutSeance;
-
+import Entities.Session;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -34,7 +35,9 @@ import javafx.scene.shape.Circle;
 import javafx.scene.control.Button;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
-
+import Entities.Session;
+import Entities.UserApp;
+import javax.management.relation.Role;
 import java.awt.*;
 import java.io.File;
 import java.io.FileOutputStream;
@@ -61,7 +64,8 @@ public class CoachDashboardController {
 
     private final Map<Integer, String> planningMap = new HashMap<>();
 
-    private final int coachId = 1; // ⚠️ login plus tard
+    private UserApp connectedCoach;
+    private int coachId; // ⚠️ login plus tard
 
     private List<Seance> masterData;
 
@@ -70,6 +74,24 @@ public class CoachDashboardController {
     // =================================================
     @FXML
     public void initialize() {
+
+        connectedCoach = Session.getConnectedUser();
+
+        if (connectedCoach == null) {
+            DialogUtils.showError("Erreur", "Utilisateur non connecté.");
+            return;
+        }
+
+        // ✅ Vérification du rôle ICI
+        if (connectedCoach.getRole() != RoleUser.COACH) {
+            DialogUtils.showError(
+                    "Accès refusé",
+                    "Cette page est réservée aux coachs."
+            );
+            return;
+        }
+
+        coachId = connectedCoach.getIdUser();
 
         configureFilters();
 
@@ -314,8 +336,7 @@ public class CoachDashboardController {
     private void handleRetour(ActionEvent event) {
 
         SceneUtils.loadScene(
-                "/Menu.fxml",
-                "/menu.css",
+                "/gui/MainLayoutcoach.fxml",
                 (Node) event.getSource()
         );
     }
@@ -382,6 +403,26 @@ public class CoachDashboardController {
         header.addCell(headerCell);
 
         document.add(header);
+        // ================= COACH + DATE =================
+        UserApp coach = Session.getConnectedUser();
+
+        String coachName = "Inconnu";
+        if (coach != null) {
+            coachName = coach.getNom() + " " + coach.getPrenom();
+        }
+
+        String today = java.time.LocalDate.now().toString();
+
+        Paragraph coachInfo = new Paragraph(
+                "Coach : " + coachName + "\n"
+                        + "Date de génération : " + today,
+                new Font(Font.FontFamily.HELVETICA, 11)
+        );
+
+        coachInfo.setSpacingBefore(15);
+        coachInfo.setSpacingAfter(20);
+
+        document.add(coachInfo);
 
         // ================= TITRE =================
         Font titleFont = new Font(

@@ -1,4 +1,4 @@
-package gui;
+package GUI;
 
 import Entities.UserApp;
 import Services.interfaces.UserService;

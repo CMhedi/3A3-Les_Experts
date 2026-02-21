@@ -104,7 +104,7 @@
                 <version>0.0.8</version>
                 <configuration>
                     <!-- ⚠️ Choisis UNE seule classe main -->
-                    <mainClass>GUI.MainApp</mainClass>
+                    <mainClass>GUI.MainFX</mainClass>
                 </configuration>
             </plugin>
 

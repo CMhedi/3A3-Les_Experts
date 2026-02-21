@@ -7,7 +7,9 @@ import Services.interfaces.SeanceService;
 import Services.interfaces.UserService;
 import enums.StatutSeance;
 import exceptions.ValidationException;
-
+import Entities.Session;
+import Entities.UserApp;
+import enums.RoleUser;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
 import javafx.stage.Stage;
@@ -34,7 +36,7 @@ public class SeanceFormController {
     // ================= SERVICES =================
     private final SeanceService seanceService = new SeanceService();
     private final UserService userService = new UserService();
-
+    private UserApp connectedUser;
     private Seance seance;
     private int planningId;
 
@@ -44,13 +46,33 @@ public class SeanceFormController {
     @FXML
     public void initialize() {
 
+        connectedUser = Session.getConnectedUser();
+
+        if (connectedUser == null) {
+            DialogUtils.showError(
+                    "Erreur",
+                    "Utilisateur non connecté."
+            );
+            close();
+            return;
+        }
+
+        if (connectedUser.getRole() != RoleUser.ADMIN) {
+            DialogUtils.showError(
+                    "Accès refusé",
+                    "Cette page est réservée aux administrateurs."
+            );
+            close();
+            return;
+        }
+
         errorLabel.setVisible(false);
 
         statutCombo.getItems().setAll(StatutSeance.values());
 
         loadCoachs();
         configureCoachCombo();
-        initTimeSpinners();   // 🔥 Important
+        initTimeSpinners();
     }
 
     // =================================================

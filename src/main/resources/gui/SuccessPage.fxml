@@ -6,7 +6,7 @@
 <VBox alignment="CENTER" spacing="20.0" prefHeight="400.0" prefWidth="600.0"
       xmlns="http://javafx.com/javafx/17"
       xmlns:fx="http://javafx.com/fxml/1"
-      fx:controller="gui.SuccessController">
+      fx:controller="GUI.SuccessController">
     <children>
         <Label text="✅ Inscription Réussie !" textFill="#2ecc71">
             <font>

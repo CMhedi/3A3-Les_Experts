@@ -5,7 +5,7 @@
         <?import javafx.scene.image.*?>
         <?import javafx.scene.shape.*?>
 
-<HBox prefHeight="600.0" prefWidth="1000.0" stylesheets="@styleuser.css" xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1" fx:controller="gui.LoginController">
+<HBox prefHeight="600.0" prefWidth="1000.0" stylesheets="@styleuser.css" xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1" fx:controller="GUI.LoginController">
 
 <children>
     <AnchorPane prefWidth="500.0" style="-fx-background-color: #2a7760; -fx-background-radius: 0 50 50 0;">

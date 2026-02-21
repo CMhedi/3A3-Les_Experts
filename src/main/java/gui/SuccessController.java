@@ -1,4 +1,4 @@
-package gui;
+package GUI;
 
 import Entities.UserApp;
 import javafx.fxml.FXML;

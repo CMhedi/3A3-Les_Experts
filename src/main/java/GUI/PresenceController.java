@@ -17,7 +17,9 @@ import javafx.util.Duration;
 import GUI.utils.DialogUtils;
 import java.time.LocalDate;
 import java.util.List;
-
+import Entities.Session;
+import Entities.UserApp;
+import enums.RoleUser;
 public class PresenceController {
 
     @FXML private Label lblSeanceTitle;
@@ -61,14 +63,41 @@ public class PresenceController {
     @FXML
     public void initialize() {
 
+        UserApp connectedUser = Session.getConnectedUser();
+
+        if (connectedUser == null) {
+            DialogUtils.showError(
+                    "Erreur",
+                    "Utilisateur non connecté."
+            );
+            closeWindow();
+            return;
+        }
+
+        if (connectedUser.getRole() != RoleUser.COACH) {
+            DialogUtils.showError(
+                    "Accès refusé",
+                    "Cette page est réservée aux coachs."
+            );
+            closeWindow();
+            return;
+        }
+
         tablePresence.setColumnResizePolicy(
                 TableView.CONSTRAINED_RESIZE_POLICY
         );
+
         tablePresence.setPlaceholder(
                 new Label("Aucun participant inscrit")
         );
 
         configureRowStyle();
+    }
+    private void closeWindow() {
+        if (tablePresence != null && tablePresence.getScene() != null) {
+            Stage stage = (Stage) tablePresence.getScene().getWindow();
+            stage.close();
+        }
     }
     private void configureRowStyle() {
 
