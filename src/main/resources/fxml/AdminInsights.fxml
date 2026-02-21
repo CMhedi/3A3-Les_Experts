@@ -1,0 +1,142 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.chart.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<BorderPane xmlns="http://javafx.com/javafx/21"
+            xmlns:fx="http://javafx.com/fxml/1"
+            stylesheets="@/css/admin-insights.css"
+            fx:controller="controllers.AdminInsightsController">
+
+    <top>
+        <HBox spacing="10">
+            <padding>
+                <Insets top="14" right="14" bottom="14" left="14"/>
+            </padding>
+
+            <Label text="Admin Insights" style="-fx-font-size: 18; -fx-font-weight: bold;"/>
+            <Region HBox.hgrow="ALWAYS"/>
+
+            <Label text="From:"/>
+            <DatePicker fx:id="dpFrom"/>
+
+            <Label text="To:"/>
+            <DatePicker fx:id="dpTo"/>
+
+            <Label text="Top:"/>
+            <Spinner fx:id="spTopLimit" prefWidth="85"/>
+
+            <Label text="Min Risk:"/>
+            <Spinner fx:id="spMinRisk" prefWidth="85"/>
+
+            <Button text="Refresh" onAction="#onRefresh"/>
+        </HBox>
+    </top>
+
+    <center>
+        <ScrollPane fitToWidth="true">
+            <content>
+                <VBox spacing="16">
+                    <padding>
+                        <Insets top="16" right="16" bottom="16" left="16"/>
+                    </padding>
+
+                    <!-- KPIs -->
+                    <FlowPane hgap="12" vgap="12" prefWrapLength="900">
+                        <VBox spacing="6" prefWidth="190" style="-fx-padding:12; -fx-background-radius:12; -fx-background-color:#f6f7fb;">
+                            <Label text="Total" style="-fx-opacity:0.7;"/>
+                            <Label fx:id="lblTotal" text="0" style="-fx-font-size:22; -fx-font-weight:bold;"/>
+                        </VBox>
+                        <VBox spacing="6" prefWidth="190" style="-fx-padding:12; -fx-background-radius:12; -fx-background-color:#f6f7fb;">
+                            <Label text="Confirmed" style="-fx-opacity:0.7;"/>
+                            <Label fx:id="lblConfirmed" text="0" style="-fx-font-size:22; -fx-font-weight:bold;"/>
+                        </VBox>
+                        <VBox spacing="6" prefWidth="190" style="-fx-padding:12; -fx-background-radius:12; -fx-background-color:#f6f7fb;">
+                            <Label text="Pending" style="-fx-opacity:0.7;"/>
+                            <Label fx:id="lblPending" text="0" style="-fx-font-size:22; -fx-font-weight:bold;"/>
+                        </VBox>
+                        <VBox spacing="6" prefWidth="190" style="-fx-padding:12; -fx-background-radius:12; -fx-background-color:#f6f7fb;">
+                            <Label text="Canceled" style="-fx-opacity:0.7;"/>
+                            <Label fx:id="lblCanceled" text="0" style="-fx-font-size:22; -fx-font-weight:bold;"/>
+                        </VBox>
+                        <VBox spacing="6" prefWidth="190" style="-fx-padding:12; -fx-background-radius:12; -fx-background-color:#f6f7fb;">
+                            <Label text="Revenue" style="-fx-opacity:0.7;"/>
+                            <Label fx:id="lblRevenue" text="0.00" style="-fx-font-size:22; -fx-font-weight:bold;"/>
+                        </VBox>
+                        <VBox spacing="6" prefWidth="190" style="-fx-padding:12; -fx-background-radius:12; -fx-background-color:#f6f7fb;">
+                            <Label text="Trend" style="-fx-opacity:0.7;"/>
+                            <Label fx:id="lblTrend" text="0.00%" style="-fx-font-size:22; -fx-font-weight:bold;"/>
+                        </VBox>
+                    </FlowPane>
+
+                    <!-- Charts -->
+                    <HBox spacing="12">
+                        <VBox spacing="8" HBox.hgrow="ALWAYS"
+                              style="-fx-padding:12; -fx-background-radius:12; -fx-background-color:white; -fx-border-color:#ececec; -fx-border-radius:12;">
+                            <Label text="Daily Inscriptions" style="-fx-font-weight:bold;"/>
+                            <LineChart fx:id="chartInscriptions" animated="false" createSymbols="false" prefHeight="280">
+                                <xAxis><CategoryAxis label="Date"/></xAxis>
+                                <yAxis><NumberAxis label="Count"/></yAxis>
+                            </LineChart>
+                        </VBox>
+
+                        <VBox spacing="8" HBox.hgrow="ALWAYS"
+                              style="-fx-padding:12; -fx-background-radius:12; -fx-background-color:white; -fx-border-color:#ececec; -fx-border-radius:12;">
+                            <Label text="Daily Revenue" style="-fx-font-weight:bold;"/>
+                            <LineChart fx:id="chartRevenue" animated="false" createSymbols="false" prefHeight="280">
+                                <xAxis><CategoryAxis label="Date"/></xAxis>
+                                <yAxis><NumberAxis label="Revenue"/></yAxis>
+                            </LineChart>
+                        </VBox>
+                    </HBox>
+
+                    <!-- Top Packs Widget -->
+                    <VBox spacing="10"
+                          style="-fx-padding:12; -fx-background-radius:12; -fx-background-color:white; -fx-border-color:#ececec; -fx-border-radius:12;">
+                        <Label text="Top Packs" style="-fx-font-weight:bold;"/>
+                        <HBox spacing="10" style="-fx-padding:8; -fx-background-color:#f6f7fb; -fx-background-radius:10;">
+                            <Label text="Pack" prefWidth="260" style="-fx-font-weight:bold;"/>
+                            <Label text="Type" prefWidth="160" style="-fx-font-weight:bold;"/>
+                            <Label text="Insc." prefWidth="90" style="-fx-font-weight:bold;"/>
+                            <Label text="Revenue" prefWidth="120" style="-fx-font-weight:bold;"/>
+                            <Region HBox.hgrow="ALWAYS"/>
+                        </HBox>
+                        <ScrollPane fitToWidth="true" prefHeight="220" style="-fx-background-color:transparent;">
+                            <content><VBox fx:id="boxTopPacks" spacing="8"/></content>
+                        </ScrollPane>
+                    </VBox>
+
+                    <!-- Alerts Widget -->
+                    <VBox spacing="10"
+                          style="-fx-padding:12; -fx-background-radius:12; -fx-background-color:white; -fx-border-color:#ececec; -fx-border-radius:12;">
+                        <HBox spacing="10">
+                            <Label text="Alerts (Risk Engine)" style="-fx-font-weight:bold;"/>
+                            <Region HBox.hgrow="ALWAYS"/>
+                            <ProgressIndicator fx:id="piLoading" visible="false" prefWidth="22" prefHeight="22"/>
+                            <Label fx:id="lblStatus" text="" style="-fx-opacity:0.75;"/>
+                        </HBox>
+
+                        <HBox spacing="10" style="-fx-padding:8; -fx-background-color:#f6f7fb; -fx-background-radius:10;">
+                            <Label text="Date" prefWidth="150" style="-fx-font-weight:bold;"/>
+                            <Label text="User" prefWidth="160" style="-fx-font-weight:bold;"/>
+                            <Label text="Pack" prefWidth="200" style="-fx-font-weight:bold;"/>
+                            <Label text="Risk" prefWidth="60" style="-fx-font-weight:bold;"/>
+                            <Label text="Level" prefWidth="70" style="-fx-font-weight:bold;"/>
+                            <Label text="Signals" prefWidth="260" style="-fx-font-weight:bold;"/>
+                            <Label text="Statut" prefWidth="90" style="-fx-font-weight:bold;"/>
+                            <Label text="Montant" prefWidth="100" style="-fx-font-weight:bold;"/>
+                            <Region HBox.hgrow="ALWAYS"/>
+                        </HBox>
+
+                        <ScrollPane fitToWidth="true" prefHeight="320" style="-fx-background-color:transparent;">
+                            <content><VBox fx:id="boxAlerts" spacing="8"/></content>
+                        </ScrollPane>
+                    </VBox>
+
+                </VBox>
+            </content>
+        </ScrollPane>
+    </center>
+</BorderPane>

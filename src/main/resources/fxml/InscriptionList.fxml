@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<VBox xmlns="http://javafx.com/javafx/21"
+      xmlns:fx="http://javafx.com/fxml/1"
+      fx:controller="controllers.InscriptionListController"
+      stylesheets="@/css/InscriptionList.css"
+      spacing="16" styleClass="page">
+
+    <padding>
+        <Insets top="24" right="24" bottom="24" left="24"/>
+    </padding>
+
+    <HBox spacing="10" alignment="CENTER_LEFT">
+        <VBox spacing="2">
+            <Label text="Inscriptions" styleClass="page-title"/>
+            <Label text="Suivi des inscriptions liées aux packs." styleClass="page-subtitle"/>
+        </VBox>
+        <Region HBox.hgrow="ALWAYS"/>
+        <Button text="Ajouter" onAction="#onAdd" styleClass="btn-primary"/>
+    </HBox>
+
+    <HBox spacing="10" alignment="CENTER_LEFT">
+        <TextField fx:id="txtSearch"
+                   promptText="Rechercher (utilisateur / pack / statut / montant / date)..."
+                   styleClass="input"
+                   HBox.hgrow="ALWAYS"/>
+        <Button text="Rafraîchir" onAction="#onRefresh" styleClass="btn-secondary"/>
+    </HBox>
+
+    <Label fx:id="lblTotal" text="Affiché / Total : 0"/>
+
+    <!-- ✅ TableWidget (custom) -->
+    <ScrollPane fitToWidth="true" VBox.vgrow="ALWAYS">
+        <content>
+            <VBox style="-fx-background-color: transparent;">
+
+                <HBox spacing="0" styleClass="table-header">
+                    <Label text="Utilisateur" prefWidth="240" styleClass="th"/>
+                    <Label text="Pack" prefWidth="240" styleClass="th"/>
+                    <Label text="Date" prefWidth="160" styleClass="th"/>
+                    <Label text="Montant" prefWidth="120" styleClass="th"/>
+                    <Label text="Statut" prefWidth="160" styleClass="th"/>
+                </HBox>
+
+                <VBox fx:id="rowsBox" spacing="6" style="-fx-padding: 10 0 0 0;"/>
+            </VBox>
+        </content>
+    </ScrollPane>
+
+    <HBox spacing="10" alignment="CENTER_RIGHT">
+        <Button text="Modifier" onAction="#onEdit" styleClass="btn-secondary"/>
+        <Button text="Supprimer" onAction="#onDelete" styleClass="btn-danger"/>
+    </HBox>
+
+</VBox>

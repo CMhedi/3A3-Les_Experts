@@ -1,0 +1,143 @@
+/* =========================
+   EcoAdventure — Admin Insights
+   Palette: green + orange
+   ========================= */
+
+/* Page scope */
+.insights-root {
+    -fx-background-color: linear-gradient(to bottom right, #0b1f14, #113A28);
+}
+
+/* Topbar */
+.insights-topbar {
+    -fx-background-color: rgba(255,255,255,0.88);
+    -fx-background-radius: 18;
+    -fx-padding: 14;
+    -fx-border-color: rgba(17,58,40,0.10);
+    -fx-border-radius: 18;
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.18), 22, 0.25, 0, 8);
+}
+
+.insights-title {
+    -fx-font-size: 18px;
+    -fx-font-weight: 800;
+    -fx-text-fill: #0b1f14;
+}
+
+/* Inputs */
+.insights-root .date-picker,
+.insights-root .spinner,
+.insights-root .text-field {
+    -fx-background-radius: 12;
+}
+
+.insights-root .date-picker .text-field,
+.insights-root .spinner .text-field {
+    -fx-background-color: white;
+    -fx-background-radius: 12;
+    -fx-border-color: rgba(17,58,40,0.18);
+    -fx-border-radius: 12;
+    -fx-padding: 8 10;
+}
+
+/* Primary button (Refresh) */
+.btn-primary {
+    -fx-background-color: linear-gradient(to right, #F57A1A, #ff9a3d);
+    -fx-text-fill: white;
+    -fx-font-weight: 800;
+    -fx-background-radius: 12;
+    -fx-padding: 9 14;
+    -fx-effect: dropshadow(gaussian, rgba(245,122,26,0.35), 14, 0.25, 0, 6);
+}
+.btn-primary:hover {
+    -fx-effect: dropshadow(gaussian, rgba(245,122,26,0.45), 18, 0.25, 0, 8);
+}
+.btn-primary:pressed {
+    -fx-opacity: 0.92;
+}
+
+/* KPI cards */
+.kpi-card {
+    -fx-background-color: rgba(255,255,255,0.94);
+    -fx-background-radius: 18;
+    -fx-padding: 14;
+    -fx-border-color: rgba(17,58,40,0.10);
+    -fx-border-radius: 18;
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.16), 18, 0.25, 0, 6);
+}
+.kpi-label {
+    -fx-text-fill: rgba(11,31,20,0.65);
+    -fx-font-weight: 700;
+}
+.kpi-value {
+    -fx-text-fill: #0b1f14;
+    -fx-font-size: 22px;
+    -fx-font-weight: 900;
+}
+.kpi-accent {
+    -fx-border-width: 0 0 0 6;
+    -fx-border-color: transparent transparent transparent #F57A1A;
+}
+
+/* Cards (charts/widgets) */
+.card {
+    -fx-background-color: rgba(255,255,255,0.94);
+    -fx-background-radius: 18;
+    -fx-padding: 12;
+    -fx-border-color: rgba(17,58,40,0.10);
+    -fx-border-radius: 18;
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.16), 18, 0.25, 0, 6);
+}
+
+.section-title {
+    -fx-text-fill: #0b1f14;
+    -fx-font-weight: 800;
+}
+
+/* TableWidget header + rows */
+.tw-header {
+    -fx-background-color: rgba(17,58,40,0.06);
+    -fx-background-radius: 14;
+    -fx-padding: 10;
+}
+.tw-header .label {
+    -fx-font-weight: 900;
+    -fx-text-fill: #0b1f14;
+}
+
+.tw-row {
+    -fx-background-color: rgba(255,255,255,0.96);
+    -fx-background-radius: 14;
+    -fx-padding: 10;
+    -fx-border-color: rgba(17,58,40,0.08);
+    -fx-border-radius: 14;
+}
+.tw-row:hover {
+    -fx-border-color: rgba(245,122,26,0.35);
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.12), 14, 0.25, 0, 6);
+}
+.tw-cell {
+    -fx-text-fill: rgba(11,31,20,0.85);
+}
+
+/* ScrollPane transparent */
+.insights-root .scroll-pane,
+.insights-root .scroll-pane > .viewport {
+    -fx-background-color: transparent;
+}
+
+/* Charts */
+.insights-root .chart-plot-background {
+    -fx-background-color: transparent;
+}
+.insights-root .chart-vertical-grid-lines,
+.insights-root .chart-horizontal-grid-lines {
+    -fx-stroke: rgba(17,58,40,0.10);
+}
+
+/* Series colors (Eco palette) */
+.insights-root .default-color0.chart-series-line { -fx-stroke: #F57A1A; -fx-stroke-width: 2.5px; }
+.insights-root .default-color0.chart-line-symbol { -fx-background-color: #F57A1A, white; }
+
+.insights-root .default-color1.chart-series-line { -fx-stroke: #113A28; -fx-stroke-width: 2.5px; }
+.insights-root .default-color1.chart-line-symbol { -fx-background-color: #113A28, white; }

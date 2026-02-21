@@ -6,33 +6,44 @@ import java.sql.SQLException;
 
 public class MyDB {
 
-    private final String URL = "jdbc:mysql://localhost:3308/ecoadventure";
-    private final String USER = "root";
-    private final String PASSWORD = "";
+    private static final String URL = "jdbc:mysql://localhost:3308/ecoadventure?useSSL=false&serverTimezone=UTC";
+    private static final String USER = "root";
+    private static final String PASSWORD = "";
 
     private static Connection connection;
     private static MyDB instance;
 
-    // constructeur privé (Singleton)
     private MyDB() {
+        connect();
+    }
+
+    public static MyDB getInstance() {
+        if (instance == null) {
+            instance = new MyDB();
+        } else {
+            try {
+                if (connection == null || connection.isClosed()) {
+                    instance.connect();
+                }
+            } catch (SQLException e) {
+                instance.connect();
+            }
+        }
+        return instance;
+    }
+
+    private void connect() {
         try {
             connection = DriverManager.getConnection(URL, USER, PASSWORD);
             System.out.println("✅ Connected to database successfully");
         } catch (SQLException e) {
             System.out.println("❌ Database connection error: " + e.getMessage());
+            connection = null;
         }
     }
 
-    // retourner l'instance unique
-    public static MyDB getInstance() {
-        if (instance == null) {
-            instance = new MyDB();
-        }
-        return instance;
-    }
-
-    // retourner la connexion
     public static Connection getConnection() {
+        MyDB.getInstance();
         return connection;
     }
 }

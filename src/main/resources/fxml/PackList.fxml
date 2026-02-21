@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<BorderPane xmlns="http://javafx.com/javafx/21"
+            xmlns:fx="http://javafx.com/fxml/1"
+            stylesheets="@/css/PackList.css"
+            fx:controller="controllers.PackListController">
+
+    <top>
+        <VBox spacing="12" BorderPane.alignment="CENTER">
+            <padding>
+                <Insets top="18" right="18" bottom="10" left="18"/>
+            </padding>
+
+            <Label text="Gestion des Packs" style="-fx-font-size:18px; -fx-font-weight:bold;"/>
+
+            <HBox spacing="10" alignment="CENTER_LEFT">
+                <TextField fx:id="txtSearch"
+                           promptText="Rechercher (nom / type / statut)..."
+                           HBox.hgrow="ALWAYS"/>
+
+                <Button text="Ajouter" onAction="#onAdd"/>
+                <Button text="Modifier" onAction="#onEdit"/>
+                <Button text="Supprimer" onAction="#onDelete"/>
+                <Button text="Rafraîchir" onAction="#onRefresh"/>
+            </HBox>
+        </VBox>
+    </top>
+
+    <!-- ✅ TableWidget (custom) -->
+    <center>
+        <VBox spacing="10">
+            <padding>
+                <Insets top="0" right="18" bottom="0" left="18"/>
+            </padding>
+
+            <ScrollPane fitToWidth="true" prefHeight="520">
+                <content>
+                    <VBox style="-fx-background-color: transparent;">
+
+                        <!-- header -->
+                        <HBox spacing="0" styleClass="table-header">
+                            <Label text="Nom" prefWidth="240" styleClass="th"/>
+                            <Label text="Type" prefWidth="170" styleClass="th"/>
+                            <Label text="Prix" prefWidth="120" styleClass="th"/>
+                            <Label text="Max activités" prefWidth="140" styleClass="th"/>
+                            <Label text="Statut" prefWidth="140" styleClass="th"/>
+                        </HBox>
+
+                        <!-- rows -->
+                        <VBox fx:id="rowsBox" spacing="6" style="-fx-padding: 10 0 0 0;"/>
+                    </VBox>
+                </content>
+            </ScrollPane>
+        </VBox>
+    </center>
+
+    <bottom>
+        <HBox spacing="8" alignment="CENTER_LEFT">
+            <padding>
+                <Insets top="10" right="18" bottom="18" left="18"/>
+            </padding>
+            <Label text="Affiché / Total :"/>
+            <Label fx:id="lblTotal" text="0" style="-fx-font-weight:bold;"/>
+        </HBox>
+    </bottom>
+
+</BorderPane>

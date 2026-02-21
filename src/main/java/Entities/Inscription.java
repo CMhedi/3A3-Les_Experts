@@ -8,6 +8,8 @@ public class Inscription {
     private int idInscription;
     private LocalDateTime dateInscription;
     private String statutInscr;
+    private String nomUser;
+    private String nomPack;
     private BigDecimal montantTotal;
     private int idUser;
     private int idPack;

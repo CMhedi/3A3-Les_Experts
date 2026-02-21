@@ -1,0 +1,156 @@
+/* =========================================================
+   InscriptionList.css — EcoAdventure Dark Glass (PRO)
+   Fix: contraste + cohérence + table widget propre
+   ========================================================= */
+
+.page {
+    -ea-text: rgba(255,255,255,0.92);
+    -ea-muted: rgba(255,255,255,0.65);
+    -ea-surface: rgba(255,255,255,0.06);
+    -ea-surface-2: rgba(255,255,255,0.10);
+    -ea-border: rgba(255,255,255,0.12);
+    -ea-green: rgba(95,233,140,0.85);
+    -ea-green-soft: rgba(95,233,140,0.18);
+    -ea-danger: rgba(255,79,79,0.90);
+
+    /* ✅ important: dark background (plus transparent blanc) */
+    -fx-background-color: linear-gradient(to bottom right,
+    rgba(10,12,12,0.75),
+    rgba(14,18,16,0.70),
+    rgba(8,10,10,0.80));
+    -fx-background-radius: 18;
+    -fx-border-radius: 18;
+    -fx-border-color: rgba(255,255,255,0.10);
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.55), 26, 0.22, 0, 10);
+}
+
+.label { -fx-text-fill: -ea-text; }
+
+/* Titles */
+.page-title {
+    -fx-text-fill: rgba(255,255,255,0.96);
+    -fx-font-size: 20px;
+    -fx-font-weight: 900;
+}
+.page-subtitle {
+    -fx-text-fill: -ea-muted;
+    -fx-font-size: 12px;
+    -fx-font-weight: 700;
+}
+#lblTotal {
+    -fx-text-fill: rgba(255,255,255,0.82);
+    -fx-font-weight: 800;
+}
+
+/* Search input */
+.input, .text-field {
+    -fx-background-color: rgba(255,255,255,0.07);
+    -fx-border-color: -ea-border;
+    -fx-text-fill: -ea-text;
+    -fx-prompt-text-fill: -ea-muted;
+    -fx-background-radius: 14;
+    -fx-border-radius: 14;
+    -fx-padding: 10 12;
+    -fx-font-weight: 700;
+}
+.input:focused, .text-field:focused {
+    -fx-border-color: -ea-green;
+    -fx-effect: dropshadow(gaussian, rgba(95,233,140,0.18), 18, 0.22, 0, 6);
+}
+
+/* Buttons */
+.btn-primary {
+    -fx-background-color: linear-gradient(to right, rgba(55, 180, 98, 0.95), rgba(95, 233, 140, 0.90));
+    -fx-text-fill: rgba(10,14,10,0.95);
+    -fx-font-weight: 900;
+    -fx-padding: 10 14;
+    -fx-background-radius: 14;
+    -fx-border-radius: 14;
+    -fx-border-color: rgba(255,255,255,0.18);
+    -fx-cursor: hand;
+    -fx-effect: dropshadow(gaussian, rgba(95,233,140,0.32), 22, 0.22, 0, 7);
+}
+.btn-primary:hover {
+    -fx-effect: dropshadow(gaussian, rgba(95,233,140,0.46), 26, 0.25, 0, 9);
+}
+
+.btn-secondary {
+    -fx-background-color: rgba(255,255,255,0.07);
+    -fx-text-fill: -ea-text;
+    -fx-font-weight: 800;
+    -fx-padding: 10 14;
+    -fx-background-radius: 14;
+    -fx-border-radius: 14;
+    -fx-border-color: -ea-border;
+    -fx-cursor: hand;
+}
+.btn-secondary:hover {
+    -fx-background-color: rgba(255,255,255,0.10);
+    -fx-border-color: rgba(95,233,140,0.22);
+    -fx-effect: dropshadow(gaussian, rgba(95,233,140,0.12), 18, 0.22, 0, 6);
+}
+
+.btn-danger {
+    -fx-background-color: linear-gradient(to right, rgba(255,79,79,0.95), rgba(255,120,120,0.88));
+    -fx-text-fill: white;
+    -fx-font-weight: 900;
+    -fx-padding: 10 14;
+    -fx-background-radius: 14;
+    -fx-border-radius: 14;
+    -fx-border-color: rgba(255,255,255,0.18);
+    -fx-cursor: hand;
+    -fx-effect: dropshadow(gaussian, rgba(255,79,79,0.22), 20, 0.22, 0, 6);
+}
+
+/* ScrollPane clean */
+.scroll-pane { -fx-background-color: transparent; -fx-background: transparent; }
+.scroll-pane > .viewport { -fx-background-color: transparent; }
+
+/* ✅ Header table (plus de blanc) */
+.table-header {
+    -fx-background-color: rgba(255,255,255,0.06);
+    -fx-border-color: rgba(255,255,255,0.12);
+    -fx-background-radius: 14;
+    -fx-border-radius: 14;
+    -fx-padding: 12 12;
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.35), 14, 0.20, 0, 4);
+}
+.th {
+    -fx-text-fill: rgba(255,255,255,0.88);
+    -fx-font-weight: 900;
+}
+
+/* Rows box */
+#rowsBox { -fx-padding: 10 0 0 0; }
+
+/* ✅ Si tes rows sont générées en Java: ajoute styleClass "row-card" */
+.row-card {
+    -fx-background-color: rgba(255,255,255,0.05);
+    -fx-background-radius: 14;
+    -fx-border-radius: 14;
+    -fx-border-color: rgba(255,255,255,0.10);
+    -fx-padding: 10 12;
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.35), 16, 0.20, 0, 5);
+}
+.row-card:hover {
+    -fx-background-color: rgba(255,255,255,0.07);
+    -fx-border-color: rgba(95,233,140,0.18);
+    -fx-effect: dropshadow(gaussian, rgba(95,233,140,0.14), 18, 0.22, 0, 6);
+}
+.row-text {
+    -fx-text-fill: rgba(255,255,255,0.88);
+    -fx-font-weight: 700;
+}
+
+/* Scrollbar */
+.scroll-bar:vertical .track, .scroll-bar:horizontal .track {
+    -fx-background-color: rgba(255,255,255,0.04);
+    -fx-background-radius: 999;
+}
+.scroll-bar:vertical .thumb, .scroll-bar:horizontal .thumb {
+    -fx-background-color: rgba(255,255,255,0.18);
+    -fx-background-radius: 999;
+}
+.scroll-bar:vertical .thumb:hover, .scroll-bar:horizontal .thumb:hover {
+    -fx-background-color: rgba(95,233,140,0.35);
+}

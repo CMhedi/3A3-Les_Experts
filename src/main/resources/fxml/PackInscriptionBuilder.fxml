@@ -1,0 +1,102 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<VBox xmlns="http://javafx.com/javafx/21"
+      xmlns:fx="http://javafx.com/fxml/1"
+      fx:controller="controllers.PackInscriptionBuilderController"
+      spacing="14"
+      styleClass="page-root"
+      stylesheets="@../css/pack-builder.css">
+
+    <padding>
+        <Insets top="18" right="18" bottom="18" left="18"/>
+    </padding>
+
+    <Label text="Pack Builder" styleClass="page-title"/>
+
+    <VBox styleClass="card" spacing="12">
+        <padding><Insets top="14" right="14" bottom="14" left="14"/></padding>
+
+        <GridPane hgap="12" vgap="10">
+            <columnConstraints>
+                <ColumnConstraints percentWidth="20"/>
+                <ColumnConstraints percentWidth="80"/>
+            </columnConstraints>
+
+            <Label text="Pack :" styleClass="label-muted" GridPane.rowIndex="0" GridPane.columnIndex="0"/>
+            <ComboBox fx:id="cbPack" promptText="Choisir un pack..."
+                      GridPane.rowIndex="0" GridPane.columnIndex="1"/>
+
+            <Label text="Nb personnes :" styleClass="label-muted" GridPane.rowIndex="1" GridPane.columnIndex="0"/>
+            <Spinner fx:id="spNbPersonnes" GridPane.rowIndex="1" GridPane.columnIndex="1"/>
+
+            <Label text="Coupon :" styleClass="label-muted" GridPane.rowIndex="2" GridPane.columnIndex="0"/>
+            <TextField fx:id="txtCoupon" promptText="Optionnel (ex: PROMO10)"
+                       GridPane.rowIndex="2" GridPane.columnIndex="1"/>
+
+            <Label fx:id="lblMaxAct" text="Max activités : --"
+                   styleClass="hint"
+                   GridPane.rowIndex="3" GridPane.columnIndex="1"/>
+        </GridPane>
+    </VBox>
+
+    <Label text="Activités du pack (coche celles que tu veux inclure)"
+           styleClass="section-title"/>
+
+    <!-- ✅ FIX: no columnResizePolicy attribute here -->
+    <TableView fx:id="tvActivites" prefHeight="260" styleClass="table">
+        <columns>
+            <TableColumn fx:id="colSelect" text="✓" prefWidth="60"/>
+            <TableColumn fx:id="colNom" text="Nom"/>
+            <TableColumn fx:id="colCategorie" text="Catégorie"/>
+            <TableColumn fx:id="colNiveau" text="Niveau"/>
+            <TableColumn fx:id="colPrix" text="Prix"/>
+        </columns>
+    </TableView>
+
+    <HBox spacing="10">
+        <Button fx:id="btnCalculer" text="Calculer le prix" styleClass="btn-secondary"/>
+        <Button fx:id="btnInscrire" text="Créer inscription (brouillon) + réservations" styleClass="btn-primary"/>
+    </HBox>
+
+    <Separator styleClass="sep"/>
+
+    <VBox styleClass="card" spacing="10">
+        <padding><Insets top="14" right="14" bottom="14" left="14"/></padding>
+
+        <Label text="Devis / Pricing" styleClass="section-title"/>
+
+        <GridPane hgap="10" vgap="8">
+            <columnConstraints>
+                <ColumnConstraints percentWidth="30"/>
+                <ColumnConstraints percentWidth="70"/>
+            </columnConstraints>
+
+            <Label text="Pack base :" styleClass="label-muted" GridPane.rowIndex="0" GridPane.columnIndex="0"/>
+            <Label fx:id="lblPackBase" text="--" styleClass="price-value" GridPane.rowIndex="0" GridPane.columnIndex="1"/>
+
+            <Label text="Activités total :" styleClass="label-muted" GridPane.rowIndex="1" GridPane.columnIndex="0"/>
+            <Label fx:id="lblActTotal" text="--" styleClass="price-value" GridPane.rowIndex="1" GridPane.columnIndex="1"/>
+
+            <Label text="Réduction pack :" styleClass="label-muted" GridPane.rowIndex="2" GridPane.columnIndex="0"/>
+            <Label fx:id="lblDiscountPack" text="--" styleClass="price-discount" GridPane.rowIndex="2" GridPane.columnIndex="1"/>
+
+            <Label text="Réduction groupe :" styleClass="label-muted" GridPane.rowIndex="3" GridPane.columnIndex="0"/>
+            <Label fx:id="lblDiscountGroupe" text="--" styleClass="price-discount" GridPane.rowIndex="3" GridPane.columnIndex="1"/>
+
+            <Label text="Coupon :" styleClass="label-muted" GridPane.rowIndex="4" GridPane.columnIndex="0"/>
+            <Label fx:id="lblDiscountCoupon" text="--" styleClass="price-discount" GridPane.rowIndex="4" GridPane.columnIndex="1"/>
+
+            <Label text="TOTAL :" styleClass="total-label" GridPane.rowIndex="5" GridPane.columnIndex="0"/>
+            <Label fx:id="lblTotal" text="--" styleClass="total-value" GridPane.rowIndex="5" GridPane.columnIndex="1"/>
+
+            <Label text="Détails :" styleClass="label-muted" GridPane.rowIndex="6" GridPane.columnIndex="0"/>
+            <Label fx:id="lblDetails" text="" wrapText="true" styleClass="details"
+                   GridPane.rowIndex="6" GridPane.columnIndex="1"/>
+        </GridPane>
+    </VBox>
+
+</VBox>
