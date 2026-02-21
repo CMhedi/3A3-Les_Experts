@@ -1,122 +1,40 @@
-/* ===========================
-   PackList.css (Final - no warning)
-   =========================== */
+@import "theme.css";
 
-/* ✅ Lookups disponibles partout */
-*{
-    -brand-violet:#7c3aed;
-    -brand-pink:#ec4899;
+.pack-page { -fx-background-color: linear-gradient(to bottom right, -ea-bg0, -ea-bg1, -ea-bg2); }
 
-    -bg-0:#0b1020;
-    -bg-1:#111827;
+.top-wrap { }
+.toolbar { }
 
-    -text:#0f172a;
-    -muted:#64748b;
-
-    -shadow-1:dropshadow(gaussian, rgba(2,6,23,0.12), 18, 0.25, 0, 6);
-    -shadow-2:dropshadow(gaussian, rgba(2,6,23,0.20), 26, 0.28, 0, 10);
-}
-
-/* Background + font */
-.root, .border-pane{
-    -fx-font-family: "Segoe UI","Inter","Arial";
-    -fx-background-color: linear-gradient(to bottom right, -bg-0, -bg-1);
-}
-
-/* ✅ Labels lisibles par défaut (rows blanches) */
-.label{
-    -fx-text-fill: -text;
-}
-
-/* ✅ Labels Top/Bottom en blanc (fond sombre) */
-.top .label, .bottom .label{
-    -fx-text-fill: rgba(255,255,255,0.92);
-}
-
-/* Containers */
-.border-pane > .top > VBox,
-.border-pane > .center > VBox,
-.border-pane > .bottom > HBox{
-    -fx-background-color: rgba(255,255,255,0.06);
-    -fx-background-radius: 18;
-    -fx-border-color: rgba(255,255,255,0.08);
-    -fx-border-radius: 18;
-    -fx-effect: -shadow-1;
-}
-
-/* ===== 🔎 Barre de recherche (txtSearch) ===== */
-#txtSearch{
-    -fx-background-color: rgba(255,255,255,0.12);
-    -fx-background-radius: 12;
+.search {
+    -fx-background-color: rgba(255,255,255,0.07);
     -fx-border-color: rgba(255,255,255,0.14);
-    -fx-border-radius: 12;
-
-    -fx-text-fill: white;
-    -fx-prompt-text-fill: rgba(255,255,255,0.55);
-
-    -fx-padding: 10 12 10 12;
-}
-#txtSearch:focused{
-    -fx-background-color: rgba(255,255,255,0.16);
-    -fx-border-color: rgba(124,58,237,0.75);
-    -fx-effect: dropshadow(gaussian, rgba(124,58,237,0.22), 16, 0.25, 0, 0);
-}
-
-/* ===== 🎛️ Boutons (top) ===== */
-.top .button{
     -fx-background-radius: 12;
-    -fx-background-color: linear-gradient(to right, -brand-violet, -brand-pink);
-    -fx-text-fill: white;
-
-    -fx-font-weight: 800;
-    -fx-padding: 9 14 9 14;
-
-    -fx-cursor: hand;
-    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.22), 14, 0.25, 0, 5);
+    -fx-border-radius: 12;
+    -fx-padding: 9 12;
+    -fx-text-fill: -ea-text;
+    -fx-prompt-text-fill: -ea-faint;
 }
-.top .button:hover{ -fx-effect: -shadow-2; -fx-opacity: 0.96; }
-.top .button:pressed{ -fx-opacity: 0.90; }
 
-/* ScrollPane clean */
-.scroll-pane, .scroll-pane > .viewport, .scroll-pane .corner{
+.table-wrap {
     -fx-background-color: transparent;
 }
 
-/* Table Header */
-.table-header{
-    -fx-background-color: linear-gradient(to right, rgba(124,58,237,0.92), rgba(236,72,153,0.88));
+.table-header {
+    -fx-background-color: rgba(255,255,255,0.08);
     -fx-background-radius: 14;
-    -fx-padding: 10;
-    -fx-effect: dropshadow(gaussian, rgba(2,6,23,0.22), 16, 0.25, 0, 5);
-}
-.table-header .label, .th{
-    -fx-text-fill: white;
-    -fx-font-weight: 900;
-    -fx-font-size: 13px;
-    -fx-padding: 0 10 0 10;
-}
-
-/* Rows */
-#rowsBox > .hbox{
-    -fx-background-color: rgba(255,255,255,0.94);
-    -fx-background-radius: 14;
-    -fx-border-color: rgba(15,23,42,0.06);
     -fx-border-radius: 14;
-    -fx-padding: 10;
-    -fx-effect: -shadow-1;
-}
-#rowsBox > .hbox:hover{
-    -fx-border-color: rgba(124,58,237,0.28);
-    -fx-effect: -shadow-2;
-}
-#rowsBox > .hbox .label{
-    -fx-text-fill: -text; /* ✅ visible */
-    -fx-font-size: 13px;
-    -fx-padding: 0 10 0 10;
+    -fx-border-color: rgba(255,255,255,0.12);
+    -fx-padding: 10 12;
 }
 
-/* Total */
-#lblTotal{
-    -fx-text-fill: rgba(255,255,255,0.92);
+.th {
+    -fx-text-fill: -ea-muted;
     -fx-font-weight: 900;
+}
+
+/* Bas */
+.bottom-bar { }
+.total {
+    -fx-font-weight: 900;
+    -fx-text-fill: -ea-text;
 }

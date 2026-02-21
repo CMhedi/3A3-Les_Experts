@@ -1,183 +1,29 @@
-/* =========================
-   PALETTE (Blanc / Orange / Vert)
-   ========================= */
-.root {
-    /* Base */
-    -c-bg: #f6f7fb;                 /* blanc cassé */
-    -c-card: #ffffff;               /* blanc */
-    -c-text: #111827;               /* noir doux */
-    -c-muted: rgba(17,24,39,0.65);  /* gris */
+@import "theme.css";
 
-    /* Accents */
-    -c-orange: #f97316;             /* orange */
-    -c-orange2: #fb923c;            /* orange clair */
-    -c-vert: #16a34a;               /* vert */
-    -c-vert2: #22c55e;              /* vert clair */
+.root { -fx-background-color: linear-gradient(to bottom right, -ea-bg0, -ea-bg1, -ea-bg2); }
 
-    /* Borders / shadow */
-    -c-border: rgba(17,24,39,0.10);
-    -c-border2: rgba(17,24,39,0.06);
-
-    -fx-font-family: "Inter", "Segoe UI", Arial;
-    -fx-background-color: -c-bg;
+.kpi {
+    -fx-min-width: 160;
 }
-
-/* =========================
-   TOP BAR
-   ========================= */
-.topbar {
-    -fx-padding: 12 16;
-    -fx-background-color: -c-card;
-    -fx-border-color: -c-border2;
-    -fx-border-width: 0 0 1 0;
-}
-
-.title {
-    -fx-text-fill: -c-text;
-    -fx-font-size: 18px;
-    -fx-font-weight: 900;
-}
-
-.muted {
-    -fx-text-fill: -c-muted;
-}
-
-/* =========================
-   BUTTONS
-   ========================= */
-.btn-primary {
-    -fx-background-radius: 14;
-    -fx-padding: 10 14;
-    -fx-background-color: linear-gradient(to right, -c-orange, -c-orange2);
-    -fx-text-fill: white;
-    -fx-font-weight: 900;
-    -fx-cursor: hand;
-}
-.btn-primary:hover { -fx-opacity: 0.93; }
-
-.btn-ghost {
-    -fx-background-radius: 12;
-    -fx-padding: 10 12;
-    -fx-background-color: rgba(249,115,22,0.10);
-    -fx-text-fill: -c-orange;
-    -fx-font-weight: 900;
-    -fx-cursor: hand;
-}
-.btn-ghost:hover { -fx-background-color: rgba(249,115,22,0.16); }
-
-/* =========================
-   KPI / CARDS
-   ========================= */
-.kpi, .kpi-card {
-    -fx-padding: 12;
-    -fx-background-radius: 16;
-    -fx-border-radius: 16;
-    -fx-background-color: -c-card;
-    -fx-border-color: -c-border;
-    -fx-effect: dropshadow(gaussian, rgba(17,24,39,0.10), 16, 0, 0, 6);
-}
-.kpi:hover, .kpi-card:hover { -fx-translate-y: -2; }
-
 .kpi-title {
-    -fx-text-fill: -c-muted;
+    -fx-text-fill: -ea-muted;
     -fx-font-weight: 800;
 }
-
 .kpi-value {
-    -fx-text-fill: -c-text;
     -fx-font-size: 22px;
     -fx-font-weight: 900;
 }
 
-/* Si tu utilises kpi-1..kpi-4 dans d'autres pages */
-.kpi-1 { -fx-background-color: rgba(249,115,22,0.08); } /* orange soft */
-.kpi-2 { -fx-background-color: rgba(34,197,94,0.08); }  /* vert soft  */
-.kpi-3 { -fx-background-color: rgba(249,115,22,0.05); }
-.kpi-4 { -fx-background-color: rgba(34,197,94,0.05); }
-
-/* =========================
-   PANELS
-   ========================= */
-.panel {
-    -fx-padding: 14;
-    -fx-background-radius: 16;
-    -fx-border-radius: 16;
-    -fx-background-color: -c-card;
-    -fx-border-color: -c-border;
-    -fx-effect: dropshadow(gaussian, rgba(17,24,39,0.08), 14, 0, 0, 5);
-}
-
 .panel-title {
-    -fx-text-fill: -c-text;
     -fx-font-size: 14px;
     -fx-font-weight: 900;
 }
 
-/* =========================
-   TABLES
-   ========================= */
-.table {
-    -fx-background-color: transparent;
-    -fx-control-inner-background: -c-card;
-    -fx-background-radius: 14;
-    -fx-border-radius: 14;
-    -fx-border-color: -c-border;
+.profile {
+    -fx-background-color: rgba(255,255,255,0.06);
+    -fx-background-radius: 16;
+    -fx-border-radius: 16;
+    -fx-border-color: rgba(255,255,255,0.14);
 }
-
-.table .column-header-background {
-    -fx-background-color: rgba(17,24,39,0.03);
-}
-.table .column-header, .table .label {
-    -fx-text-fill: -c-text;
-    -fx-font-weight: 900;
-}
-
-/* sélection (orange/vert) */
-.table-row-cell:filled:selected,
-.table-row-cell:filled:selected:hover {
-    -fx-background-color: rgba(249,115,22,0.18);
-}
-
-/* =========================
-   TABS
-   ========================= */
-.tabs .tab-header-area {
-    -fx-padding: 6 0 0 0;
-}
-.tabs .tab {
-    -fx-background-color: -c-card;
-    -fx-border-color: -c-border;
-    -fx-border-radius: 12 12 0 0;
-    -fx-background-radius: 12 12 0 0;
-}
-.tabs .tab:selected {
-    -fx-background-color: rgba(34,197,94,0.10);
-    -fx-border-color: rgba(34,197,94,0.25);
-}
-.tabs .tab .tab-label {
-    -fx-text-fill: -c-text;
-    -fx-font-weight: 900;
-}
-
-/* =========================
-   LIST / PROFILE
-   ========================= */
-.profile, .profile-card {
-    -fx-padding: 12;
-    -fx-background-radius: 14;
-    -fx-border-radius: 14;
-    -fx-background-color: rgba(34,197,94,0.06);
-    -fx-border-color: rgba(34,197,94,0.20);
-}
-
-.profile-name {
-    -fx-text-fill: -c-text;
-    -fx-font-size: 18px;
-    -fx-font-weight: 900;
-}
-
-.profile-metric {
-    -fx-text-fill: -c-vert;
-    -fx-font-size: 20px;
-    -fx-font-weight: 900;
-}
+.profile-name { -fx-font-weight: 900; }
+.profile-metric { -fx-font-weight: 900; }

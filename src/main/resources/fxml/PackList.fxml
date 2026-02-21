@@ -7,41 +7,41 @@
 <BorderPane xmlns="http://javafx.com/javafx/21"
             xmlns:fx="http://javafx.com/fxml/1"
             stylesheets="@/css/PackList.css"
+            styleClass="pack-page"
             fx:controller="controllers.PackListController">
 
     <top>
-        <VBox spacing="12" BorderPane.alignment="CENTER">
+        <VBox spacing="12" BorderPane.alignment="CENTER" styleClass="top-wrap">
             <padding>
                 <Insets top="18" right="18" bottom="10" left="18"/>
             </padding>
 
-            <Label text="Gestion des Packs" style="-fx-font-size:18px; -fx-font-weight:bold;"/>
+            <Label text="Gestion des Packs" styleClass="page-title"/>
 
-            <HBox spacing="10" alignment="CENTER_LEFT">
+            <HBox spacing="10" alignment="CENTER_LEFT" styleClass="toolbar">
                 <TextField fx:id="txtSearch"
                            promptText="Rechercher (nom / type / statut)..."
+                           styleClass="search"
                            HBox.hgrow="ALWAYS"/>
 
-                <Button text="Ajouter" onAction="#onAdd"/>
-                <Button text="Modifier" onAction="#onEdit"/>
-                <Button text="Supprimer" onAction="#onDelete"/>
-                <Button text="Rafraîchir" onAction="#onRefresh"/>
+                <Button text="Ajouter" onAction="#onAdd" styleClass="btn-primary"/>
+                <Button text="Modifier" onAction="#onEdit" styleClass="btn-secondary"/>
+                <Button text="Supprimer" onAction="#onDelete" styleClass="btn-danger"/>
+                <Button text="Rafraîchir" onAction="#onRefresh" styleClass="btn-secondary"/>
             </HBox>
         </VBox>
     </top>
 
-    <!-- ✅ TableWidget (custom) -->
     <center>
         <VBox spacing="10">
             <padding>
                 <Insets top="0" right="18" bottom="0" left="18"/>
             </padding>
 
-            <ScrollPane fitToWidth="true" prefHeight="520">
+            <ScrollPane fitToWidth="true" prefHeight="520" styleClass="table-wrap">
                 <content>
                     <VBox style="-fx-background-color: transparent;">
 
-                        <!-- header -->
                         <HBox spacing="0" styleClass="table-header">
                             <Label text="Nom" prefWidth="240" styleClass="th"/>
                             <Label text="Type" prefWidth="170" styleClass="th"/>
@@ -50,7 +50,6 @@
                             <Label text="Statut" prefWidth="140" styleClass="th"/>
                         </HBox>
 
-                        <!-- rows -->
                         <VBox fx:id="rowsBox" spacing="6" style="-fx-padding: 10 0 0 0;"/>
                     </VBox>
                 </content>
@@ -59,12 +58,12 @@
     </center>
 
     <bottom>
-        <HBox spacing="8" alignment="CENTER_LEFT">
+        <HBox spacing="8" alignment="CENTER_LEFT" styleClass="bottom-bar">
             <padding>
                 <Insets top="10" right="18" bottom="18" left="18"/>
             </padding>
-            <Label text="Affiché / Total :"/>
-            <Label fx:id="lblTotal" text="0" style="-fx-font-weight:bold;"/>
+            <Label text="Affiché / Total :" styleClass="muted"/>
+            <Label fx:id="lblTotal" text="0" styleClass="total"/>
         </HBox>
     </bottom>
 

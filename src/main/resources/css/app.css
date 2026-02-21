@@ -1,376 +1,94 @@
-/* =========================================================
-   EcoAdventure Admin — Pro Theme (Green Glass + Animations)
-   Works with your FXML classes:
-   root, sidebar, sidebar-bg, sidebar-overlay, sidebar-content,
-   brand-wrap, logo-circle, brand, brand-sub,
-   profile-card, avatar, avatar-text, profile-name, profile-role,
-   sep, nav-list, nav-item, nav-active,
-   topbar, title, subtitle, pill, btn-secondary,
-   page, content-card, glass, page-subtitle, hint-row, hint, hint-emoji, sep-light
-   ========================================================= */
+@import "theme.css";
 
-/* ------------------- Base / Reset ------------------- */
-/* ===== EcoAdventure Theme Variables (Looked-up colors) ===== */
-.root {
-    -ea-text: rgba(255,255,255,0.92);
-    -ea-muted: rgba(255,255,255,0.65);
-
-    -ea-surface: rgba(255,255,255,0.06);
-    -ea-surface-2: rgba(255,255,255,0.09);
-
-    -ea-border: rgba(255,255,255,0.12);
-    -ea-border-strong: rgba(255,255,255,0.18);
-
-    -ea-green: rgba(95,233,140,0.85);
-    -ea-green-soft: rgba(95,233,140,0.18);
-
-    -ea-danger: rgba(255,79,79,0.90);
-    -ea-warning: rgba(255,190,70,0.90);
-}
-
-/* Make focus outlines nicer */
-.button:focused, .text-field:focused, .combo-box:focused, .spinner:focused, .table-view:focused {
-    -fx-faint-focus-color: transparent;
-    -fx-focus-color: rgba(95, 233, 140, 0.55);
-}
-
-/* ------------------- Sidebar ------------------- */
+/* ====== Sidebar ====== */
 .sidebar {
-    -fx-background-radius: 18;
-    -fx-border-radius: 18;
-    -fx-border-color: rgba(255,255,255,0.10);
-    -fx-background-color: rgba(255,255,255,0.04);
-    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.55), 28, 0.22, 0, 10);
+    -fx-background-color: transparent;
 }
 
-/* Background image */
 .sidebar-bg {
-    -fx-opacity: 0.70;
+    -fx-opacity: 0.92;
 }
 
-/* Artistic overlay (glass + gradient + vignette) */
 .sidebar-overlay {
-    -fx-background-radius: 18;
-    -fx-background-color:
-            linear-gradient(to bottom right,
-            rgba(0,0,0,0.55),
-            rgba(18,40,22,0.55),
-            rgba(0,0,0,0.75));
-    -fx-border-radius: 18;
+    -fx-background-color: linear-gradient(to bottom,
+    rgba(8,10,10,0.78),
+    rgba(8,10,10,0.86),
+    rgba(8,10,10,0.92));
 }
 
-/* Sidebar content container */
 .sidebar-content {
-    -fx-padding: 18 16 16 16;
-}
-
-/* Brand */
-.brand-wrap {
-    -fx-padding: 6 6 10 6;
-}
-
-.logo-circle {
-    -fx-background-radius: 999;
-    -fx-border-radius: 999;
-    -fx-background-color: rgba(255,255,255,0.08);
-    -fx-border-color: rgba(255,255,255,0.16);
-    -fx-border-width: 1.2;
-    -fx-effect: dropshadow(gaussian, rgba(95,233,140,0.25), 18, 0.22, 0, 5);
-    -fx-cursor: hand;
-}
-
-.logo-circle:hover {
-    -fx-effect: dropshadow(gaussian, rgba(95,233,140,0.42), 24, 0.25, 0, 7);
-    -fx-border-color: rgba(95,233,140,0.45);
+    -fx-padding: 18;
 }
 
 .brand {
-    -fx-text-fill: rgba(255,255,255,0.95);
-    -fx-font-size: 17px;
+    -fx-font-size: 16px;
     -fx-font-weight: 900;
-    -fx-letter-spacing: 0.2px;
 }
-
 .brand-sub {
-    -fx-text-fill: rgba(255,255,255,0.65);
-    -fx-font-size: 11px;
-    -fx-font-weight: 600;
+    -fx-font-size: 12px;
+    -fx-text-fill: -ea-muted;
 }
 
-/* Profile card */
+.logo-circle {
+    -fx-background-color: rgba(255,255,255,0.10);
+    -fx-background-radius: 999;
+    -fx-border-radius: 999;
+    -fx-border-color: rgba(255,255,255,0.14);
+}
+
 .profile-card {
     -fx-padding: 12;
-    -fx-background-radius: 16;
-    -fx-border-radius: 16;
-    -fx-background-color: rgba(255,255,255,0.06);
-    -fx-border-color: rgba(255,255,255,0.10);
-    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.42), 18, 0.20, 0, 6);
 }
 
 .avatar {
-    -fx-min-width: 42;
-    -fx-min-height: 42;
+    -fx-min-width: 36;
+    -fx-min-height: 36;
+    -fx-background-color: rgba(95,233,140,0.18);
     -fx-background-radius: 999;
     -fx-border-radius: 999;
-    -fx-background-color: rgba(95,233,140,0.18);
-    -fx-border-color: rgba(95,233,140,0.32);
-    -fx-border-width: 1.2;
-    -fx-effect: dropshadow(gaussian, rgba(95,233,140,0.22), 14, 0.20, 0, 4);
+    -fx-border-color: rgba(95,233,140,0.35);
 }
+.avatar-text { -fx-font-weight: 900; }
 
-.avatar-text {
-    -fx-text-fill: rgba(255,255,255,0.92);
-    -fx-font-weight: 900;
-    -fx-font-size: 14px;
-}
+.profile-name { -fx-font-weight: 900; }
+.profile-role { -fx-text-fill: -ea-muted; }
 
-.profile-name {
-    -fx-text-fill: rgba(255,255,255,0.92);
-    -fx-font-weight: 800;
-    -fx-font-size: 13px;
-}
-
-.profile-role {
-    -fx-text-fill: rgba(255,255,255,0.62);
-    -fx-font-weight: 700;
-    -fx-font-size: 11px;
-}
-
-/* Separators */
-.sep {
-    -fx-min-height: 1;
-    -fx-background-color: rgba(255,255,255,0.14);
-    -fx-opacity: 0.35;
-}
-
-/* ------------------- Nav ------------------- */
-.nav-list {
-    -fx-padding: 6 0 0 0;
-}
+.nav-list { -fx-padding: 6 0 0 0; }
 
 .nav-item {
-    -fx-background-color: rgba(255,255,255,0.06);
-    -fx-text-fill: rgba(255,255,255,0.90);
-    -fx-font-weight: 800;
-    -fx-font-size: 12.5px;
-
-    -fx-padding: 10 12;
-    -fx-background-radius: 14;
-    -fx-border-radius: 14;
-    -fx-border-color: rgba(255,255,255,0.10);
-
+    -fx-background-color: transparent;
+    -fx-text-fill: -ea-text;
     -fx-alignment: CENTER_LEFT;
-    -fx-cursor: hand;
-
-    /* micro-interaction feel */
-    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.25), 10, 0.18, 0, 3);
+    -fx-padding: 10 12;
+    -fx-background-radius: 12;
+    -fx-border-radius: 12;
 }
-
 .nav-item:hover {
-    -fx-background-color: rgba(255,255,255,0.09);
-    -fx-border-color: rgba(95,233,140,0.24);
-    -fx-effect: dropshadow(gaussian, rgba(95,233,140,0.18), 16, 0.22, 0, 4);
+    -fx-background-color: rgba(255,255,255,0.08);
+    -fx-border-color: rgba(255,255,255,0.14);
+    -fx-border-width: 1;
+}
+.nav-item:armed {
+    -fx-background-color: rgba(95,233,140,0.14);
+    -fx-border-color: rgba(95,233,140,0.32);
 }
 
-/* Active item (your controller adds nav-active) */
-.nav-active {
-    -fx-background-color: linear-gradient(to right,
-    rgba(55, 180, 98, 0.95),
-    rgba(95, 233, 140, 0.85));
-    -fx-text-fill: rgba(10, 14, 10, 0.95);
-    -fx-font-weight: 900;
-    -fx-border-color: rgba(255,255,255,0.20);
-    -fx-effect: dropshadow(gaussian, rgba(95,233,140,0.40), 22, 0.22, 0, 6);
-}
-
-/* Add a small “shine” feel */
-.nav-active:hover {
-    -fx-background-color: linear-gradient(to right,
-    rgba(65, 200, 110, 1),
-    rgba(120, 255, 165, 0.95));
-}
-
-/* ------------------- Topbar ------------------- */
+/* ====== Topbar ====== */
 .topbar {
-    -fx-background-radius: 18;
-    -fx-border-radius: 18;
     -fx-background-color: rgba(255,255,255,0.04);
     -fx-border-color: rgba(255,255,255,0.10);
-    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.45), 20, 0.20, 0, 8);
+    -fx-border-width: 0 0 1 0;
 }
 
-.title {
-    -fx-text-fill: rgba(255,255,255,0.95);
-    -fx-font-size: 15px;
-    -fx-font-weight: 900;
-}
-
-.subtitle {
-    -fx-text-fill: rgba(255,255,255,0.65);
-    -fx-font-size: 11.5px;
-    -fx-font-weight: 700;
-}
-
-/* Status pill */
 .pill {
+    -fx-background-color: rgba(95,233,140,0.18);
+    -fx-text-fill: -ea-text;
     -fx-padding: 6 10;
     -fx-background-radius: 999;
     -fx-border-radius: 999;
-
-    -fx-background-color: rgba(95,233,140,0.16);
     -fx-border-color: rgba(95,233,140,0.35);
-    -fx-text-fill: rgba(255,255,255,0.92);
-    -fx-font-weight: 800;
-    -fx-font-size: 11px;
-
-    -fx-effect: dropshadow(gaussian, rgba(95,233,140,0.22), 16, 0.22, 0, 4);
 }
 
-/* Secondary button (topbar) */
-.btn-secondary {
-    -fx-background-color: rgba(255,255,255,0.07);
-    -fx-text-fill: rgba(255,255,255,0.92);
-    -fx-font-weight: 800;
-    -fx-padding: 8 12;
-
-    -fx-background-radius: 14;
-    -fx-border-radius: 14;
-    -fx-border-color: rgba(255,255,255,0.12);
-
-    -fx-cursor: hand;
-}
-
-.btn-secondary:hover {
-    -fx-background-color: rgba(255,255,255,0.10);
-    -fx-border-color: rgba(95,233,140,0.25);
-    -fx-effect: dropshadow(gaussian, rgba(95,233,140,0.14), 18, 0.22, 0, 5);
-}
-
-/* ------------------- Page Center ------------------- */
-.page {
-    -fx-padding: 18;
-}
-
-/* Glass container */
-.glass {
-    -fx-background-radius: 18;
-    -fx-border-radius: 18;
-
-    -fx-background-color: rgba(255,255,255,0.06);
-    -fx-border-color: rgba(255,255,255,0.12);
-
-    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.55), 26, 0.22, 0, 10);
-}
-
-/* Content card in center */
-.content-card {
-    -fx-padding: 18;
-}
-
-.page-subtitle {
-    -fx-text-fill: rgba(255,255,255,0.88);
-    -fx-font-weight: 900;
-    -fx-font-size: 13px;
-}
-
-.hint-row {
-    -fx-background-color: rgba(95,233,140,0.08);
-    -fx-border-color: rgba(95,233,140,0.18);
-    -fx-border-radius: 14;
-    -fx-background-radius: 14;
-    -fx-padding: 10 12;
-}
-
-.hint-emoji {
-    -fx-font-size: 14px;
-}
-
-.hint {
-    -fx-text-fill: rgba(255,255,255,0.72);
-    -fx-font-weight: 700;
-    -fx-font-size: 12px;
-}
-
-.sep-light {
-    -fx-min-height: 1;
-    -fx-background-color: rgba(255,255,255,0.14);
-    -fx-opacity: 0.28;
-}
-
-/* ------------------- Inputs (global) ------------------- */
-.text-field, .combo-box, .spinner {
-    -fx-background-color: rgba(255,255,255,0.07);
-    -fx-background-radius: 14;
-    -fx-border-radius: 14;
-    -fx-border-color: rgba(255,255,255,0.12);
-    -fx-text-fill: rgba(255,255,255,0.92);
-    -fx-prompt-text-fill: rgba(255,255,255,0.48);
-}
-
-.combo-box .list-cell {
-    -fx-text-fill: rgba(255,255,255,0.92);
-}
-
-.spinner .text-field {
-    -fx-text-fill: rgba(255,255,255,0.92);
-}
-
-/* ------------------- TableView (global pro style) ------------------- */
-.table-view {
-    -fx-background-color: rgba(255,255,255,0.05);
-    -fx-background-radius: 16;
-    -fx-border-radius: 16;
-    -fx-border-color: rgba(255,255,255,0.10);
-    -fx-padding: 6;
-}
-
-.table-view .column-header-background {
-    -fx-background-color: rgba(255,255,255,0.06);
-    -fx-background-radius: 16 16 0 0;
-}
-
-.table-view .column-header, .table-view .filler {
-    -fx-background-color: transparent;
-}
-
-.table-view .column-header .label {
-    -fx-text-fill: rgba(255,255,255,0.85);
-    -fx-font-weight: 900;
-}
-
-.table-row-cell {
-    -fx-background-color: transparent;
-}
-
-.table-row-cell:filled:hover {
-    -fx-background-color: rgba(95,233,140,0.08);
-}
-
-.table-cell {
-    -fx-text-fill: rgba(255,255,255,0.85);
-}
-
-/* ------------------- Advanced feel: subtle motion (via :hover shadows) ------------------- */
-/* JavaFX CSS cannot do keyframe animations like web CSS.
-   We simulate “advanced animation” with layered shadows + hover transforms via your Java transitions
-   (you already have Fade/Translate/Scale in controller). */
-
-/* Bonus: smoother buttons */
-.button {
-    -fx-background-insets: 0;
-}
-
-/* Optional: make scrollbar sleek */
-.scroll-bar:vertical .track, .scroll-bar:horizontal .track {
-    -fx-background-color: rgba(255,255,255,0.04);
-    -fx-background-radius: 999;
-}
-
-.scroll-bar:vertical .thumb, .scroll-bar:horizontal .thumb {
-    -fx-background-color: rgba(255,255,255,0.18);
-    -fx-background-radius: 999;
-}
-
-.scroll-bar:vertical .thumb:hover, .scroll-bar:horizontal .thumb:hover {
-    -fx-background-color: rgba(95,233,140,0.35);
-}
+.hint-row { -fx-padding: 6 0 0 0; }
+.hint-emoji { -fx-font-size: 16px; }
+.hint { -fx-text-fill: -ea-muted; }

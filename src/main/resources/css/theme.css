@@ -1,0 +1,140 @@
+/*noinspection CssInvalidFunction,CssInvalidPseudoSelector,CssUnknownProperty,CssInvalidPropertyValue */
+/* =========================================================
+   theme.css — EcoAdventure Dark Glass (PRO) (Safe IDE)
+   Lisibilité + contraste + cohérence
+   ========================================================= */
+
+.root, .page, .dialog-root {
+    -fx-font-family: "Inter", "Segoe UI", "System";
+    -fx-font-size: 13px;
+    -fx-text-fill: rgba(255,255,255,0.92);
+
+    /* couleurs */
+    -ea-text: rgba(255,255,255,0.92);
+    -ea-muted: rgba(255,255,255,0.70);
+    -ea-faint: rgba(255,255,255,0.52);
+
+    -ea-surface: rgba(255,255,255,0.06);
+    -ea-surface-2: rgba(255,255,255,0.10);
+    -ea-border: rgba(255,255,255,0.14);
+
+    -ea-accent: rgba(95,233,140,0.92);
+    -ea-accent2: rgba(54,211,153,0.95);
+    -ea-danger: rgba(255,79,79,0.92);
+
+    -fx-focus-color: rgba(120,255,180,0.55);
+    -fx-faint-focus-color: transparent;
+}
+
+/* Background (syntaxe JavaFX) */
+.root, .page, .dialog-root {
+    -fx-background-color: linear-gradient(
+            from 0% 0% to 100% 100%,
+            rgba(10,12,12,0.92) 0%,
+            rgba(14,18,16,0.88) 55%,
+            rgba(8,10,10,0.95) 100%
+    );
+}
+
+/* ===== Texte ===== */
+.label { -fx-text-fill: -ea-text; }
+.muted, .label.muted { -fx-text-fill: -ea-muted; }
+
+.title, .page-title {
+    -fx-font-size: 20px;
+    -fx-font-weight: 900;
+    -fx-text-fill: -ea-text;
+}
+.subtitle, .page-subtitle {
+    -fx-font-size: 12.5px;
+    -fx-text-fill: -ea-muted;
+}
+
+/* ===== Cards glass ===== */
+.glass, .content-card, .panel, .kpi, .profile-card, .dialog-card {
+    -fx-background-color: -ea-surface;
+    -fx-background-radius: 18;
+    -fx-border-radius: 18;
+    -fx-border-color: -ea-border;
+    -fx-border-width: 1;
+    -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.38), 18, 0.12, 0, 6);
+}
+
+/* ===== Inputs ===== */
+.text-input, .text-field, .password-field, .text-area, .combo-box-base, .date-picker {
+    -fx-background-color: -ea-surface;
+    -fx-background-radius: 12;
+    -fx-border-radius: 12;
+    -fx-border-color: -ea-border;
+    -fx-border-width: 1;
+    -fx-text-fill: -ea-text;
+    -fx-prompt-text-fill: -ea-faint;
+    -fx-padding: 9 12;
+}
+
+/* ===== Buttons ===== */
+.button {
+    -fx-background-radius: 12;
+    -fx-border-radius: 12;
+    -fx-padding: 9 14;
+    -fx-font-weight: 800;
+    -fx-cursor: hand;
+}
+
+.btn-primary {
+    -fx-background-color: linear-gradient(
+            from 0% 0% to 0% 100%,
+            rgba(110,255,170,0.98) 0%,
+            rgba(54,211,153,0.98) 100%
+    );
+    -fx-text-fill: rgba(0,0,0,0.90);
+    -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.35), 18, 0.12, 0, 6);
+}
+
+.btn-secondary {
+    -fx-background-color: -ea-surface-2;
+    -fx-text-fill: -ea-text;
+    -fx-border-color: -ea-border;
+    -fx-border-width: 1;
+}
+
+.btn-danger {
+    -fx-background-color: -ea-danger;
+    -fx-text-fill: white;
+}
+
+.button:disabled { -fx-opacity: 0.55; }
+
+/* ===== TableView (zebra sans :odd/:filled) ===== */
+.table-view {
+    -fx-background-color: transparent;
+    -fx-border-color: -ea-border;
+    -fx-border-radius: 14;
+    -fx-background-radius: 14;
+    -fx-padding: 6;
+
+    -fx-control-inner-background: rgba(255,255,255,0.03);
+    -fx-control-inner-background-alt: rgba(255,255,255,0.05);
+
+    -fx-selection-bar: rgba(95,233,140,0.24);
+    -fx-selection-bar-non-focused: rgba(95,233,140,0.16);
+}
+
+.table-view .column-header-background {
+    -fx-background-color: rgba(255,255,255,0.08);
+    -fx-background-radius: 12;
+}
+
+.table-view .column-header .label {
+    -fx-text-fill: -ea-muted;
+    -fx-font-weight: 900;
+}
+
+.table-cell { -fx-text-fill: -ea-text; }
+
+/* ===== Scroll ===== */
+.scroll-pane, .scroll-pane > .viewport { -fx-background-color: transparent; }
+.scroll-bar .thumb {
+    -fx-background-color: rgba(255,255,255,0.18);
+    -fx-background-radius: 999;
+}
