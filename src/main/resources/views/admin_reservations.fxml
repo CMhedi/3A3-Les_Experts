@@ -4,45 +4,48 @@
 <?import javafx.scene.layout.*?>
 
 <BorderPane xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1"
-            fx:controller="controllers.ReservationEvenementController"
-            stylesheets="@/styles/app.css" styleClass="root">
+            fx:controller="controllers.ReservationAdminController" stylesheets="@/styles/app.css" styleClass="root">
 
-    <top>
-        <HBox styleClass="topbar" spacing="12" alignment="CENTER_LEFT">
-            <Button text="← Accueil" onAction="#goHome" styleClass="ghostBtn"/>
-            <Label text="Gestion des Réservations" styleClass="pageTitle"/>
-            <Region HBox.hgrow="ALWAYS"/>
-            <HBox styleClass="searchBox" spacing="8" alignment="CENTER_LEFT">
-                <TextField fx:id="searchField" promptText="Rechercher par ID..." onKeyReleased="#onSearch" styleClass="searchInput"/>
-            </HBox>
-            <Button text="Actualiser" onAction="#onRefresh" styleClass="ghostBtn"/>
-        </HBox>
-    </top>
+    <left>
+        <VBox styleClass="sidebar" spacing="15" prefWidth="250">
+            <VBox spacing="5" styleClass="sidebarHeader">
+                <Label text="EcoAdventure" styleClass="brand"/>
+                <Label text="Admin Dashboard" styleClass="mutedSidebar"/>
+            </VBox>
+            <VBox spacing="10" styleClass="sidebarNav">
+                <Button text="🏠 Accueil" onAction="#goHome" styleClass="navItem"/>
+                <Button text="🎫 Événements" onAction="#goToEvents" styleClass="navItem"/>
+                <Button text="📅 Réservations" styleClass="navItem, navItemActive"/>
+            </VBox>
+        </VBox>
+    </left>
 
     <center>
-        <VBox styleClass="page" spacing="14">
-            <padding><Insets top="18" right="18" bottom="18" left="18"/></padding>
-            <VBox styleClass="card" spacing="12" VBox.vgrow="ALWAYS">
-                <HBox alignment="CENTER_LEFT">
-                    <Label text="Liste des réservations" styleClass="cardTitle"/>
-                    <Region HBox.hgrow="ALWAYS"/>
-                    <Label fx:id="lblInfo" text="0 réservation(s)" styleClass="mutedText"/>
+        <VBox spacing="0">
+            <HBox styleClass="topbar" spacing="15" alignment="CENTER_LEFT">
+                <Label text="Liste des Réservations" styleClass="pageTitle"/>
+                <Region HBox.hgrow="ALWAYS"/>
+                <HBox styleClass="searchBox">
+                    <TextField fx:id="searchReservationField" promptText="Chercher par ID Event..." onKeyReleased="#onSearchReservation" styleClass="searchInput"/>
                 </HBox>
+                <Button text="🗑 Supprimer" onAction="#onDeleteReservation" styleClass="dangerBtn" style="-fx-background-color: #e74c3c; -fx-text-fill: white;"/>
+            </HBox>
 
-                <TableView fx:id="table" VBox.vgrow="ALWAYS" styleClass="pro-table">
+            <VBox spacing="20" styleClass="pageContent" VBox.vgrow="ALWAYS">
+                <padding><Insets top="25" right="35" bottom="25" left="35"/></padding>
+
+                <TableView fx:id="reservationTable" VBox.vgrow="ALWAYS" styleClass="modern-table">
                     <columns>
-                        <TableColumn fx:id="colIdRes" text="ID Res" prefWidth="80"/>
-                        <TableColumn fx:id="colIdEvent" text="ID Événement" prefWidth="120"/>
-                        <TableColumn fx:id="colNbBillets" text="Billets" prefWidth="100"/>
-                        <TableColumn fx:id="colStatut" text="Statut" prefWidth="150"/>
-                        <TableColumn fx:id="colDateRes" text="Date Réservation" prefWidth="200"/>
+                        <TableColumn fx:id="colId" text="ID Res" prefWidth="70"/>
+                        <TableColumn fx:id="colDate" text="Date" prefWidth="150"/>
+                        <TableColumn fx:id="colStatus" text="Statut" prefWidth="120"/>
+                        <TableColumn fx:id="colBillets" text="Billets" prefWidth="80"/>
+                        <TableColumn fx:id="colEventId" text="ID Event" prefWidth="100"/>
                     </columns>
+                    <columnResizePolicy>
+                        <TableView fx:constant="CONSTRAINED_RESIZE_POLICY" />
+                    </columnResizePolicy>
                 </TableView>
-
-                <HBox spacing="10" alignment="CENTER_RIGHT">
-                    <Button text="Supprimer" onAction="#onDeleteSelected" style="-fx-background-color: #e74c3c; -fx-text-fill: white;"/>
-                    <Button text="+ Ajouter" onAction="#onAdd" style="-fx-background-color: #27ae60; -fx-text-fill: white;"/>
-                </HBox>
             </VBox>
         </VBox>
     </center>

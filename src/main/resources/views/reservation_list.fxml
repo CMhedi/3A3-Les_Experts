@@ -3,11 +3,9 @@
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
 
-<BorderPane xmlns="http://javafx.com/javafx/17"
-            xmlns:fx="http://javafx.com/fxml/1"
+<BorderPane xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1"
             fx:controller="controllers.ReservationClientController"
-            stylesheets="@/styles/app.css"
-            styleClass="root">
+            stylesheets="@/styles/app.css" styleClass="root">
 
     <left>
         <VBox styleClass="sidebar" spacing="16" prefWidth="240">
@@ -18,12 +16,13 @@
 
             <VBox spacing="8" styleClass="sidebarNav">
                 <Button text="🏠  Accueil" onAction="#goHome" styleClass="navItem"/>
-                <Button text="🎫  Mes Réservations" styleClass="navItem navItemActive"/>
+                <Button text="🎫  Événements" onAction="#goToEvents" styleClass="navItem"/>
+                <Button text="📅  Mes Réservations" styleClass="navItem, navItemActive"/>
             </VBox>
 
             <Region VBox.vgrow="ALWAYS"/>
             <Separator styleClass="sidebarSep"/>
-            <Button text="⎋  Déconnexion" styleClass="navItem danger"/>
+            <Button text="⎋  Déconnexion" onAction="#onLogout" styleClass="navItem, danger"/>
         </VBox>
     </left>
 
@@ -34,7 +33,7 @@
                 <Region HBox.hgrow="ALWAYS"/>
                 <HBox styleClass="searchBox" spacing="8" alignment="CENTER_LEFT">
                     <Label text="🔎" styleClass="muted"/>
-                    <TextField fx:id="searchField" promptText="Filtrer mes billets..." styleClass="searchInput"/>
+                    <TextField fx:id="searchField" onKeyReleased="#onSearch" promptText="Filtrer mes billets..." styleClass="searchInput"/>
                 </HBox>
                 <Button text="Actualiser" onAction="#onRefresh" styleClass="secondaryBtn"/>
             </HBox>

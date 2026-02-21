@@ -517,7 +517,16 @@
 .table-cell {
     -fx-alignment: CENTER_LEFT;
 }
-
+.event-card-client:hover {
+    -fx-translate-y: -5;
+    -fx-cursor: hand;
+}
+.primaryBtn {
+    -fx-background-color: #27ae60;
+    -fx-text-fill: white;
+    -fx-background-radius: 8;
+    -fx-padding: 10 20;
+}
 /* Ken t7eb el Scrollbar tji mziyna zeda */
 .table .scroll-bar:vertical .thumb,
 .table .scroll-bar:horizontal .thumb {

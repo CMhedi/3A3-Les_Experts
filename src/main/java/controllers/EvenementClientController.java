@@ -2,146 +2,128 @@ package controllers;
 
 import Entities.Evenement;
 import Services.EvenementService;
-import javafx.beans.property.SimpleIntegerProperty;
-import javafx.beans.property.SimpleStringProperty;
-import javafx.collections.FXCollections;
-import javafx.collections.ObservableList;
+import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
+import javafx.geometry.Pos;
+import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
+import javafx.scene.layout.*;
 import javafx.stage.Stage;
-
-import java.time.format.DateTimeFormatter;
+import java.net.URL;
 import java.util.List;
-import java.util.Locale;
 import java.util.stream.Collectors;
 
 public class EvenementClientController {
 
-    @FXML private TableView<Evenement> tableEvents;
-    @FXML private TableColumn<Evenement, Number> colId;
-    @FXML private TableColumn<Evenement, String> colTitre;
-    @FXML private TableColumn<Evenement, String> colCategorie;
-    @FXML private TableColumn<Evenement, String> colDate;
-    @FXML private TableColumn<Evenement, String> colLieu;
-    @FXML private TableColumn<Evenement, Number> colPlaces;
-    @FXML private TableColumn<Evenement, String> colStatut;
-
+    @FXML private VBox cardsContainer;
     @FXML private TextField searchField;
     @FXML private Label lblInfo;
 
-    private final EvenementService service = new EvenementService();
-    private final ObservableList<Evenement> data = FXCollections.observableArrayList();
-    private final DateTimeFormatter dtf = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
+    private final EvenementService evenementService = new EvenementService();
+    private List<Evenement> allEvents;
 
     @FXML
     public void initialize() {
-        colId.setCellValueFactory(c -> new SimpleIntegerProperty(c.getValue().getIdEvenement()));
-        colTitre.setCellValueFactory(c -> new SimpleStringProperty(nvl(c.getValue().getTitre())));
-        colCategorie.setCellValueFactory(c -> new SimpleStringProperty(
-                c.getValue().getCategorieEvt() == null ? "" : c.getValue().getCategorieEvt().name()
-        ));
-        colDate.setCellValueFactory(c -> new SimpleStringProperty(
-                c.getValue().getDateEvent() == null ? "" : c.getValue().getDateEvent().format(dtf)
-        ));
-        colLieu.setCellValueFactory(c -> new SimpleStringProperty(nvl(c.getValue().getLieu())));
-        colPlaces.setCellValueFactory(c -> new SimpleIntegerProperty(c.getValue().getNbPlaces()));
-        colStatut.setCellValueFactory(c -> new SimpleStringProperty(nvl(c.getValue().getStatut())));
-
-        tableEvents.setItems(data);
-        loadAll();
-
-        tableEvents.setRowFactory(tv -> {
-            TableRow<Evenement> row = new TableRow<>();
-            row.setOnMouseClicked(e -> {
-                if (e.getClickCount() == 2 && !row.isEmpty()) {
-                    Evenement ev = row.getItem();
-                    openReservationsClient(ev.getIdEvenement());
-                }
-            });
-            return row;
-        });
+        loadEvents();
     }
 
-    private void loadAll() {
+    private void loadEvents() {
         try {
-            List<Evenement> list = service.getAll();
-            data.setAll(list);
-            if (lblInfo != null) lblInfo.setText("Total: " + data.size());
+            allEvents = evenementService.getAll();
+            displayCards(allEvents);
         } catch (Exception e) {
-            if (lblInfo != null) lblInfo.setText("Erreur: " + e.getMessage());
+            e.printStackTrace();
         }
     }
 
-    @FXML
-    private void onRefresh() {
-        if (searchField != null) searchField.clear();
-        loadAll();
+    private void displayCards(List<Evenement> list) {
+        cardsContainer.getChildren().clear();
+        for (Evenement ev : list) {
+            cardsContainer.getChildren().add(createEventCard(ev));
+        }
+    }
+
+    private VBox createEventCard(Evenement ev) {
+        VBox card = new VBox(12);
+        card.setStyle("-fx-background-color: white; -fx-background-radius: 15; -fx-padding: 20; -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.1), 10, 0, 0, 5);");
+
+        HBox header = new HBox();
+        header.setAlignment(Pos.CENTER_LEFT);
+
+        Label title = new Label(ev.getTitre());
+        title.setStyle("-fx-font-weight: bold; -fx-font-size: 18px; -fx-text-fill: #2c3e50;");
+
+        Region spacer = new Region();
+        HBox.setHgrow(spacer, Priority.ALWAYS);
+
+        Label category = new Label(ev.getCategorieEvt() != null ? ev.getCategorieEvt().name() : "Général");
+        category.setStyle("-fx-background-color: #e0f2fe; -fx-text-fill: #0369a1; -fx-padding: 4 10; -fx-background-radius: 8; -fx-font-size: 11px;");
+
+        header.getChildren().addAll(title, spacer, category);
+
+        Label info = new Label("📍 " + ev.getLieu() + "  |  📅 " + ev.getDateEvent());
+        info.setStyle("-fx-text-fill: #64748b;");
+
+        Label desc = new Label(ev.getDescription());
+        desc.setWrapText(true);
+        desc.setStyle("-fx-text-fill: #475569;");
+
+        HBox footer = new HBox();
+        footer.setAlignment(Pos.CENTER_LEFT);
+
+        Label places = new Label("👥 Places: " + ev.getNbPlaces());
+        places.setStyle("-fx-font-weight: bold; -fx-text-fill: #059669;");
+
+        Region spacer2 = new Region();
+        HBox.setHgrow(spacer2, Priority.ALWAYS);
+
+        Button btnReserve = new Button("Réserver");
+        btnReserve.setStyle("-fx-background-color: #2563eb; -fx-text-fill: white; -fx-background-radius: 8;");
+        btnReserve.setOnAction(e -> handleReservation(ev));
+
+        footer.getChildren().addAll(places, spacer2, btnReserve);
+        card.getChildren().addAll(header, info, desc, new Separator(), footer);
+
+        return card;
+    }
+
+    private void handleReservation(Evenement ev) {
+        // Houni t7el el popup mta3 el réservation (form)
+        System.out.println("Réserver l'event: " + ev.getTitre());
     }
 
     @FXML
     private void onSearch() {
-        String q = nvl(searchField.getText()).trim().toLowerCase(Locale.ROOT);
-        if (q.isEmpty()) { loadAll(); return; }
-
-        try {
-            List<Evenement> list = service.getAll();
-            data.setAll(list.stream()
-                    .filter(e -> nvl(e.getTitre()).toLowerCase(Locale.ROOT).contains(q)
-                            || nvl(e.getLieu()).toLowerCase(Locale.ROOT).contains(q)
-                            || (e.getCategorieEvt() != null && e.getCategorieEvt().name().toLowerCase(Locale.ROOT).contains(q))
-                            || nvl(e.getStatut()).toLowerCase(Locale.ROOT).contains(q))
-                    .collect(Collectors.toList()));
-            if (lblInfo != null) lblInfo.setText("Résultats: " + data.size());
-        } catch (Exception e) {
-            if (lblInfo != null) lblInfo.setText("Erreur: " + e.getMessage());
-        }
+        String q = searchField.getText().toLowerCase();
+        List<Evenement> filtered = allEvents.stream()
+                .filter(e -> e.getTitre().toLowerCase().contains(q) || e.getLieu().toLowerCase().contains(q))
+                .collect(Collectors.toList());
+        displayCards(filtered);
     }
 
-    private void openReservationsClient(int eventId) {
+    @FXML private void onRefresh() { searchField.clear(); loadEvents(); }
+
+    @FXML private void goToReservations(ActionEvent event) { switchScene(event, "/views/reservation_list_client.fxml"); }
+    @FXML private void goToEvenements(ActionEvent event) { loadEvents(); }
+    @FXML private void goHome(ActionEvent event) { switchScene(event, "/views/Home.fxml"); }
+    @FXML private void logout(ActionEvent event) { switchScene(event, "/views/Login.fxml"); }
+
+    private void switchScene(ActionEvent event, String fxmlPath) {
         try {
-            FXMLLoader loader = new FXMLLoader(getClass().getResource("/views/reservation_list_client.fxml"));
-            Parent root = loader.load();
-
-            ReservationClientController ctrl = loader.getController();
-            ctrl.loadReservationsByEventId(eventId);
-
-            Stage stage = (Stage) tableEvents.getScene().getWindow();
+            URL resource = getClass().getResource(fxmlPath);
+            if (resource == null) {
+                System.err.println("❌ Path mal9itech: " + fxmlPath);
+                return;
+            }
+            Parent root = FXMLLoader.load(resource);
+            Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
             stage.setScene(new Scene(root));
-            stage.setMaximized(true);
             stage.show();
         } catch (Exception e) {
             e.printStackTrace();
-            if (lblInfo != null) lblInfo.setText("Erreur ouverture réservations: " + e.getMessage());
         }
     }
-
-    @FXML
-    private void goHome() { switchScene("/views/HomeClient.fxml"); }
-
-    @FXML
-    private void goToReservations() { switchScene("/views/reservation_list_client.fxml"); }
-
-    @FXML
-    private void goToEvenements() { switchScene("/views/evenement_list_client.fxml"); }
-
-    @FXML
-    private void logout() { switchScene("/views/Login.fxml"); }
-
-    private void switchScene(String fxmlPath) {
-        try {
-            Parent root = FXMLLoader.load(getClass().getResource(fxmlPath));
-            Stage stage = (Stage) tableEvents.getScene().getWindow();
-            stage.setScene(new Scene(root));
-            stage.setMaximized(true);
-            stage.show();
-        } catch (Exception e) {
-            e.printStackTrace();
-            if (lblInfo != null) lblInfo.setText("Erreur navigation: " + e.getMessage());
-        }
-    }
-
-    private String nvl(String s) { return s == null ? "" : s; }
 }
