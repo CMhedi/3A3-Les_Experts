@@ -4,7 +4,6 @@ import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
 public class Inscription {
-
     private int idInscription;
     private LocalDateTime dateInscription;
     private String statutInscr;
@@ -12,7 +11,18 @@ public class Inscription {
     private int idUser;
     private int idPack;
 
+    // ✅ Zid hedhom bech t-affichi el assemi fil-Tableau
+    private String nomUser;
+    private String nomPack;
+
     public Inscription() {}
+
+    // ✅ Getters & Setters lel assemi el jdod
+    public String getNomUser() { return nomUser; }
+    public void setNomUser(String nomUser) { this.nomUser = nomUser; }
+
+    public String getNomPack() { return nomPack; }
+    public void setNomPack(String nomPack) { this.nomPack = nomPack; }
 
     public int getIdInscription() { return idInscription; }
     public void setIdInscription(int idInscription) { this.idInscription = idInscription; }

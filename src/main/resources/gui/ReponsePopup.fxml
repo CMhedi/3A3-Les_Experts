@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<VBox spacing="20" style="-fx-padding: 25; -fx-background-color: white; -fx-background-radius: 15; -fx-border-color: #143D30; -fx-border-radius: 15; -fx-border-width: 2;" xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1" fx:controller="gui.ReponsePopupController">
+    <children>
+        <Label text="Répondre à la Réclamation" style="-fx-font-size: 18; -fx-font-weight: bold; -fx-text-fill: #143D30;"/>
+
+        <VBox spacing="10">
+            <Label text="Votre message de réponse :" style="-fx-font-weight: bold;"/>
+            <TextArea fx:id="txtReponse" prefHeight="150" prefWidth="400" promptText="Saisissez votre réponse ici..." wrapText="true" style="-fx-background-radius: 10;"/>
+        </VBox>
+
+        <HBox spacing="15" alignment="CENTER_RIGHT">
+            <Button onAction="#handleAnnuler" text="Annuler" style="-fx-background-color: transparent; -fx-text-fill: #718096; -fx-border-color: #cbd5e0; -fx-border-radius: 8;"/>
+            <Button onAction="#handleEnvoyer" text="Envoyer la Réponse" style="-fx-background-color: #F37021; -fx-text-fill: white; -fx-font-weight: bold; -fx-background-radius: 8; -fx-padding: 8 15;"/>
+        </HBox>
+    </children>
+</VBox>

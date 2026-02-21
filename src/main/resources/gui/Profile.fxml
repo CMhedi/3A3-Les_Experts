@@ -1,0 +1,138 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.shape.*?>
+<?import java.net.URL?>
+<?import javafx.geometry.Insets?>
+
+<AnchorPane prefHeight="650.0" prefWidth="850.0" xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1" fx:controller="gui.ProfileController">
+    <stylesheets>
+        <URL value="@styleuser.css" />
+    </stylesheets>
+
+    <children>
+        <StackPane fx:id="mainStackPane" alignment="CENTER" style="-fx-background-color: #f0f2f5;" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+            <children>
+                <ScrollPane fitToWidth="true" maxWidth="800.0" style="-fx-background-color: transparent; -fx-background: transparent;" vbarPolicy="AS_NEEDED">
+                    <content>
+                <VBox alignment="TOP_CENTER" maxWidth="750.0" spacing="0.0" style="-fx-background-color: white; -fx-background-radius: 20; -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.15), 25, 0, 0, 10);">
+                    <children>
+                        <VBox alignment="CENTER" spacing="8.0" style="-fx-background-color: #1B4D3E; -fx-background-radius: 20 20 0 0; -fx-padding: 25;">
+                            <children>
+                                <Circle fx:id="profileCircle" fill="WHITE" onMouseClicked="#handleChangePhotoClick" radius="55.0" stroke="WHITE" strokeWidth="3.0" style="-fx-cursor: hand;" />
+                                <Button onAction="#handleChangePhotoButton" style="-fx-background-color: rgba(255,255,255,0.2); -fx-text-fill: white; -fx-background-radius: 15; -fx-font-size: 11;" text="Modifier la photo" />
+                                <Label fx:id="lblFullName" style="-fx-font-size: 24; -fx-font-weight: bold; -fx-text-fill: white;" text="Nom Prénom" />
+                                <Label fx:id="lblEmailTop" style="-fx-text-fill: rgba(255,255,255,0.7); -fx-font-size: 14;" text="user@email.com" />
+                            </children>
+                        </VBox>
+
+                        <TabPane fx:id="tabPane" tabClosingPolicy="UNAVAILABLE" VBox.vgrow="ALWAYS" style="-fx-padding: 10;">
+                            <tabs>
+                                <Tab text="Paramètres du Profil">
+                                    <content>
+                                        <VBox spacing="20.0" style="-fx-padding: 25;">
+                                            <children>
+                                                <GridPane hgap="20.0" vgap="15.0">
+                                                    <columnConstraints>
+                                                        <ColumnConstraints percentWidth="50" />
+                                                        <ColumnConstraints percentWidth="50" />
+                                                    </columnConstraints>
+                                                    <children>
+                                                        <VBox spacing="5" GridPane.columnIndex="0" GridPane.rowIndex="0">
+                                                            <Label text="Nom" style="-fx-font-weight: bold; -fx-text-fill: #475569;" />
+                                                            <TextField fx:id="txtNom" prefHeight="40.0" styleClass="modern-input" />
+                                                            <Label fx:id="errorNom" text="Nom obligatoire" textFill="RED" visible="false" style="-fx-font-size: 10;"/>
+                                                        </VBox>
+                                                        <VBox spacing="5" GridPane.columnIndex="1" GridPane.rowIndex="0">
+                                                            <Label text="Prénom" style="-fx-font-weight: bold; -fx-text-fill: #475569;" />
+                                                            <TextField fx:id="txtPrenom" prefHeight="40.0" styleClass="modern-input" />
+                                                            <Label fx:id="errorPrenom" text="Prénom obligatoire" textFill="RED" visible="false" style="-fx-font-size: 10;"/>
+                                                        </VBox>
+                                                        <VBox spacing="5" GridPane.columnIndex="0" GridPane.rowIndex="1">
+                                                            <Label text="Téléphone" style="-fx-font-weight: bold; -fx-text-fill: #475569;" />
+                                                            <TextField fx:id="txtTel" prefHeight="40.0" styleClass="modern-input" />
+                                                            <Label fx:id="errorTel" text="8 chiffres requis" textFill="RED" visible="false" style="-fx-font-size: 10;"/>
+                                                        </VBox>
+                                                        <VBox spacing="5" GridPane.columnIndex="1" GridPane.rowIndex="1">
+                                                            <Label text="Email" style="-fx-font-weight: bold; -fx-text-fill: #475569;" />
+                                                            <TextField fx:id="txtEmail" prefHeight="40.0" styleClass="modern-input" />
+                                                            <Label fx:id="errorEmail" text="Email invalide" textFill="RED" visible="false" style="-fx-font-size: 10;"/>
+                                                        </VBox>
+
+                                                        <VBox fx:id="paneCoach" spacing="15" GridPane.columnIndex="0" GridPane.rowIndex="2" GridPane.columnSpan="2">
+                                                            <children>
+                                                                <Separator style="-fx-padding: 10 0 10 0;" />
+                                                                <Label text="Informations Coach" style="-fx-font-weight: bold; -fx-text-fill: #1B4D3E; -fx-font-size: 14;" />
+
+                                                                <HBox spacing="40">
+                                                                    <children>
+                                                                        <VBox spacing="5">
+                                                                            <Label text="Âge" style="-fx-font-weight: bold; -fx-text-fill: #475569;" />
+                                                                            <Label fx:id="lblAgeValue" text="--" style="-fx-font-size: 14; -fx-text-fill: #1e293b;" />
+                                                                        </VBox>
+                                                                        <VBox spacing="5">
+                                                                            <Label text="Expérience" style="-fx-font-weight: bold; -fx-text-fill: #475569;" />
+                                                                            <Label fx:id="lblExpValue" text="--" style="-fx-font-size: 14; -fx-text-fill: #1e293b;" />
+                                                                        </VBox>
+                                                                        <VBox spacing="5">
+                                                                            <Label text="Spécialité" style="-fx-font-weight: bold; -fx-text-fill: #475569;" />
+                                                                            <Label fx:id="lblSpecValue" text="--" style="-fx-font-size: 14; -fx-text-fill: #1e293b;" />
+                                                                        </VBox>
+                                                                    </children>
+                                                                </HBox>
+
+                                                                <VBox spacing="5">
+                                                                    <Label text="Modifier Disponibilité" style="-fx-font-weight: bold; -fx-text-fill: #475569;" />
+                                                                    <ComboBox fx:id="comboDispoUpdate" prefWidth="250.0" styleClass="modern-input" />
+                                                                </VBox>
+                                                            </children>
+                                                        </VBox>                                                    </children>
+                                                </GridPane>
+
+                                                <HBox alignment="CENTER_RIGHT" spacing="15.0">
+                                                    <children>
+                                                        <Button onAction="#handleDeleteAccount" prefHeight="40.0" style="-fx-background-color: transparent; -fx-border-color: #ef4444; -fx-border-radius: 10; -fx-text-fill: #ef4444; -fx-font-weight: bold;" text="Supprimer le compte" />
+                                                        <Button fx:id="btnUpdate" onAction="#handleUpdate" prefHeight="45.0" prefWidth="200.0" style="-fx-background-color: #1B4D3E; -fx-text-fill: white; -fx-font-weight: bold; -fx-background-radius: 10;" text="Enregistrer" />
+                                                    </children>
+                                                </HBox>
+                                            </children>
+                                        </VBox>
+                                    </content>
+                                </Tab>
+
+                                <Tab text="Sécurité">
+                                    <content>
+                                        <VBox spacing="15.0" style="-fx-padding: 25;">
+                                            <children>
+                                                <Label style="-fx-font-weight: bold;" text="Vérification d'identité" />
+                                                <HBox spacing="10.0">
+                                                    <children>
+                                                        <PasswordField fx:id="txtOldPass" promptText="Mot de passe actuel" styleClass="modern-input" HBox.hgrow="ALWAYS" />
+                                                        <Button onAction="#handleVerifyPassword" prefHeight="35.0" text="Vérifier" />
+                                                    </children>
+                                                </HBox>
+                                                <Label fx:id="lblError" textFill="RED" visible="false" />
+
+                                                <VBox fx:id="newPassSection" spacing="12.0" visible="false">
+                                                    <children>
+                                                        <Separator />
+                                                        <PasswordField fx:id="txtNewPass" promptText="Nouveau mot de passe" styleClass="modern-input" />
+                                                        <ProgressBar fx:id="passwordProgressBar" maxWidth="Infinity" progress="0.0" />
+                                                        <PasswordField fx:id="txtConfirmPass" promptText="Confirmer nouveau mot de passe" styleClass="modern-input" />
+                                                        <Button onAction="#handleChangePassword" maxWidth="Infinity" prefHeight="40.0" style="-fx-background-color: #1B4D3E; -fx-text-fill: white; -fx-font-weight: bold;" text="Mettre à jour" />
+                                                    </children>
+                                                </VBox>
+                                            </children>
+                                        </VBox>
+                                    </content>
+                                </Tab>
+                            </tabs>
+                        </TabPane>
+                    </children>
+                </VBox>
+            </content>
+        </ScrollPane>
+            </children>
+        </StackPane>
+    </children>
+</AnchorPane>

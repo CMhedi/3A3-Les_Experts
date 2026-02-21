@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import java.net.URL?>
+
+<AnchorPane prefHeight="650.0" prefWidth="950.0" xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1" fx:controller="gui.UserReclamationController">
+    <stylesheets>
+        <URL value="@style_reclamation.css" />
+    </stylesheets>
+    <children>
+        <VBox spacing="20.0" AnchorPane.bottomAnchor="20.0" AnchorPane.leftAnchor="20.0" AnchorPane.rightAnchor="20.0" AnchorPane.topAnchor="20.0">
+            <children>
+                <HBox alignment="CENTER_LEFT" spacing="20">
+                    <children>
+                        <Button onAction="#switchToForm" text="⬅ Retour au formulaire" style="-fx-background-color: #f1f5f9; -fx-font-weight: bold; -fx-background-radius: 10;"/>
+                        <Label text="Historique de mes demandes" style="-fx-font-size: 24; -fx-font-weight: 800; -fx-text-fill: #143D30;"/>
+
+                    </children>
+                </HBox>
+
+                <ListView fx:id="listMyRecs" VBox.vgrow="ALWAYS" style="-fx-background-radius: 15; -fx-background-color: transparent; -fx-border-color: transparent;" />
+            </children>
+        </VBox>
+
+    </children>
+</AnchorPane>

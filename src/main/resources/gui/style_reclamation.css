@@ -1,0 +1,94 @@
+/* 1. El Background el kbir: N-7ottou loun "Slate" bared bech el cards y-banou */
+.main-container, .root {
+    -fx-background-color: #000000; /* Gris bared a8me9 chwaya mel 9dim */
+}
+
+/* 2. Les Cartes (VBox): N-9awiw chwaya fil Shadow bech t-welli dhihra */
+.card {
+    -fx-background-color: white;
+    -fx-background-radius: 12;
+    -fx-padding: 25;
+    /* Shadow akther Pro: y-khalli el card tban tal3a chwaya */
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.08), 20, 0, 0, 10);
+}
+.list-view .list-cell:filled:selected {
+    -fx-background-color: transparent; /* Na77i el-bleu */
+}
+
+.list-view .list-cell:filled:selected VBox {
+    -fx-border-color: #143D30; /* 7ot cadre sghir fil selection */
+    -fx-border-radius: 10;
+    -fx-border-width: 2;
+}
+
+.list-view {
+    -fx-background-color: transparent;
+}
+
+/* 4. Les Inputs (TextArea w ComboBox) */
+.text-area, .combo-box {
+    -fx-background-color: #ffffff;
+    -fx-border-color: #143d30;
+    -fx-border-radius: 6;
+    -fx-background-radius: 6;
+}
+
+.text-area:focused, .combo-box:focused {
+    -fx-border-color: #143D30;
+    -fx-border-width: 1.5;
+    -fx-effect: dropshadow(gaussian, rgba(20, 61, 48, 0.1), 5, 0, 0, 0);
+}
+
+/* 5. Buttons Hover Transitions */
+.btn-primary:hover {
+    -fx-opacity: 0.85;
+    -fx-scale-x: 1.02;
+    -fx-scale-y: 1.02;
+}
+/* 1. Nadhafelna el DialogPane kemla */
+.my-custom-dialog.dialog-pane {
+    -fx-background-color: white;
+    -fx-padding: 0; /* Na7i el padding el zayed bech el header yalsa9 fou9 */
+}
+
+/* 2. El Header (el blaca el khadhra kima fil tsawer) */
+.my-custom-dialog.dialog-pane > .header-panel {
+    -fx-background-color: #143D30;
+    -fx-padding: 20;
+}
+
+.my-custom-dialog.dialog-pane > .header-panel > .label {
+    -fx-text-fill: white;
+    -fx-font-weight: bold;
+    -fx-font-size: 18px;
+}
+
+/* 3. El blaca elli feha el form (VBox) */
+.my-custom-dialog .content.pane {
+    -fx-background-color: white;
+    -fx-padding: 20;
+}
+
+/* 4. Style mta3 el Labels fost el form */
+.my-custom-dialog .label {
+    -fx-text-fill: #143D30;
+    -fx-font-weight: bold;
+}
+
+/* 5. El blaca mta3 el boutonnet (ButtonBar) */
+.my-custom-dialog .button-bar {
+    -fx-background-color: white;
+    -fx-padding: 10 20 20 20;
+}
+
+/* 6. Style mta3 el bouton Enregistrer (Lounou orange kima image_b3fa48) */
+.my-custom-dialog .button {
+    -fx-background-radius: 10;
+    -fx-cursor: hand;
+    -fx-font-weight: bold;
+}
+
+.my-custom-dialog .button:default {
+    -fx-background-color: #F37021;
+    -fx-text-fill: white;
+}
