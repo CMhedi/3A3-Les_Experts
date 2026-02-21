@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<AnchorPane xmlns:fx="http://javafx.com/fxml"
+            fx:controller="Controllers.ReservationController">
+
+    <children>
+        <VBox spacing="15" AnchorPane.topAnchor="20"
+              AnchorPane.leftAnchor="20"
+              AnchorPane.rightAnchor="20"
+              AnchorPane.bottomAnchor="20">
+
+            <Label text="Liste des Réservations"
+                   style="-fx-font-size:20px; -fx-font-weight:bold;"/>
+
+            <TableView fx:id="tableReservation">
+
+                <columns>
+
+                    <TableColumn fx:id="colId" text="ID" prefWidth="60"/>
+                    <TableColumn fx:id="colDate" text="Date" prefWidth="120"/>
+                    <TableColumn fx:id="colStatut" text="Statut" prefWidth="120"/>
+                    <TableColumn fx:id="colNb" text="Participants" prefWidth="120"/>
+                    <TableColumn fx:id="colUser" text="ID User" prefWidth="100"/>
+                    <TableColumn fx:id="colActivite" text="ID Activité" prefWidth="100"/>
+
+                </columns>
+            </TableView>
+
+            <HBox spacing="10">
+                <Button text="Modifier"
+                        onAction="#modifierReservation"
+                        style="-fx-background-color:#f9a825; -fx-text-fill:white;"/>
+
+                <Button text="Supprimer"
+                        onAction="#supprimerReservation"
+                        style="-fx-background-color:#c62828; -fx-text-fill:white;"/>
+            </HBox>
+
+        </VBox>
+    </children>
+</AnchorPane>

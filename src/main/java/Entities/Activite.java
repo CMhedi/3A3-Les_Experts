@@ -4,6 +4,7 @@ import enums.CategorieActivite;
 import enums.NiveauActivite;
 
 import java.math.BigDecimal;
+import java.time.LocalDateTime;
 
 public class Activite {
 
@@ -16,6 +17,7 @@ public class Activite {
     private String statut;
     private String imageUrl;
     private int idPack;
+    private LocalDateTime dateReservation;
 
     public Activite() {}
 
@@ -29,6 +31,7 @@ public class Activite {
         this.idActivite = idActivite;
     }
 
+
     public String getNom() {
         return nom;
     }
@@ -39,6 +42,13 @@ public class Activite {
 
     public String getTypeActivite() {
         return typeActivite;
+    }
+     public LocalDateTime getDateReservation() {
+        return dateReservation;
+    }
+
+    public void setDateReservation(LocalDateTime dateReservation) {
+        this.dateReservation = dateReservation;
     }
 
     public void setTypeActivite(String typeActivite) {
@@ -76,6 +86,7 @@ public class Activite {
     public void setStatut(String statut) {
         this.statut = statut;
     }
+
 
     public String getImageUrl() {
         return imageUrl;

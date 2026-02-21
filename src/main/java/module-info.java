@@ -2,17 +2,27 @@ module org.example.demo {
 
     requires javafx.controls;
     requires javafx.fxml;
-
-    requires java.sql;
-    requires java.desktop;
     requires javafx.base;
     requires javafx.graphics;
 
-    opens org.example.demo to javafx.fxml;
-    opens Models to javafx.base, javafx.fxml;
+    requires java.sql;
+    requires java.net.http;
+    requires com.google.gson;
 
-    exports org.example.demo;
+
+    requires org.apache.pdfbox;
+    requires javafx.swing;
+    requires java.desktop;
+
+
+
+    requires com.fasterxml.jackson.databind;
+    requires com.fasterxml.jackson.core;
+    requires com.fasterxml.jackson.annotation;
 
     opens Controllers to javafx.fxml;
+    opens Models to javafx.base, javafx.fxml;
+
     exports Controllers;
+    exports org.example.demo;
 }

@@ -9,7 +9,7 @@ public class DataBase {
     private static DataBase instance;
     private Connection conx;
 
-    // ⚠️ adapte le nom de ta DB ici
+    // adapte le nom de bd
     private final String URL  = "jdbc:mysql://localhost:3306/ecoadventure?useSSL=false&serverTimezone=UTC&allowPublicKeyRetrieval=true";
     private final String USER = "root";
     private final String PASS = "";

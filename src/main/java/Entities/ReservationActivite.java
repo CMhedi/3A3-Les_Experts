@@ -6,7 +6,7 @@ import java.time.LocalDateTime;
 public class ReservationActivite {
 
     private int idResAct;
-    private LocalDateTime dateReservation;
+   // private LocalDateTime dateReservation;
     private StatutReservation statutRes;
     private int nbPersonnes;
     private int idUser;
@@ -24,13 +24,13 @@ public class ReservationActivite {
         this.idResAct = idResAct;
     }
 
-    public LocalDateTime getDateReservation() {
+   /* public LocalDateTime getDateReservation() {
         return dateReservation;
-    }
+    }*/
 
-    public void setDateReservation(LocalDateTime dateReservation) {
+   /* public void setDateReservation(LocalDateTime dateReservation) {
         this.dateReservation = dateReservation;
-    }
+    }*/
 
     public StatutReservation getStatutRes() {
         return statutRes;

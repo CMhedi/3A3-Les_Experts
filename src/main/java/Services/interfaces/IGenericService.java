@@ -1,5 +1,7 @@
 package Services.interfaces;
 
+import Models.TopActivite;
+
 import java.util.List;
 
 public interface IGenericService<T> {
@@ -13,4 +15,8 @@ public interface IGenericService<T> {
     List<T> getAll() throws Exception;
 
     T getById(int id) throws Exception;
+
+    List<TopActivite> getTop3Activites();
+
+
 }

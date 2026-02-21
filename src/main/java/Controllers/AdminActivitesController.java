@@ -19,11 +19,12 @@ import java.io.IOException;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
+import java.util.Date;
 
 public class AdminActivitesController {
 
     @FXML private TableView<Activite> tableActivites;
-
+    @FXML private DatePicker dateReservation;
     @FXML private TableColumn<Activite, Integer> colId;
     @FXML private TableColumn<Activite, String> colNom;
     @FXML private TableColumn<Activite, String> colType;
@@ -32,12 +33,15 @@ public class AdminActivitesController {
     @FXML private TableColumn<Activite, String> colStatut;
     @FXML private TableColumn<Activite, Double> colPrix;
     @FXML private TableColumn<Activite, String> colImage;
+    @FXML private TableColumn<Activite, Date> colDate;
+
+
 
     private final ObservableList<Activite> activites = FXCollections.observableArrayList();
 
     @FXML
     public void initialize() {
-        colId.setCellValueFactory(new PropertyValueFactory<>("idActivite"));
+      //  colId.setCellValueFactory(new PropertyValueFactory<>("idActivite"));
         colNom.setCellValueFactory(new PropertyValueFactory<>("nom"));
         colType.setCellValueFactory(new PropertyValueFactory<>("typeActivite"));
         colCategorie.setCellValueFactory(new PropertyValueFactory<>("categorieAct"));
@@ -45,11 +49,13 @@ public class AdminActivitesController {
         colStatut.setCellValueFactory(new PropertyValueFactory<>("statut"));
         colPrix.setCellValueFactory(new PropertyValueFactory<>("prix"));
         colImage.setCellValueFactory(new PropertyValueFactory<>("imageUrl"));
+        colDate.setCellValueFactory(new PropertyValueFactory<>("date"));
 
         loadActivites();
     }
 
-    // ================= Load Activities from DB =================
+
+    //   telech de activ  d apres mon bd
     private void loadActivites() {
         try {
             Connection cnx = DataBase.getInstance().getConx();
@@ -68,7 +74,10 @@ public class AdminActivitesController {
                         rs.getString("niveau_act"),
                         rs.getDouble("prix"),
                         rs.getString("statut"),
-                        rs.getString("image_url")
+                        rs.getString("image_url"),
+                        rs.getDate("date_reservation")
+
+
                 ));
             }
 
@@ -81,7 +90,7 @@ public class AdminActivitesController {
         }
     }
 
-    // ================= Modifier Activité (POPUP) =================
+    // modif
     @FXML
     private void modifierActivite() {
         Activite selected = tableActivites.getSelectionModel().getSelectedItem();
@@ -91,12 +100,11 @@ public class AdminActivitesController {
         }
 
         try {
-            // ⚠️ Mets le bon chemin selon ton dossier resources
-            // Exemple: "/Views/EditActivite.fxml" si ton fxml est dans resources/Views/
+
             FXMLLoader loader = new FXMLLoader(getClass().getResource("/GUI/EditActivite.fxml"));
             Parent root = loader.load();
 
-            // Controller du popup
+            // controller du popup(modifier)
             EditActiviteController controller = loader.getController();
             controller.setActivite(selected);  // remplir les champs
 
@@ -107,7 +115,7 @@ public class AdminActivitesController {
             popup.setScene(new Scene(root));
             popup.showAndWait();
 
-            // Si l'utilisateur a cliqué ENREGISTRER => reload depuis DB
+            //  si user a clique enregistre reload depuis DB
             if (controller.isSaved()) {
                 loadActivites();
             }
@@ -134,7 +142,7 @@ public class AdminActivitesController {
         }
     }
 
-    // ================= Supprimer Activité =================
+    //  Supprimer
     @FXML
     private void supprimerActivite() {
         Activite selected = tableActivites.getSelectionModel().getSelectedItem();
@@ -172,7 +180,7 @@ public class AdminActivitesController {
     }
 
 
-    // ================= Helper =================
+    //  Helper
     private void showAlert(String msg) {
         Alert alert = new Alert(Alert.AlertType.INFORMATION);
         alert.setHeaderText(null);
@@ -185,6 +193,37 @@ public class AdminActivitesController {
     private void goToUserSeances(ActionEvent event) {
         try {
             Parent root = FXMLLoader.load(getClass().getResource("/GUI/UserSeances.fxml"));
+            Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
+            stage.setScene(new Scene(root));
+            stage.show();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+    }
+
+    @FXML
+    private void openstat() {
+        try {
+
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/GUI/StatsActivite.fxml"));
+            Parent root = loader.load();
+
+            Stage stage = (Stage) tableActivites.getScene().getWindow();
+            stage.setScene(new Scene(root));
+            stage.setTitle("Statistique - Admin");
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            showAlert("Impossible d'ouvrir la page statistique !");
+        }
+    }
+
+
+
+    private void switchScene(ActionEvent event, String fxmlPath) {
+        try {
+            Parent root = FXMLLoader.load(getClass().getResource(fxmlPath));
             Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
             stage.setScene(new Scene(root));
             stage.show();

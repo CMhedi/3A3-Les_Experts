@@ -1,0 +1,80 @@
+/* ===== ROOT BACKGROUND ===== */
+.main-bg {
+    -fx-background-color: #f5f7f6;
+}
+
+/* ===== TITLE ===== */
+.title-label {
+    -fx-font-size: 24px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #1b4332;
+}
+
+/* ===== LABELS ===== */
+.label {
+    -fx-font-size: 14px;
+    -fx-text-fill: #344e41;
+    -fx-font-weight: 500;
+}
+
+/* ===== TEXTFIELDS ===== */
+.text-field {
+    -fx-background-color: white;
+    -fx-border-color: #d8e2dc;
+    -fx-border-radius: 6;
+    -fx-background-radius: 6;
+    -fx-padding: 6 8 6 8;
+    -fx-font-size: 13px;
+}
+
+.text-field:focused {
+    -fx-border-color: #40916c;
+    -fx-effect: dropshadow(gaussian, rgba(64,145,108,0.3), 6, 0, 0, 0);
+}
+
+/* ===== COMBOBOX ===== */
+.combo-box {
+    -fx-background-color: white;
+    -fx-border-color: #d8e2dc;
+    -fx-border-radius: 6;
+    -fx-background-radius: 6;
+}
+
+.combo-box:focused {
+    -fx-border-color: #40916c;
+}
+
+/* ===== PRIMARY BUTTON (Green) ===== */
+.primary-button {
+    -fx-background-color: #2d6a4f;
+    -fx-text-fill: white;
+    -fx-font-weight: bold;
+    -fx-background-radius: 8;
+    -fx-padding: 8 18 8 18;
+}
+
+.primary-button:hover {
+    -fx-background-color: #1b4332;
+}
+
+/* ===== SECONDARY BUTTON (Blue) ===== */
+.secondary-button {
+    -fx-background-color: #1d3557;
+    -fx-text-fill: white;
+    -fx-font-weight: bold;
+    -fx-background-radius: 8;
+    -fx-padding: 8 18 8 18;
+}
+
+.secondary-button:hover {
+    -fx-background-color: #0b2545;
+}
+
+/* ===== GRIDPANE CARD STYLE ===== */
+.grid-pane {
+    -fx-background-color: white;
+    -fx-padding: 20;
+    -fx-background-radius: 10;
+    -fx-border-radius: 10;
+    -fx-border-color: #e9ecef;
+}

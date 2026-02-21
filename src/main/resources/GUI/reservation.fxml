@@ -43,10 +43,10 @@
             <TableView fx:id="tableReservation" VBox.vgrow="ALWAYS" styleClass="modern-table">
                 <columns>
                   <!--  <TableColumn fx:id="colId" text="ID" prefWidth="70"/> -->
-                    <TableColumn fx:id="colDate" text="Date" prefWidth="130"/>
+                  <!--  <TableColumn fx:id="colDate" text="Date" prefWidth="130"/>-->
                     <TableColumn fx:id="colStatut" text="Statut" prefWidth="140"/>
                     <TableColumn fx:id="colNb" text="Participants" prefWidth="130"/>
-                    <TableColumn fx:id="colUser" text="ID User" prefWidth="110"/>
+                    <TableColumn fx:id="colUser" text="ID User" prefWidth="1"/>
                     <TableColumn fx:id="colActivite" text="Numéro De Recu Activité" prefWidth="180"/>
                 </columns>
             </TableView>

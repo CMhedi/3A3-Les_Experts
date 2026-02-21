@@ -16,7 +16,8 @@
                    AnchorPane.leftAnchor="0"
                    AnchorPane.rightAnchor="0">
 
-            <VBox spacing="20"
+            <VBox fx:id="receiptCard"
+                  spacing="20"
                   alignment="CENTER"
                   styleClass="receipt-card">
 
@@ -41,6 +42,7 @@
                     <Label fx:id="lblNiveau" styleClass="receipt-text"/>
                     <Label fx:id="lblPrix" styleClass="receipt-price"/>
                     <Label fx:id="lblStatut" styleClass="receipt-status"/>
+                    <Label fx:id="lblDate" styleClass="receipt-text"/>
 
                 </VBox>
 
@@ -49,8 +51,12 @@
                 <!-- Boutons -->
                 <HBox spacing="15" alignment="CENTER">
 
-                    <Button text="Aller réserver cette activité"
+                    <Button text="Télécharger PDF"
+                            onAction="#downloadPdf"
+                            styleClass="reserve-button"/>
 
+                    <Button text="Aller réserver cette activité"
+                            onAction="#reserver"
                             styleClass="reserve-button"/>
 
                     <Button text="Fermer"

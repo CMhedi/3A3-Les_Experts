@@ -55,6 +55,8 @@
                         onAction="#openAjouterActivite"
                         styleClass="secondary-btn"
                         prefWidth="260"/>
+                <Button text="Top 3 Client"  styleClass="primary-btn" onAction="#goTopActivites"/>
+                <Button text="TALK WITH IA"  styleClass="secondary-btn-btn" onAction="#goToIA"/>
 
             </VBox>
         </StackPane>

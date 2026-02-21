@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<AnchorPane xmlns:fx="http://javafx.com/fxml"
+            fx:controller="Controllers.AjouterReservationController">
+
+    <children>
+
+        <VBox spacing="20"
+              AnchorPane.topAnchor="30"
+              AnchorPane.leftAnchor="40"
+              AnchorPane.rightAnchor="40">
+
+            <!-- Titre -->
+            <Label text="Ajouter une Réservation"
+                   style="-fx-font-size: 22px; -fx-font-weight: bold;" />
+
+            <GridPane hgap="15" vgap="15">
+
+                <padding>
+                    <Insets top="20"/>
+                </padding>
+
+                <!-- Date réservation -->
+                <Label text="Date de réservation :" GridPane.rowIndex="0" GridPane.columnIndex="0"/>
+                <DatePicker fx:id="dateReservation"
+                            GridPane.rowIndex="0"
+                            GridPane.columnIndex="1"
+                            prefWidth="250"/>
+
+                <!-- Statut -->
+                <Label text="Statut :" GridPane.rowIndex="1" GridPane.columnIndex="0"/>
+                <ComboBox fx:id="statutRes"
+                          GridPane.rowIndex="1"
+                          GridPane.columnIndex="1"
+                          prefWidth="250">
+
+                </ComboBox>
+
+                <!-- Nombre personnes -->
+                <Label text="Nombre de personnes :" GridPane.rowIndex="2" GridPane.columnIndex="0"/>
+                <TextField fx:id="nbPersonnes"
+                           promptText="Ex: 3"
+                           GridPane.rowIndex="2"
+                           GridPane.columnIndex="1"/>
+
+                <!-- ID User -->
+                <Label text="ID Utilisateur :" GridPane.rowIndex="3" GridPane.columnIndex="0"/>
+                <TextField fx:id="idUser"
+                           GridPane.rowIndex="3"
+                           GridPane.columnIndex="1"/>
+
+                <!-- ID Activité -->
+                <Label text="ID Activité :" GridPane.rowIndex="4" GridPane.columnIndex="0"/>
+                <TextField fx:id="idActivite"
+                           GridPane.rowIndex="4"
+                           GridPane.columnIndex="1"/>
+
+            </GridPane>
+
+            <!-- Boutons -->
+            <HBox spacing="15">
+                <Button text="Ajouter"
+                        fx:id="btnAjouter"
+                        onAction="#ajouterReservation"
+                        style="-fx-background-color: #2e7d32; -fx-text-fill: white;"/>
+
+                <Button text="Annuler"
+                        fx:id="btnAnnuler"
+                        onAction="#annuler"
+                        style="-fx-background-color: #c62828; -fx-text-fill: white;"/>
+                <Button text="Annuler"
+                        fx:id="btnSwitch"
+                        onAction="#btnswitch"
+                        style="-fx-background-color: #c62828; -fx-text-fill: white;"/>
+            </HBox>
+
+        </VBox>
+    </children>
+</AnchorPane>

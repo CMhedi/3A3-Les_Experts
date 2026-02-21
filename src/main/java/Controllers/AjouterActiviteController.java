@@ -9,44 +9,66 @@ import javafx.stage.Stage;
 import java.io.IOException;
 import java.sql.*;
 
+// ===== ADDED IMPORTS =====
+import java.util.function.Consumer;
+
 public class AjouterActiviteController {
 
-    @FXML
-    private TextField nomField;
-    @FXML
-    private ComboBox<String> typeBox;
-    @FXML
-    private ComboBox<String> categorieBox;
-    @FXML
-    private ComboBox<String> niveauBox;
-    @FXML
-    private TextField prixField;
-    @FXML
-    private ComboBox<String> statutBox;
-    @FXML
-    private TextField imageField;
+    @FXML private TextField nomField;
+    @FXML private ComboBox<String> typeBox;
+    @FXML private ComboBox<String> categorieBox;
+    @FXML private ComboBox<String> niveauBox;
+    @FXML private TextField prixField;
+    @FXML private ComboBox<String> statutBox;
+    @FXML private TextField imageField;
+    @FXML private DatePicker dateReservation;
 
     private final String URL = "jdbc:mysql://localhost:3306/ecoadventure?useSSL=false&serverTimezone=UTC";
     private final String USER = "root";
     private final String PASSWORD = "";
 
+    // ===== ADDED: anti-bot lock =====
+    private int wrongAttempts = 0;
+    private static final int MAX_ATTEMPTS = 3;
+    private static final int LOCK_SECONDS = 30;
+    private long lockUntilMillis = 0;
+
     @FXML
     public void initialize() {
-
         categorieBox.getItems().addAll("FITNESS", "RUNNING", "FOOTBALL", "BASKETBALL");
         niveauBox.getItems().addAll("DEBUTANT", "INTERMEDIAIRE", "AVANCE");
-        statutBox.getItems().addAll( "DISPONIBLE", "INDISPONIBLE");
-        typeBox.getItems().addAll(  "SPORT", "CAMPING", "INTELECTUEL", "CULTUREL");
+        statutBox.getItems().addAll("DISPONIBLE", "INDISPONIBLE");
+        typeBox.getItems().addAll("SPORT", "CAMPING", "INTELECTUEL", "CULTUREL");
     }
 
     @FXML
     private void ajouterActivite() {
 
+        // ===== ADDED: si bloqué =====
+        long now = System.currentTimeMillis();
+        if (now < lockUntilMillis) {
+            long remain = (lockUntilMillis - now) / 1000;
+            new Alert(Alert.AlertType.ERROR, "Trop d'erreurs. Réessayer dans " + remain + "s.").show();
+            return;
+        }
+
+        // ===== ADDED: open captcha then run your insert =====
+        openCaptcha(ok -> {
+            if (ok) {
+                wrongAttempts = 0;
+                doAjouterActivite(); // ✅ ton code original copié
+            }
+        });
+    }
+
+    // ===== ADDED: ton code original (copié inchangé) =====
+    private void doAjouterActivite() {
+
         try {
 
             Connection conn = DriverManager.getConnection(URL, USER, PASSWORD);
 
-            String sql = "INSERT INTO activite (nom, type_activite, categorie_act, niveau_act, prix, statut, image_url, id_pack) VALUES (?, ?, ?, ?, ?, ?, ?, NULL)";
+            String sql = "INSERT INTO activite (nom, type_activite, categorie_act, niveau_act, prix, statut, image_url, id_pack, date_reservation) VALUES (?, ?, ?, ?, ?, ?, ?, NULL, ?)";
 
             PreparedStatement pst = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);
 
@@ -57,6 +79,7 @@ public class AjouterActiviteController {
             pst.setDouble(5, Double.parseDouble(prixField.getText()));
             pst.setString(6, statutBox.getValue());
             pst.setString(7, imageField.getText());
+            pst.setString(8, dateReservation.getValue().toString());
 
             pst.executeUpdate();
 
@@ -77,6 +100,7 @@ public class AjouterActiviteController {
                     categorieBox.getValue(),
                     niveauBox.getValue(),
                     prixField.getText(),
+                    dateReservation.getValue(),
                     statutBox.getValue()
             );
 
@@ -93,6 +117,46 @@ public class AjouterActiviteController {
         }
     }
 
+    // ===== ADDED: open CAPTCHA popup =====
+    private void openCaptcha(Consumer<Boolean> onDone) {
+        try {
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/GUI/CaptchaVerification.fxml"));
+            Parent root = loader.load();
+
+            CaptchaVerificationController vc = loader.getController();
+
+            vc.setOnWrongAttempt(() -> {
+                wrongAttempts++;
+                int remaining = MAX_ATTEMPTS - wrongAttempts;
+
+                if (wrongAttempts >= MAX_ATTEMPTS) {
+                    lockUntilMillis = System.currentTimeMillis() + (LOCK_SECONDS * 1000L);
+                    new Alert(Alert.AlertType.ERROR,
+                            "Trop d'erreurs ! Ajout bloqué pendant " + LOCK_SECONDS + " secondes.").show();
+                } else {
+                    new Alert(Alert.AlertType.WARNING,
+                            "Code incorrect. Il vous reste " + remaining + " tentative(s).").show();
+                }
+            });
+
+            vc.setOnResult(ok -> {
+                if (onDone != null) onDone.accept(ok);
+            });
+
+            Stage popup = new Stage();
+            popup.setTitle("Vérification Anti-Bot");
+            popup.initOwner(nomField.getScene().getWindow());
+            popup.setScene(new Scene(root));
+            popup.setResizable(false);
+            popup.showAndWait();
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            new Alert(Alert.AlertType.ERROR, "Erreur ouverture CAPTCHA").show();
+            if (onDone != null) onDone.accept(false);
+        }
+    }
+
     private void switchScene(ActionEvent event, String fxmlPath) {
         try {
             Parent root = FXMLLoader.load(getClass().getResource(fxmlPath));
@@ -104,6 +168,7 @@ public class AjouterActiviteController {
             e.printStackTrace();
         }
     }
+
     @FXML
     public void goUserSeances(ActionEvent event) {
         switchScene(event, "/GUI/UserSeances.fxml");
@@ -113,9 +178,3 @@ public class AjouterActiviteController {
         switchScene(event, "/GUI/AdminActivites.fxml");
     }
 }
-
-
-
-
-
-

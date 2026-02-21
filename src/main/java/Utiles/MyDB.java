@@ -13,7 +13,7 @@ public class MyDB {
     private static Connection connection;
     private static MyDB instance;
 
-    // constructeur privé (Singleton)
+    // constructeur privée(Singleton)
     private MyDB() {
         try {
             connection = DriverManager.getConnection(URL, USER, PASSWORD);
@@ -23,7 +23,7 @@ public class MyDB {
         }
     }
 
-    // retourner l'instance unique
+    // retourner l instance unique
     public static MyDB getInstance() {
         if (instance == null) {
             instance = new MyDB();
@@ -31,7 +31,7 @@ public class MyDB {
         return instance;
     }
 
-    // retourner la connexion
+    // retourner la cnx
     public static Connection getConnection() {
         return connection;
     }

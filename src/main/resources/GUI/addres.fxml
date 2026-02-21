@@ -32,10 +32,10 @@
             <!-- Form -->
             <VBox spacing="14">
 
-                <VBox spacing="6">
-                    <Label text="Date de réservation" styleClass="form-label"/>
-                    <DatePicker fx:id="dateReservation" prefWidth="360" styleClass="date-blue"/>
-                </VBox>
+               <!-- <VBox spacing="6">-->
+                   <!--<Label text="Date de réservation" styleClass="form-label"/>-->
+                <!--    <DatePicker fx:id="dateReservation" prefWidth="360" styleClass="date-blue"/>-->
+                <!-- </VBox>-->
 
                 <VBox spacing="6">
                     <Label text="Statut" styleClass="form-label"/>
@@ -48,12 +48,12 @@
                 </VBox>
 
                 <VBox spacing="6">
-                    <Label text="ID Utilisateur" styleClass="form-label"/>
+                    <Label text="Votre Compte" styleClass="form-label"/>
                     <TextField fx:id="idUser" styleClass="input"/>
                 </VBox>
 
                 <VBox spacing="6">
-                    <Label text="ID Activité" styleClass="form-label"/>
+                    <Label text="Numero de l'Activité" styleClass="form-label"/>
                     <TextField fx:id="idActivite" styleClass="input"/>
                 </VBox>
 

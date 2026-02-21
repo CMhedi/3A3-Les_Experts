@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<BorderPane xmlns:fx="http://javafx.com/fxml"
+            fx:controller="Controllers.ChatbotUserController"
+            stylesheets="@chatbot.css">
+
+    <top>
+        <HBox spacing="10" styleClass="topbar" alignment="CENTER_LEFT">
+            <Label text="🤖 Assistant EcoAdventure" styleClass="title"/>
+            <Region HBox.hgrow="ALWAYS"/>
+            <Button text="Retour" onAction="#goBack" styleClass="btn2"/>
+        </HBox>
+    </top>
+
+    <center>
+        <VBox spacing="10">
+
+            <!-- ✅ padding corrigé -->
+            <padding>
+                <Insets top="15" right="15" bottom="15" left="15"/>
+            </padding>
+
+            <TextArea fx:id="taChat" editable="false" wrapText="true" prefHeight="260"/>
+
+            <HBox spacing="10">
+                <TextField fx:id="tfMessage"
+                           promptText="Ex: activité SPORT débutant budget 60..."
+                           HBox.hgrow="ALWAYS"/>
+                <Button text="Envoyer" onAction="#send" styleClass="btn1"/>
+            </HBox>
+
+            <Separator/>
+
+            <Label text="Résultats (recommandations SQL) :" />
+            <TextArea fx:id="taResults" editable="false" wrapText="true" prefHeight="220"/>
+
+            <Label fx:id="lblStatus" text="" styleClass="status"/>
+
+        </VBox>
+    </center>
+</BorderPane>

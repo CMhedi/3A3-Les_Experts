@@ -1,7 +1,8 @@
 /* ===== ROOT ===== */
 .root {
     -fx-font-family: "Segoe UI";
-    -fx-background-color: #0f3d2e;
+    /* Nouveau background moderne */
+    -fx-background-color: linear-gradient(to bottom right, #0f3d2e, #194c3b);
 }
 
 /* ===== TOPBAR ===== */
@@ -34,7 +35,8 @@
 .sidebar {
     -fx-padding: 18 16;
     -fx-pref-width: 260;
-    -fx-background-color: #123b2d;
+    /* Nouveau background sidebar moderne */
+    -fx-background-color: linear-gradient(to bottom, #123b2d, #0f2a1f);
 }
 
 .brand {
@@ -72,12 +74,41 @@
 }
 
 .card {
-    -fx-max-width: 880;
-    -fx-background-color: #f7f7f7;
-    -fx-background-radius: 16;
-    -fx-padding: 18 18 16 18;
-    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.18), 18, 0.25, 0, 6);
+    /* Modern gradient background with subtle depth */
+    -fx-background-color: linear-gradient(to bottom right, #ffffffcc, #e8f0f5cc);
+
+    /* Rounded corners for modern style */
+    -fx-background-radius: 24;
+
+    /* Padding inside the card */
+    -fx-padding: 30;
+
+    /* Floating shadow effect */
+    -fx-effect: dropshadow(
+            gaussian,
+            rgba(0,0,0,0.15),
+            25, 0.3, 0, 6
+    );
+
+    /* Optional soft border to separate from background */
+    -fx-border-color: rgba(0,0,0,0.05);
+    -fx-border-width: 1;
+
+    /* Smooth transition for hover */
+    -fx-transition: all 0.3s ease;
 }
+
+.card:hover {
+    /* Lift and stronger shadow on hover */
+    -fx-effect: dropshadow(
+            gaussian,
+            rgba(0,0,0,0.22),
+            30, 0.35, 0, 8
+    );
+    -fx-translate-y: -3;
+}
+
+
 
 .card-title {
     -fx-text-fill: #2b2b2b;

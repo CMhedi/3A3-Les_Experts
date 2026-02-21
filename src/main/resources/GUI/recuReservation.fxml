@@ -2,32 +2,73 @@
 
 <?import javafx.scene.layout.*?>
 <?import javafx.scene.control.*?>
+<?import javafx.geometry.Insets?>
 
 <AnchorPane xmlns:fx="http://javafx.com/fxml"
-            fx:controller="Controllers.RecuReservationController">
+            fx:controller="Controllers.RecuReservationController"
+            stylesheets="@recuReserevation.css"
+            styleClass="main-bg">
 
     <children>
-        <VBox spacing="15"
-              alignment="CENTER"
-              AnchorPane.topAnchor="30"
-              AnchorPane.leftAnchor="30"
-              AnchorPane.rightAnchor="30">
 
-            <Label text="REÇU DE RÉSERVATION"
-                   style="-fx-font-size:22px; -fx-font-weight:bold;" />
+        <StackPane AnchorPane.topAnchor="0"
+                   AnchorPane.bottomAnchor="0"
+                   AnchorPane.leftAnchor="0"
+                   AnchorPane.rightAnchor="0">
 
-            <Separator/>
+            <VBox spacing="20"
+                  alignment="CENTER"
+                  styleClass="receipt-card">
 
-            <Label fx:id="lblId"/>
-            <Label fx:id="lblDate"/>
-            <Label fx:id="lblStatut"/>
-            <Label fx:id="lblNb"/>
-            <Label fx:id="lblUser"/>
-            <Label fx:id="lblActivite"/>
-
-            <Separator/>
+                <padding>
+                    <Insets top="35" right="40" bottom="35" left="40"/>
+                </padding>
 
 
-        </VBox>
+                <Label text="REÇU DE RÉSERVATION"
+                       styleClass="title-label"/>
+
+                <Separator styleClass="separator-modern"/>
+
+
+                <VBox spacing="12"
+                      alignment="CENTER_LEFT"
+                      styleClass="receipt-content">
+
+                    <Label fx:id="lblId"
+                           styleClass="receipt-highlight"/>
+
+                   <!-- <Label fx:id="lblDate"
+                           styleClass="receipt-text"/>-->
+
+                    <Label fx:id="lblStatut"
+                           styleClass="receipt-status"/>
+
+                    <Label fx:id="lblNb"
+                           styleClass="receipt-text"/>
+
+                    <Label fx:id="lblUser"
+                           styleClass="receipt-text"/>
+
+                    <Label fx:id="lblActivite"
+                           styleClass="receipt-text"/>
+
+                </VBox>
+
+                <Separator styleClass="separator-modern"/>
+
+
+                <HBox alignment="CENTER">
+
+                    <Button text="Fermer"
+                            onAction="#fermer"
+                            styleClass="secondary-button"/>
+
+                </HBox>
+
+            </VBox>
+
+        </StackPane>
+
     </children>
 </AnchorPane>

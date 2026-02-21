@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.geometry.Insets?>
+
+<AnchorPane xmlns:fx="http://javafx.com/fxml"
+            fx:controller="Controllers.RecuActiviteController"
+            stylesheets="@recuActivite.css"
+            styleClass="main-bg">
+
+    <children>
+
+        <StackPane AnchorPane.topAnchor="0"
+                   AnchorPane.bottomAnchor="0"
+                   AnchorPane.leftAnchor="0"
+                   AnchorPane.rightAnchor="0">
+
+            <VBox spacing="18"
+                  alignment="CENTER"
+                  styleClass="receipt-card">
+
+                <padding>
+                    <Insets top="30" right="30" bottom="30" left="30"/>
+                </padding>
+
+
+                <Label text="REÇU ACTIVITÉ"
+                       styleClass="title-label"/>
+
+                <Separator styleClass="separator-modern"/>
+
+                <VBox spacing="10" alignment="CENTER_LEFT" styleClass="receipt-content">
+                    <Label fx:id="lblType" styleClass="receipt-type"/>
+                    <Label fx:id="lblNom" styleClass="receipt-text"/>
+                    <Label fx:id="lblCategorie" styleClass="receipt-text"/>
+                    <Label fx:id="lblNiveau" styleClass="receipt-text"/>
+                    <Label fx:id="lblPrix" styleClass="receipt-price"/>
+                    <Label fx:id="lblStatut" styleClass="receipt-status"/>
+                </VBox>
+
+                <Separator styleClass="separator-modern"/>
+
+                <Button text="Fermer"
+                        onAction="#fermer"
+                        styleClass="primary-button"/>
+
+            </VBox>
+
+        </StackPane>
+
+    </children>
+</AnchorPane>

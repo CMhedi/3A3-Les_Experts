@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<AnchorPane xmlns:fx="http://javafx.com/fxml"
+            fx:controller="Controllers.VerificationController"
+            stylesheets="@verification.css">
+
+    <children>
+        <StackPane AnchorPane.topAnchor="0" AnchorPane.bottomAnchor="0"
+                   AnchorPane.leftAnchor="0" AnchorPane.rightAnchor="0"
+                   styleClass="bg">
+
+            <VBox spacing="14" alignment="CENTER" styleClass="card">
+                <padding>
+                    <Insets top="24" right="24" bottom="24" left="24"/>
+                </padding>
+
+                <Label text="Vérification Anti-Bot" styleClass="title"/>
+                <Label text="Recopie le code suivant pour continuer" styleClass="sub"/>
+
+                <!-- Code affiché -->
+                <Label fx:id="lblCode" text="ABCDE" styleClass="code"/>
+
+                <TextField fx:id="tfInput" promptText="Entrer le code ici..." styleClass="input"/>
+
+                <Label fx:id="lblError" text="" styleClass="error"/>
+
+                <HBox spacing="10" alignment="CENTER">
+                    <Button text="Régénérer" onAction="#regen" styleClass="secondary"/>
+                    <Button text="Vérifier" onAction="#verify" styleClass="primary"/>
+                    <Button text="Annuler" onAction="#cancel" styleClass="secondary"/>
+                </HBox>
+            </VBox>
+
+        </StackPane>
+    </children>
+</AnchorPane>

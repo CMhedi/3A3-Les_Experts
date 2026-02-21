@@ -12,26 +12,26 @@ import java.io.IOException;
 
 public class UserSeancesController {
 
-    // ====== Bouton top: "Utilisateur" => AdminActivites.fxml ======
+    //  Bouton user
     @FXML
     private void goToAdmin(ActionEvent event) {
-        switchScene(event, "/GUI/AdminActivites.fxml");  // adapte le chemin
+        switchScene(event, "/GUI/AdminActivites.fxml");
     }
 
-    // ====== Bouton bas: "+ Ajouter une activité" ======
+    //  Bouton ajout
     @FXML
     private void openAjouterActivite(ActionEvent event) {
-        switchScene(event, "/GUI/AjouterActivite.fxml"); // adapte le chemin
+        switchScene(event, "/GUI/AjouterActivite.fxml");
     }
 
-    // ====== Exemple réserver (tu gardes ta logique) ======
+
     @FXML
     private void reserver(ActionEvent event) {
 
         switchScene(event, "/GUI/addres.fxml");
     }
 
-    // ====== Utilitaire switch scene ======
+    //  switch scene
     private void switchScene(ActionEvent event, String fxmlPath) {
         try {
             Parent root = FXMLLoader.load(getClass().getResource(fxmlPath));
@@ -41,5 +41,14 @@ public class UserSeancesController {
         } catch (IOException e) {
             e.printStackTrace();
         }
+    }
+    @FXML
+    private void goToIA(ActionEvent event) {
+        switchScene(event, "/GUI/ChatbotUser.fxml");
+    }
+
+    @FXML
+    public void goTopActivites(ActionEvent event) {
+        switchScene(event, "/GUI/TopActivite.fxml");
     }
 }

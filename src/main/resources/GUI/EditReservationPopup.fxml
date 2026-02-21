@@ -29,18 +29,18 @@
                     <ColumnConstraints percentWidth="50"/>
                 </columnConstraints>
 
-                <!-- Row 1 -->
-                <VBox spacing="6" GridPane.rowIndex="0" GridPane.columnIndex="0">
+
+             <!--   <VBox spacing="6" GridPane.rowIndex="0" GridPane.columnIndex="0">
                     <Label text="Date Réservation" styleClass="field-label"/>
                     <DatePicker fx:id="dpDate" styleClass="field"/>
-                </VBox>
+                </VBox>-->
 
                 <VBox spacing="6" GridPane.rowIndex="0" GridPane.columnIndex="1">
                     <Label text="Statut" styleClass="field-label"/>
                     <ComboBox fx:id="cbStatut" promptText="Choisir..." styleClass="field"/>
                 </VBox>
 
-                <!-- Row 2 -->
+
                 <VBox spacing="6" GridPane.rowIndex="1" GridPane.columnIndex="0">
                     <Label text="Participants" styleClass="field-label"/>
                     <Spinner fx:id="spNbPersonnes" styleClass="field"/>
@@ -51,16 +51,13 @@
                     <TextField fx:id="tfIdReservation" editable="false" styleClass="field read-only"/>
                 </VBox>
 
-                <!-- Row 3 -->
-                <VBox spacing="6" GridPane.rowIndex="2" GridPane.columnIndex="0">
-                    <Label text="ID Utilisateur" styleClass="field-label"/>
-                    <TextField fx:id="tfIdUser" editable="false" styleClass="field read-only"/>
-                </VBox>
+
 
                 <VBox spacing="6" GridPane.rowIndex="2" GridPane.columnIndex="1">
                     <Label text="Numero De Recu Activité" styleClass="field-label"/>
                     <TextField fx:id="tfIdActivite" editable="false" styleClass="field read-only"/>
                 </VBox>
+
             </GridPane>
 
             <!-- Buttons -->

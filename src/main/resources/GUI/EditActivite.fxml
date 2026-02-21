@@ -36,8 +36,8 @@
                 </VBox>
 
                 <VBox spacing="6" GridPane.rowIndex="0" GridPane.columnIndex="1">
-                    <Label text="Statut" styleClass="field-label"/>
-                    <ComboBox fx:id="cbStatut" promptText="DISPONIBLE / INDISPONIBLE" styleClass="field"/>
+                    <Label text="Date Réservation" styleClass="field-label"/>
+                    <DatePicker fx:id="dpDate" styleClass="field"/>
                 </VBox>
 
                 <!-- Row 1 -->
@@ -47,27 +47,35 @@
                 </VBox>
 
                 <VBox spacing="6" GridPane.rowIndex="1" GridPane.columnIndex="1">
-                    <Label text="Catégorie" styleClass="field-label"/>
-                    <ComboBox fx:id="cbCategorie" promptText="FITNESS / RUNNING ..." styleClass="field"/>
+                    <Label text="Statut" styleClass="field-label"/>
+                    <ComboBox fx:id="cbStatut" promptText="DISPONIBLE / INDISPONIBLE" styleClass="field"/>
                 </VBox>
 
                 <!-- Row 2 -->
                 <VBox spacing="6" GridPane.rowIndex="2" GridPane.columnIndex="0">
+                    <Label text="Catégorie" styleClass="field-label"/>
+                    <ComboBox fx:id="cbCategorie" promptText="FITNESS / RUNNING ..." styleClass="field"/>
+                </VBox>
+
+                <VBox spacing="6" GridPane.rowIndex="2" GridPane.columnIndex="1">
                     <Label text="Niveau" styleClass="field-label"/>
                     <ComboBox fx:id="cbNiveau" promptText="DEBUTANT / INTERMEDIAIRE / AVANCE" styleClass="field"/>
                 </VBox>
 
-                <VBox spacing="6" GridPane.rowIndex="2" GridPane.columnIndex="1">
+                <!-- Row 3 -->
+                <VBox spacing="6" GridPane.rowIndex="3" GridPane.columnIndex="0">
                     <Label text="Prix" styleClass="field-label"/>
                     <TextField fx:id="tfPrix" promptText="Ex: 25.5" styleClass="field"/>
                 </VBox>
 
-                <!-- Row 3 -->
-                <VBox spacing="6" GridPane.rowIndex="3" GridPane.columnIndex="0" GridPane.columnSpan="2">
+                <!-- Row 4 -->
+                <VBox spacing="6" GridPane.rowIndex="4" GridPane.columnIndex="0" GridPane.columnSpan="2">
                     <Label text="Image URL" styleClass="field-label"/>
                     <TextField fx:id="tfImageUrl" promptText="https://..." styleClass="field"/>
                 </VBox>
+
             </GridPane>
+
 
             <!-- Buttons -->
             <HBox spacing="14" alignment="CENTER">

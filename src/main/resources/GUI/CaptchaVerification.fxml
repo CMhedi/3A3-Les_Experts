@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.*?>
+
+<AnchorPane xmlns:fx="http://javafx.com/fxml"
+            fx:controller="Controllers.CaptchaVerificationController"
+            stylesheets="@captcha.css">
+
+    <children>
+        <StackPane AnchorPane.topAnchor="0" AnchorPane.bottomAnchor="0"
+                   AnchorPane.leftAnchor="0" AnchorPane.rightAnchor="0"
+                   styleClass="bg">
+
+            <VBox spacing="12" alignment="CENTER" styleClass="card">
+                <padding>
+                    <Insets top="18" right="18" bottom="18" left="18"/>
+                </padding>
+
+                <Label text="Vérification Anti-Bot (CAPTCHA)" styleClass="title"/>
+                <Label text="Recopie le code affiché pour continuer" styleClass="sub"/>
+
+                <ImageView fx:id="imgCaptcha" fitWidth="260" fitHeight="80" preserveRatio="false" />
+
+                <HBox spacing="10" alignment="CENTER">
+                    <Button text="↻" onAction="#regen" styleClass="btn2" />
+                    <TextField fx:id="tfInput" promptText="Entrer le code" styleClass="input"/>
+                </HBox>
+
+                <Label fx:id="lblError" text="" styleClass="error"/>
+
+                <HBox spacing="10" alignment="CENTER_RIGHT">
+                    <Button text="Annuler" onAction="#cancel" styleClass="btn2"/>
+                    <Button text="Vérifier" onAction="#verify" styleClass="btn1"/>
+                </HBox>
+            </VBox>
+
+        </StackPane>
+    </children>
+</AnchorPane>

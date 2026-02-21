@@ -25,8 +25,9 @@
     <top>
         <HBox alignment="CENTER_RIGHT" spacing="20" styleClass="topbar">
             <Button text="Admin"
-                    onAction="#goToUserSeances"
-                    styleClass="admin-name"/>
+                    styleClass="sidebar-btn admin-btn"
+                    onAction="#goToUserSeances"/>
+
 
         </HBox>
     </top>
@@ -42,7 +43,8 @@
 
             <TableView fx:id="tableActivites" VBox.vgrow="ALWAYS">
                 <columns>
-                    <TableColumn fx:id="colId" text="Numéro De Recu"/>
+                  <!--<TableColumn fx:id="colId" text="Numéro De Recu"/>-->
+                    <TableColumn fx:id="colDate" text="Date" prefWidth="130"/>
                     <TableColumn fx:id="colNom" text="Nom"/>
                     <TableColumn fx:id="colType" text="Type"/>
                     <TableColumn fx:id="colCategorie" text="Catégorie"/>
@@ -63,6 +65,7 @@
                 <Button text="Supprimer"
                         styleClass="btn-danger"
                         onAction="#supprimerActivite"/>
+                <Button text="Statistique" styleClass="side-btn" onAction="#openstat"/>
             </HBox>
 
         </VBox>

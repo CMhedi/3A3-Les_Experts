@@ -8,6 +8,7 @@ import javafx.scene.Scene;
 import javafx.scene.control.Alert;
 import javafx.stage.Stage;
 import javafx.scene.Node;
+import Services.ReservationService;
 
 import Models.Reservation;
 import javafx.collections.*;
@@ -21,8 +22,8 @@ public class ReservationController {
     private TableView<Reservation> tableReservation;
     //@FXML
     //private TableColumn<Reservation, Integer> colId;
-    @FXML
-    private TableColumn<Reservation, Date> colDate;
+   // @FXML
+   // private TableColumn<Reservation, Date> colDate;
     @FXML
     private TableColumn<Reservation, String> colStatut;
     @FXML
@@ -33,6 +34,7 @@ public class ReservationController {
     private TableColumn<Reservation, Integer> colActivite;
 
     private final String URL = "jdbc:mysql://localhost:3306/ecoadventure?useSSL=false&serverTimezone=UTC";
+    private final ReservationService reservationService = new ReservationService();
 
     private final String USER = "root";
     private final String PASSWORD = "";
@@ -45,8 +47,8 @@ public class ReservationController {
        // colId.setCellValueFactory(data ->
                // new javafx.beans.property.SimpleIntegerProperty(data.getValue().getId()).asObject());
 
-        colDate.setCellValueFactory(data ->
-                new javafx.beans.property.SimpleObjectProperty<>(data.getValue().getDate()));
+       // colDate.setCellValueFactory(data ->
+          //      new javafx.beans.property.SimpleObjectProperty<>(data.getValue().getDate()));
 
         colStatut.setCellValueFactory(data ->
                 new javafx.beans.property.SimpleStringProperty(data.getValue().getStatut()));
@@ -74,7 +76,7 @@ public class ReservationController {
             while (rs.next()) {
                 list.add(new Reservation(
                         rs.getInt("id_res_act"),
-                        rs.getDate("date_reservation"),
+                       // rs.getDate("date_reservation"),
                         rs.getString("statut_res"),
                         rs.getInt("nb_personnes"),
                         rs.getInt("id_user"),
@@ -160,7 +162,7 @@ public class ReservationController {
         } catch (Exception e) {
             e.printStackTrace();
             new Alert(Alert.AlertType.ERROR,
-                    "Erreur ouverture popup:\n" + e.getClass().getSimpleName() + "\n" + e.getMessage()
+                    "Erreur ouverture de modif:\n" + e.getClass().getSimpleName() + "\n" + e.getMessage()
             ).show();
         }
     }

@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.geometry.*?>
+
+<BorderPane xmlns:fx="http://javafx.com/fxml"
+            fx:controller="Controllers.AdminActivitesController"
+            stylesheets="@admincss.css">
+
+    <!-- ============ LEFT SIDEBAR ============ -->
+    <left>
+        <VBox spacing="15" styleClass="sidebar">
+            <Label text="EcoAdventure" styleClass="logo"/>
+
+            <Button text="Tableau de bord" styleClass="sidebar-btn"/>
+            <Button text="Activités" styleClass="sidebar-btn active"/>
+            <Button text="Réservations" styleClass="sidebar-btn"/>
+            <Button text="Événements" styleClass="sidebar-btn"/>
+            <Button text="Utilisateurs" styleClass="sidebar-btn"/>
+        </VBox>
+    </left>
+
+    <!-- ============ TOP NAVBAR ============ -->
+    <top>
+        <HBox alignment="CENTER_RIGHT" spacing="20" styleClass="topbar">
+            <Label text="Admin" styleClass="admin-name"/>
+        </HBox>
+    </top>
+
+    <!-- ============ CENTER CONTENT ============ -->
+    <center>
+        <VBox spacing="20">
+            <padding>
+                <Insets top="30" right="30" bottom="30" left="30"/>
+            </padding>
+
+            <Label text="Réservations" styleClass="page-title"/>
+
+            <TableView fx:id="tableActivites" VBox.vgrow="ALWAYS">
+                <columns>
+                    <TableColumn fx:id="colId" text="Numéro De Recu"/>
+                    <TableColumn fx:id="colNom" text="Nom"/>
+                    <TableColumn fx:id="colType" text="Type"/>
+                    <TableColumn fx:id="colCategorie" text="Catégorie"/>
+                    <TableColumn fx:id="colNiveau" text="Niveau"/>
+                    <TableColumn fx:id="colStatut" text="Statut"/>
+                    <TableColumn fx:id="colPrix" text="Prix"/>
+                    <TableColumn fx:id="colImage" text="Image URL"/>
+
+                </columns>
+            </TableView>
+
+
+            <HBox alignment="CENTER_RIGHT" spacing="15">
+                <Button text="Modifier"
+                        styleClass="btn-primary"
+                        onAction="#modifierActivite"/>
+
+                <Button text="Supprimer"
+                        styleClass="btn-danger"
+                        onAction="#supprimerActivite"/>
+            </HBox>
+
+        </VBox>
+    </center>
+
+</BorderPane>
