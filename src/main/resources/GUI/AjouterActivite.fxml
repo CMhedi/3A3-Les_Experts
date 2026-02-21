@@ -83,7 +83,9 @@
                 <Button text="↩ Retourner"
                         onAction="#goUserSeances"
                         styleClass="btn btn-secondary"/>
+                <Button text="Météo" onAction="#goToWeather"   styleClass="btn btn-secondary"/>
             </HBox>
+
 
         </VBox>
     </children>

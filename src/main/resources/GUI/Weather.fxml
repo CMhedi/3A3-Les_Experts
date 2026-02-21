@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<BorderPane xmlns:fx="http://javafx.com/fxml"
+            fx:controller="Controllers.WeatherController"
+            stylesheets="@weather.css">
+
+    <top>
+        <HBox spacing="10" styleClass="topbar" alignment="CENTER_LEFT">
+            <Label text="Eco" styleClass="eco"/>
+            <Label text="Adventure" styleClass="adventure"/>
+            <Region HBox.hgrow="ALWAYS"/>
+            <Button text="Retour" onAction="#goBack" styleClass="btn-secondary"/>
+        </HBox>
+    </top>
+
+    <center>
+        <VBox spacing="14" alignment="TOP_CENTER">
+            <padding>
+                <Insets top="18" right="18" bottom="18" left="18"/>
+            </padding>
+
+            <HBox spacing="10" alignment="CENTER">
+                <TextField fx:id="tfCity" promptText="Ville (ex: Tunis)" prefWidth="260"/>
+                <Button text="Actualiser" onAction="#refresh" styleClass="btn-primary"/>
+            </HBox>
+
+            <Label fx:id="lblStatus" text="" styleClass="status"/>
+
+            <VBox spacing="10" styleClass="card">
+                <Label fx:id="lblCity" text="Ville : -" styleClass="lineTitle"/>
+                <Label fx:id="lblTemp" text="Température : -" styleClass="line"/>
+                <Label fx:id="lblDesc" text="Description : -" styleClass="line"/>
+                <Label fx:id="lblHumidity" text="Humidité : -" styleClass="line"/>
+                <Label fx:id="lblWind" text="Vent : -" styleClass="line"/>
+            </VBox>
+
+        </VBox>
+    </center>
+</BorderPane>

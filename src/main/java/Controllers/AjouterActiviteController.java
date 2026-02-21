@@ -1,5 +1,6 @@
 package Controllers;
 
+import Services.WeatherService;
 import javafx.event.ActionEvent;
 import javafx.fxml.*;
 import javafx.scene.*;
@@ -8,10 +9,7 @@ import javafx.stage.Stage;
 
 import java.io.IOException;
 import java.sql.*;
-
-// ===== ADDED IMPORTS =====
 import java.util.function.Consumer;
-import Services.WeatherService;
 
 public class AjouterActiviteController {
 
@@ -28,7 +26,7 @@ public class AjouterActiviteController {
     private final String USER = "root";
     private final String PASSWORD = "";
 
-    // ===== ADDED: anti-bot lock =====
+    // ===== anti-bot lock =====
     private int wrongAttempts = 0;
     private static final int MAX_ATTEMPTS = 3;
     private static final int LOCK_SECONDS = 30;
@@ -45,7 +43,7 @@ public class AjouterActiviteController {
     @FXML
     private void ajouterActivite() {
 
-        // ===== ADDED: si bloqué =====
+        // ===== si bloqué =====
         long now = System.currentTimeMillis();
         if (now < lockUntilMillis) {
             long remain = (lockUntilMillis - now) / 1000;
@@ -53,7 +51,7 @@ public class AjouterActiviteController {
             return;
         }
 
-        // ===== ADDED: open captcha then run your insert =====
+        // ===== open captcha then run insert =====
         openCaptcha(ok -> {
             if (ok) {
 
@@ -61,7 +59,18 @@ public class AjouterActiviteController {
 
                 // ===== WEATHER CHECK =====
                 WeatherService weatherService = new WeatherService();
-                String weatherMsg = weatherService.getWeatherMessage();
+                String weatherMsg;
+
+                try {
+                    WeatherService.WeatherData data = weatherService.getCurrentWeather("Tunis");
+
+                    weatherMsg = "Météo à " + data.city + " : " +
+                            data.description + ", " +
+                            String.format("%.1f", data.temp) + "°C";
+
+                } catch (Exception e) {
+                    weatherMsg = "⚠️ Erreur météo : " + e.getMessage();
+                }
 
                 Alert weatherAlert = new Alert(Alert.AlertType.INFORMATION);
                 weatherAlert.setTitle("Information Météo");
@@ -75,11 +84,10 @@ public class AjouterActiviteController {
         });
     }
 
-    // ===== ADDED: ton code original (copié inchangé) =====
+    // ===== ton code original (copié inchangé) =====
     private void doAjouterActivite() {
 
         try {
-
             Connection conn = DriverManager.getConnection(URL, USER, PASSWORD);
 
             String sql = "INSERT INTO activite (nom, type_activite, categorie_act, niveau_act, prix, statut, image_url, id_pack, date_reservation) VALUES (?, ?, ?, ?, ?, ?, ?, NULL, ?)";
@@ -131,7 +139,7 @@ public class AjouterActiviteController {
         }
     }
 
-    // ===== ADDED: open CAPTCHA popup =====
+    // ===== open CAPTCHA popup =====
     private void openCaptcha(Consumer<Boolean> onDone) {
         try {
             FXMLLoader loader = new FXMLLoader(getClass().getResource("/GUI/CaptchaVerification.fxml"));
@@ -190,5 +198,10 @@ public class AjouterActiviteController {
 
     public void goAdmin(ActionEvent event) {
         switchScene(event, "/GUI/AdminActivites.fxml");
+    }
+
+    @FXML
+    private void goToWeather(ActionEvent event) {
+        switchScene(event, "/GUI/Weather.fxml");
     }
 }
