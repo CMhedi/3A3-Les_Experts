@@ -30,8 +30,8 @@ public class EmailService {
     private static final String SMTP_HOST = getEnv("EA_SMTP_HOST", "smtp.gmail.com");
     private static final int SMTP_PORT = Integer.parseInt(getEnv("EA_SMTP_PORT", "587"));
 
-    private static final String SMTP_USER = getEnv("EA_SMTP_USER", "");
-    private static final String SMTP_PASS = getEnvPass("EA_SMTP_PASS", ""); // App Password (sans espaces)
+    private static final String SMTP_USER = getEnv("EA_SMTP_USER", "hedicheikh14@gmail.com");
+    private static final String SMTP_PASS = getEnvPass("EA_SMTP_PASS", "iyxr btso iocx qfqo"); // App Password (sans espaces)
 
     private static final String ADMIN_EMAIL = getEnv("EA_ADMIN_EMAIL", "hedicheikh14@gmail.com");
 
@@ -42,8 +42,8 @@ public class EmailService {
     private static final int IMAP_PORT = Integer.parseInt(getEnv("EA_IMAP_PORT", "993"));
 
     // Inbox account that the APP will read (can be same as SMTP_USER)
-    private static final String IMAP_USER = getEnv("EA_IMAP_USER", "");
-    private static final String IMAP_PASS = getEnvPass("EA_IMAP_PASS", ""); // App Password (sans espaces)
+    private static final String IMAP_USER = getEnv("EA_IMAP_USER", "hedicheikh14@gmail.com");
+    private static final String IMAP_PASS = getEnvPass("EA_IMAP_PASS", "iyxr btso iocx qfqo"); // App Password (sans espaces)
 
     // Subject that admin uses from phone
     private static final String PACK_FORM_SUBJECT = getEnv("EA_PACK_FORM_SUBJECT", "EA_PACK_FORM");
