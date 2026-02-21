@@ -11,6 +11,7 @@ import java.sql.*;
 
 // ===== ADDED IMPORTS =====
 import java.util.function.Consumer;
+import Services.WeatherService;
 
 public class AjouterActiviteController {
 
@@ -55,8 +56,21 @@ public class AjouterActiviteController {
         // ===== ADDED: open captcha then run your insert =====
         openCaptcha(ok -> {
             if (ok) {
+
                 wrongAttempts = 0;
-                doAjouterActivite(); // ✅ ton code original copié
+
+                // ===== WEATHER CHECK =====
+                WeatherService weatherService = new WeatherService();
+                String weatherMsg = weatherService.getWeatherMessage();
+
+                Alert weatherAlert = new Alert(Alert.AlertType.INFORMATION);
+                weatherAlert.setTitle("Information Météo");
+                weatherAlert.setHeaderText(null);
+                weatherAlert.setContentText(weatherMsg);
+                weatherAlert.showAndWait();
+
+                // ===== Ensuite ajout normal =====
+                doAjouterActivite();
             }
         });
     }

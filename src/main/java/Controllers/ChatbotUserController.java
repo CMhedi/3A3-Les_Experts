@@ -37,7 +37,7 @@ public class ChatbotUserController {
 
         new Thread(() -> {
             try {
-                AiRecommendationService.Filters f = ai.extractFilters(msg);
+                AiRecommendationService.Filters f = ai.extractFiltersPro(msg);
 
                 int limit = (f.limit == null ? 5 : f.limit);
                 List<Activite> results = db.searchByFilters(f.type_activite, f.categorie_act, f.niveau_act, f.prix_max, f.limit);
