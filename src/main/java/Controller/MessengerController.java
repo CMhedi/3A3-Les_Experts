@@ -1,4 +1,7 @@
 package Controller;
+import Utiles.StompClientHandler;
+import Controller.CallController;
+import Controller.CallingController;
 import org.springframework.messaging.simp.stomp.StompSession;
 import java.nio.charset.StandardCharsets;
 import Entities.Conversation;
@@ -79,6 +82,7 @@ public class MessengerController implements Initializable {
     private AudioRecorder aiRecorder;
     @FXML
     private HBox chatHeader;
+
     @FXML
     private TextField searchField;
     @FXML
@@ -106,17 +110,16 @@ public class MessengerController implements Initializable {
     private ConversationDAO conversationDAO;
     private List<Conversation> allConversations;
     private int selectedConversationId = -1;
-    private int currentUserId = 3;  // valeur par défaut
+    private int currentUserId = 2;  // valeur par défaut
 
 
     private ObservableList<Message> chatMessages = FXCollections.observableArrayList();
-    private StompSession stompClient;
-
+    private StompClientHandler stompHandler;
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
         messageDAO = new MessageDAO();
         conversationDAO = new ConversationDAO();
-        currentUserId = 3;
+        currentUserId = 2;
         messagesList.setFocusTraversable(false);
         conversationsList.setFocusTraversable(false);
 
@@ -126,8 +129,74 @@ public class MessengerController implements Initializable {
         setupSearchListener();
         startAutoRefresh();
         gifService = new GifService("Filp4GHzXpQubEthmUu744ozFrXl464m");
+        initializeStompClient();
+
+// ✅ Add delay and null check
+        if (stompHandler != null) {
+            new Thread(() -> {
+                try {
+                    Thread.sleep(2000); // Wait for server
+                    stompHandler.connect(
+                            session -> System.out.println("✅ STOMP connecté"),
+                            payload -> Platform.runLater(() -> processIncomingCall(payload))
+                    );
+                } catch (InterruptedException e) {
+                    Thread.currentThread().interrupt();
+                }
+            }).start();
+        } else {
+            System.err.println("❌ StompHandler initialization failed");
+        }
+
     }
 
+    private boolean requestUserLogin() {
+        TextInputDialog dialog = new TextInputDialog("2");
+        dialog.setTitle("👤 User Login");
+        dialog.setHeaderText("Which user are you?");
+        dialog.setContentText("Enter User ID (2, 3, 4, etc.):");
+        dialog.setGraphic(null);
+
+        var result = dialog.showAndWait();
+        if (result.isPresent()) {
+            try {
+                currentUserId = Integer.parseInt(result.get().trim());
+                System.out.println("✅ Logged in as User ID: " + currentUserId);
+                return true;
+            } catch (NumberFormatException e) {
+                Alert alert = new Alert(Alert.AlertType.ERROR);
+                alert.setTitle("Error");
+                alert.setHeaderText("Invalid User ID");
+                alert.setContentText("Please enter a valid number!");
+                alert.showAndWait();
+                return requestUserLogin(); // Ask again
+            }
+        }
+        return false;
+    }
+    private void processIncomingCall(String payload) {
+        try {
+            System.out.println("📞 Incoming call received: " + payload);
+
+            // Parse the JSON payload
+            ObjectMapper mapper = new ObjectMapper();
+            Map<String, Object> callData = mapper.readValue(payload, Map.class);
+
+            String senderName = (String) callData.get("senderName");
+            int senderId = ((Number) callData.get("senderId")).intValue();
+            int conversationId = ((Number) callData.get("conversationId")).intValue();
+            String callType = (String) callData.get("type");
+
+            System.out.println("📱 Call from: " + senderName + " (Type: " + callType + ")");
+
+            // ✅ Show incoming call window
+            onIncomingCallReceived(senderName, senderId, conversationId, callType);
+
+        } catch (Exception e) {
+            System.err.println("❌ Error processing incoming call: " + e.getMessage());
+            e.printStackTrace();
+        }
+    }
 
     private String callChatBotAPI(String userInput) {
         try {
@@ -1645,127 +1714,53 @@ public class MessengerController implements Initializable {
         stage.show();
     }
 
-// ========== REMPLACER startAudioCall() DANS MessengerController ==========
-// C'EST ICI LE PROBLÈME ! Tu dois passer setCallData() !
-private void sendCallSignal(int conversationId, String callType) {
-    if (stompClient != null && stompClient.isConnected()) {
-        try {
-            // Create call data payload
-            Map<String, Object> callData = new HashMap<>();
-            callData.put("senderName", chatUserName.getText());
-            callData.put("senderId", currentUserId);
-            callData.put("conversationId", conversationId);
-            callData.put("type", callType);
-
-            // Serialize to JSON
-            ObjectMapper mapper = new ObjectMapper();
-            String payload = mapper.writeValueAsString(callData);
-
-            // Send via STOMP
-            stompClient.send("/app/call.start", payload.getBytes(StandardCharsets.UTF_8));
-
-            System.out.println("📤 Call signal sent via STOMP");
-            System.out.println("   Type: " + callType);
-
-        } catch (Exception e) {
-            System.err.println("❌ Error sending call signal: " + e.getMessage());
-            e.printStackTrace();
-        }
-    } else {
-        System.out.println("⚠️ STOMP not connected - signal not sent");
-        System.out.println("   Note: For local testing, this is OK");
-    }
-}
-
-// ========== METHOD 2: Initialize STOMP Connection ==========
-    /**
-     * Initialize STOMP WebSocket connection for real-time call notifications
-     * Call this from initialize() method
-     */
-    private void initializeStompClient() {
-        try {
-            System.out.println("🔗 STOMP initialization ready");
-            System.out.println("✅ Ready to receive incoming calls!");
-
-            // TODO: Implement actual STOMP connection based on your Spring setup
-            // For now, the stompClient variable will be set by your backend
-
-        } catch (Exception e) {
-            System.err.println("❌ STOMP initialization error: " + e.getMessage());
-        }
-    }
-
-// ========== METHOD 3: Subscribe to Incoming Calls ==========
-    /**
-     * Subscribe to incoming call notifications via STOMP
-     */
-    private void subscribeToIncomingCalls() {
-        if (stompClient == null || !stompClient.isConnected()) {
-            System.err.println("❌ STOMP not connected");
-            return;
-        }
-
-        try {
-            String destination = "/topic/call/" + currentUserId;
-            System.out.println("✅ Subscribing to: " + destination);
-
-            // TODO: Implement actual subscription based on your framework
-
-        } catch (Exception e) {
-            System.err.println("❌ Subscription error: " + e.getMessage());
-        }
-    }
-
-// ========== METHOD 4: Handle Incoming Call - UPDATED ==========
-    /**
-     * Handle incoming call - open CallWindow on receiver's device
-     * Called when: Sender initiates a call via STOMP
-     */
-    public void onIncomingCallReceived(String senderName, int senderId, int conversationId, String callType) {
-        Platform.runLater(() -> {
+    private void sendCallSignal(int conversationId, String callType) {
+        if (stompHandler != null && stompHandler.isConnected()) {
             try {
-                System.out.println("🔔 Incoming call from: " + senderName + " (" + callType + ")");
+                Map<String, Object> callData = new HashMap<>();
+                callData.put("senderName", chatUserName.getText());
+                callData.put("senderId", currentUserId);
+                callData.put("conversationId", conversationId);
+                callData.put("type", callType);
 
-                // Load CallWindow.fxml
-                FXMLLoader loader = new FXMLLoader(getClass().getResource("/Gui/CallWindow.fxml"));
-                Parent root = loader.load();
+                ObjectMapper mapper = new ObjectMapper();
+                String payload = mapper.writeValueAsString(callData);
 
-                // Get controller
-                CallController callController = loader.getController();
+                // Use handler to send (method may be named differently; adjust as needed)
+                stompHandler.send("/app/call.start", payload.getBytes(StandardCharsets.UTF_8));
 
-                if (callController == null) {
-                    System.err.println("❌ CallController is null");
-                    return;
-                }
-
-                // Create stage
-                Stage callStage = new Stage();
-                callStage.initStyle(StageStyle.TRANSPARENT);
-                Scene scene = new Scene(root);
-                scene.setFill(null);
-                callStage.setScene(scene);
-
-                // ✅ Pass data to controller - CRITICAL
-                callController.setCallerData(senderName, callStage);
-                callController.setCallData(conversationId, currentUserId, callType, messageDAO);
-
-                // Make draggable
-                makeStageDraggable(root, callStage);
-
-                // Show window
-                callStage.show();
-                callStage.toFront();
-
-                System.out.println("✅ Incoming call window displayed");
-
+                System.out.println("📤 Call signal sent via STOMP");
             } catch (Exception e) {
-                System.err.println("❌ Error opening CallWindow: " + e.getMessage());
+                System.err.println("❌ Error sending call signal: " + e.getMessage());
                 e.printStackTrace();
             }
-        });
+        } else {
+            System.out.println("⚠️ STOMP not connected – signal not sent");
+        }
     }
 
-    // ========== UPDATED: startAudioCall() ==========
+
+
+
+
+
+    /**
+     * Initialise le gestionnaire STOMP pour la communication WebSocket.
+     * Cette méthode crée une instance de StompClientHandler avec l'URL du serveur,
+     * puis tente de se connecter (la connexion réelle est déclenchée après dans initialize()).
+     */
+
+        private void initializeStompClient() {
+            try {
+                String serverUrl = "http://localhost:8080/ws";
+                stompHandler = new StompClientHandler(serverUrl, currentUserId);
+                System.out.println("🔗 STOMP handler created for user " + currentUserId);
+            } catch (Exception e) {
+                System.err.println("❌ STOMP initialization error: " + e.getMessage());
+                stompHandler = null;
+            }
+        }
+
     @FXML
     public void startAudioCall() {
         String name = chatUserName.getText();
@@ -1789,7 +1784,6 @@ private void sendCallSignal(int conversationId, String callType) {
             controller.setContactData(name, callStage);
             controller.setCallData(selectedConversationId, currentUserId, "AUDIO_CALL", messageDAO);
 
-            // ✅ Send signal to receiver
             sendCallSignal(selectedConversationId, "AUDIO_CALL");
 
             makeStageDraggable(root, callStage);
@@ -1800,6 +1794,7 @@ private void sendCallSignal(int conversationId, String callType) {
             showAlert("Erreur", "Impossible de charger la fenêtre d'appel.");
         }
     }
+
 
     // ========== UPDATED: startVideoCall() ==========
     @FXML
@@ -1829,7 +1824,6 @@ private void sendCallSignal(int conversationId, String callType) {
             controller.setContactData(contactName, callStage);
             controller.setCallData(selectedConversationId, currentUserId, "VIDEO_CALL", messageDAO);
 
-            // ✅ Send signal to receiver
             sendCallSignal(selectedConversationId, "VIDEO_CALL");
 
             makeStageDraggable(root, callStage);
@@ -1863,31 +1857,32 @@ private void makeStageDraggable(Parent root, Stage stage) {
 // Dans MessengerController.java
 
     private CallController currentIncomingCallController; // Pour stocker l'instance du récepteur
-
-    public void onIncomingCallReceived(String senderName) {
+    private void onIncomingCallReceived(String senderName, int senderId, int conversationId, String callType) {
         Platform.runLater(() -> {
             try {
-                // ⚠️ Verifie bien le nom du fichier (CallWindow.fxml vs CallingWindow.fxml)
                 FXMLLoader loader = new FXMLLoader(getClass().getResource("/Gui/CallWindow.fxml"));
                 Parent root = loader.load();
 
                 CallController controller = loader.getController();
                 Stage incomingStage = new Stage();
 
-                // Passer les données
+                // Pass call data to receiver
                 controller.setCallerData(senderName, incomingStage);
+                controller.setCallData(conversationId, currentUserId, callType, messageDAO);
 
                 incomingStage.setScene(new Scene(root));
-                incomingStage.setTitle("Appel entrant");
+                incomingStage.setTitle("Appel entrant de " + senderName);
                 incomingStage.show();
 
-                System.out.println("📞 Fenêtre d'appel affichée pour: " + senderName);
-            } catch (Exception e) {
-                System.err.println("❌ Erreur chargement CallWindow: " + e.getMessage());
-                e.printStackTrace(); // Hédhi bech nchoufou el ghalta mnin bedabt
+                System.out.println("📞 Incoming call window displayed for: " + senderName);
+
+            } catch (IOException e) {
+                System.err.println("❌ Error loading CallWindow: " + e.getMessage());
+                e.printStackTrace();
             }
         });
     }
+   
     public void onCallCancelledBySender() {
         if (currentIncomingCallController != null) {
             currentIncomingCallController.forceClose();

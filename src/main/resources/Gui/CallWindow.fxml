@@ -41,7 +41,7 @@
     <!-- ✅ Call Action Buttons -->
     <HBox alignment="CENTER" spacing="40">
         <!-- REJECT Button -->
-        <Button onAction="#handleReject" prefHeight="65" prefWidth="65"
+        <Button fx:id="rejectButton" onAction="#handleReject" prefHeight="65" prefWidth="65"
                 style="-fx-background-color: #ff3b30; -fx-background-radius: 50; -fx-cursor: hand; -fx-font-size: 24; -fx-text-fill: white; -fx-effect: dropshadow(three-pass-box, rgba(255,59,48,0.4), 10, 0, 0, 0);">
             ✘
         </Button>
