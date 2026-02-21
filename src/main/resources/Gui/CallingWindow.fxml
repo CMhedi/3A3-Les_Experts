@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.shape.Circle?>
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.text.Font?>
+
+<VBox alignment="CENTER" spacing="25" prefHeight="450.0" prefWidth="320.0"
+      style="-fx-background-color: #121212; -fx-background-radius: 30; -fx-border-color: #333; -fx-border-radius: 30; -fx-border-width: 1;"
+      xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1"
+      fx:controller="Controller.CallingController">
+
+    <padding>
+        <Insets top="50" bottom="50" />
+    </padding>
+
+    <StackPane>
+        <Circle fx:id="profileCircle" fill="#282828" radius="60" stroke="#34c759" strokeWidth="2" />
+        <Label text="👤" textFill="WHITE">
+            <font><Font size="40.0" /></font>
+        </Label>
+    </StackPane>
+
+    <VBox alignment="CENTER" spacing="10">
+        <Label fx:id="contactName" text="Nom du Contact" textFill="WHITE">
+            <font><Font name="System Bold" size="22.0" /></font>
+        </Label>
+        <Label text="Appel audio en cours..." textFill="#b3b3b3">
+            <font><Font size="14.0" /></font>
+        </Label>
+    </VBox>
+
+    <Region VBox.vgrow="ALWAYS" />
+
+    <Button onAction="#handleCancelCall" prefHeight="65" prefWidth="65"
+            style="-fx-background-color: #ff3b30; -fx-background-radius: 50; -fx-cursor: hand; -fx-effect: dropshadow(three-pass-box, rgba(255,59,48,0.4), 10, 0, 0, 0);"
+            text="📴" textFill="WHITE">
+        <font><Font size="24.0" /></font>
+    </Button>
+
+    <Label text="Annuler" textFill="#8e8e8e">
+        <font><Font size="12.0" /></font>
+    </Label>
+</VBox>

@@ -64,6 +64,23 @@
                         <Label fx:id="chatUserName" style="-fx-font-size: 16; -fx-font-weight: bold;" text="Sélectionnez un chat" />
                         <Label fx:id="chatStatus" style="-fx-font-size: 12; -fx-text-fill: #0095f6;" text="En ligne" />
                     </VBox>
+
+                    <!-- Audio Call Button -->
+                    <Button onAction="#startAudioCall" style="-fx-background-color: transparent; -fx-text-fill: #00b1ff; -fx-cursor: hand;" text="☎️">
+                        <font><Font name="Segoe UI Emoji" size="18.0" /></font>
+                        <padding>
+                            <Insets bottom="8.0" left="12.0" right="12.0" top="8.0" />
+                        </padding>
+                    </Button>
+
+                    <!-- Video Call Button -->
+                    <Button onAction="#startVideoCall" style="-fx-background-color: transparent; -fx-text-fill: #00b1ff; -fx-cursor: hand;" text="📹">
+                        <font><Font name="Segoe UI Emoji" size="18.0" /></font>
+                        <padding>
+                            <Insets bottom="8.0" left="12.0" right="12.0" top="8.0" />
+                        </padding>
+                    </Button>
+
                     <Button onAction="#showChatOptions" style="-fx-background-color: transparent; -fx-cursor: hand;" text="⋮">
                         <font><Font size="20.0" /></font>
                     </Button>

@@ -2,6 +2,7 @@ package Controller;
 
 import Services.interfaces.GeminiService;
 import Services.interfaces.GifService;
+import javafx.fxml.FXMLLoader;
 import javafx.scene.*;
 import javafx.scene.web.WebView;
 import javafx.stage.Stage;
@@ -9,39 +10,27 @@ import javafx.application.Platform;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.layout.FlowPane;
 import javafx.scene.layout.VBox;
-import javafx.scene.image.Image;
-import javafx.scene.image.ImageView;
 import javafx.geometry.Insets;
 import Services.interfaces.MessageDAO;
-
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 import javafx.stage.FileChooser;
+import javafx.stage.StageStyle;
 import org.json.JSONObject;
 import org.vosk.Model;
 import org.vosk.Recognizer;
 import javax.sound.sampled.AudioInputStream;
 import javax.sound.sampled.AudioSystem;
-
-
-
 import javafx.scene.control.*;
 import javafx.scene.layout.*;
 import javafx.scene.image.*;
-import javafx.geometry.Insets;
 import org.json.JSONArray;
 import javafx.scene.Scene;
-import javafx.scene.image.Image;
-import javafx.scene.image.ImageView;
-import javafx.scene.control.ScrollPane;
 import javafx.scene.control.TextField;
-import Services.interfaces.GifService;
-import org.json.JSONArray;
 import java.io.File;
 import java.io.InputStream;
 import java.io.FileInputStream;
 import java.io.IOException;
-
 import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
 import javafx.event.ActionEvent;
@@ -49,11 +38,8 @@ import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.*;
 import javafx.collections.FXCollections;
-import javafx.scene.layout.VBox;
 import javafx.scene.layout.HBox;
-import javafx.scene.layout.FlowPane;
 import javafx.geometry.Pos;
-import javafx.geometry.Insets;
 import javafx.geometry.Side;
 import javafx.scene.text.Font;
 import javafx.scene.text.Text;
@@ -66,6 +52,7 @@ import Services.interfaces.*;
 import java.net.URL;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.ResourceBundle;
 import java.util.stream.Collectors;
@@ -76,23 +63,8 @@ import java.net.http.HttpResponse;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import java.util.Map;
 import Utiles.AudioRecorder;
-import javafx.stage.Stage;
-import javafx.scene.Scene;
-import javafx.scene.layout.VBox;
-import javafx.scene.layout.FlowPane;
-import javafx.geometry.Insets;
-import javafx.geometry.Pos;
 import javafx.scene.control.Button;
-import javafx.scene.control.TextField;
-import javafx.scene.image.Image;
-import javafx.scene.image.ImageView;
-
-import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
 
 
 public class MessengerController implements Initializable {
@@ -137,7 +109,7 @@ public class MessengerController implements Initializable {
     private ConversationDAO conversationDAO;
     private List<Conversation> allConversations;
     private int selectedConversationId = -1;
-    private final int currentUserId = 3;
+    private int currentUserId = 2;  // valeur par défaut
 
 
     private ObservableList<Message> chatMessages = FXCollections.observableArrayList();
@@ -147,7 +119,7 @@ public class MessengerController implements Initializable {
     public void initialize(URL url, ResourceBundle resourceBundle) {
         messageDAO = new MessageDAO();
         conversationDAO = new ConversationDAO();
-
+        currentUserId = 2;
         messagesList.setFocusTraversable(false);
         conversationsList.setFocusTraversable(false);
 
@@ -448,121 +420,574 @@ public class MessengerController implements Initializable {
 
     @FXML
     private void showChatOptions() {
-        if (selectedConversationId == -1) return;
-        Conversation selectedConv = conversationsList.getSelectionModel().getSelectedItem();
-        if (selectedConv == null) return;
+        // Vérifications préalables
+        if (selectedConversationId == -1) {
+            Alert alert = new Alert(Alert.AlertType.WARNING);
+            alert.setTitle("Attention");
+            alert.setHeaderText(null);
+            alert.setContentText("Veuillez sélectionner une conversation d'abord !");
+            alert.showAndWait();
+            return;
+        }
 
+        Conversation selectedConv = conversationsList.getSelectionModel().getSelectedItem();
+        if (selectedConv == null) {
+            Alert alert = new Alert(Alert.AlertType.WARNING);
+            alert.setTitle("Attention");
+            alert.setHeaderText(null);
+            alert.setContentText("Aucune conversation sélectionnée !");
+            alert.showAndWait();
+            return;
+        }
+
+        // Créer le menu contextuel
         ContextMenu contextMenu = new ContextMenu();
+        contextMenu.setStyle("-fx-font-size: 13;");
+
+        // ========== CAS 1 : SI C'EST UN GROUPE (EstGroupe == 1) ==========
         if (selectedConv.getEstGroupe() == 1) {
+
+            // ===== OPTION 1.1 : Afficher les membres =====
             MenuItem showMembersItem = new MenuItem("Afficher les membres 👥");
             showMembersItem.setOnAction(e -> {
-                List<String> membres = conversationDAO.getMembresByConversation(selectedConversationId);
-                if (membres.stream().noneMatch(m -> m.toLowerCase().contains("ahmed"))) {
-                    membres.add(0, "Ahmed Admin (Moi) ⭐");
+                try {
+                    List<String> membres = conversationDAO.getMembresByConversation(selectedConversationId);
+
+                    if (membres == null || membres.isEmpty()) {
+                        Alert emptyAlert = new Alert(Alert.AlertType.INFORMATION);
+                        emptyAlert.setTitle("Aucun membre");
+                        emptyAlert.setHeaderText(null);
+                        emptyAlert.setContentText("Cette conversation n'a pas de membres !");
+                        emptyAlert.showAndWait();
+                        return;
+                    }
+
+                    // ✅ CORRECTION : Ajouter "Vous" si l'utilisateur actuel est dans la liste
+                    // Vérifier le format des données retournées par getMembresByConversation()
+                    boolean currentUserExists = membres.stream().anyMatch(m -> {
+                        try {
+                            // Si le format est "id|nom|email"
+                            if (m.contains("|")) {
+                                String[] parts = m.split("\\|");
+                                if (parts.length > 0 && parts[0].matches("\\d+")) {
+                                    return Integer.parseInt(parts[0].trim()) == currentUserId;
+                                }
+                            }
+                            // Sinon essayer de matcher avec currentUserId comme string
+                            return m.contains(String.valueOf(currentUserId));
+                        } catch (Exception ex) {
+                            return false;
+                        }
+                    });
+
+                    // Ajouter l'indication "Vous" si trouvé
+                    if (currentUserExists) {
+                        // Mapper les membres pour ajouter l'indication "Vous"
+                        List<String> membresWithYou = new ArrayList<>(membres);
+                        membresWithYou = membresWithYou.stream()
+                                .map(m -> {
+                                    try {
+                                        if (m.contains("|")) {
+                                            String[] parts = m.split("\\|");
+                                            if (parts.length > 0 && parts[0].matches("\\d+")) {
+                                                if (Integer.parseInt(parts[0].trim()) == currentUserId) {
+                                                    return parts[1] + " (Vous) ⭐";
+                                                }
+                                            }
+                                        }
+                                    } catch (Exception ex) {
+                                        return m;
+                                    }
+                                    return m;
+                                })
+                                .collect(Collectors.toList());
+
+                        // Afficher dans le dialogue
+                        ListView<String> membersListView = new ListView<>(
+                                FXCollections.observableArrayList(membresWithYou)
+                        );
+                        membersListView.setPrefHeight(250);
+                        membersListView.setStyle("-fx-font-size: 12;");
+
+                        Dialog<Void> dialog = new Dialog<>();
+                        dialog.setTitle("Membres du groupe");
+                        dialog.setHeaderText("Liste des participants (" + membresWithYou.size() + ")");
+                        dialog.getDialogPane().setContent(membersListView);
+                        dialog.getDialogPane().getButtonTypes().add(ButtonType.CLOSE);
+                        dialog.showAndWait();
+                    } else {
+                        ListView<String> membersListView = new ListView<>(
+                                FXCollections.observableArrayList(membres)
+                        );
+                        membersListView.setPrefHeight(250);
+                        membersListView.setStyle("-fx-font-size: 12;");
+
+                        Dialog<Void> dialog = new Dialog<>();
+                        dialog.setTitle("Membres du groupe");
+                        dialog.setHeaderText("Liste des participants (" + membres.size() + ")");
+                        dialog.getDialogPane().setContent(membersListView);
+                        dialog.getDialogPane().getButtonTypes().add(ButtonType.CLOSE);
+                        dialog.showAndWait();
+                    }
+                } catch (Exception ex) {
+                    ex.printStackTrace();
+                    Alert errorAlert = new Alert(Alert.AlertType.ERROR);
+                    errorAlert.setTitle("Erreur");
+                    errorAlert.setHeaderText("Erreur lors de la récupération des membres");
+                    errorAlert.setContentText(ex.getMessage());
+                    errorAlert.showAndWait();
                 }
-                ListView<String> membersListView = new ListView<>(FXCollections.observableArrayList(membres));
-                membersListView.setPrefHeight(200);
-                Dialog<Void> dialog = new Dialog<>();
-                dialog.setTitle("Membres");
-                dialog.getDialogPane().setContent(membersListView);
-                dialog.getDialogPane().getButtonTypes().add(ButtonType.CLOSE);
-                dialog.showAndWait();
             });
 
+            // ===== OPTION 1.2 : Ajouter un membre =====
             MenuItem addMemberItem = new MenuItem("Ajouter un membre ➕");
             addMemberItem.setOnAction(e -> {
-                List<String> allUsers = conversationDAO.getAllAppUsers();
-                List<String> currentMembres = conversationDAO.getMembresByConversation(selectedConversationId);
-                List<String> filteredUsers = allUsers.stream()
-                        .filter(u -> {
-                            String nameInBase = u.split("\\|")[0].trim().toLowerCase();
-                            boolean alreadyMember = currentMembres.stream().anyMatch(m -> m.toLowerCase().equals(nameInBase));
-                            return !alreadyMember && !nameInBase.contains("ahmed");
-                        })
-                        .collect(Collectors.toList());
-
-                if (filteredUsers.isEmpty()) {
-                    new Alert(Alert.AlertType.INFORMATION, "Aucun utilisateur disponible !").show();
-                    return;
-                }
-
-                ChoiceDialog<String> dialog = new ChoiceDialog<>(filteredUsers.get(0), filteredUsers);
-                dialog.showAndWait().ifPresent(selectedUser -> {
-                    String email = selectedUser.substring(selectedUser.lastIndexOf("|") + 2).trim();
-                    if (conversationDAO.addMemberToConversation(selectedConversationId, email)) {
-                        new Alert(Alert.AlertType.INFORMATION, "Ajouté !").show();
+                try {
+                    // Récupérer tous les utilisateurs
+                    List<String> allUsers = conversationDAO.getAllAppUsers();
+                    if (allUsers == null || allUsers.isEmpty()) {
+                        Alert emptyAlert = new Alert(Alert.AlertType.INFORMATION);
+                        emptyAlert.setTitle("Aucun utilisateur");
+                        emptyAlert.setHeaderText(null);
+                        emptyAlert.setContentText("Aucun utilisateur disponible dans l'application !");
+                        emptyAlert.showAndWait();
+                        return;
                     }
-                });
+
+                    // Récupérer les membres actuels
+                    List<String> currentMembres = conversationDAO.getMembresByConversation(selectedConversationId);
+
+                    // ✅ CORRECTION : Filtrer les utilisateurs disponibles
+                    // Format supposé : "id|nom|email" ou "nom|email"
+                    List<String> filteredUsers = allUsers.stream()
+                            .filter(u -> {
+                                try {
+                                    String[] parts = u.split("\\|");
+                                    String name = parts.length > 0 ? parts[0].trim().toLowerCase() : "";
+                                    String identifier = parts.length > 1 ? parts[1].trim() : "";
+                                    String email = parts.length > 2 ? parts[2].trim() : "";
+
+                                    // Vérifier si l'utilisateur est déjà membre
+                                    boolean alreadyMember = currentMembres.stream().anyMatch(m -> {
+                                        try {
+                                            String[] memberParts = m.split("\\|");
+                                            if (memberParts.length > 0 && memberParts[0].matches("\\d+")) {
+                                                return Integer.parseInt(memberParts[0].trim()) == Integer.parseInt(identifier);
+                                            }
+                                            return m.toLowerCase().contains(name);
+                                        } catch (Exception ex) {
+                                            return m.toLowerCase().equals(name);
+                                        }
+                                    });
+
+                                    // Vérifier si c'est l'utilisateur actuel
+                                    boolean isCurrentUser = false;
+                                    if (identifier.matches("\\d+")) {
+                                        isCurrentUser = Integer.parseInt(identifier) == currentUserId;
+                                    } else if (email.matches("\\d+")) {
+                                        isCurrentUser = Integer.parseInt(email) == currentUserId;
+                                    }
+
+                                    return !alreadyMember && !isCurrentUser;
+                                } catch (Exception ex) {
+                                    ex.printStackTrace();
+                                    return false;
+                                }
+                            })
+                            .collect(Collectors.toList());
+
+                    // Vérifier s'il y a des utilisateurs disponibles
+                    if (filteredUsers.isEmpty()) {
+                        Alert emptyAlert = new Alert(Alert.AlertType.INFORMATION);
+                        emptyAlert.setTitle("Aucun utilisateur disponible");
+                        emptyAlert.setHeaderText(null);
+                        emptyAlert.setContentText("Tous les autres utilisateurs sont déjà membres de ce groupe !");
+                        emptyAlert.showAndWait();
+                        return;
+                    }
+
+                    // Afficher le dialogue de sélection
+                    ChoiceDialog<String> dialog = new ChoiceDialog<>(filteredUsers.get(0), filteredUsers);
+                    dialog.setTitle("Ajouter un membre");
+                    dialog.setHeaderText("Sélectionnez l'utilisateur à ajouter au groupe :");
+                    dialog.setContentText("Utilisateur :");
+
+                    dialog.showAndWait().ifPresent(selectedUser -> {
+                        try {
+                            String[] parts = selectedUser.split("\\|");
+                            String identifier = parts.length > 1 ? parts[1].trim() : "";
+                            String email = parts.length > 2 ? parts[2].trim() : "";
+
+                            // Utiliser l'identifiant approprié (ID ou email)
+                            boolean added = false;
+                            if (identifier.matches("\\d+")) {
+                                added = conversationDAO.addMemberToConversation(selectedConversationId, Integer.parseInt(identifier));
+                            } else if (!email.isEmpty()) {
+                                added = conversationDAO.addMemberToConversation(selectedConversationId, email);
+                            } else {
+                                added = conversationDAO.addMemberToConversation(selectedConversationId, identifier);
+                            }
+
+                            if (added) {
+                                Alert successAlert = new Alert(Alert.AlertType.INFORMATION);
+                                successAlert.setTitle("Succès");
+                                successAlert.setHeaderText(null);
+                                successAlert.setContentText("Membre ajouté avec succès ! ✅");
+                                successAlert.showAndWait();
+                            } else {
+                                Alert errorAlert = new Alert(Alert.AlertType.ERROR);
+                                errorAlert.setTitle("Erreur");
+                                errorAlert.setHeaderText(null);
+                                errorAlert.setContentText("Impossible d'ajouter le membre. Veuillez réessayer.");
+                                errorAlert.showAndWait();
+                            }
+                        } catch (Exception ex) {
+                            ex.printStackTrace();
+                            Alert errorAlert = new Alert(Alert.AlertType.ERROR);
+                            errorAlert.setTitle("Erreur");
+                            errorAlert.setHeaderText("Erreur lors de l'ajout du membre");
+                            errorAlert.setContentText(ex.getMessage());
+                            errorAlert.showAndWait();
+                        }
+                    });
+                } catch (Exception ex) {
+                    ex.printStackTrace();
+                    Alert errorAlert = new Alert(Alert.AlertType.ERROR);
+                    errorAlert.setTitle("Erreur");
+                    errorAlert.setHeaderText("Erreur lors de la récupération des utilisateurs");
+                    errorAlert.setContentText(ex.getMessage());
+                    errorAlert.showAndWait();
+                }
             });
+
+            // Ajouter les options de groupe au menu
             contextMenu.getItems().addAll(showMembersItem, addMemberItem, new SeparatorMenuItem());
         }
 
+        // ========== CAS 2 : OPTIONS COMMUNES (GROUPE ET PRIVÉE) ==========
+
+        // ===== OPTION 2.1 : Modifier le nom du chat =====
         MenuItem editTitle = new MenuItem("Modifier le nom du chat ✏️");
-        MenuItem deleteChat = new MenuItem("Supprimer la conversation 🗑️");
         editTitle.setOnAction(e -> {
             TextInputDialog dialog = new TextInputDialog(chatUserName.getText());
+            dialog.setTitle("Modifier le nom");
+            dialog.setHeaderText("Entrez le nouveau nom de la conversation :");
+            dialog.setContentText("Nouveau nom :");
+
             dialog.showAndWait().ifPresent(newName -> {
-                if (conversationDAO.updateConversationTitle(selectedConversationId, newName)) {
-                    chatUserName.setText(newName);
+                if (newName.trim().isEmpty()) {
+                    Alert warningAlert = new Alert(Alert.AlertType.WARNING);
+                    warningAlert.setTitle("Attention");
+                    warningAlert.setHeaderText(null);
+                    warningAlert.setContentText("Le nom ne peut pas être vide !");
+                    warningAlert.showAndWait();
+                    return;
+                }
+
+                if (conversationDAO.updateConversationTitle(selectedConversationId, newName.trim())) {
+                    chatUserName.setText(newName.trim());
                     loadConversations();
+
+                    Alert successAlert = new Alert(Alert.AlertType.INFORMATION);
+                    successAlert.setTitle("Succès");
+                    successAlert.setHeaderText(null);
+                    successAlert.setContentText("Nom modifié avec succès ! ✅");
+                    successAlert.showAndWait();
+                } else {
+                    Alert errorAlert = new Alert(Alert.AlertType.ERROR);
+                    errorAlert.setTitle("Erreur");
+                    errorAlert.setHeaderText(null);
+                    errorAlert.setContentText("Impossible de modifier le nom. Veuillez réessayer.");
+                    errorAlert.showAndWait();
                 }
             });
         });
+
+        // ===== OPTION 2.2 : Supprimer la conversation =====
+        MenuItem deleteChat = new MenuItem("Supprimer la conversation 🗑️");
         deleteChat.setOnAction(e -> {
-            if (conversationDAO.deleteConversation(selectedConversationId)) {
-                selectedConversationId = -1;
-                chatUserName.setText("Sélectionnez un chat");
-                messagesList.setItems(null);
-                loadConversations();
-            }
+            // Confirmation avant suppression
+            Alert confirmAlert = new Alert(Alert.AlertType.CONFIRMATION);
+            confirmAlert.setTitle("Confirmation");
+            confirmAlert.setHeaderText("Supprimer la conversation ?");
+            confirmAlert.setContentText("Êtes-vous sûr de vouloir supprimer cette conversation ? Cette action est irréversible.");
+
+            confirmAlert.showAndWait().ifPresent(response -> {
+                if (response == ButtonType.OK) {
+                    if (conversationDAO.deleteConversation(selectedConversationId)) {
+                        selectedConversationId = -1;
+                        chatUserName.setText("Sélectionnez un chat");
+                        messagesList.setItems(null);
+                        loadConversations();
+
+                        Alert successAlert = new Alert(Alert.AlertType.INFORMATION);
+                        successAlert.setTitle("Succès");
+                        successAlert.setHeaderText(null);
+                        successAlert.setContentText("Conversation supprimée avec succès ! ✅");
+                        successAlert.showAndWait();
+                    } else {
+                        Alert errorAlert = new Alert(Alert.AlertType.ERROR);
+                        errorAlert.setTitle("Erreur");
+                        errorAlert.setHeaderText(null);
+                        errorAlert.setContentText("Impossible de supprimer la conversation. Veuillez réessayer.");
+                        errorAlert.showAndWait();
+                    }
+                }
+            });
         });
+
+        // Ajouter les options communes au menu
         contextMenu.getItems().addAll(editTitle, deleteChat);
+
+        // ========== AFFICHER LE MENU CONTEXTUEL ==========
         contextMenu.show(chatHeader, Side.BOTTOM, 0, 0);
     }
 
     @FXML
     private void addNewConversation() {
+        // Étape 1 : Demander le type de conversation (Privée ou Groupe)
         List<String> choices = List.of("Message Privé 👤", "Groupe 👥");
         ChoiceDialog<String> typeDialog = new ChoiceDialog<>("Message Privé 👤", choices);
+        typeDialog.setTitle("Nouvelle Conversation");
+        typeDialog.setHeaderText("Quel type de conversation voulez-vous créer ?");
+        typeDialog.setContentText("Type :");
+
         typeDialog.showAndWait().ifPresent(type -> {
             if (type.contains("Privé")) {
-                List<String> allUsers = conversationDAO.getAllAppUsers();
-                List<String> existingPrivateChats = allConversations.stream()
-                        .filter(c -> c.getEstGroupe() == 0)
-                        .map(c -> c.getTitre().trim().toLowerCase())
-                        .collect(Collectors.toList());
-                List<String> availableUsers = allUsers.stream()
-                        .filter(u -> {
-                            String name = u.split("\\|")[0].trim().toLowerCase();
-                            return !existingPrivateChats.contains(name) && !name.contains("ahmed");
-                        })
-                        .collect(Collectors.toList());
-                if (availableUsers.isEmpty()) return;
-                ChoiceDialog<String> userDialog = new ChoiceDialog<>(availableUsers.get(0), availableUsers);
-                userDialog.showAndWait().ifPresent(selectedUser -> {
-                    String name = selectedUser.split("\\|")[0].trim();
-                    String email = selectedUser.substring(selectedUser.lastIndexOf("|") + 2).trim();
-                    int newId = conversationDAO.addConversation(new Conversation(name, 0));
-                    if (newId != -1) {
-                        conversationDAO.addMemberToConversation(newId, currentUserId);
-                        conversationDAO.addMemberToConversation(newId, email);
-                        loadConversations();
+                // ========== CAS 1 : MESSAGE PRIVÉ ==========
+
+                try {
+                    // Récupérer tous les utilisateurs de l'application
+                    List<String> allUsers = conversationDAO.getAllAppUsers();
+
+                    if (allUsers == null || allUsers.isEmpty()) {
+                        Alert emptyAlert = new Alert(Alert.AlertType.INFORMATION);
+                        emptyAlert.setTitle("Aucun utilisateur");
+                        emptyAlert.setHeaderText(null);
+                        emptyAlert.setContentText("Aucun utilisateur disponible dans l'application !");
+                        emptyAlert.showAndWait();
+                        return;
                     }
-                });
-            } else {
-                TextInputDialog nameInput = new TextInputDialog();
-                nameInput.showAndWait().ifPresent(name -> {
-                    if (!name.trim().isEmpty()) {
-                        int newId = conversationDAO.addConversation(new Conversation(name.trim(), 1));
-                        if (newId != -1) {
-                            conversationDAO.addMemberToConversation(newId, currentUserId);
-                            loadConversations();
+
+                    // Récupérer les conversations privées existantes
+                    List<String> existingPrivateChats = allConversations.stream()
+                            .filter(c -> c.getEstGroupe() == 0)  // Filtrer les conversations privées (0 = privé)
+                            .map(c -> c.getTitre().trim().toLowerCase())
+                            .collect(Collectors.toList());
+
+                    // ✅ CORRECTION : Filtrer les utilisateurs disponibles
+                    // Format supposé : "nom|id|email" ou "nom|email|id" ou "id|nom|email"
+                    List<String> availableUsers = allUsers.stream()
+                            .filter(u -> {
+                                try {
+                                    String[] parts = u.split("\\|");
+
+                                    // Essayer de détecter le format et extraire les infos
+                                    String name = "";
+                                    String userId = "";
+                                    String email = "";
+
+                                    // Format 1 : "nom|id|email"
+                                    if (parts.length == 3) {
+                                        name = parts[0].trim().toLowerCase();
+                                        userId = parts[1].trim();
+                                        email = parts[2].trim();
+                                    }
+                                    // Format 2 : "nom|email" (pas d'ID numérique)
+                                    else if (parts.length == 2) {
+                                        name = parts[0].trim().toLowerCase();
+                                        email = parts[1].trim();
+                                        // userId reste vide
+                                    }
+                                    // Format 3 : "id|nom|email"
+                                    else if (parts.length >= 3 && parts[0].matches("\\d+")) {
+                                        userId = parts[0].trim();
+                                        name = parts[1].trim().toLowerCase();
+                                        email = parts[2].trim();
+                                    }
+
+                                    // ✅ VÉRIFICATION 1 : Exclure l'utilisateur actuel
+                                    boolean isCurrentUser = false;
+
+                                    // Comparer par ID numérique si disponible
+                                    if (!userId.isEmpty() && userId.matches("\\d+")) {
+                                        isCurrentUser = Integer.parseInt(userId) == currentUserId;
+                                    }
+                                    // Sinon comparer par email
+                                    else if (!email.isEmpty()) {
+                                        // Si email est un nombre, comparer comme ID
+                                        if (email.matches("\\d+")) {
+                                            isCurrentUser = Integer.parseInt(email) == currentUserId;
+                                        } else {
+                                            // Sinon, vous devez avoir l'email de l'utilisateur actuel
+                                            // isCurrentUser = email.equals(getCurrentUserEmail());
+                                            isCurrentUser = false; // À adapter
+                                        }
+                                    }
+
+                                    // ✅ VÉRIFICATION 2 : Vérifier qu'il n'existe pas déjà une conversation avec cet utilisateur
+                                    boolean alreadyHasChat = existingPrivateChats.contains(name);
+
+                                    // Retourner true si l'utilisateur doit être affiché
+                                    return !alreadyHasChat && !isCurrentUser;
+
+                                } catch (Exception e) {
+                                    e.printStackTrace();
+                                    return false;
+                                }
+                            })
+                            .collect(Collectors.toList());
+
+                    // Vérifier s'il y a des utilisateurs disponibles
+                    if (availableUsers.isEmpty()) {
+                        Alert emptyAlert = new Alert(Alert.AlertType.INFORMATION);
+                        emptyAlert.setTitle("Aucun utilisateur disponible");
+                        emptyAlert.setHeaderText(null);
+                        emptyAlert.setContentText("Vous avez déjà une conversation privée avec tous les autres utilisateurs.");
+                        emptyAlert.showAndWait();
+                        return;
+                    }
+
+                    // Afficher le dialogue de sélection d'utilisateur
+                    ChoiceDialog<String> userDialog = new ChoiceDialog<>(availableUsers.get(0), availableUsers);
+                    userDialog.setTitle("Sélectionner un contact");
+                    userDialog.setHeaderText("Choisissez l'utilisateur avec qui commencer une conversation privée :");
+                    userDialog.setContentText("Utilisateur :");
+
+                    userDialog.showAndWait().ifPresent(selectedUser -> {
+                        try {
+                            String[] parts = selectedUser.split("\\|");
+                            String name = parts[0].trim();
+
+                            // Extraire l'identifiant (email ou ID)
+                            String identifier = "";
+                            if (parts.length == 2) {
+                                identifier = parts[1].trim();
+                            } else if (parts.length >= 3) {
+                                // Essayer d'obtenir l'ID d'abord
+                                if (parts[1].matches("\\d+")) {
+                                    identifier = parts[1].trim();
+                                } else {
+                                    identifier = parts[2].trim();
+                                }
+                            }
+
+                            // Créer la nouvelle conversation privée
+                            int newId = conversationDAO.addConversation(
+                                    new Conversation(name, 0)  // 0 = conversation privée
+                            );
+
+                            if (newId != -1) {
+                                // Ajouter l'utilisateur actuel comme participant
+                                conversationDAO.addMemberToConversation(newId, currentUserId);
+
+                                // Ajouter l'autre utilisateur
+                                if (identifier.matches("\\d+")) {
+                                    // C'est un ID numérique
+                                    conversationDAO.addMemberToConversation(newId, Integer.parseInt(identifier));
+                                } else {
+                                    // C'est un email ou autre identifiant
+                                    conversationDAO.addMemberToConversation(newId, identifier);
+                                }
+
+                                // Rafraîchir la liste des conversations
+                                loadConversations();
+
+                                // Message de succès
+                                Alert successAlert = new Alert(Alert.AlertType.INFORMATION);
+                                successAlert.setTitle("Succès");
+                                successAlert.setHeaderText(null);
+                                successAlert.setContentText("Conversation privée créée avec " + name + " ✅");
+                                successAlert.showAndWait();
+                            } else {
+                                // Erreur lors de la création
+                                Alert errorAlert = new Alert(Alert.AlertType.ERROR);
+                                errorAlert.setTitle("Erreur");
+                                errorAlert.setHeaderText("Impossible de créer la conversation");
+                                errorAlert.setContentText("Une erreur s'est produite lors de la création de la conversation.");
+                                errorAlert.showAndWait();
+                            }
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                            Alert errorAlert = new Alert(Alert.AlertType.ERROR);
+                            errorAlert.setTitle("Erreur");
+                            errorAlert.setHeaderText("Erreur de traitement");
+                            errorAlert.setContentText("Erreur : " + e.getMessage());
+                            errorAlert.showAndWait();
                         }
+                    });
+
+                } catch (Exception e) {
+                    e.printStackTrace();
+                    Alert errorAlert = new Alert(Alert.AlertType.ERROR);
+                    errorAlert.setTitle("Erreur");
+                    errorAlert.setHeaderText("Erreur lors de la récupération des utilisateurs");
+                    errorAlert.setContentText(e.getMessage());
+                    errorAlert.showAndWait();
+                }
+
+            } else {
+                // ========== CAS 2 : GROUPE ==========
+
+                // Demander le nom du groupe
+                TextInputDialog nameInput = new TextInputDialog();
+                nameInput.setTitle("Créer un groupe");
+                nameInput.setHeaderText("Créer une nouvelle conversation de groupe");
+                nameInput.setContentText("Nom du groupe :");
+                nameInput.getEditor().setPromptText("Ex: Projet 2024, Amis, ...");
+
+                nameInput.showAndWait().ifPresent(name -> {
+                    // Vérifier que le nom n'est pas vide
+                    if (!name.trim().isEmpty()) {
+                        try {
+                            // Créer le groupe
+                            int newId = conversationDAO.addConversation(
+                                    new Conversation(name.trim(), 1)  // 1 = groupe
+                            );
+
+                            if (newId != -1) {
+                                // Ajouter le créateur comme premier membre
+                                conversationDAO.addMemberToConversation(newId, currentUserId);
+
+                                // Rafraîchir la liste
+                                loadConversations();
+
+                                // Message de succès
+                                Alert successAlert = new Alert(Alert.AlertType.INFORMATION);
+                                successAlert.setTitle("Succès");
+                                successAlert.setHeaderText(null);
+                                successAlert.setContentText("Groupe \"" + name.trim() + "\" créé ! ✅\nVous pouvez maintenant ajouter des membres.");
+                                successAlert.showAndWait();
+                            } else {
+                                // Erreur lors de la création
+                                Alert errorAlert = new Alert(Alert.AlertType.ERROR);
+                                errorAlert.setTitle("Erreur");
+                                errorAlert.setHeaderText("Impossible de créer le groupe");
+                                errorAlert.setContentText("Une erreur s'est produite lors de la création du groupe.");
+                                errorAlert.showAndWait();
+                            }
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                            Alert errorAlert = new Alert(Alert.AlertType.ERROR);
+                            errorAlert.setTitle("Erreur");
+                            errorAlert.setHeaderText("Erreur de traitement");
+                            errorAlert.setContentText("Erreur : " + e.getMessage());
+                            errorAlert.showAndWait();
+                        }
+                    } else {
+                        // Nom vide
+                        Alert warningAlert = new Alert(Alert.AlertType.WARNING);
+                        warningAlert.setTitle("Attention");
+                        warningAlert.setHeaderText(null);
+                        warningAlert.setContentText("Le nom du groupe ne peut pas être vide !");
+                        warningAlert.showAndWait();
                     }
                 });
             }
         });
     }
+
+
 
     @FXML
     private void sendMessage() {
@@ -983,5 +1408,75 @@ public class MessengerController implements Initializable {
         Scene scene = new Scene(root, 500, 500);
         stage.setScene(scene);
         stage.show();
+    }
+
+
+    @FXML
+    private void startAudioCall() {
+        String name = chatUserName.getText();
+        if ("Sélectionnez un chat".equals(name)) return;
+
+        try {
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/Gui/CallingWindow.fxml"));
+            Parent root = loader.load();
+
+            // Nakhou el controller mte3 el window jdida
+            CallingController controller = loader.getController();
+
+            Stage callStage = new Stage();
+            callStage.initStyle(StageStyle.TRANSPARENT);
+            Scene scene = new Scene(root);
+            scene.setFill(null);
+            callStage.setScene(scene);
+
+            // N’passiw el data
+            controller.setContactData(name, callStage);
+
+            // Faza beich tnejem t'hark el window b souris
+            final double[] xOffset = {0};
+            final double[] yOffset = {0};
+            root.setOnMousePressed(event -> {
+                xOffset[0] = event.getSceneX();
+                yOffset[0] = event.getSceneY();
+            });
+            root.setOnMouseDragged(event -> {
+                callStage.setX(event.getScreenX() - xOffset[0]);
+                callStage.setY(event.getScreenY() - yOffset[0]);
+            });
+
+            callStage.show();
+
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    @FXML
+    private void startVideoCall() {
+        // Get the selected conversation/contact
+        String contactName = chatUserName.getText();
+
+        if ("Sélectionnez un chat".equals(contactName)) {
+            showAlert("Erreur", "Veuillez sélectionner un contact");
+            return;
+        }
+
+        // TODO: Implement video call logic
+        // - Initialize video call connection
+        // - Show video call UI (camera preview, etc.)
+        // - Handle audio and video streaming
+        System.out.println("Video call started with: " + contactName);
+        showAlert("Appel Vidéo", "Appel vidéo en cours avec " + contactName);
+    }
+
+    /**
+     * Helper method to show alerts
+     */
+    private void showAlert(String title, String message) {
+        Alert alert = new Alert(Alert.AlertType.INFORMATION);
+        alert.setTitle(title);
+        alert.setHeaderText(null);
+        alert.setContentText(message);
+        alert.showAndWait();
     }
 }
