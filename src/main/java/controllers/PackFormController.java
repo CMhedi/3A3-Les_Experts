@@ -2,6 +2,7 @@ package controllers;
 
 import Entities.Pack;
 import Services.PackService;
+import Services.EmailService;
 import enums.StatutPack;
 import enums.TypePack;
 import javafx.fxml.FXML;
@@ -84,14 +85,34 @@ public class PackFormController {
             editing.setNbActivitesMax(max);
             editing.setStatutPack(cmbStatut.getValue());
 
-            if (editing.getIdPack() == 0) {
+            boolean isCreate = (editing.getIdPack() == 0);
+
+            if (isCreate) {
                 service.add(editing);
+
+                // ✅ EMAIL ADMIN (CREATION)
+                EmailService.sendPackValidationAsync(
+                        "CREATION",
+                        editing.getIdPack(),
+                        editing.getNom(),
+                        prix.doubleValue()
+                );
+
             } else {
                 service.update(editing);
+
+                // ✅ EMAIL ADMIN (MODIFICATION)
+                EmailService.sendPackValidationAsync(
+                        "MODIFICATION",
+                        editing.getIdPack(),
+                        editing.getNom(),
+                        prix.doubleValue()
+                );
             }
 
             if (onSaved != null) onSaved.run();
             onCancel();
+
         } catch (Exception e) {
             e.printStackTrace();
             showError(e.getMessage());
