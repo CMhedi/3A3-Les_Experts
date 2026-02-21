@@ -315,44 +315,45 @@ public class UserManagementController {
     }
     @FXML
     void handleAjouter(ActionEvent event) {
-        // 1. Madem el-bouton wallat m-bindia (Disabled), ma3adech famma 7ajta b-check mta3 Error Labels hna.
-        // D-data dima bech toussel hna s7i7a 100%.
-
-        UserApp u = new UserApp();
-        u.setNom(txtNom.getText());
-        u.setPrenom(txtPrenom.getText());
-        u.setEmail(txtEmail.getText());
-        u.setTelephone(txtTel.getText());
-        u.setMotDePasse(txtMdp.getText());
-        u.setRole(comboRole.getValue());
-
-        // 2. Kenou COACH, n-zidu d-data mta3u (elli hya déjà validée fil-initialize)
-        if (comboRole.getValue() == RoleUser.COACH) {
-            u.setAge(Integer.parseInt(txtAge.getText()));
-            u.setExperience(txtExperience.getText());
-            u.setSpecialite(comboSpecialite.getValue());
-            u.setDisponibilite(comboDispo.getValue());
-            u.setBioCertifs(txtBio.getText());
-        }
-
-        // 3. Enregistrement
         try {
+            UserApp u = new UserApp();
+            u.setNom(txtNom.getText());
+            u.setPrenom(txtPrenom.getText());
+            u.setEmail(txtEmail.getText());
+            u.setTelephone(txtTel.getText());
+            u.setMotDePasse(txtMdp.getText());
+            u.setRole(comboRole.getValue());
+
+            // توليد رابط الصورة أوتوماتيكياً
+            String avatarUrl = "https://ui-avatars.com/api/?name=" + txtNom.getText() + "+" + txtPrenom.getText() + "&background=random&color=fff";
+            u.setImageUrl(avatarUrl);
+
+            if (comboRole.getValue() == RoleUser.COACH) {
+                u.setAge(Integer.parseInt(txtAge.getText()));
+                u.setExperience(txtExperience.getText());
+                u.setSpecialite(comboSpecialite.getValue());
+                u.setDisponibilite(comboDispo.getValue());
+                u.setBioCertifs(txtBio.getText());
+            }
+
+            // 3. التسجيل في القاعدة
             us.add(u);
-            // Alert de succès
+
+            // إظهار رسالة النجاح
             Alert success = new Alert(Alert.AlertType.INFORMATION);
             success.setTitle("Succès");
             success.setHeaderText(null);
-            success.setContentText("Compte créé avec succès !");
+            success.setContentText("✅ Compte créé avec succès !");
             success.showAndWait();
 
-            // Redirect lel Login
+            // 4. الانتقال لصفحة الـ Login (السطر اللي كان ناقص)
             Parent root = FXMLLoader.load(getClass().getResource("/gui/Login.fxml"));
-            Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
+            Stage stage = (Stage) ((javafx.scene.Node) event.getSource()).getScene().getWindow();
             stage.setScene(new Scene(root));
 
         } catch (Exception e) {
-            // Hedhi el-Alert el-wa7ida elli t-khalliha (ken famma mouchkla fil-base de données)
-            showAlert("Erreur Base de données", "Impossible d'ajouter l'utilisateur: " + e.getMessage());
+            showAlert("Erreur", "Impossible d'ajouter l'utilisateur: " + e.getMessage());
+            e.printStackTrace(); // باش تشوف الغلطة وين في الـ Console
         }
     }
     // Fonction sghira bech ma n-3awduch el-koud mta3 el-Alert

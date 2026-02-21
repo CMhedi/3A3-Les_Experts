@@ -21,7 +21,7 @@ public class UserApp {
     private String specialite; // Tnajem t-rod'ha Enum ba3d ken t-7eb
     private String bioCertifs;
     private String disponibilite;
-
+    private boolean faceAuthEnabled;
     public UserApp() {}
 
     // ===== Getters & Setters Standard =====
@@ -69,7 +69,8 @@ public class UserApp {
 
     public String getDisponibilite() { return disponibilite; }
     public void setDisponibilite(String disponibilite) { this.disponibilite = disponibilite; }
-
+    public boolean isFaceAuthEnabled() { return faceAuthEnabled; }
+    public void setFaceAuthEnabled(boolean faceAuthEnabled) { this.faceAuthEnabled = faceAuthEnabled; }
     // ===== toString =====
     @Override
     public String toString() {
