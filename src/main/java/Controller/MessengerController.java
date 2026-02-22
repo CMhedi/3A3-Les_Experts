@@ -114,7 +114,7 @@ public class MessengerController implements Initializable {
 
 
     private String currentTargetLanguage = "fr"; // اللغة الافتراضية (نعرض بها الرسائل الأصلية)
-// conversationId -> projectId
+    // conversationId -> projectId
     private Map<Integer, String> translatedCache = new HashMap<>(); // messageId -> texte traduit
     private final Set<Integer> translationInProgress = ConcurrentHashMap.newKeySet();
     private Set<Integer> lastFiveMessageIds = new HashSet<>();
@@ -1817,16 +1817,16 @@ public class MessengerController implements Initializable {
      * puis tente de se connecter (la connexion réelle est déclenchée après dans initialize()).
      */
 
-        private void initializeStompClient() {
-            try {
-                String serverUrl = "http://localhost:8080/ws";
-                stompHandler = new StompClientHandler(serverUrl, currentUserId);
-                System.out.println("🔗 STOMP handler created for user " + currentUserId);
-            } catch (Exception e) {
-                System.err.println("❌ STOMP initialization error: " + e.getMessage());
-                stompHandler = null;
-            }
+    private void initializeStompClient() {
+        try {
+            String serverUrl = "http://localhost:8080/ws";
+            stompHandler = new StompClientHandler(serverUrl, currentUserId);
+            System.out.println("🔗 STOMP handler created for user " + currentUserId);
+        } catch (Exception e) {
+            System.err.println("❌ STOMP initialization error: " + e.getMessage());
+            stompHandler = null;
         }
+    }
 
     @FXML
     public void startAudioCall() {
@@ -1907,19 +1907,19 @@ public class MessengerController implements Initializable {
             errorAlert.showAndWait();
         }
     }
-// ========== BONUS : startVideoCall() AVEC ENREGISTREMENT ==========
-private void makeStageDraggable(Parent root, Stage stage) {
-    final double[] xOffset = {0};
-    final double[][] yOffset = {{0}};
-    root.setOnMousePressed(event -> {
-        xOffset[0] = event.getSceneX();
-        yOffset[0][0] = event.getSceneY();
-    });
-    root.setOnMouseDragged(event -> {
-        stage.setX(event.getScreenX() - xOffset[0]);
-        stage.setY(event.getScreenY() - yOffset[0][0]);
-    });
-}
+    // ========== BONUS : startVideoCall() AVEC ENREGISTREMENT ==========
+    private void makeStageDraggable(Parent root, Stage stage) {
+        final double[] xOffset = {0};
+        final double[][] yOffset = {{0}};
+        root.setOnMousePressed(event -> {
+            xOffset[0] = event.getSceneX();
+            yOffset[0][0] = event.getSceneY();
+        });
+        root.setOnMouseDragged(event -> {
+            stage.setX(event.getScreenX() - xOffset[0]);
+            stage.setY(event.getScreenY() - yOffset[0][0]);
+        });
+    }
 
 // Dans MessengerController.java
 
@@ -1949,7 +1949,7 @@ private void makeStageDraggable(Parent root, Stage stage) {
             }
         });
     }
-   
+
     public void onCallCancelledBySender() {
         if (currentIncomingCallController != null) {
             currentIncomingCallController.forceClose();

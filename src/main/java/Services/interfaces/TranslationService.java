@@ -16,7 +16,7 @@ import java.util.Map;
 
 public class TranslationService {
     private static final String ACCOUNT_ID = "72b45b34-58a1-4db6-b6a9-b9f376eb236a";
-    private static final String API_KEY = "2_TCaFFRJlAu11Ct7VSQV9V5APk";
+    private static final String API_KEY = "AIzaSyA1FJz30cyJGcplg-hB5r1GKRXgQ1wOifI";
     private static final String BASE_URL = "https://smartcat.ai/api/integration/v1";
     private final HttpClient httpClient;
     private final ObjectMapper mapper;
