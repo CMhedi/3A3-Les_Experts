@@ -6,7 +6,7 @@ import Utiles.MyDB;
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
-
+import org.mindrot.jbcrypt.BCrypt;
 public class UserService implements IGenericService<UserApp> {
     private Connection cnx = MyDB.getInstance().getConnection();
 
@@ -23,7 +23,8 @@ public class UserService implements IGenericService<UserApp> {
         ps.setString(5, u.getImageUrl());
         ps.setString(6, u.getRole().name());
         ps.setString(7, u.getMotDePasse());
-
+        String hashedPassword = BCrypt.hashpw(u.getMotDePasse(), BCrypt.gensalt());
+        ps.setString(7, hashedPassword);
         // Logic bech n-sabbu data el Coach barka
         if (u.getRole() == RoleUser.COACH) {
             ps.setInt(8, u.getAge());
@@ -122,6 +123,7 @@ public class UserService implements IGenericService<UserApp> {
     public void updatePassword(String email, String newPassword) throws SQLException {
         String sql = "UPDATE user_app SET mot_de_passe = ? WHERE email = ?";
         try (PreparedStatement ps = cnx.prepareStatement(sql)) {
+            String hashed = BCrypt.hashpw(newPassword, BCrypt.gensalt());
             ps.setString(1, newPassword);
             ps.setString(2, email);
             ps.executeUpdate();

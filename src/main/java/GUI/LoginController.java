@@ -17,7 +17,7 @@ import javafx.scene.input.MouseEvent;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 import java.io.IOException;
-
+import org.mindrot.jbcrypt.BCrypt;
 public class LoginController {
 
     @FXML private TextField txtEmail;
@@ -61,8 +61,8 @@ public class LoginController {
         try {
             UserApp user = us.findByEmail(email);
 
-            if (user != null && user.getMotDePasse().equals(mdp)) {
-                // ✅ Stocker session
+            if (user != null && BCrypt.checkpw(mdp, user.getMotDePasse())) {                // ✅ Stocker session
+
                 Session.setConnectedUser(user);
 
                 String fxmlPath = "";
