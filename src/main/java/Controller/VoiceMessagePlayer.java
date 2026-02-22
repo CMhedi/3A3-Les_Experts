@@ -7,27 +7,39 @@ import java.io.File;
 public class VoiceMessagePlayer {
 
     private MediaPlayer mediaPlayer;
+    private String currentPlayingPath;
 
     /**
-     * تشغيل ملف صوتي من مجلد uploads/audio
+     * تشغيل ملف صوتي - يقبل المسار الكامل مباشرة
      */
-    public void playVoiceMessage(String audioFileName) {
+    public void playVoiceMessage(String fullAudioPath) {
         try {
-            // المسار الكامل
-            String audioPath = "src/main/resources/uploads/audio/" + audioFileName;
-            File audioFile = new File(audioPath);
+            File audioFile = new File(fullAudioPath);
 
             if (!audioFile.exists()) {
-                System.err.println("❌ الملف غير موجود: " + audioPath);
+                System.err.println("❌ الملف غير موجود: " + fullAudioPath);
+                System.err.println("📂 المسار المتوقع: " + audioFile.getAbsolutePath());
                 return;
             }
 
-            // تشغيل الملف
+            // إيقاف التشغيل السابق إذا كان مختلفاً
+            if (mediaPlayer != null && !fullAudioPath.equals(currentPlayingPath)) {
+                mediaPlayer.stop();
+                mediaPlayer.dispose();
+            }
+
+            currentPlayingPath = fullAudioPath;
             Media media = new Media(audioFile.toURI().toString());
             mediaPlayer = new MediaPlayer(media);
-            mediaPlayer.play();
 
-            System.out.println("▶️ تشغيل: " + audioFileName);
+            // إضافة معالج لنهاية التشغيل
+            mediaPlayer.setOnEndOfMedia(() -> {
+                System.out.println("✅ انتهى التشغيل: " + audioFile.getName());
+                currentPlayingPath = null;
+            });
+
+            mediaPlayer.play();
+            System.out.println("▶️ تشغيل: " + audioFile.getName());
 
         } catch (Exception e) {
             System.err.println("❌ خطأ تشغيل الملف: " + e.getMessage());
@@ -40,7 +52,24 @@ public class VoiceMessagePlayer {
     public void stopPlayback() {
         if (mediaPlayer != null) {
             mediaPlayer.stop();
+            mediaPlayer.dispose();
+            mediaPlayer = null;
+            currentPlayingPath = null;
             System.out.println("⏹️ توقف التشغيل");
         }
+    }
+
+    /**
+     * التحقق من تشغيل أي ملف
+     */
+    public boolean isPlaying() {
+        return mediaPlayer != null && mediaPlayer.getStatus() == MediaPlayer.Status.PLAYING;
+    }
+
+    /**
+     * التحقق من هل الملف الحالي قيد التشغيل
+     */
+    public boolean isCurrentlyPlaying(String audioPath) {
+        return currentPlayingPath != null && currentPlayingPath.equals(audioPath) && isPlaying();
     }
 }

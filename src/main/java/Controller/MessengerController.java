@@ -2,7 +2,10 @@ package Controller;
 
 import Entities.Conversation;
 import Entities.Message;
-import Services.interfaces.*;
+import Services.interfaces.ConversationDAO;
+import Services.interfaces.GeminiService;
+import Services.interfaces.GifService;
+import Services.interfaces.MessageDAO;
 import Utiles.AudioRecorder;
 import Utiles.StompClientHandler;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -23,6 +26,8 @@ import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.FlowPane;
@@ -33,7 +38,6 @@ import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
 import javafx.scene.text.Text;
 import javafx.scene.text.TextFlow;
-import javafx.scene.web.WebView;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
@@ -45,10 +49,8 @@ import org.vosk.Recognizer;
 
 import javax.sound.sampled.AudioInputStream;
 import javax.sound.sampled.AudioSystem;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.IOException;
-import java.io.InputStream;
+import java.io.*;
+import java.net.HttpURLConnection;
 import java.net.URI;
 import java.net.URL;
 import java.net.http.HttpClient;
@@ -477,13 +479,14 @@ public class MessengerController implements Initializable {
                 container.getChildren().add(mainCall);
             }
 
-            // ✅ AFFICHER UN MESSAGE VOCAL
-            // ضع هذا الكود مكان displayVocalMessage() الموجود في setupMessagesList()
 
-            // ✅ AFFICHER UN MESSAGE VOCAL (محدث مع أزرار التشغيل)
+// ضع هذا الكود مكان displayVocalMessage() الموجود في setupMessagesList()
+            // ✅ استبدل displayVocalMessage() بهذا الكود:
+
             private void displayVocalMessage(VBox container, Message msg) {
                 // محتوى الرسالة يحتوي على مسار الملف
                 String audioPath = msg.getContenu();
+                String fullPath = "src/main/resources/" + audioPath;
 
                 // استخرج اسم الملف فقط
                 String audioFileName = extractAudioFileName(audioPath);
@@ -526,13 +529,23 @@ public class MessengerController implements Initializable {
                 deleteBtn.setStyle(
                         "-fx-background-color: transparent;" +
                                 "-fx-text-fill: " + (msg.getIdUser() == currentUserId ? "white" : "#999") + ";" +
-                                "-fx-font-size: 12;" +
-                                "-fx-cursor: hand;"
+                                "-fx-font-size: 14;" +
+                                "-fx-cursor: hand;" +
+                                "-fx-padding: 0 3;"
                 );
                 deleteBtn.setVisible(msg.getIdUser() == currentUserId);
                 deleteBtn.setOnAction(e -> {
+                    // إيقاف التشغيل إذا كان الملف الحالي قيد التشغيل
+                    if (voicePlayer.isCurrentlyPlaying(fullPath)) {
+                        voicePlayer.stopPlayback();
+                    }
+
+                    // حذف الرسالة من قاعدة البيانات
                     if (messageDAO.deleteMessage(msg.getIdMessage())) {
+                        System.out.println("🗑️ تم حذف الرسالة الصوتية: " + audioFileName);
                         loadMessages(selectedConversationId);
+                    } else {
+                        System.err.println("❌ فشل حذف الرسالة");
                     }
                 });
 
@@ -543,21 +556,18 @@ public class MessengerController implements Initializable {
                 }
 
                 // ========== معالج الضغط على زر التشغيل ==========
-                final boolean[] isPlaying = {false};
                 playStopBtn.setOnAction(e -> {
-                    if (!isPlaying[0]) {
-                        // شغّل الملف
-                        String fullPath = "src/main/resources/" + audioPath;
-                        voicePlayer.playVoiceMessage(fullPath);
-                        playStopBtn.setText("⏸️");
-                        isPlaying[0] = true;
-                        System.out.println("▶️ تشغيل: " + audioFileName);
-                    } else {
-                        // أوقف الملف
+                    // تحقق من هل الملف الحالي يتم تشغيله
+                    if (voicePlayer.isCurrentlyPlaying(fullPath)) {
+                        // إذا كان قيد التشغيل → أوقفه
                         voicePlayer.stopPlayback();
                         playStopBtn.setText("▶️");
-                        isPlaying[0] = false;
                         System.out.println("⏹️ توقف: " + audioFileName);
+                    } else {
+                        // إذا لم يكن قيد التشغيل → شغّله
+                        voicePlayer.playVoiceMessage(fullPath);
+                        playStopBtn.setText("⏸️");
+                        System.out.println("▶️ تشغيل: " + audioFileName);
                     }
                 });
 
@@ -573,10 +583,6 @@ public class MessengerController implements Initializable {
                 container.getChildren().add(messageBox);
             }
 
-            /**
-             * استخرج اسم الملف من المسار الكامل
-             * مثال: "uploads/audio/voice_3_1771796105344.wav" → "voice_3_1771796105344.wav"
-             */
             private String extractAudioFileName(String filePath) {
                 if (filePath == null || filePath.isEmpty()) {
                     return "Unknown.wav";
@@ -592,9 +598,6 @@ public class MessengerController implements Initializable {
 
                 return filePath;
             }
-
-            // اضف هذه الدالة بعدها مباشرة:
-
             private void displayTextMessage(VBox container, Message msg) {
                 String originalText = msg.getContenu();
                 String displayText = originalText;
@@ -1833,33 +1836,119 @@ public class MessengerController implements Initializable {
                         progress.setVisible(false);
 
                         if (gifs.length() == 0) {
-                            gifsPane.getChildren().add(new Label("Aucun GIF trouvé pour : " + query));
+                            gifsPane.getChildren().add(new Label("❌ Aucun GIF trouvé pour : " + query));
                             return;
                         }
 
                         for (int i = 0; i < gifs.length(); i++) {
                             try {
                                 JSONObject gifObj = gifs.getJSONObject(i);
-                                String gifUrl = gifObj.getString("url");
+                                String imageUrl = gifObj.getString("url");
+                                final int index = i + 1;
 
-                                // Affichage du GIF animé avec WebView
-                                WebView web = new WebView();
-                                web.setPrefSize(120, 120);
-                                web.getEngine().load(gifUrl);
-                                web.setCursor(Cursor.HAND);
+                                // ✅ Créer un conteneur VBox pour chaque image
+                                VBox gifContainer = new VBox();
+                                gifContainer.setAlignment(Pos.CENTER);
+                                gifContainer.setPrefSize(120, 120);
+                                gifContainer.setStyle(
+                                        "-fx-border-color: #ddd;" +
+                                                "-fx-border-radius: 8;" +
+                                                "-fx-padding: 5;" +
+                                                "-fx-background-color: #f5f5f5;"
+                                );
 
-                                // Sélection du GIF
-                                String finalUrl = gifUrl;
-                                web.setOnMouseClicked(ev -> {
-                                    if (messageInput != null) {
-                                        messageInput.appendText(" " + finalUrl);
+                                // ProgressIndicator pendant le chargement
+                                ProgressIndicator gifProgress = new ProgressIndicator();
+                                gifProgress.setMaxSize(30, 30);
+                                gifContainer.getChildren().add(gifProgress);
+
+                                // Charger l'image dans un thread séparé
+                                new Thread(() -> {
+                                    try {
+                                        // ✅ Télécharger l'image avec HTTP headers
+                                        byte[] imageData = downloadImageWithHeaders(imageUrl);
+
+                                        if (imageData == null || imageData.length == 0) {
+                                            throw new Exception("Données d'image vides");
+                                        }
+
+                                        // ✅ Créer l'ImageView
+                                        ImageView imageView = new ImageView();
+                                        imageView.setFitWidth(120);
+                                        imageView.setFitHeight(120);
+                                        imageView.setPreserveRatio(true);
+                                        imageView.setCursor(Cursor.HAND);
+
+                                        // ✅ Charger l'image à partir des données
+                                        Image image = new Image(new ByteArrayInputStream(imageData));
+
+                                        Platform.runLater(() -> {
+                                            if (!image.isError() && image.getWidth() > 0) {
+                                                imageView.setImage(image);
+                                                gifContainer.getChildren().clear();
+                                                gifContainer.getChildren().add(imageView);
+                                                gifContainer.setCursor(Cursor.HAND);
+
+                                                System.out.println("✅ Image #" + index + " affichée avec succès");
+
+                                                // Ajouter les effets de hover
+                                                gifContainer.setOnMouseEntered(event -> {
+                                                    gifContainer.setStyle(
+                                                            "-fx-border-color: #007AFF;" +
+                                                                    "-fx-border-width: 2;" +
+                                                                    "-fx-border-radius: 8;" +
+                                                                    "-fx-padding: 5;" +
+                                                                    "-fx-background-color: #e8f4ff;"
+                                                    );
+                                                    gifContainer.setScaleX(1.05);
+                                                    gifContainer.setScaleY(1.05);
+                                                });
+
+                                                gifContainer.setOnMouseExited(event -> {
+                                                    gifContainer.setStyle(
+                                                            "-fx-border-color: #ddd;" +
+                                                                    "-fx-border-radius: 8;" +
+                                                                    "-fx-padding: 5;" +
+                                                                    "-fx-background-color: #f5f5f5;"
+                                                    );
+                                                    gifContainer.setScaleX(1.0);
+                                                    gifContainer.setScaleY(1.0);
+                                                });
+
+                                                // Clic pour ajouter à la rédaction
+                                                String finalUrl = imageUrl;
+                                                gifContainer.setOnMouseClicked(ev -> {
+                                                    if (messageInput != null) {
+                                                        messageInput.appendText(" " + finalUrl + " ");
+                                                        System.out.println("✅ Image #" + index + " ajoutée à la rédaction");
+                                                    }
+                                                    stage.close();
+                                                });
+                                            } else {
+                                                // Image erreur
+                                                Label errorLabel = new Label("❌");
+                                                errorLabel.setFont(Font.font("Segoe UI Emoji", 30));
+                                                gifContainer.getChildren().clear();
+                                                gifContainer.getChildren().add(errorLabel);
+                                                System.err.println("❌ Erreur chargement image #" + index);
+                                            }
+                                        });
+
+                                    } catch (Exception ex) {
+                                        System.err.println("❌ Erreur téléchargement image #" + index + " : " + ex.getMessage());
+                                        Platform.runLater(() -> {
+                                            Label errorLabel = new Label("❌");
+                                            errorLabel.setFont(Font.font("Segoe UI Emoji", 30));
+                                            gifContainer.getChildren().clear();
+                                            gifContainer.getChildren().add(errorLabel);
+                                        });
                                     }
-                                    stage.close();
-                                });
+                                }).start();
 
-                                gifsPane.getChildren().add(web);
+                                gifsPane.getChildren().add(gifContainer);
+
                             } catch (Exception ex) {
-                                System.err.println("Erreur sur le GIF #" + i + " : " + ex.getMessage());
+                                System.err.println("❌ Erreur parsing image #" + (i+1) + " : " + ex.getMessage());
                             }
                         }
                     });
@@ -1867,7 +1956,11 @@ public class MessengerController implements Initializable {
                     ex.printStackTrace();
                     Platform.runLater(() -> {
                         progress.setVisible(false);
-                        new Alert(Alert.AlertType.ERROR, "Erreur API : " + ex.getMessage()).show();
+                        Alert alert = new Alert(Alert.AlertType.ERROR);
+                        alert.setTitle("❌ Erreur");
+                        alert.setHeaderText("Erreur lors de la recherche");
+                        alert.setContentText("Erreur API: " + ex.getMessage());
+                        alert.showAndWait();
                     });
                 }
             }).start();
@@ -1878,7 +1971,46 @@ public class MessengerController implements Initializable {
         stage.show();
     }
 
+    /**
+     * ✅ Télécharge une image avec les HTTP headers appropriés
+     */
+    private byte[] downloadImageWithHeaders(String urlString) throws Exception {
+        URL url = new URL(urlString);
+        HttpURLConnection connection = (HttpURLConnection) url.openConnection();
 
+        // ✅ Ajouter les headers essentiels
+        connection.setRequestMethod("GET");
+        connection.setRequestProperty("User-Agent", "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36");
+        connection.setRequestProperty("Accept", "image/webp,image/apng,image/*,*/*;q=0.8");
+        connection.setRequestProperty("Referer", "https://giphy.com/");
+        connection.setRequestProperty("Accept-Encoding", "gzip, deflate");
+        connection.setRequestProperty("Accept-Language", "en-US,en;q=0.9");
+        connection.setConnectTimeout(5000);
+        connection.setReadTimeout(5000);
+
+        int responseCode = connection.getResponseCode();
+        System.out.println("📡 Réponse HTTP: " + responseCode + " pour " + urlString);
+
+        if (responseCode != 200) {
+            throw new Exception("Erreur HTTP " + responseCode);
+        }
+
+        // Lire les données de l'image
+        ByteArrayOutputStream buffer = new ByteArrayOutputStream();
+        InputStream is;
+        is = connection.getInputStream();
+        byte[] data = new byte[4096];
+        int nRead;
+
+        while ((nRead = is.read(data, 0, data.length)) != -1) {
+            buffer.write(data, 0, nRead);
+        }
+
+        is.close();
+        connection.disconnect();
+
+        return buffer.toByteArray();
+    }
 
     private void sendCallSignal(int conversationId, String callType) {
         if (stompHandler != null && stompHandler.isConnected()) {

@@ -52,17 +52,47 @@ public class GifService {
 
             for (int i = 0; i < data.length(); i++) {
 
-                String gifUrl = data.getJSONObject(i)
-                        .getJSONObject("images")
-                        .getJSONObject("fixed_height")
-                        .getString("url");
+                JSONObject gifObj = data.getJSONObject(i);
+                JSONObject images = gifObj.getJSONObject("images");
+
+                // ✅ استخدم الصورة الثابتة بدل الـ GIF المتحركة
+                // البدائل المتاحة:
+                // 1. fixed_height_still (صورة ثابتة)
+                // 2. fixed_height_small_still (صورة صغيرة ثابتة)
+                // 3. preview (معاينة)
+
+                String stillImageUrl;
+
+                try {
+                    // محاول 1: الصورة الثابتة (الأفضل)
+                    stillImageUrl = images.getJSONObject("fixed_height_still")
+                            .getString("url");
+                } catch (Exception e1) {
+                    try {
+                        // محاول 2: الصورة الصغيرة الثابتة
+                        stillImageUrl = images.getJSONObject("fixed_height_small_still")
+                                .getString("url");
+                    } catch (Exception e2) {
+                        try {
+                            // محاول 3: صورة الـ GIF الأصلية (كحد أخير)
+                            stillImageUrl = images.getJSONObject("fixed_height")
+                                    .getString("url");
+                        } catch (Exception e3) {
+                            // تخطي هذا الـ GIF إذا فشل
+                            System.err.println("⚠️ لم تتمكن من الحصول على صورة للـ GIF #" + i);
+                            continue;
+                        }
+                    }
+                }
 
                 JSONObject obj = new JSONObject();
-                obj.put("url", gifUrl);
+                obj.put("url", stillImageUrl);
                 urls.put(obj);
+
+                System.out.println("✅ صورة #" + (urls.length()) + " محملة بنجاح");
             }
 
-            System.out.println("Found gifs: " + urls.length());
+            System.out.println("✅ عدد الصور المحملة: " + urls.length());
 
             return urls;
 
