@@ -6,60 +6,80 @@
 
 <BorderPane xmlns:fx="http://javafx.com/fxml"
             fx:controller="Controllers.ReservationController"
-            stylesheets="@reservation.css">
+            stylesheets="@reservation.css"
+            styleClass="root">
 
-    <!-- ============ LEFT SIDEBAR ============ -->
-    <left>
-        <VBox spacing="15" styleClass="sidebar">
-            <Label text="EcoAdventure" styleClass="logo"/>
-
-            <Button text="Tableau de bord" styleClass="sidebar-btn"/>
-            <Button text="Activités" styleClass="sidebar-btn" onAction="#goActivites"/>
-            <Button text="Réservations" styleClass="sidebar-btn active"/>
-            <Button text="Événements" styleClass="sidebar-btn"/>
-            <Button text="Utilisateurs" styleClass="sidebar-btn"/>
-        </VBox>
-    </left>
-
-    <!-- ============ TOP NAVBAR ============ -->
+    <!-- TOP BAR -->
     <top>
-        <HBox alignment="CENTER_RIGHT" spacing="20" styleClass="topbar">
-            <Button text="Admin"
-                    onAction="#goToUserSeances"
-                    styleClass="admin-name"/>
-
+        <HBox alignment="CENTER_LEFT" spacing="12" styleClass="topbar">
+            <Label text="Espace Coach" styleClass="topbar-title"/>
+            <Region HBox.hgrow="ALWAYS"/>
+            <Button text="Coach" onAction="#goToUserSeances" styleClass="user-pill"/>
         </HBox>
     </top>
 
-    <!-- ============ CENTER CONTENT ============ -->
+    <!-- LEFT SIDEBAR -->
+    <left>
+        <VBox spacing="14" styleClass="sidebar">
+            <HBox spacing="6" alignment="CENTER_LEFT">
+                <Label text="Eco" styleClass="brand"/>
+                <Label text="Adventure" styleClass="brand-accent"/>
+            </HBox>
+
+            <Separator styleClass="sep"/>
+
+            <Button text="← Retour Menu" styleClass="side-btn" onAction="#goToUserSeances"/>
+            <Button text="Réservations Activités" styleClass="side-btn active"/>
+            <Button text="Activités" styleClass="side-btn" onAction="#goActivites"/>
+        </VBox>
+    </left>
+
+    <!-- CENTER CONTENT -->
     <center>
-        <VBox spacing="20">
+        <VBox spacing="18" styleClass="content-wrap">
             <padding>
-                <Insets top="30" right="30" bottom="30" left="30"/>
+                <Insets top="18" right="18" bottom="18" left="18"/>
             </padding>
 
-            <Label text="Réservations" styleClass="page-title"/>
+            <!-- KPI CARDS -->
+            <HBox spacing="18" alignment="CENTER" styleClass="kpi-row">
+                <VBox alignment="CENTER" spacing="6" styleClass="kpi-card">
+                    <Label text="Total Réservations" styleClass="kpi-label"/>
+                    <Label fx:id="lblTotal" text="0" styleClass="kpi-value"/>
+                </VBox>
 
-            <TableView fx:id="tableReservation" VBox.vgrow="ALWAYS" styleClass="modern-table">
-                <columns>
-                  <!--  <TableColumn fx:id="colId" text="ID" prefWidth="70"/> -->
-                  <!--  <TableColumn fx:id="colDate" text="Date" prefWidth="130"/>-->
-                    <TableColumn fx:id="colStatut" text="Statut" prefWidth="140"/>
-                    <TableColumn fx:id="colNb" text="Participants" prefWidth="130"/>
-                    <TableColumn fx:id="colUser" text="ID User" prefWidth="1"/>
-                    <TableColumn fx:id="colActivite" text="Numéro De Recu Activité" prefWidth="180"/>
-                </columns>
-            </TableView>
+                <VBox alignment="CENTER" spacing="6" styleClass="kpi-card">
+                    <Label text="Tickets générés" styleClass="kpi-label"/>
+                    <Label fx:id="lblTickets" text="0" styleClass="kpi-value"/>
+                </VBox>
 
-            <HBox alignment="CENTER_RIGHT" spacing="15">
-                <Button text="Modifier"
-                        styleClass="btn-primary"
-                        onAction="#modifierReservation"/>
-
-                <Button text="Supprimer"
-                        styleClass="btn-danger"
-                        onAction="#supprimerReservation"/>
+                <VBox alignment="CENTER" spacing="6" styleClass="kpi-card">
+                    <Label text="Check-in" styleClass="kpi-label"/>
+                    <Label fx:id="lblChecked" text="0" styleClass="kpi-value"/>
+                </VBox>
             </HBox>
+
+            <!-- TABLE CARD -->
+            <VBox spacing="12" styleClass="table-card">
+                <Label text="Mes Réservations" styleClass="section-title"/>
+
+                <TableView fx:id="tableReservation" VBox.vgrow="ALWAYS" styleClass="modern-table">
+                    <columns>
+                        <TableColumn fx:id="colStatut" text="Statut" prefWidth="130"/>
+                        <TableColumn fx:id="colNb" text="Participants" prefWidth="120"/>
+                        <TableColumn fx:id="colToken" text="Ticket Token" prefWidth="220"/>
+                        <TableColumn fx:id="colGeneratedAt" text="Généré le" prefWidth="160"/>
+                        <TableColumn fx:id="colCheckedIn" text="Check-in" prefWidth="110"/>
+                        <TableColumn fx:id="colCheckinTime" text="Heure check-in" prefWidth="160"/>
+                    </columns>
+                </TableView>
+
+                <HBox alignment="CENTER_RIGHT" spacing="12">
+                    <Button text="Rafraîchir" styleClass="btn-secondary" onAction="#refreshTable"/>
+                    <Button text="Modifier" styleClass="btn-primary" onAction="#modifierReservation"/>
+                    <Button text="Supprimer" styleClass="btn-danger" onAction="#supprimerReservation"/>
+                </HBox>
+            </VBox>
 
         </VBox>
     </center>

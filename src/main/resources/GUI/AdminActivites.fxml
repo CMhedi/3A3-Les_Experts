@@ -4,69 +4,88 @@
 <?import javafx.scene.layout.*?>
 <?import javafx.geometry.*?>
 
-<BorderPane xmlns:fx="http://javafx.com/fxml"
+<BorderPane xmlns="http://javafx.com/javafx/17"
+            xmlns:fx="http://javafx.com/fxml"
             fx:controller="Controllers.AdminActivitesController"
-            stylesheets="@admincss.css">
+            stylesheets="@admincss.css"
+            styleClass="root">
 
-    <!-- ============ LEFT SIDEBAR ============ -->
-    <left>
-        <VBox spacing="15" styleClass="sidebar">
-            <Label text="EcoAdventure" styleClass="logo"/>
-
-            <Button text="Tableau de bord" styleClass="sidebar-btn"/>
-            <Button text="Activités" styleClass="sidebar-btn active"/>
-            <Button text="Réservations" styleClass="sidebar-btn" onAction="#openReservations"/>
-            <Button text="Événements" styleClass="sidebar-btn"/>
-            <Button text="Utilisateurs" styleClass="sidebar-btn"/>
-        </VBox>
-    </left>
-
-    <!-- ============ TOP NAVBAR ============ -->
+    <!-- TOP BAR -->
     <top>
-        <HBox alignment="CENTER_RIGHT" spacing="20" styleClass="topbar">
-            <Button text="Admin"
-                    styleClass="sidebar-btn admin-btn"
-                    onAction="#goToUserSeances"/>
-
-
+        <HBox alignment="CENTER_LEFT" spacing="12" styleClass="topbar">
+            <Label text="Espace Admin" styleClass="topbar-title"/>
+            <Region HBox.hgrow="ALWAYS"/>
+            <Button text="Admin" onAction="#goToUserSeances" styleClass="user-pill"/>
         </HBox>
     </top>
 
-    <!-- ============ CENTER CONTENT ============ -->
+    <!-- LEFT SIDEBAR -->
+    <left>
+        <VBox spacing="14" styleClass="sidebar">
+
+            <HBox spacing="6" alignment="CENTER_LEFT">
+                <Label text="Eco" styleClass="brand"/>
+                <Label text="Adventure" styleClass="brand-accent"/>
+            </HBox>
+
+            <Separator styleClass="sep"/>
+
+            <Button text="Activités" styleClass="side-btn active"/>
+            <Button text="Réservations" styleClass="side-btn" onAction="#openReservations"/>
+            <Button text="Événements" styleClass="side-btn"/>
+            <Button text="Utilisateurs" styleClass="side-btn"/>
+        </VBox>
+    </left>
+
+    <!-- CENTER CONTENT -->
     <center>
-        <VBox spacing="20">
+        <VBox spacing="18" styleClass="content-wrap">
             <padding>
-                <Insets top="30" right="30" bottom="30" left="30"/>
+                <Insets top="18" right="18" bottom="18" left="18"/>
             </padding>
 
-            <Label text="Activités" styleClass="page-title"/>
+            <!-- KPI CARDS (optionnel visuel) -->
+            <HBox spacing="18" alignment="CENTER" styleClass="kpi-row">
+                <VBox alignment="CENTER" spacing="6" styleClass="kpi-card">
+                    <Label text="Total Activités" styleClass="kpi-label"/>
+                    <Label fx:id="lblTotalAct" text="-" styleClass="kpi-value"/>
+                </VBox>
 
-            <TableView fx:id="tableActivites" VBox.vgrow="ALWAYS">
-                <columns>
-                  <!--<TableColumn fx:id="colId" text="Numéro De Recu"/>-->
-                    <TableColumn fx:id="colDate" text="Date" prefWidth="130"/>
-                    <TableColumn fx:id="colNom" text="Nom"/>
-                    <TableColumn fx:id="colType" text="Type"/>
-                    <TableColumn fx:id="colCategorie" text="Catégorie"/>
-                    <TableColumn fx:id="colNiveau" text="Niveau"/>
-                    <TableColumn fx:id="colStatut" text="Statut"/>
-                    <TableColumn fx:id="colPrix" text="Prix"/>
-                    <TableColumn fx:id="colImage" text="Image URL"/>
+                <VBox alignment="CENTER" spacing="6" styleClass="kpi-card">
+                    <Label text="Actives" styleClass="kpi-label"/>
+                    <Label fx:id="lblActiveAct" text="-" styleClass="kpi-value"/>
+                </VBox>
 
-                </columns>
-            </TableView>
-
-
-            <HBox alignment="CENTER_RIGHT" spacing="15">
-                <Button text="Modifier"
-                        styleClass="btn-primary"
-                        onAction="#modifierActivite"/>
-
-                <Button text="Supprimer"
-                        styleClass="btn-danger"
-                        onAction="#supprimerActivite"/>
-                <Button text="Statistique" styleClass="side-btn" onAction="#openstat"/>
+                <VBox alignment="CENTER" spacing="6" styleClass="kpi-card">
+                    <Label text="Prix moyen" styleClass="kpi-label"/>
+                    <Label fx:id="lblAvgPrice" text="-" styleClass="kpi-value"/>
+                </VBox>
             </HBox>
+
+            <!-- TABLE CARD -->
+            <VBox spacing="12" styleClass="table-card">
+                <Label text="Mes Activités" styleClass="section-title"/>
+
+                <TableView fx:id="tableActivites" VBox.vgrow="ALWAYS" styleClass="modern-table">
+                    <columns>
+                        <TableColumn fx:id="colDate" text="Date" prefWidth="130"/>
+                        <TableColumn fx:id="colNom" text="Nom" prefWidth="150"/>
+                        <TableColumn fx:id="colType" text="Type" prefWidth="130"/>
+                        <TableColumn fx:id="colCategorie" text="Catégorie" prefWidth="140"/>
+                        <TableColumn fx:id="colNiveau" text="Niveau" prefWidth="120"/>
+                        <TableColumn fx:id="colStatut" text="Statut" prefWidth="120"/>
+                        <TableColumn fx:id="colPrix" text="Prix" prefWidth="90"/>
+                        <TableColumn fx:id="colImage" text="Image URL" prefWidth="220"/>
+                    </columns>
+                </TableView>
+
+                <HBox alignment="CENTER_RIGHT" spacing="12">
+                    <Button text="Modifier" styleClass="btn-primary" onAction="#modifierActivite"/>
+                    <Button text="Supprimer" styleClass="btn-danger" onAction="#supprimerActivite"/>
+                    <Button text="Statistique" styleClass="btn-secondary" onAction="#openstat"/>
+                </HBox>
+
+            </VBox>
 
         </VBox>
     </center>

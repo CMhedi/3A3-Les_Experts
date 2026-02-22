@@ -12,68 +12,75 @@
 
     <children>
 
-        <!-- Card -->
-        <VBox spacing="16"
-              AnchorPane.topAnchor="20"
-              AnchorPane.leftAnchor="25"
-              AnchorPane.rightAnchor="25"
-              AnchorPane.bottomAnchor="20"
-              styleClass="form-card">
+        <!-- Center wrapper -->
+        <StackPane AnchorPane.topAnchor="0"
+                   AnchorPane.bottomAnchor="0"
+                   AnchorPane.leftAnchor="0"
+                   AnchorPane.rightAnchor="0"
+                   styleClass="page-wrap">
 
-            <!-- Title row -->
-            <HBox spacing="10" styleClass="title-row">
-                <Label text="⦿" styleClass="title-icon"/>
-                <Label text="Ajouter une Réservation" styleClass="title-label"/>
-            </HBox>
+            <!-- Card -->
+            <VBox spacing="16" styleClass="form-card">
 
-            <!-- Divider -->
-            <Line styleClass="divider-line"/>
+                <padding>
+                    <Insets top="26" right="26" bottom="22" left="26"/>
+                </padding>
 
-            <!-- Form -->
-            <VBox spacing="14">
+                <!-- Header -->
+                <VBox spacing="6" styleClass="header-wrap">
+                    <HBox spacing="10" styleClass="title-row">
+                        <Label text="⦿" styleClass="title-icon"/>
+                        <Label text="Ajouter une Réservation" styleClass="title-label"/>
+                    </HBox>
 
-               <!-- <VBox spacing="6">-->
-                   <!--<Label text="Date de réservation" styleClass="form-label"/>-->
-                <!--    <DatePicker fx:id="dateReservation" prefWidth="360" styleClass="date-blue"/>-->
-                <!-- </VBox>-->
+                    <Label text="Remplissez les informations puis cliquez sur Ajouter."
+                           styleClass="subtitle-label"/>
 
-                <VBox spacing="6">
-                    <Label text="Statut" styleClass="form-label"/>
-                    <ComboBox fx:id="statutRes" prefWidth="360" styleClass="combo"/>
+                    <Line styleClass="divider-line"/>
                 </VBox>
 
-                <VBox spacing="6">
-                    <Label text="Nombre de personnes" styleClass="form-label"/>
-                    <TextField fx:id="nbPersonnes" promptText="Ex: 3" styleClass="input"/>
+                <!-- Form content -->
+                <VBox spacing="12" styleClass="form-wrap">
+
+                    <VBox spacing="6" styleClass="field">
+                        <Label text="Statut" styleClass="form-label"/>
+                        <ComboBox fx:id="statutRes" prefWidth="420" styleClass="combo"/>
+                    </VBox>
+
+                    <VBox spacing="6" styleClass="field">
+                        <Label text="Nombre de personnes" styleClass="form-label"/>
+                        <TextField fx:id="nbPersonnes" promptText="Ex: 3" styleClass="input"/>
+                    </VBox>
+
+                    <HBox spacing="12">
+                        <VBox spacing="6" HBox.hgrow="ALWAYS" styleClass="field">
+                            <Label text="Votre Compte" styleClass="form-label"/>
+                            <TextField fx:id="idUser" promptText="ID user" styleClass="input"/>
+                        </VBox>
+
+                        <VBox spacing="6" HBox.hgrow="ALWAYS" styleClass="field">
+                            <Label text="Numéro de l'Activité" styleClass="form-label"/>
+                            <TextField fx:id="idActivite" promptText="ID activité" styleClass="input"/>
+                        </VBox>
+                    </HBox>
+
                 </VBox>
 
-                <VBox spacing="6">
-                    <Label text="Votre Compte" styleClass="form-label"/>
-                    <TextField fx:id="idUser" styleClass="input"/>
-                </VBox>
-
-                <VBox spacing="6">
-                    <Label text="Numero de l'Activité" styleClass="form-label"/>
-                    <TextField fx:id="idActivite" styleClass="input"/>
-                </VBox>
+                <!-- Buttons -->
+                <HBox spacing="12" styleClass="btn-row">
+                    <Region HBox.hgrow="ALWAYS"/>
+                    <Button text="↩ Retourner"
+                            onAction="#goUserSeances"
+                            styleClass="btn btn-secondary"/>
+                    <Button text="✔ Ajouter"
+                            fx:id="btnAjouter"
+                            onAction="#ajouterReservation"
+                            styleClass="btn btn-save"/>
+                </HBox>
 
             </VBox>
 
-            <!-- Buttons -->
-            <HBox spacing="14" styleClass="btn-row">
-                <Button text="✔ Ajouter"
-                        fx:id="btnAjouter"
-                        onAction="#ajouterReservation"
-                        styleClass="btn btn-save"/>
+        </StackPane>
 
-
-
-                <Button text="↩ Retourner"
-                        onAction="#goUserSeances"
-                        styleClass="btn btn-secondary"/>
-            </HBox>
-
-        </VBox>
     </children>
-
 </AnchorPane>

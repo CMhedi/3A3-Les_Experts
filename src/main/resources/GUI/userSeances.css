@@ -1,11 +1,14 @@
-/* ===== ROOT ===== */
+/* =====================================================
+   ROOT
+===================================================== */
 .root {
     -fx-font-family: "Segoe UI";
-    /* Nouveau background moderne */
     -fx-background-color: linear-gradient(to bottom right, #0f3d2e, #194c3b);
 }
 
-/* ===== TOPBAR ===== */
+/* =====================================================
+   TOPBAR
+===================================================== */
 .topbar {
     -fx-padding: 14 18;
     -fx-background-color: #194c3b;
@@ -16,38 +19,41 @@
 .topbar-title {
     -fx-text-fill: white;
     -fx-font-size: 18px;
-    -fx-font-weight: 700;
+    -fx-font-weight: bold;
 }
 
 .user-pill {
     -fx-background-color: rgba(255,255,255,0.18);
     -fx-text-fill: white;
-    -fx-font-weight: 600;
+    -fx-font-weight: bold;
     -fx-background-radius: 18;
     -fx-padding: 8 14;
     -fx-cursor: hand;
 }
+
 .user-pill:hover {
     -fx-background-color: rgba(255,255,255,0.26);
 }
 
-/* ===== SIDEBAR ===== */
+/* =====================================================
+   SIDEBAR
+===================================================== */
 .sidebar {
     -fx-padding: 18 16;
     -fx-pref-width: 260;
-    /* Nouveau background sidebar moderne */
     -fx-background-color: linear-gradient(to bottom, #123b2d, #0f2a1f);
 }
 
 .brand {
     -fx-text-fill: white;
     -fx-font-size: 22px;
-    -fx-font-weight: 800;
+    -fx-font-weight: bold;
 }
+
 .brand-accent {
     -fx-text-fill: #f4b400;
     -fx-font-size: 22px;
-    -fx-font-weight: 800;
+    -fx-font-weight: bold;
 }
 
 .sep {
@@ -58,64 +64,48 @@
     -fx-background-color: transparent;
     -fx-text-fill: white;
     -fx-font-size: 14px;
-    -fx-font-weight: 600;
+    -fx-font-weight: bold;
     -fx-alignment: CENTER_LEFT;
     -fx-padding: 10 10;
     -fx-background-radius: 10;
     -fx-cursor: hand;
 }
+
 .side-btn:hover {
     -fx-background-color: rgba(255,255,255,0.12);
 }
 
-/* ===== CONTENT ===== */
+/* =====================================================
+   CONTENT AREA (UPGRADED BODY)
+===================================================== */
 .content-wrap {
-    -fx-padding: 22;
+    -fx-padding: 26;
 }
 
+/* Premium glass card */
 .card {
-    /* Modern gradient background with subtle depth */
-    -fx-background-color: linear-gradient(to bottom right, #ffffffcc, #e8f0f5cc);
+    -fx-background-color: rgba(255,255,255,0.16);
+    -fx-background-radius: 26;
 
-    /* Rounded corners for modern style */
-    -fx-background-radius: 24;
-
-    /* Padding inside the card */
-    -fx-padding: 30;
-
-    /* Floating shadow effect */
-    -fx-effect: dropshadow(
-            gaussian,
-            rgba(0,0,0,0.15),
-            25, 0.3, 0, 6
-    );
-
-    /* Optional soft border to separate from background */
-    -fx-border-color: rgba(0,0,0,0.05);
+    -fx-border-color: rgba(255,255,255,0.18);
     -fx-border-width: 1;
+    -fx-border-radius: 26;
 
-    /* Smooth transition for hover */
-    -fx-transition: all 0.3s ease;
+    -fx-padding: 34;
+    -fx-max-width: 560;
+
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.35), 30, 0.30, 0, 10);
 }
-
-.card:hover {
-    /* Lift and stronger shadow on hover */
-    -fx-effect: dropshadow(
-            gaussian,
-            rgba(0,0,0,0.22),
-            30, 0.35, 0, 8
-    );
-    -fx-translate-y: -3;
-}
-
-
 
 .card-title {
-    -fx-text-fill: #2b2b2b;
-    -fx-font-size: 18px;
-    -fx-font-weight: 800;
+    -fx-text-fill: white;
+    -fx-font-size: 20px;
+    -fx-font-weight: bold;
 }
 
+/* =====================================================
+   TABLE STYLE (if used)
+===================================================== */
 .table {
     -fx-background-radius: 12;
     -fx-border-radius: 12;
@@ -124,49 +114,103 @@
     -fx-padding: 4;
 }
 
-/* Header style */
 .table .column-header-background {
     -fx-background-color: transparent;
 }
+
 .table .column-header {
     -fx-background-color: transparent;
     -fx-border-color: transparent transparent #f4b400 transparent;
     -fx-border-width: 0 0 2 0;
 }
+
 .table .column-header .label {
     -fx-text-fill: #1c3c2f;
-    -fx-font-weight: 800;
+    -fx-font-weight: bold;
 }
 
-/* Rows */
 .table .table-row-cell {
     -fx-background-color: white;
 }
+
 .table .table-row-cell:filled:selected {
     -fx-background-color: rgba(244,180,0,0.25);
 }
 
-/* ===== BUTTONS ===== */
+/* =====================================================
+   BUTTONS (UPGRADED - SAME THEME)
+===================================================== */
+
+/* Primary (Gold) */
 .primary-btn {
-    -fx-background-color: #f4b400;
-    -fx-text-fill: white;
-    -fx-font-weight: 800;
-    -fx-background-radius: 14;
-    -fx-padding: 10 18;
+    -fx-background-color: linear-gradient(to right, #f4b400, #f1a738);
+    -fx-text-fill: #0b1a12;
+    -fx-font-weight: bold;
+
+    -fx-background-radius: 16;
+    -fx-padding: 12 18;
     -fx-cursor: hand;
-}
-.primary-btn:hover {
-    -fx-background-color: #ffbf1f;
+
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.18), 12, 0.25, 0, 4);
 }
 
-.secondary-btn {
-    -fx-background-color: #e9e9e9;
-    -fx-text-fill: #1c3c2f;
-    -fx-font-weight: 800;
-    -fx-background-radius: 14;
-    -fx-padding: 10 18;
-    -fx-cursor: hand;
+.primary-btn:hover {
+    -fx-background-color: linear-gradient(to right, #ffbf1f, #f4b400);
+    -fx-translate-y: -2;
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.26), 16, 0.28, 0, 6);
 }
+
+.primary-btn:pressed {
+    -fx-translate-y: 0;
+    -fx-opacity: 0.92;
+}
+
+/* Secondary (Glass) */
+.secondary-btn {
+    -fx-background-color: rgba(255,255,255,0.14);
+    -fx-text-fill: white;
+    -fx-font-weight: bold;
+
+    -fx-background-radius: 16;
+    -fx-padding: 12 18;
+    -fx-cursor: hand;
+
+    -fx-border-color: rgba(255,255,255,0.18);
+    -fx-border-width: 1;
+    -fx-border-radius: 16;
+}
+
 .secondary-btn:hover {
-    -fx-background-color: #dedede;
+    -fx-background-color: rgba(255,255,255,0.20);
+    -fx-translate-y: -2;
+}
+
+.secondary-btn:pressed {
+    -fx-translate-y: 0;
+    -fx-opacity: 0.92;
+}
+
+/* Chat button (because your FXML uses secondary-btn-btn) */
+.secondary-btn-btn {
+    -fx-background-color: rgba(255,255,255,0.10);
+    -fx-text-fill: rgba(255,255,255,0.92);
+    -fx-font-weight: bold;
+
+    -fx-background-radius: 16;
+    -fx-padding: 12 18;
+    -fx-cursor: hand;
+
+    -fx-border-color: rgba(244,180,0,0.45);
+    -fx-border-width: 1;
+    -fx-border-radius: 16;
+}
+
+.secondary-btn-btn:hover {
+    -fx-background-color: rgba(255,255,255,0.16);
+    -fx-translate-y: -2;
+}
+
+.secondary-btn-btn:pressed {
+    -fx-translate-y: 0;
+    -fx-opacity: 0.92;
 }

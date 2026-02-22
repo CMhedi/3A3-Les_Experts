@@ -1,84 +1,136 @@
-/* ================= BACKGROUND ================= */
+/* ===================== ROOT BACKGROUND ===================== */
 .main-bg {
-    -fx-background-color: linear-gradient(to bottom right, #1b3a2c, #2d5c46);
+    -fx-background-color: linear-gradient(to bottom right, #0b2e1a, #0f1f2e);
+    -fx-font-family: "Segoe UI";
 }
 
-/* ================= CARD ================= */
+.root-wrap {
+    -fx-padding: 30;
+}
+
+/* ===================== RECEIPT CARD (GLASS) ===================== */
 .receipt-card {
-    -fx-background-color: #ffffff;
-    -fx-background-radius: 20;
-    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.18), 25, 0.25, 0, 8);
-    -fx-max-width: 520;
-    -fx-padding: 20;
+    -fx-background-color: rgba(255, 255, 255, 0.10);
+    -fx-background-radius: 22;
+    -fx-border-radius: 22;
+    -fx-border-color: rgba(255, 255, 255, 0.18);
+    -fx-border-width: 1;
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.45), 28, 0.35, 0, 12);
+    -fx-max-width: 560;
 }
 
-/* ================= TITLE ================= */
+/* ===================== TITLES ===================== */
 .title-label {
-    -fx-font-size: 24px;
-    -fx-font-weight: 800;
-    -fx-text-fill: #1b3a2c;
+    -fx-text-fill: white;
+    -fx-font-size: 26px;
+    -fx-font-weight: 900;
+    -fx-letter-spacing: 1px;
 }
 
-/* ================= SEPARATOR ================= */
+.subtitle-label {
+    -fx-text-fill: rgba(255,255,255,0.78);
+    -fx-font-size: 13px;
+    -fx-font-weight: 600;
+}
+
+/* ===================== SEPARATOR ===================== */
 .separator-modern {
-    -fx-background-color: #d9d9d9;
-    -fx-pref-height: 2;
-    -fx-opacity: 0.6;
+    -fx-background-color: rgba(255,255,255,0.18);
+    -fx-opacity: 0.9;
+    -fx-pref-height: 1.2;
 }
 
-/* ================= CONTENT ================= */
+/* ===================== CONTENT BOX ===================== */
 .receipt-content {
-    -fx-padding: 12 0 12 0;
+    -fx-padding: 8 0 8 0;
 }
 
-/* ================= NORMAL TEXT ================= */
+/* ===================== TEXT STYLES ===================== */
 .receipt-text {
-    -fx-font-size: 15px;
-    -fx-text-fill: #555;
+    -fx-text-fill: rgba(255,255,255,0.82);
+    -fx-font-size: 14.5px;
 }
 
-/* ================= IMPORTANT TEXT ================= */
 .receipt-highlight {
+    -fx-text-fill: #f4b400; /* gold */
     -fx-font-size: 16px;
-    -fx-font-weight: 700;
-    -fx-text-fill: #2d5c46;
+    -fx-font-weight: 800;
 }
 
-/* ================= STATUS ================= */
 .receipt-status {
     -fx-font-size: 14px;
-    -fx-font-weight: 700;
-    -fx-text-fill: #27ae60;
+    -fx-font-weight: 800;
+    -fx-text-fill: #4ef08b; /* green mint */
 }
 
-/* ================= BUTTONS ================= */
+/* ===================== QR BOX ===================== */
+.qr-box {
+    -fx-background-color: rgba(255, 255, 255, 0.10);
+    -fx-background-radius: 18;
+    -fx-border-radius: 18;
+    -fx-border-color: rgba(255,255,255,0.16);
+    -fx-border-width: 1;
+    -fx-padding: 12;
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.30), 16, 0.25, 0, 6);
+}
+
+/* ===================== BUTTONS ROW ===================== */
+.buttons-row {
+    -fx-padding: 4 0 0 0;
+}
+
+/* Primary (gold) */
 .primary-button {
-    -fx-background-color: linear-gradient(to right, #f4b860, #f1a738);
-    -fx-text-fill: white;
-    -fx-font-weight: 700;
-    -fx-background-radius: 28;
-    -fx-padding: 10 22;
-    -fx-cursor: hand;
-    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.12), 6, 0.2, 0, 2);
-    -fx-transition: all 0.3s ease;
-}
-
-.primary-button:hover {
-    -fx-background-color: linear-gradient(to right, #f1a738, #e5992f);
-    -fx-translate-y: -2;
-    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.18), 8, 0.25, 0, 3);
-}
-
-.secondary-button {
-    -fx-background-color: #e0e0e0;
-    -fx-text-fill: #333;
+    -fx-background-color: linear-gradient(to right, #f4b400, #f1a738);
+    -fx-text-fill: #0b1a12;
+    -fx-font-weight: 900;
     -fx-background-radius: 28;
     -fx-padding: 10 20;
     -fx-cursor: hand;
-    -fx-transition: all 0.3s ease;
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.25), 10, 0.25, 0, 3);
+}
+
+.primary-button:hover {
+    -fx-translate-y: -2;
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.33), 14, 0.28, 0, 5);
+}
+
+.primary-button:pressed {
+    -fx-translate-y: 0;
+    -fx-opacity: 0.92;
+}
+
+/* Secondary */
+.secondary-button {
+    -fx-background-color: rgba(255,255,255,0.14);
+    -fx-text-fill: white;
+    -fx-font-weight: 800;
+    -fx-background-radius: 28;
+    -fx-padding: 10 18;
+    -fx-cursor: hand;
+    -fx-border-color: rgba(255,255,255,0.18);
+    -fx-border-width: 1;
+    -fx-border-radius: 28;
 }
 
 .secondary-button:hover {
-    -fx-background-color: #cfcfcf;
+    -fx-background-color: rgba(255,255,255,0.20);
     -fx-translate-y: -1;
+}
+
+/* Ghost (close) */
+.ghost-button {
+    -fx-background-color: transparent;
+    -fx-text-fill: rgba(255,255,255,0.85);
+    -fx-font-weight: 700;
+    -fx-background-radius: 28;
+    -fx-padding: 10 16;
+    -fx-cursor: hand;
+    -fx-border-color: rgba(255,255,255,0.20);
+    -fx-border-width: 1;
+    -fx-border-radius: 28;
+}
+
+.ghost-button:hover {
+    -fx-background-color: rgba(255,255,255,0.08);
 }

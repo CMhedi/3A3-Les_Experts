@@ -1,5 +1,6 @@
 package Controllers;
 
+import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
@@ -11,7 +12,7 @@ import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.stage.Stage;
 import javafx.scene.Node;
-import javafx.event.ActionEvent;
+
 import Services.LocalTicketServer;
 import Services.TicketApiClient;
 
@@ -23,35 +24,29 @@ public class RecuReservationController {
     @FXML private Label lblId;
     @FXML private Label lblStatut;
     @FXML private Label lblNb;
-    @FXML private Label lblUser;
-    @FXML private Label lblActivite;
 
-    // NEW
+    // Ticket
     @FXML private Label lblToken;
     @FXML private ImageView qrView;
 
     private int reservationId;
 
-    public void setData(int id, String statut,
-                        int nb, int user, int activite) {
-
+    // Keep same signature (even if we don't display user/activite)
+    public void setData(int id, String statut, int nb, int user, int activite) {
         this.reservationId = id;
 
-        lblId.setText("Numero De Réservation : " + id);
+        lblId.setText("Numéro de réservation : " + id);
         lblStatut.setText("Statut : " + statut);
         lblNb.setText("Nombre de personnes : " + nb);
-        lblUser.setText("NUM Compte : " + user);
-        lblActivite.setText("Num Recu Activité : " + activite);
 
-        // NEW default
+        // Default
         if (lblToken != null) lblToken.setText("Ticket : (non généré)");
         if (qrView != null) qrView.setImage(null);
 
-        // Démarre serveur ticket local (au cas où)
+        // Start local ticket server (optional)
         LocalTicketServer.startOnce();
     }
 
-    // NEW
     @FXML
     private void genererQr(ActionEvent event) {
         try {
@@ -76,10 +71,12 @@ public class RecuReservationController {
         }
     }
 
+    // If you still use it somewhere, keep it
     @FXML
     private void retour(ActionEvent event) {
         ((Stage)((Node)event.getSource()).getScene().getWindow()).close();
     }
+
     @FXML
     private void openCheckIn(ActionEvent event) {
         try {
