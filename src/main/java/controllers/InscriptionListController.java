@@ -6,6 +6,7 @@ import Entities.UserApp;
 import Services.InscriptionService;
 import Services.PackService;
 import Services.UserService;
+import Utiles.CaptchaDialog; // ✅ ADD THIS
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
@@ -80,8 +81,14 @@ public class InscriptionListController {
 
         if (confirm.showAndWait().orElse(ButtonType.CANCEL) != ButtonType.OK) return;
 
+        // ✅ CAPTCHA step
+        boolean okCaptcha = CaptchaDialog.confirmDeletion(
+                "Captcha de suppression",
+                "Pour confirmer la suppression, tape le code affiché."
+        );
+        if (!okCaptcha) return;
+
         try {
-            // suppression interne par ID (non affiché)
             service.delete(selectedInscription.getIdInscription());
             refresh();
         } catch (Exception e) {
