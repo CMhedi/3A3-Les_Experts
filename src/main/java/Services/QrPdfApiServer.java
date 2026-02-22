@@ -28,9 +28,7 @@ public class QrPdfApiServer {
 
     public static void main(String[] args) throws Exception {
         int port = Integer.parseInt(env("EA_QR_API_PORT", "8086"));
-        String publicBaseUrl = env("EA_PUBLIC_BASE_URL", "=http://192.168.1.12:" + port);
-        // ✅ مهم: EA_PUBLIC_BASE_URL حطها بـ IP متاع PC باش التليفون ينجم يوصل
-        // مثال: http://192.168.1.20:8086
+        String publicBaseUrl = env("EA_PUBLIC_BASE_URL", "=http://192.168.1.114:" + port);
 
         PdfExportService pdfService = new PdfExportService();
 

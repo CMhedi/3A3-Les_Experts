@@ -1,94 +1,352 @@
-@import "theme.css";
+/* =========================================================
+   app.css — Eco-Sport & Adventure (GLOBAL UI)
+   Palette:
+   Forest #14532D | Emerald #10B981 | Sky #38BDF8 | Orange #F97316
+   Sand #F5F3E7 | Slate #0F172A | White #FFFFFF
+   Surface #F1F5F9 | Border #E2E8F0 | Muted #64748B
+   ========================================================= */
 
-/* ====== Sidebar ====== */
-.sidebar {
+/* ---------- Design Tokens (variables) ---------- */
+.root, .page, .dialog-root, .page-root, .pack-page {
+    -ea-forest: #14532D;
+    -ea-emerald: #10B981;
+    -ea-sky: #38BDF8;
+    -ea-orange: #F97316;
+    -ea-orange-hover: #EA580C;
+
+    -ea-sand: #F5F3E7;
+    -ea-slate: #0F172A;
+    -ea-white: #FFFFFF;
+
+    -ea-surface: #F1F5F9;
+    -ea-border: #E2E8F0;
+    -ea-muted: #64748B;
+
+    -ea-danger: #EF4444;
+    -ea-danger-hover: #DC2626;
+
+    -ea-shadow: rgba(15,23,42,0.10);
+    -ea-shadow-2: rgba(15,23,42,0.18);
+
+    -fx-font-family: "Inter", "Segoe UI", "Poppins", "System";
+}
+
+/* ---------- Page Backgrounds ---------- */
+.root, .pack-page {
+    -fx-background-color: linear-gradient(to bottom right, -ea-sand, #D1FAE5);
+}
+
+.page, .page-root, .dialog-root {
     -fx-background-color: transparent;
 }
 
-.sidebar-bg {
-    -fx-opacity: 0.92;
+/* ---------- Typography helpers ---------- */
+.label {
+    -fx-text-fill: -ea-slate;
+}
+
+.title, .page-title, .dialog-title {
+    -fx-text-fill: -ea-slate;
+    -fx-font-size: 20px;
+    -fx-font-weight: 800;
+}
+
+.subtitle, .page-subtitle, .muted, .hint, .label-muted {
+    -fx-text-fill: -ea-muted;
+}
+
+.subtitle, .page-subtitle { -fx-font-size: 13px; }
+.muted { -fx-font-size: 12.5px; }
+
+/* ---------- Topbar (generic) ---------- */
+.topbar {
+    -fx-background-color: rgba(255,255,255,0.92);
+    -fx-background-radius: 16;
+    -fx-border-radius: 16;
+    -fx-border-color: rgba(226,232,240,0.9);
+    -fx-border-width: 1;
+    -fx-effect: dropshadow(gaussian, -ea-shadow, 20, 0.12, 0, 6);
+}
+
+/* ---------- Cards / Panels ---------- */
+.card, .content-card, .panel, .kpi, .profile, .dialog-card {
+    -fx-background-color: -ea-white;
+    -fx-background-radius: 18;
+    -fx-border-radius: 18;
+    -fx-border-color: -ea-border;
+    -fx-border-width: 1;
+    -fx-effect: dropshadow(gaussian, -ea-shadow, 22, 0.12, 0, 8);
+}
+
+.glass {
+    -fx-background-color: rgba(255,255,255,0.86);
+    -fx-background-radius: 18;
+    -fx-border-radius: 18;
+    -fx-border-color: rgba(226,232,240,0.95);
+    -fx-border-width: 1;
+    -fx-effect: dropshadow(gaussian, -ea-shadow, 20, 0.10, 0, 6);
+}
+
+/* ---------- Buttons ---------- */
+.button {
+    -fx-background-radius: 12;
+    -fx-border-radius: 12;
+    -fx-padding: 9 14;
+    -fx-font-weight: 700;
+    -fx-cursor: hand;
+}
+
+.btn-primary {
+    -fx-background-color: -ea-orange;
+    -fx-text-fill: white;
+    -fx-effect: dropshadow(gaussian, rgba(249,115,22,0.28), 18, 0.20, 0, 6);
+}
+.btn-primary:hover { -fx-background-color: -ea-orange-hover; }
+.btn-primary:pressed { -fx-background-color: #C2410C; }
+
+.btn-secondary {
+    -fx-background-color: rgba(16,185,129,0.14);
+    -fx-text-fill: -ea-forest;
+    -fx-border-color: rgba(16,185,129,0.35);
+    -fx-border-width: 1;
+}
+.btn-secondary:hover {
+    -fx-background-color: rgba(16,185,129,0.22);
+    -fx-border-color: rgba(16,185,129,0.55);
+}
+.btn-secondary:pressed { -fx-background-color: rgba(16,185,129,0.30); }
+
+.btn-danger {
+    -fx-background-color: rgba(239,68,68,0.14);
+    -fx-text-fill: #991B1B;
+    -fx-border-color: rgba(239,68,68,0.35);
+    -fx-border-width: 1;
+}
+.btn-danger:hover {
+    -fx-background-color: rgba(239,68,68,0.22);
+    -fx-border-color: rgba(239,68,68,0.55);
+}
+.btn-danger:pressed { -fx-background-color: rgba(239,68,68,0.30); }
+
+/* ---------- Inputs (TextField, ComboBox, DatePicker, Spinner) ---------- */
+.text-field, .password-field, .text-area,
+.combo-box-base, .date-picker, .spinner {
+    -fx-background-color: -ea-white;
+    -fx-background-radius: 12;
+    -fx-border-radius: 12;
+    -fx-border-color: -ea-border;
+    -fx-border-width: 1;
+    -fx-padding: 9 12;
+    -fx-text-fill: -ea-slate;
+    -fx-prompt-text-fill: rgba(100,116,139,0.85);
+}
+
+.text-area .content { -fx-background-color: transparent; }
+
+.text-field:focused, .password-field:focused, .text-area:focused,
+.combo-box-base:focused, .date-picker:focused, .spinner:focused {
+    -fx-border-color: -ea-emerald;
+    -fx-effect: dropshadow(gaussian, rgba(16,185,129,0.25), 14, 0.20, 0, 0);
+}
+
+/* ComboBox arrow */
+.combo-box .arrow-button, .date-picker .arrow-button {
+    -fx-background-color: transparent;
+}
+.combo-box .arrow, .date-picker .arrow {
+    -fx-background-color: -ea-muted;
+}
+
+/* Spinner arrows */
+.spinner .increment-arrow-button, .spinner .decrement-arrow-button {
+    -fx-background-color: transparent;
+}
+.spinner .increment-arrow, .spinner .decrement-arrow {
+    -fx-background-color: -ea-muted;
+}
+
+/* ---------- ScrollPane ---------- */
+.scroll-pane {
+    -fx-background-color: transparent;
+    -fx-background-insets: 0;
+    -fx-padding: 0;
+}
+.scroll-pane > .viewport {
+    -fx-background-color: transparent;
+}
+.scroll-bar:vertical .thumb, .scroll-bar:horizontal .thumb {
+    -fx-background-color: rgba(100,116,139,0.30);
+    -fx-background-radius: 999;
+}
+.scroll-bar:vertical .track, .scroll-bar:horizontal .track {
+    -fx-background-color: rgba(226,232,240,0.70);
+    -fx-background-radius: 999;
+}
+
+/* ---------- Separators ---------- */
+.sep, .sep-light {
+    -fx-opacity: 1;
+}
+.sep {
+    -fx-background-color: -ea-border;
+}
+.sep-light {
+    -fx-background-color: rgba(226,232,240,0.70);
+}
+
+/* ---------- TableView (standard) ---------- */
+.table-view {
+    -fx-background-color: -ea-white;
+    -fx-background-radius: 16;
+    -fx-border-radius: 16;
+    -fx-border-color: -ea-border;
+    -fx-border-width: 1;
+}
+
+.table-view .column-header-background {
+    -fx-background-color: -ea-surface;
+    -fx-background-radius: 16 16 0 0;
+    -fx-border-color: -ea-border;
+    -fx-border-width: 0 0 1 0;
+}
+
+.table-view .column-header, .table-view .filler {
+    -fx-background-color: transparent;
+}
+
+.table-view .column-header .label {
+    -fx-text-fill: -ea-slate;
+    -fx-font-weight: 800;
+    -fx-opacity: 0.95;
+}
+
+.table-row-cell {
+    -fx-background-color: -ea-white;
+    -fx-border-color: transparent transparent -ea-border transparent;
+    -fx-border-width: 0 0 1 0;
+}
+.table-row-cell:odd { -fx-background-color: #F8FAFC; }
+
+.table-row-cell:hover {
+    -fx-background-color: rgba(56,189,248,0.10);
+}
+
+.table-row-cell:selected {
+    -fx-background-color: rgba(16,185,129,0.18);
+}
+.table-cell {
+    -fx-padding: 10 10;
+    -fx-text-fill: -ea-slate;
+    -fx-border-color: transparent;
+}
+
+/* ---------- TabPane ---------- */
+.tab-pane {
+    -fx-background-color: transparent;
+}
+.tab-pane .tab-header-area {
+    -fx-padding: 0 0 10 0;
+}
+.tab-pane .tab-header-background {
+    -fx-background-color: transparent;
+}
+.tab {
+    -fx-background-color: rgba(241,245,249,0.92);
+    -fx-background-radius: 12;
+    -fx-border-radius: 12;
+    -fx-border-color: -ea-border;
+    -fx-border-width: 1;
+    -fx-padding: 6 10 6 10;
+}
+.tab:selected {
+    -fx-background-color: -ea-white;
+    -fx-border-color: rgba(16,185,129,0.55);
+}
+.tab .tab-label {
+    -fx-text-fill: -ea-slate;
+    -fx-font-weight: 800;
+}
+
+/* =========================================================
+   MAIN LAYOUT — Sidebar (MainLayout.fxml)
+   ========================================================= */
+.sidebar {
+    -fx-background-color: linear-gradient(to bottom right, -ea-forest, -ea-emerald);
 }
 
 .sidebar-overlay {
-    -fx-background-color: linear-gradient(to bottom,
-    rgba(8,10,10,0.78),
-    rgba(8,10,10,0.86),
-    rgba(8,10,10,0.92));
+    -fx-background-color: rgba(15,23,42,0.40);
 }
 
 .sidebar-content {
-    -fx-padding: 18;
+    -fx-padding: 18 14 18 14;
 }
 
+/* Brand */
+.logo-circle {
+    -fx-background-color: rgba(255,255,255,0.16);
+    -fx-background-radius: 999;
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.20), 12, 0.20, 0, 6);
+}
+.brand, .brand-sub, .profile-name, .profile-role, .avatar-text, .pill {
+    -fx-text-fill: white;
+}
 .brand {
     -fx-font-size: 16px;
     -fx-font-weight: 900;
 }
 .brand-sub {
     -fx-font-size: 12px;
-    -fx-text-fill: -ea-muted;
+    -fx-opacity: 0.80;
 }
 
-.logo-circle {
-    -fx-background-color: rgba(255,255,255,0.10);
-    -fx-background-radius: 999;
-    -fx-border-radius: 999;
-    -fx-border-color: rgba(255,255,255,0.14);
-}
-
+/* Profile Card on sidebar */
 .profile-card {
-    -fx-padding: 12;
+    -fx-background-color: rgba(255,255,255,0.12);
+    -fx-background-radius: 16;
+    -fx-border-radius: 16;
+    -fx-border-color: rgba(255,255,255,0.18);
+    -fx-border-width: 1;
 }
-
 .avatar {
-    -fx-min-width: 36;
-    -fx-min-height: 36;
-    -fx-background-color: rgba(95,233,140,0.18);
+    -fx-background-color: rgba(56,189,248,0.25);
     -fx-background-radius: 999;
     -fx-border-radius: 999;
-    -fx-border-color: rgba(95,233,140,0.35);
+    -fx-border-color: rgba(255,255,255,0.25);
+    -fx-border-width: 1;
+    -fx-padding: 8;
 }
-.avatar-text { -fx-font-weight: 900; }
 
-.profile-name { -fx-font-weight: 900; }
-.profile-role { -fx-text-fill: -ea-muted; }
-
+/* Nav */
 .nav-list { -fx-padding: 6 0 0 0; }
 
 .nav-item {
     -fx-background-color: transparent;
-    -fx-text-fill: -ea-text;
+    -fx-text-fill: rgba(255,255,255,0.92);
+    -fx-font-weight: 800;
     -fx-alignment: CENTER_LEFT;
     -fx-padding: 10 12;
     -fx-background-radius: 12;
-    -fx-border-radius: 12;
 }
 .nav-item:hover {
-    -fx-background-color: rgba(255,255,255,0.08);
-    -fx-border-color: rgba(255,255,255,0.14);
-    -fx-border-width: 1;
+    -fx-background-color: rgba(255,255,255,0.14);
 }
-.nav-item:armed {
-    -fx-background-color: rgba(95,233,140,0.14);
-    -fx-border-color: rgba(95,233,140,0.32);
+.nav-item:pressed {
+    -fx-background-color: rgba(255,255,255,0.20);
 }
 
-/* ====== Topbar ====== */
-.topbar {
-    -fx-background-color: rgba(255,255,255,0.04);
-    -fx-border-color: rgba(255,255,255,0.10);
-    -fx-border-width: 0 0 1 0;
-}
-
+/* Pills */
 .pill {
-    -fx-background-color: rgba(95,233,140,0.18);
-    -fx-text-fill: -ea-text;
-    -fx-padding: 6 10;
+    -fx-background-color: rgba(16,185,129,0.30);
     -fx-background-radius: 999;
-    -fx-border-radius: 999;
-    -fx-border-color: rgba(95,233,140,0.35);
+    -fx-padding: 6 10;
+    -fx-font-weight: 900;
 }
 
-.hint-row { -fx-padding: 6 0 0 0; }
-.hint-emoji { -fx-font-size: 16px; }
-.hint { -fx-text-fill: -ea-muted; }
+/* Content panel inside main layout */
+.content-card {
+    -fx-padding: 18;
+}
+.hint-row .hint-emoji {
+    -fx-font-size: 16px;
+}
