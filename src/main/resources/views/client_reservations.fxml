@@ -2,22 +2,43 @@
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
+<?import javafx.scene.image.*?>
 
-<BorderPane xmlns="http://javafx.com/javafx/17"
-            xmlns:fx="http://javafx.com/fxml/1"
+<BorderPane xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1"
             fx:controller="controllers.ReservationClientController"
-            stylesheets="@/styles/app.css"
-            styleClass="root">
+            stylesheets="@/styles/app.css" styleClass="root">
+
+    <left>
+        <VBox prefWidth="220" styleClass="sidebar" spacing="20">
+            <padding><Insets top="30" right="15" bottom="30" left="15"/></padding>
+            <Label text="EcoAdventure" styleClass="logo-text"/>
+            <Label text="Espace Client" styleClass="sub-logo"/>
+
+            <VBox spacing="10" VBox.vgrow="ALWAYS">
+                <Button text="🏠 Accueil" onAction="#goHome" styleClass="nav-button"/>
+                <Button text="📅 Événements" onAction="#goToEvents" styleClass="nav-button"/>
+                <Button text="🎟️ Mes Réservations" styleClass="nav-button, active"/>
+            </VBox>
+        </VBox>
+    </left>
+
     <center>
-        <VBox styleClass="page" spacing="14">
-            <TableView fx:id="table" VBox.vgrow="ALWAYS" styleClass="pro-table">
-                <columns>
-                    <TableColumn fx:id="colIdEvent" text="ID Événement" prefWidth="120"/>
-                    <TableColumn fx:id="colNbBillets" text="Billets" prefWidth="90"/>
-                    <TableColumn fx:id="colStatut" text="Statut" prefWidth="130"/>
-                    <TableColumn fx:id="colDateRes" text="Date Réservation" prefWidth="170"/>
-                </columns>
-            </TableView>
+        <VBox spacing="20" styleClass="main-content">
+            <padding><Insets top="25" right="30" bottom="25" left="30"/></padding>
+
+            <HBox alignment="CENTER_LEFT" spacing="20">
+                <Label text="Mes Réservations" styleClass="page-title"/>
+                <Region HBox.hgrow="ALWAYS" />
+                <TextField fx:id="searchField" promptText="Filtrer mes billets..." onKeyReleased="#onSearch" prefWidth="300" styleClass="search-field"/>
+                <Button text="Actualiser" onAction="#onRefresh" styleClass="btn-refresh"/>
+            </HBox>
+
+            <Label fx:id="lblInfo" text="Total: 0 réservation(s)" styleClass="info-label"/>
+
+            <ScrollPane fitToWidth="true" styleClass="transparent-scroll">
+                <VBox fx:id="cardsContainer" spacing="15">
+                </VBox>
+            </ScrollPane>
         </VBox>
     </center>
 </BorderPane>
