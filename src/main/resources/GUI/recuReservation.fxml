@@ -3,6 +3,7 @@
 <?import javafx.scene.layout.*?>
 <?import javafx.scene.control.*?>
 <?import javafx.geometry.Insets?>
+<?import javafx.scene.image.ImageView?>
 
 <AnchorPane xmlns:fx="http://javafx.com/fxml"
             fx:controller="Controllers.RecuReservationController"
@@ -24,41 +25,35 @@
                     <Insets top="35" right="40" bottom="35" left="40"/>
                 </padding>
 
-
                 <Label text="REÇU DE RÉSERVATION"
                        styleClass="title-label"/>
 
                 <Separator styleClass="separator-modern"/>
 
-
                 <VBox spacing="12"
                       alignment="CENTER_LEFT"
                       styleClass="receipt-content">
 
-                    <Label fx:id="lblId"
-                           styleClass="receipt-highlight"/>
+                    <Label fx:id="lblId" styleClass="receipt-highlight"/>
+                    <Label fx:id="lblStatut" styleClass="receipt-status"/>
+                    <Label fx:id="lblNb" styleClass="receipt-text"/>
+                    <Label fx:id="lblUser" styleClass="receipt-text"/>
+                    <Label fx:id="lblActivite" styleClass="receipt-text"/>
 
-                   <!-- <Label fx:id="lblDate"
-                           styleClass="receipt-text"/>-->
-
-                    <Label fx:id="lblStatut"
-                           styleClass="receipt-status"/>
-
-                    <Label fx:id="lblNb"
-                           styleClass="receipt-text"/>
-
-                    <Label fx:id="lblUser"
-                           styleClass="receipt-text"/>
-
-                    <Label fx:id="lblActivite"
-                           styleClass="receipt-text"/>
+                    <!-- NEW -->
+                    <Label fx:id="lblToken" styleClass="receipt-text" wrapText="true"/>
+                    <ImageView fx:id="qrView" fitWidth="220" fitHeight="220" preserveRatio="true"/>
 
                 </VBox>
 
                 <Separator styleClass="separator-modern"/>
 
+                <HBox alignment="CENTER" spacing="12">
 
-                <HBox alignment="CENTER">
+                    <!-- NEW -->
+                    <Button text="🎟 Générer Ticket QR"
+                            onAction="#genererQr"
+                            styleClass="primary-button"/>
 
                     <Button text="Fermer"
                             onAction="#fermer"

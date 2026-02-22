@@ -4,17 +4,20 @@ module org.example.demo {
     requires javafx.fxml;
     requires javafx.base;
     requires javafx.graphics;
+    requires javafx.swing;
 
     requires java.sql;
     requires java.net.http;
-    requires com.google.gson;
-
-
-    requires org.apache.pdfbox;
-    requires javafx.swing;
+    requires jdk.httpserver;
     requires java.desktop;
 
+    requires com.google.gson;
 
+    requires com.google.zxing;
+    requires com.google.zxing.javase;
+    opens Services to com.google.gson;
+
+    requires org.apache.pdfbox;
 
     requires com.fasterxml.jackson.databind;
     requires com.fasterxml.jackson.core;
