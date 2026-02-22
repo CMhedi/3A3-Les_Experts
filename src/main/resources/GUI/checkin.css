@@ -1,100 +1,166 @@
-/* ================= ROOT ================= */
+/* ===================== GLOBAL ===================== */
 .root-bg {
-    -fx-background-color: linear-gradient(to bottom right, #0f2027, #203a43, #2c5364);
+    -fx-background-color: linear-gradient(to bottom right, #0b2e1a, #0f1f2e);
     -fx-font-family: "Segoe UI";
 }
 
-/* ================= CARD ================= */
 .glass-card {
-    -fx-background-color: rgba(255,255,255,0.08);
-    -fx-background-radius: 25;
-    -fx-padding: 30;
-    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.5), 30, 0.3, 0, 12);
+    -fx-background-color: rgba(255, 255, 255, 0.10);
+    -fx-background-radius: 22;
+    -fx-border-radius: 22;
+    -fx-border-color: rgba(255, 255, 255, 0.18);
+    -fx-border-width: 1;
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.45), 26, 0.35, 0, 10);
 }
 
-/* ================= BRAND ================= */
-.brand-row {
-    -fx-padding: 5 0 10 0;
-}
+/* ===================== BRAND / LOGO ===================== */
+.brand-row { -fx-padding: 4 0 8 0; }
 
 .brand-eco {
     -fx-text-fill: #f4b400;
-    -fx-font-size: 28px;
-    -fx-font-weight: bold;
+    -fx-font-size: 26px;
+    -fx-font-weight: 800;
 }
 
 .brand-adv {
     -fx-text-fill: white;
-    -fx-font-size: 28px;
-    -fx-font-weight: bold;
+    -fx-font-size: 26px;
+    -fx-font-weight: 700;
 }
 
 .subtitle {
-    -fx-text-fill: rgba(255,255,255,0.8);
+    -fx-text-fill: rgba(255,255,255,0.85);
     -fx-font-size: 13px;
 }
 
-/* ================= LABELS ================= */
-.field-label {
-    -fx-text-fill: white;
-    -fx-font-weight: 600;
-    -fx-font-size: 13px;
-}
-
-/* ================= TEXTAREA ================= */
-.token-area, .details-area {
-    -fx-background-radius: 15;
-    -fx-border-radius: 15;
+/* ===================== DIVIDER ===================== */
+.separator .line {
+    -fx-border-color: rgba(255,255,255,0.22);
     -fx-border-width: 1;
-    -fx-border-color: rgba(255,255,255,0.2);
 }
 
-.token-area .content,
-.details-area .content {
-    -fx-background-color: rgba(0,0,0,0.25);
-    -fx-background-radius: 15;
-    -fx-padding: 12;
-}
-
-.token-area, .token-area .content {
-    -fx-text-fill: white;
-    -fx-prompt-text-fill: rgba(255,255,255,0.6);
+/* ===================== INPUTS (FIXED) ===================== */
+.field-label {
+    -fx-text-fill: rgba(255,255,255,0.88);
     -fx-font-size: 13px;
+    -fx-font-weight: 600;
 }
 
+/* IMPORTANT: TextArea a une zone interne ".content" */
+.token-area, .details-area {
+    -fx-background-color: transparent;   /* on met le fond sur .content */
+    -fx-background-insets: 0;
+    -fx-background-radius: 14;
+    -fx-border-radius: 14;
+    -fx-border-width: 1;
+    -fx-padding: 0;                     /* padding sur .content */
+}
+
+/* Zone interne */
+.token-area .content {
+    -fx-background-color: rgba(255,255,255,0.12);
+    -fx-background-radius: 14;
+    -fx-padding: 10;
+}
+
+.details-area .content {
+    -fx-background-color: rgba(0,0,0,0.18);
+    -fx-background-radius: 14;
+    -fx-padding: 10;
+}
+
+/* Texte VISIBLE (appliquer aux deux : control + content) */
+.token-area, .token-area .content,
 .details-area, .details-area .content {
     -fx-text-fill: white;
     -fx-font-size: 13px;
 }
 
-/* ================= BUTTONS ================= */
+/* Prompt visible */
+.token-area {
+    -fx-prompt-text-fill: rgba(255,255,255,0.60);
+}
+
+/* Focus */
+.token-area {
+    -fx-border-color: rgba(255,255,255,0.20);
+}
+
+.token-area:focused {
+    -fx-border-color: rgba(244,180,0,0.80);
+}
+
+/* sélection */
+.token-area, .details-area {
+    -fx-highlight-fill: rgba(244,180,0,0.35);
+    -fx-highlight-text-fill: white;
+}
+
+/* ===================== BUTTONS ===================== */
 .btn-primary {
-    -fx-background-color: #f4b400;
-    -fx-text-fill: black;
-    -fx-font-weight: bold;
-    -fx-background-radius: 15;
-    -fx-padding: 10 20;
+    -fx-background-color: linear-gradient(to right, #f4b400, #ffcf4a);
+    -fx-text-fill: #0b1d12;
+    -fx-font-weight: 800;
+    -fx-background-radius: 14;
+    -fx-padding: 10 18;
     -fx-cursor: hand;
+    -fx-effect: dropshadow(gaussian, rgba(244,180,0,0.35), 18, 0.25, 0, 6);
 }
 
 .btn-primary:hover {
-    -fx-background-color: #ffd54f;
+    -fx-effect: dropshadow(gaussian, rgba(244,180,0,0.55), 22, 0.35, 0, 8);
+    -fx-translate-y: -1;
 }
 
 .btn-secondary {
-    -fx-background-color: rgba(255,255,255,0.15);
+    -fx-background-color: rgba(255, 255, 255, 0.12);
     -fx-text-fill: white;
-    -fx-background-radius: 15;
-    -fx-padding: 10 20;
-    -fx-border-radius: 15;
-    -fx-border-color: rgba(255,255,255,0.2);
+    -fx-font-weight: 700;
+    -fx-background-radius: 14;
+    -fx-padding: 10 18;
+    -fx-border-radius: 14;
+    -fx-border-color: rgba(255,255,255,0.18);
+    -fx-border-width: 1;
+    -fx-cursor: hand;
 }
 
 .btn-secondary:hover {
-    -fx-background-color: rgba(255,255,255,0.25);
+    -fx-background-color: rgba(255, 255, 255, 0.16);
 }
 
-/* ================= SEPARATOR ================= */
-.separator .line {
-    -fx-border-color: rgba(255,255,255,0.2);
+/* ===================== SMALL CHIP / STATUS ===================== */
+.status-chip-ok {
+    -fx-background-color: rgba(46, 204, 113, 0.18);
+    -fx-text-fill: #dfffea;
+    -fx-padding: 6 10;
+    -fx-background-radius: 999;
+    -fx-border-radius: 999;
+    -fx-border-color: rgba(46, 204, 113, 0.45);
+    -fx-border-width: 1;
+    -fx-font-weight: 700;
+    -fx-font-size: 12px;
+}
+
+.status-chip-warn {
+    -fx-background-color: rgba(241, 196, 15, 0.18);
+    -fx-text-fill: #fff7d2;
+    -fx-padding: 6 10;
+    -fx-background-radius: 999;
+    -fx-border-radius: 999;
+    -fx-border-color: rgba(241, 196, 15, 0.50);
+    -fx-border-width: 1;
+    -fx-font-weight: 700;
+    -fx-font-size: 12px;
+}
+
+.status-chip-bad {
+    -fx-background-color: rgba(231, 76, 60, 0.18);
+    -fx-text-fill: #ffe3df;
+    -fx-padding: 6 10;
+    -fx-background-radius: 999;
+    -fx-border-radius: 999;
+    -fx-border-color: rgba(231, 76, 60, 0.50);
+    -fx-border-width: 1;
+    -fx-font-weight: 700;
+    -fx-font-size: 12px;
 }
