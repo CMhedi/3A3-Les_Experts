@@ -1,0 +1,131 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.control.*?>
+
+<ScrollPane fitToWidth="true"
+            xmlns="http://javafx.com/javafx/17"
+            xmlns:fx="http://javafx.com/fxml/1"
+            fx:controller="GUI.NutritionController"
+            stylesheets="@nutrition.css">
+
+    <VBox spacing="30"
+          alignment="TOP_CENTER"
+          styleClass="main-container">
+
+        <!-- ===== HEADER ===== -->
+        <HBox alignment="CENTER_LEFT"
+              maxWidth="600"
+              spacing="10">
+
+            <Button text="← Retour"
+                    onAction="#handleRetour"
+                    styleClass="btn-retour"/>
+        </HBox>
+
+        <!-- ===== TITLE ===== -->
+        <Label text="🍏 Dashboard Nutrition &amp; Santé"
+               styleClass="title-label"/>
+
+        <!-- ========================================== -->
+        <!-- ============ NUTRITION CARD ============== -->
+        <!-- ========================================== -->
+
+        <VBox spacing="20"
+              maxWidth="600"
+              styleClass="card">
+
+            <Label text="Analyse Alimentaire"
+                   styleClass="section-title"/>
+
+            <Separator opacity="0.3"/>
+
+            <TextField fx:id="txtIngredient"
+                       promptText="Ex: 200g chicken breast ou 1 apple"
+                       styleClass="text-field"/>
+
+            <HBox spacing="12"
+                  alignment="CENTER_LEFT">
+
+                <Button text="Analyser"
+                        onAction="#handleAnalyzeFood"
+                        styleClass="primary-btn"/>
+
+                <Button text="Ajouter au journal"
+                        onAction="#handleSaveToJournal"
+                        styleClass="success-btn"/>
+
+                <Button text="Total aujourd'hui"
+                        onAction="#handleTodayTotal"
+                        styleClass="secondary-btn"/>
+            </HBox>
+
+        </VBox>
+
+        <!-- ========================================== -->
+        <!-- =============== IMC CARD ================== -->
+        <!-- ========================================== -->
+
+        <VBox spacing="20"
+              maxWidth="600"
+              styleClass="card">
+
+            <Label text="Calcul IMC"
+                   styleClass="section-title"/>
+
+            <Separator opacity="0.3"/>
+
+            <HBox spacing="12"
+                  alignment="CENTER_LEFT">
+
+                <TextField fx:id="txtPoids"
+                           promptText="Poids en kg (ex: 70 ou 70.5)"
+                           HBox.hgrow="ALWAYS"
+                           styleClass="text-field"/>
+
+                <TextField fx:id="txtTaille"
+                           promptText="Taille en mètres (ex: 1.75 ou 1,75)"
+                           HBox.hgrow="ALWAYS"
+                           styleClass="text-field"/>
+
+                <Button text="Calculer"
+                        onAction="#handleIMC"
+                        styleClass="primary-btn"/>
+            </HBox>
+
+            <Label fx:id="lblIMC"
+                   styleClass="imc-result"/>
+
+            <Label fx:id="lblIMCRemark"
+                   wrapText="true"
+                   styleClass="imc-remark"/>
+
+        </VBox>
+
+        <!-- ========================================== -->
+        <!-- =============== RESULT CARD =============== -->
+        <!-- ========================================== -->
+
+        <VBox spacing="15"
+              maxWidth="600"
+              styleClass="card">
+
+            <Label text="Résultat"
+                   styleClass="section-title"/>
+
+            <Separator opacity="0.3"/>
+
+            <TextArea fx:id="txtResult"
+                      prefHeight="220"
+                      editable="false"
+                      wrapText="true"
+                      styleClass="result-area"/>
+
+        </VBox>
+
+        <!-- Spacer bottom -->
+        <Region prefHeight="20"/>
+
+    </VBox>
+
+</ScrollPane>

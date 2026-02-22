@@ -17,6 +17,14 @@
                -fx-text-fill: white;
                -fx-alignment: CENTER_LEFT;
                -fx-cursor: hand;"/>
+        <Button onAction="#goToNutrition"
+                maxWidth="Infinity"
+                text=" 🍎 Nutrition &amp; Performance"
+                styleClass="nav-btn-user"
+                style="-fx-background-color: transparent;
+               -fx-text-fill: white;
+               -fx-alignment: CENTER_LEFT;
+               -fx-cursor: hand;"/>
         <Region VBox.vgrow="ALWAYS" />
 
         <Button onAction="#handleLogout" maxWidth="Infinity" text=" Déconnexion" style="-fx-background-color: #ef4444; -fx-text-fill: white; -fx-font-weight: bold; -fx-background-radius: 8;"/>

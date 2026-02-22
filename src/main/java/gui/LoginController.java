@@ -127,35 +127,25 @@ public class LoginController {
     @FXML
     void handleForgotPassword() {
         String email = txtEmail.getText();
-
-        if (email.isEmpty() || !email.contains("@")) {
-            new Alert(Alert.AlertType.WARNING, "Veuillez saisir votre email dans le champ de texte avant de cliquer !").show();
-            return;
-        }
-
         UserApp user = us.findByEmail(email);
 
         if (user != null) {
-            // 1. Gènèri el Code
-            String generatedOTP = String.valueOf((int) (Math.random() * 9000) + 1000);
-
-            // 2. Ab3ath el Mail direct
-            MailService.sendOTP(email, generatedOTP);
-
             try {
-                FXMLLoader loader = new FXMLLoader(getClass().getResource("/gui/ForgotPassword.fxml"));
+                FXMLLoader loader = new FXMLLoader(getClass().getResource("/gui/MethodSelection.fxml"));
                 Parent root = loader.load();
 
-                GUI.ForgotPasswordController controller = loader.getController();
-                // Passi el User wel Code s7i7
-                controller.initData(user, generatedOTP);
+                // Passi el User lel interface ejdida
+                MethodSelectionController controller = loader.getController();
+                controller.initData(user);
 
-                Stage stage = (Stage) txtEmail.getScene().getWindow();
+                // T-7allha fi Window (Stage) jdida kima popup Pro
+                Stage stage = new Stage();
+                stage.initModality(Modality.APPLICATION_MODAL); // T-khallih maynajemch yarja3 lel Login ken maykammel
                 stage.setScene(new Scene(root));
                 stage.show();
 
             } catch (IOException e) { e.printStackTrace(); }
-        } else {
-            new Alert(Alert.AlertType.ERROR, "Aucun utilisateur trouvé avec cet email !").show();
         }
-    }}
+    }
+  }
+

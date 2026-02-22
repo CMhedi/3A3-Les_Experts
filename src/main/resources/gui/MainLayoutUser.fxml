@@ -1,12 +1,19 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <?import javafx.scene.layout.*?>
 
-<BorderPane fx:id="mainPaneUser" prefHeight="700.0" prefWidth="1100.0" xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1">
+<BorderPane fx:id="mainPaneUser"
+            prefHeight="700.0"
+            prefWidth="1100.0"
+            xmlns="http://javafx.com/javafx/17"
+            xmlns:fx="http://javafx.com/fxml/1"
+            fx:controller="GUI.MainLayoutUserController">
+
     <left>
-        <fx:include source="SideBarUser.fxml" />
+        <fx:include source="SideBarUser.fxml" fx:id="sideBarUser"/>
     </left>
 
     <center>
-        <fx:include source="AddReclamation.fxml" />
+        <fx:include source="AddReclamation.fxml"/>
     </center>
+
 </BorderPane>

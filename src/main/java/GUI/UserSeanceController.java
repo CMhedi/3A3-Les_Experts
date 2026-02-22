@@ -345,6 +345,7 @@ public class UserSeanceController {
 
             GoogleCalendarService.GoogleEventData data =
                     GoogleCalendarService.addEvent(
+                            Session.getConnectedUser().getIdUser(),   // 🔥 IMPORTANT
                             "Séance : " + s.getNom(),
                             "Séance EcoAdventure",
                             start,

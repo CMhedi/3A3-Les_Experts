@@ -58,6 +58,7 @@ public class ForgotPasswordController implements Initializable {
         System.out.println("DEBUG: Interface prête pour " + user.getEmail() + " avec code: " + code);
     }
 
+
     @FXML
     void handleAction() {
         String enteredCode = f1.getText() + f2.getText() + f3.getText() + f4.getText();

@@ -163,17 +163,31 @@ public class ProfileController implements Initializable {
     private void updateProfileImage() {
         try {
             String imagePath = currentUser.getImageUrl();
+
+            Image image;
+
             if (imagePath != null && !imagePath.isEmpty()) {
-                if (imagePath.startsWith("/")) {
-                    profileCircle.setFill(new ImagePattern(new Image(getClass().getResourceAsStream(imagePath))));
+
+                if (imagePath.startsWith("http")) {
+                    // Chargement synchrone (IMPORTANT)
+                    image = new Image(imagePath, false);
                 } else {
-                    profileCircle.setFill(new ImagePattern(new Image(imagePath)));
+                    image = new Image(getClass().getResourceAsStream(imagePath));
                 }
-            } else {
-                profileCircle.setFill(new ImagePattern(new Image(getClass().getResourceAsStream("/gui/default-user.png"))));
+
+                if (!image.isError()) {
+                    profileCircle.setFill(new ImagePattern(image));
+                    return;
+                }
             }
+
+            // Image par défaut
+            Image defaultImage =
+                    new Image(getClass().getResourceAsStream("/gui/default-user.png"));
+            profileCircle.setFill(new ImagePattern(defaultImage));
+
         } catch (Exception e) {
-            profileCircle.setFill(new ImagePattern(new Image(getClass().getResourceAsStream("/gui/default-user.png"))));
+            e.printStackTrace();
         }
     }
 

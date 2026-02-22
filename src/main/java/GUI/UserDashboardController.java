@@ -265,7 +265,10 @@ public class UserDashboardController {
             if (googleEventId != null && !googleEventId.isBlank()) {
 
                 try {
-                    GoogleCalendarService.deleteEvent(googleEventId);
+                    GoogleCalendarService.deleteEvent(
+                            Session.getConnectedUser().getIdUser(),
+                            googleEventId
+                    );
                 } catch (Exception ignored) {}
             }
 

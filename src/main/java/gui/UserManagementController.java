@@ -315,44 +315,67 @@ public class UserManagementController {
     }
     @FXML
     void handleAjouter(ActionEvent event) {
-        // 1. Madem el-bouton wallat m-bindia (Disabled), ma3adech famma 7ajta b-check mta3 Error Labels hna.
-        // D-data dima bech toussel hna s7i7a 100%.
-
-        UserApp u = new UserApp();
-        u.setNom(txtNom.getText());
-        u.setPrenom(txtPrenom.getText());
-        u.setEmail(txtEmail.getText());
-        u.setTelephone(txtTel.getText());
-        u.setMotDePasse(txtMdp.getText());
-        u.setRole(comboRole.getValue());
-
-        // 2. Kenou COACH, n-zidu d-data mta3u (elli hya déjà validée fil-initialize)
-        if (comboRole.getValue() == RoleUser.COACH) {
-            u.setAge(Integer.parseInt(txtAge.getText()));
-            u.setExperience(txtExperience.getText());
-            u.setSpecialite(comboSpecialite.getValue());
-            u.setDisponibilite(comboDispo.getValue());
-            u.setBioCertifs(txtBio.getText());
-        }
-
-        // 3. Enregistrement
         try {
+
+            // ====== 1. Nettoyage des champs ======
+            String nom = txtNom.getText().trim();
+            String prenom = txtPrenom.getText().trim();
+            String email = txtEmail.getText().trim();
+            String tel = txtTel.getText().trim();
+            String mdp = txtMdp.getText().trim();
+
+            UserApp u = new UserApp();
+            u.setNom(nom);
+            u.setPrenom(prenom);
+            u.setEmail(email);
+            u.setTelephone(tel);
+            u.setMotDePasse(mdp);
+            u.setRole(comboRole.getValue());
+
+            // ====== 2. Génération Avatar PRO ======
+            String fullName = nom + " " + prenom;
+
+            String encodedName = java.net.URLEncoder.encode(
+                    fullName,
+                    java.nio.charset.StandardCharsets.UTF_8
+            );
+
+            String avatarUrl =
+                    "https://ui-avatars.com/api/?name=" +
+                            encodedName +
+                            "&background=random&color=fff&size=200";
+
+            u.setImageUrl(avatarUrl);
+
+            // ====== 3. Infos Coach ======
+            if (comboRole.getValue() == RoleUser.COACH) {
+                u.setAge(Integer.parseInt(txtAge.getText().trim()));
+                u.setExperience(txtExperience.getText().trim());
+                u.setSpecialite(comboSpecialite.getValue());
+                u.setDisponibilite(comboDispo.getValue());
+                u.setBioCertifs(txtBio.getText().trim());
+            }
+
+            // ====== 4. Ajout DB ======
             us.add(u);
-            // Alert de succès
+
+            // ====== 5. Message succès ======
             Alert success = new Alert(Alert.AlertType.INFORMATION);
             success.setTitle("Succès");
             success.setHeaderText(null);
-            success.setContentText("Compte créé avec succès !");
+            success.setContentText("✅ Compte créé avec succès !");
             success.showAndWait();
 
-            // Redirect lel Login
+            // ====== 6. Redirection Login ======
             Parent root = FXMLLoader.load(getClass().getResource("/gui/Login.fxml"));
             Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
             stage.setScene(new Scene(root));
+            stage.centerOnScreen();
+            stage.show();
 
         } catch (Exception e) {
-            // Hedhi el-Alert el-wa7ida elli t-khalliha (ken famma mouchkla fil-base de données)
-            showAlert("Erreur Base de données", "Impossible d'ajouter l'utilisateur: " + e.getMessage());
+            showAlert("Erreur", "Impossible d'ajouter l'utilisateur: " + e.getMessage());
+            e.printStackTrace();
         }
     }
     // Fonction sghira bech ma n-3awduch el-koud mta3 el-Alert

@@ -12,38 +12,41 @@ import javafx.stage.Stage;
 import java.io.IOException;
 
 public class SideBarUserController {
+    @FXML
+    void goToProfil(ActionEvent event) {
+        changeCenter("/gui/Profile.fxml");
+    }
 
     @FXML
     void goToMyReclamations(ActionEvent event) {
-            changeCenter("/gui/AddReclamation.fxml", event);
+        changeCenter("/gui/AddReclamation.fxml");
     }
 
-    @FXML
-    void goToProfil(ActionEvent event) {
-        changeCenter("/gui/Profile.fxml", event);
-    }
 
     @FXML
     void goToActivities(ActionEvent event) {
-        // changeCenter("/gui/UserActivities.fxml", event);
+       // SceneUtils.loadScene(
+              //  "/gui/UserActivities.fxml",
+               // "/admin.css",
+              //  (Node) event.getSource()
+        //);
     }
 
-    private void changeCenter(String fxmlPath, ActionEvent event) {
+    private void changeCenter(String fxmlPath) {
         try {
 
-            BorderPane mainPane = (BorderPane) ((Node) event.getSource()).getScene().lookup("#mainPaneUser");
+            BorderPane pane =
+                    (BorderPane) mainPane.getScene().lookup("#mainPaneUser");
 
-            if (mainPane != null) {
-                Parent page = FXMLLoader.load(getClass().getResource(fxmlPath));
-                mainPane.setCenter(page);
-            } else {
-
-                Parent root = ((Node) event.getSource()).getScene().getRoot();
-                if (root instanceof BorderPane) {
-                    ((BorderPane) root).setCenter(FXMLLoader.load(getClass().getResource(fxmlPath)));
-                }
+            if (pane == null) {
+                System.out.println("⚠ Impossible de trouver mainPaneUser");
+                return;
             }
-        } catch (IOException e) {
+
+            Parent page = FXMLLoader.load(getClass().getResource(fxmlPath));
+            pane.setCenter(page);
+
+        } catch (Exception e) {
             e.printStackTrace();
         }
     }
@@ -57,9 +60,22 @@ public class SideBarUserController {
 
     public void goToSeancesDisponibles(ActionEvent event) {
         SceneUtils.loadScene(
-                "/gui/UserSeanceView.fxml",   // adapte le chemin si besoin
+                "/UserSeanceView.fxml",   // adapte le chemin si besoin
                 "/admin.css",                 // ou user.css si tu en as un
                 (Node) event.getSource()
         );
+    }
+    private BorderPane mainPane;
+
+    public void setMainPane(BorderPane mainPane) {
+        this.mainPane = mainPane;
+    }
+
+    public void goToNutrition(ActionEvent event) {
+       SceneUtils.loadScene(
+                "/NuritionView.fxml",
+                "/nutrition.css",
+                (Node) event.getSource()
+       );
     }
 }

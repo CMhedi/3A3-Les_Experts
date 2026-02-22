@@ -1,0 +1,144 @@
+/* ============================= */
+/* MAIN CONTAINER */
+/* ============================= */
+.main-container {
+    -fx-background-color: linear-gradient(to bottom right, #F7F9F8, #EEF2F1);
+    -fx-padding: 40;
+}
+
+/* ============================= */
+/* TITLE */
+/* ============================= */
+.title-label {
+    -fx-font-size: 28px;
+    -fx-font-weight: 800;
+    -fx-text-fill: #123C33;
+    -fx-padding: 0 0 10 0;
+}
+
+/* ============================= */
+/* CARD */
+/* ============================= */
+.card {
+    -fx-background-color: white;
+    -fx-padding: 25;
+    -fx-background-radius: 20;
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.08), 15, 0, 0, 6);
+    -fx-transition: all 0.3s ease;
+}
+
+.card:hover {
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.15), 25, 0, 0, 10);
+}
+
+/* ============================= */
+/* SECTION TITLE */
+/* ============================= */
+.section-title {
+    -fx-font-size: 17px;
+    -fx-font-weight: 700;
+    -fx-text-fill: #143D30;
+}
+
+/* ============================= */
+/* TEXT FIELDS */
+/* ============================= */
+.text-field {
+    -fx-background-color: #F9FBFA;
+    -fx-background-radius: 12;
+    -fx-border-radius: 12;
+    -fx-border-color: #E2E8F0;
+    -fx-padding: 12;
+    -fx-font-size: 14px;
+    -fx-prompt-text-fill: #9CA3AF;
+}
+
+.text-field:focused {
+    -fx-border-color: #16A34A;
+    -fx-background-color: white;
+}
+
+/* ============================= */
+/* RESULT AREA */
+/* ============================= */
+.result-area {
+    -fx-background-color: #F9FBFA;
+    -fx-background-radius: 12;
+    -fx-border-radius: 12;
+    -fx-border-color: #E5E7EB;
+    -fx-padding: 15;
+    -fx-font-size: 14px;
+}
+
+/* ============================= */
+/* BUTTONS */
+/* ============================= */
+.button {
+    -fx-font-size: 14px;
+    -fx-font-weight: 600;
+    -fx-background-radius: 12;
+    -fx-padding: 8 18 8 18;
+    -fx-cursor: hand;
+}
+
+/* Primary */
+.primary-btn {
+    -fx-background-color: #143D30;
+    -fx-text-fill: white;
+}
+
+.primary-btn:hover {
+    -fx-background-color: #1F5C47;
+}
+
+/* Success */
+.success-btn {
+    -fx-background-color: #16A34A;
+    -fx-text-fill: white;
+}
+
+.success-btn:hover {
+    -fx-background-color: #15803D;
+}
+
+/* Secondary */
+.secondary-btn {
+    -fx-background-color: #E5E7EB;
+    -fx-text-fill: #143D30;
+}
+
+.secondary-btn:hover {
+    -fx-background-color: #D1D5DB;
+}
+
+/* ============================= */
+/* IMC RESULT */
+/* ============================= */
+.imc-result {
+    -fx-font-size: 20px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #123C33;
+}
+
+.imc-remark {
+    -fx-font-size: 14px;
+    -fx-text-fill: #555;
+}
+
+/* ============================= */
+/* RETOUR BUTTON */
+/* ============================= */
+.btn-retour {
+    -fx-background-color: transparent;
+    -fx-text-fill: #14532d;
+    -fx-font-size: 14px;
+    -fx-font-weight: bold;
+}
+
+.btn-retour:hover {
+    -fx-underline: true;
+}
+.button:hover {
+    -fx-scale-x: 1.03;
+    -fx-scale-y: 1.03;
+}
