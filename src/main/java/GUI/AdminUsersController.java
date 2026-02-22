@@ -1,6 +1,7 @@
 package GUI;
 
 import Entities.UserApp;
+import GUI.utils.DialogUtils;
 import Services.interfaces.UserService;
 import javafx.application.Platform;
 import javafx.collections.FXCollections;
@@ -42,7 +43,7 @@ public class AdminUsersController {
                 if (empty || user == null) {
                     setGraphic(null);
                 } else {
-                    // 1. حاوية الـ Card
+
                     HBox card = new HBox(20);
                     card.setAlignment(Pos.CENTER_LEFT);
                     card.setStyle("-fx-padding: 15; -fx-background-color: white; -fx-border-color: #f1f5f9; -fx-border-width: 0 0 1 0;");
@@ -52,7 +53,7 @@ public class AdminUsersController {
                     avatar.setStyle("-fx-background-color: #143D30; -fx-text-fill: white; -fx-font-weight: bold; " +
                             "-fx-min-width: 45; -fx-min-height: 45; -fx-background-radius: 25; -fx-alignment: center;");
 
-                    // 3. المعلومات الشخصية
+
                     VBox info = new VBox(5);
                     Label name = new Label(user.getNom() + " " + user.getPrenom());
                     name.setStyle("-fx-font-weight: bold; -fx-font-size: 15px;");
@@ -60,7 +61,6 @@ public class AdminUsersController {
                     email.setStyle("-fx-text-fill: #64748b; -fx-font-size: 13px;");
                     info.getChildren().addAll(name, email);
 
-                    // 4. الـ Role Badge (ملون حسب الدور)
                     Label roleBadge = new Label(user.getRole().toString());
                     String badgeStyle = "-fx-padding: 3 10; -fx-background-radius: 12; -fx-font-size: 11px; -fx-font-weight: bold; -fx-text-fill: white;";
                     if (user.getRole().toString().equals("ADMIN")) badgeStyle += "-fx-background-color: #1e293b;";
@@ -71,7 +71,6 @@ public class AdminUsersController {
                     Region spacer = new Region();
                     HBox.setHgrow(spacer, Priority.ALWAYS);
 
-                    // 5. أزرار التحكم
                     HBox actions = new HBox(10);
                     Button btnEdit = new Button("✏️");
                     btnEdit.setStyle("-fx-background-color: #e0f2fe; -fx-text-fill: #0284c7; -fx-cursor: hand;");
@@ -111,7 +110,6 @@ public class AdminUsersController {
             FXMLLoader loader = new FXMLLoader(getClass().getResource("/GUI/UserAddForm.fxml"));
             Parent addView = loader.load();
 
-            // Baddel el blasa el bidha barka bel Form mta3 el Ajout
             mainContent.getChildren().setAll(addView);
         } catch (IOException e) {
             e.printStackTrace();
@@ -122,13 +120,10 @@ public class AdminUsersController {
         try {
             FXMLLoader loader = new FXMLLoader(getClass().getResource("/GUI/UserUpdateForm.fxml"));
 
-            // 1. Load el view el loula (hedhi elli t-khali el @FXML y-welliw mouch null)
             Parent updateView = loader.load();
 
-            // 2. Tawa nadi el controller
             GUI.UserUpdateController controller = loader.getController();
 
-            // 3. Tawa nab3ath el data
             controller.initData(user, this);
 
             mainContent.getChildren().setAll(updateView);
@@ -140,11 +135,9 @@ public class AdminUsersController {
 
     public void showUserTable() {
         try {
-            // Njibou el Stage root
             Stage stage = (Stage) mainContent.getScene().getWindow();
             Scene scene = stage.getScene();
 
-            // Thabbet elli el root howa BorderPane (elli fih el fx:include)
             if (scene.getRoot() instanceof BorderPane mainPane) {
                 Parent root = FXMLLoader.load(getClass().getResource("/GUI/AdminUsers.fxml"));
                 mainPane.setCenter(root); // N-badlou ken el center, ma nmes-sh el Sidebar
@@ -154,18 +147,23 @@ public class AdminUsersController {
         }
     }
     private void handleDeleteUser(UserApp user) {
-        Alert alert = new Alert(Alert.AlertType.CONFIRMATION, "Supprimer " + user.getNom() + " ?", ButtonType.YES, ButtonType.NO);
-        alert.showAndWait().ifPresent(response -> {
-            if (response == ButtonType.YES) {
-                try {
-                    userService.delete(user.getIdUser());
-                    userList.remove(user);
-                    userListView.refresh();
-                } catch (Exception e) {
-                    new Alert(Alert.AlertType.ERROR, "Erreur suppression: " + e.getMessage()).show();
-                }
+        boolean confirm = DialogUtils.showConfirmation(
+                "Suppression",
+                "Voulez-vous vraiment supprimer l'utilisateur : " + user.getNom() + " ?"
+        );
+
+        if (confirm) {
+            try {
+                userService.delete(user.getIdUser());
+                userList.remove(user);
+                userListView.refresh();
+
+                DialogUtils.showInfo("Succès", "Utilisateur supprimé !");
+
+            } catch (Exception e) {
+                DialogUtils.showError("Erreur suppression", "❌ Impossible de supprimer : " + e.getMessage());
             }
-        });
+        }
     }
 
     private void filterData(String query) {

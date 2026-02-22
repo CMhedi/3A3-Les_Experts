@@ -1,6 +1,7 @@
 package GUI;
 
 import Entities.UserApp;
+import GUI.utils.DialogUtils;
 import Services.interfaces.UserService;
 import enums.RoleUser;
 import javafx.beans.binding.Bindings;
@@ -29,12 +30,10 @@ public class UserAddController {
 
     @FXML
     public void initialize() {
-        // 1. تعبئة القوائم
         comboRole.setItems(FXCollections.observableArrayList("USER_SIMPLE", "ADMIN", "COACH"));
         comboSpecialite.setItems(FXCollections.observableArrayList("FITNESS", "YOGA", "RUNNING", "BASKETBALL"));
         comboDispo.setItems(FXCollections.observableArrayList("MATIN", "SOIR", "JOURNEE_COMPLETE"));
 
-        // 2. تفعيل الـ ManagedProperty لجميع الـ Labels لضمان عدم تهليلك الـ Design
         Label[] labels = {errorNom, errorPrenom, errorEmail, errorPassword, errorAge, errorSpec, errorDispo, errorExperience};
         for (Label lb : labels) {
             if (lb != null) {
@@ -98,11 +97,9 @@ public class UserAddController {
                     if (expVal < 0) {
                         updateFieldValidation(txtExperience, errorExperience, true, "⚠️ Ne يمكن pas être négative");
                     } else if (expVal > ageActif) {
-                        // الميساج الديناميكي متاعك
                         String msg = "⚠️ Max " + ageActif + " ans (âge actif: " + ageVal + "-18)";
                         updateFieldValidation(txtExperience, errorExperience, true, msg);
                     } else {
-                        // كل شيء مريغل
                         updateFieldValidation(txtExperience, errorExperience, false, "");
                     }
                 }
@@ -141,7 +138,6 @@ public class UserAddController {
                         .or(comboRole.valueProperty().isNull())
                         .or(Bindings.createBooleanBinding(() -> {
                             if ("COACH".equals(comboRole.getValue())) {
-                                // إذا كان كوتش، لازم يثبت في غلطات العمر والخبرة
                                 return errorAge.isVisible() || errorExperience.isVisible() || comboSpecialite.getValue() == null;
                             }
                             return false;
@@ -159,10 +155,17 @@ public class UserAddController {
             newUser.setMotDePasse(txtPassword.getText());
 
             userService.add(newUser);
-            new Alert(Alert.AlertType.INFORMATION, "✅ Utilisateur ajouté avec succès!").showAndWait();
+            DialogUtils.showInfo(
+                    "Succès",
+                    "✅ Utilisateur ajouté avec succès!"
+            );
             handleCancel();
+
         } catch (Exception e) {
-            new Alert(Alert.AlertType.ERROR, "❌ Erreur: " + e.getMessage()).show();
+            DialogUtils.showError(
+                    "Erreur",
+                    "❌ Erreur: " + e.getMessage()
+            );
         }
     }
 

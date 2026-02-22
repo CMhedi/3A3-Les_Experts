@@ -1,6 +1,7 @@
 package GUI;
 
 import Entities.UserApp;
+import GUI.utils.DialogUtils;
 import Services.interfaces.UserService;
 import enums.RoleUser;
 import javafx.beans.binding.Bindings;
@@ -366,11 +367,10 @@ public class UserManagementController {
             us.add(u);
 
             // ====== 5. Message succès ======
-            Alert success = new Alert(Alert.AlertType.INFORMATION);
-            success.setTitle("Succès");
-            success.setHeaderText(null);
-            success.setContentText("✅ Compte créé avec succès !");
-            success.showAndWait();
+            DialogUtils.showInfo(
+                    "Succès",
+                    "✅ Compte créé avec succès !"
+            );
 
             // ====== 6. Redirection Login ======
             Parent root = FXMLLoader.load(getClass().getResource("/GUI/Login.fxml"));
@@ -380,20 +380,15 @@ public class UserManagementController {
             stage.show();
 
         } catch (Exception e) {
-            showAlert("Erreur", "Impossible d'ajouter l'utilisateur: " + e.getMessage());
+            DialogUtils.showError("Erreur", "Impossible d'ajouter l'utilisateur: " + e.getMessage());
             e.printStackTrace();
         }
     }
-    // Fonction sghira bech ma n-3awduch el-koud mta3 el-Alert
-    private void showAlert(String title, String content) {
-        Alert alert = new Alert(Alert.AlertType.WARNING);
-        alert.setTitle(title);
-        alert.setHeaderText(null);
-        alert.setContentText(content);
-        alert.showAndWait();
-    }
+
     @FXML
     void handleGoToLogin(MouseEvent event) {
+
+
         try {
 
             Parent root = FXMLLoader.load(getClass().getResource("/GUI/Login.fxml"));

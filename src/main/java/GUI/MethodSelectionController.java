@@ -1,6 +1,7 @@
 package GUI;
 
 import Entities.UserApp;
+import GUI.utils.DialogUtils;
 import Utiles.MailService;
 import Utiles.SmsService; // El class elli 3malneha b-Vonage wala Twilio
 import javafx.event.ActionEvent;
@@ -21,9 +22,7 @@ public class MethodSelectionController {
     private UserApp currentUser;
     private String generatedCode;
 
-    /**
-     * Hedhi el méthode elli n-nadouha mel LoginController
-     */
+
     public void initData(UserApp user) {
         this.currentUser = user;
         // Generi code fih 4 ar9am
@@ -55,7 +54,10 @@ public class MethodSelectionController {
             // 3. Aller vers la vérification
             goToVerifyCode();
         } else {
-            showAlert("Erreur", "Cet utilisateur n'a pas de numéro de téléphone enregistré.");
+            DialogUtils.showWarning(
+                    "Données manquantes",
+                    "Cet utilisateur n'a pas de numéro de téléphone enregistré."
+            );
         }
     }
 
@@ -75,7 +77,10 @@ public class MethodSelectionController {
 
         } catch (IOException e) {
             e.printStackTrace();
-            showAlert("Erreur", "Impossible de charger l'interface de vérification.");
+            DialogUtils.showError(
+                    "Erreur de chargement",
+                    "Impossible de charger l'interface de vérification : " + e.getMessage()
+            );
         }
     }
 

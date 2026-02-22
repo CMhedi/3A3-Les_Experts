@@ -2,6 +2,7 @@ package GUI;
 
 import Entities.Session;
 import Entities.UserApp;
+import GUI.utils.DialogUtils;
 import Services.interfaces.UserService;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
@@ -21,16 +22,15 @@ import org.mindrot.jbcrypt.BCrypt;
 public class LoginController {
 
     @FXML private TextField txtEmail;
-    @FXML private PasswordField txtMdp;        // الحقل المخفي
-    @FXML private TextField txtMdpVisible;     // الحقل الظاهر
-    @FXML private Button btnToggleMdp;         // زر العين
+    @FXML private PasswordField txtMdp;
+    @FXML private TextField txtMdpVisible;
+    @FXML private Button btnToggleMdp;
 
     private boolean isMdpVisible = false;
     private UserService us = new UserService();
 
     @FXML
     public void initialize() {
-        // الربط المتبادل: أي تغيير في أحدهما يظهر في الآخر تلقائياً
         txtMdp.textProperty().bindBidirectional(txtMdpVisible.textProperty());
     }
 
@@ -51,11 +51,13 @@ public class LoginController {
     @FXML
     void handleLogin(ActionEvent event) {
         String email = txtEmail.getText();
-        String mdp = txtMdp.getText(); // القيمة هي نفسها في الحقلين بسبب الـ binding
+        String mdp = txtMdp.getText();
 
         if (email.isEmpty() || mdp.isEmpty()) {
-            new Alert(Alert.AlertType.WARNING, "Veuillez remplir tous les champs !").show();
-            return;
+            DialogUtils.showWarning(
+                    "Champs manquants",
+                    "Veuillez remplir tous les champs !"
+            );            return;
         }
 
         try {
@@ -81,11 +83,11 @@ public class LoginController {
                 stage.show();
 
             } else {
-                new Alert(Alert.AlertType.ERROR, "Email ou Mot de passe incorrect !").show();
+                DialogUtils.showError("Échec de connexion", "Email ou Mot de passe incorrect !");
             }
         } catch (Exception e) {
             e.printStackTrace();
-            new Alert(Alert.AlertType.ERROR, "Erreur lors du login: " + e.getMessage()).show();
+            DialogUtils.showError("Erreur système", "Une erreur est survenue lors du login : " + e.getMessage());
         }
     }
 
@@ -119,7 +121,10 @@ public class LoginController {
                 stage.show();
             } catch (IOException e) { e.printStackTrace(); }
         } else {
-            new Alert(Alert.AlertType.WARNING, "Veuillez saisir un email valide d'abord.").show();
+            DialogUtils.showWarning(
+                    "Email Manquant",
+                    "Veuillez saisir un email valide d'abord."
+            );
         }
     }
 }

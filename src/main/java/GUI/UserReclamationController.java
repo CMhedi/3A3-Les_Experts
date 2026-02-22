@@ -54,12 +54,10 @@ public class UserReclamationController {
                     setText(null);
                     setGraphic(null);
                 } else {
-                    // 1. الحاوية الكبيرة (Card)
                     VBox card = new VBox(10);
                     card.setStyle("-fx-padding: 15; -fx-background-color: white; -fx-background-radius: 12; " +
                             "-fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.1), 10, 0, 0, 5); -fx-border-color: #e2e8f0;");
 
-                    // 2. الهيدر (Type + Status)
                     HBox header = new HBox();
                     Label type = new Label(item.getType());
                     type.setStyle("-fx-font-weight: bold; -fx-font-size: 16px; -fx-text-fill: #143D30;");
@@ -73,12 +71,10 @@ public class UserReclamationController {
 
                     header.getChildren().addAll(type, spacer, statut);
 
-                    // 3. المحتوى
                     Label contenu = new Label(item.getContenu());
                     contenu.setWrapText(true);
                     contenu.setStyle("-fx-text-fill: #475569;");
 
-                    // 4. أزرار التحكم (Modifier / Supprimer) داخل الـ Card
                     HBox actions = new HBox(10);
                     actions.setAlignment(Pos.CENTER_RIGHT);
 
@@ -90,14 +86,12 @@ public class UserReclamationController {
                     btnSupp.setStyle("-fx-background-color: #fee2e2; -fx-text-fill: #ef4444; -fx-cursor: hand; -fx-background-radius: 5;");
                     btnSupp.setOnAction(event -> handleDeleteFromCard(item)); // ميثود جديدة
 
-                    // التعديل مسموح به فقط إذا كانت الريكلاماسيون في الانتظار (اختياري)
                     if (item.getStatut().toString().equals("EN_ATTENTE")) {
                         actions.getChildren().addAll(btnModif, btnSupp);
                     }
 
                     card.getChildren().addAll(header, contenu);
 
-                    // إذا فما إجابة
                     if (item.getReponse() != null && !item.getReponse().isEmpty()) {
                         Label rep = new Label("💬 " + item.getReponse());
                         rep.setStyle("-fx-font-style: italic; -fx-text-fill: #64748b; -fx-background-color: #f8fafc; -fx-padding: 8; -fx-background-radius: 5;");
@@ -111,9 +105,8 @@ public class UserReclamationController {
         });
     }
 
-    // ميثودات مساعدة للأزرار داخل الكارد
     private void handleDeleteFromCard(Reclamation rec) {
-        listMyRecs.getSelectionModel().select(rec); // نختاروها باش نخدمو بالماكرو القديم
+        listMyRecs.getSelectionModel().select(rec);
         handleDelete();
     }
 

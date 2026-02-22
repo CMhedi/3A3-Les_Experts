@@ -1,6 +1,7 @@
 package GUI;
 
 import Entities.UserApp;
+import GUI.utils.DialogUtils;
 import Services.interfaces.UserService;
 import enums.RoleUser;
 import javafx.collections.FXCollections;
@@ -13,8 +14,8 @@ import java.util.Arrays;
 public class UserUpdateController {
 
     @FXML private TextField txtNom, txtPrenom, txtEmail;
-    @FXML private PasswordField txtPassword;         // الحقل المخفي (النقاط)
-    @FXML private TextField txtPasswordVisible;      // الحقل الظاهر (الكتيبة)
+    @FXML private PasswordField txtPassword;
+    @FXML private TextField txtPasswordVisible;
     @FXML private Button btnTogglePassword;
     @FXML private ComboBox<String> comboRole;
 
@@ -70,25 +71,22 @@ public class UserUpdateController {
     void handleUpdate() {
         try {
             if (comboRole.getValue() == null) {
-                new Alert(Alert.AlertType.WARNING, "Veuillez choisir un rôle!").show();
+                DialogUtils.showWarning("Attention", "Veuillez choisir un rôle !");
                 return;
             }
 
-            // تحديث الكائن currentUser
             currentUser.setNom(txtNom.getText());
             currentUser.setPrenom(txtPrenom.getText());
             currentUser.setEmail(txtEmail.getText());
             currentUser.setRole(RoleUser.valueOf(comboRole.getValue()));
 
-            // تحديث كلمة السر (بما أنهما مرتبطان، نأخذ القيمة من أي منهما)
             String updatedPassword = txtPassword.getText();
             if (updatedPassword != null && !updatedPassword.trim().isEmpty()) {
                 currentUser.setMotDePasse(updatedPassword);
             }
 
             userService.update(currentUser);
-            new Alert(Alert.AlertType.INFORMATION, "✅ Utilisateur mis à jour !").showAndWait();
-
+            DialogUtils.showInfo("Succès", "✅ Utilisateur mis à jour avec succès !");
             if (parentController != null) {
                 parentController.loadUserData();
                 parentController.showUserTable();
@@ -96,8 +94,7 @@ public class UserUpdateController {
 
         } catch (Exception e) {
             e.printStackTrace();
-            new Alert(Alert.AlertType.ERROR, "Erreur: " + e.getMessage()).show();
-        }
+            DialogUtils.showError("Erreur", "Impossible de mettre à jour : " + e.getMessage());        }
     }
 
     @FXML
