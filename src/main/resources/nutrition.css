@@ -142,3 +142,89 @@
     -fx-scale-x: 1.03;
     -fx-scale-y: 1.03;
 }
+/* ============================= */
+/* RESULT DESIGN PREMIUM */
+/* ============================= */
+
+.result-calories {
+    -fx-font-size: 30px;
+    -fx-font-weight: 800;
+    -fx-text-fill: #16A34A;
+}
+
+.macro-box {
+    -fx-background-color: #F3F4F6;
+    -fx-padding: 15;
+    -fx-background-radius: 16;
+    -fx-min-width: 100;
+}
+
+.macro-box:hover {
+    -fx-background-color: #E5E7EB;
+}
+
+.macro-label {
+    -fx-font-size: 12px;
+    -fx-text-fill: #6B7280;
+}
+.result-message {
+    -fx-font-size: 14px;
+    -fx-text-fill: #555;
+}
+/* ============================= */
+/* CALORIES */
+/* ============================= */
+
+.result-calories {
+    -fx-font-size: 32px;
+    -fx-font-weight: 800;
+    -fx-text-fill: #16A34A;
+}
+
+/* ============================= */
+/* MACRO CARDS */
+/* ============================= */
+
+.macro-card {
+    -fx-background-color: white;
+    -fx-padding: 15 20 15 20;
+    -fx-background-radius: 16;
+    -fx-min-width: 110;
+    -fx-alignment: center;
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.06), 10, 0, 0, 4);
+}
+
+.macro-value {
+    -fx-font-size: 18px;
+    -fx-font-weight: 700;
+}
+
+.macro-title {
+    -fx-font-size: 12px;
+    -fx-text-fill: #6B7280;
+}
+
+/* ============================= */
+/* COULEUR PAR MACRO */
+/* ============================= */
+
+.protein-card .macro-value {
+    -fx-text-fill: #2563EB; /* bleu */
+}
+
+.fat-card .macro-value {
+    -fx-text-fill: #F59E0B; /* orange */
+}
+
+.carb-card .macro-value {
+    -fx-text-fill: #10B981; /* vert */
+}
+
+/* ============================= */
+/* MESSAGE */
+/* ============================= */
+
+.result-message {
+    -fx-font-size: 14px;
+    -fx-text-fill: #555;
+}

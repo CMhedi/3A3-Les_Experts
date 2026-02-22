@@ -106,7 +106,7 @@
         <!-- =============== RESULT CARD =============== -->
         <!-- ========================================== -->
 
-        <VBox spacing="15"
+        <VBox spacing="25"
               maxWidth="600"
               styleClass="card">
 
@@ -115,11 +115,40 @@
 
             <Separator opacity="0.3"/>
 
-            <TextArea fx:id="txtResult"
-                      prefHeight="220"
-                      editable="false"
-                      wrapText="true"
-                      styleClass="result-area"/>
+            <VBox spacing="20" alignment="CENTER">
+
+                <!-- Calories -->
+                <Label fx:id="lblCalories"
+                       text="0 kcal"
+                       styleClass="result-calories"/>
+
+                <!-- Macros -->
+                <HBox spacing="30" alignment="CENTER">
+
+                    <!-- Protéines -->
+                    <VBox alignment="CENTER" spacing="5" styleClass="macro-card protein-card">
+                        <Label fx:id="lblProteins" text="0 g" styleClass="macro-value"/>
+                        <Label text="Protéines" styleClass="macro-title"/>
+                    </VBox>
+
+                    <!-- Lipides -->
+                    <VBox alignment="CENTER" spacing="5" styleClass="macro-card fat-card">
+                        <Label fx:id="lblFats" text="0 g" styleClass="macro-value"/>
+                        <Label text="Lipides" styleClass="macro-title"/>
+                    </VBox>
+
+                    <!-- Glucides -->
+                    <VBox alignment="CENTER" spacing="5" styleClass="macro-card carb-card">
+                        <Label fx:id="lblCarbs" text="0 g" styleClass="macro-value"/>
+                        <Label text="Glucides" styleClass="macro-title"/>
+                    </VBox>
+
+                </HBox>
+
+                <Label fx:id="lblMessage"
+                       styleClass="result-message"/>
+
+            </VBox>
 
         </VBox>
 

@@ -13,7 +13,6 @@ import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.chart.LineChart;
 import javafx.scene.control.Label;
-import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
 import javafx.stage.Stage;
 
@@ -22,55 +21,74 @@ import java.util.List;
 
 public class NutritionController {
 
-    @FXML
-    private TextField txtFood;
-    @FXML
-    private LineChart<String, Number> caloriesChart;
-    @FXML
-    private TextArea txtResult;
+    // ==============================
+    // FXML COMPONENTS
+    // ==============================
 
-    private NutritionLogService logService =
-            new NutritionLogService();
+    @FXML private TextField txtIngredient;
+    @FXML private TextField txtPoids;
+    @FXML private TextField txtTaille;
 
+    @FXML private Label lblCalories;
+    @FXML private Label lblProteins;
+    @FXML private Label lblFats;
+    @FXML private Label lblCarbs;
+    @FXML private Label lblMessage;
+
+    @FXML private Label lblIMC;
+    @FXML private Label lblIMCRemark;
+
+    @FXML private LineChart<String, Number> caloriesChart;
+
+    // ==============================
+    // SERVICES
+    // ==============================
+
+    private NutritionLogService logService = new NutritionLogService();
     private double[] lastNutritionValues;
+
+    // ==============================
+    // ANALYSE ALIMENT
+    // ==============================
 
     @FXML
     void handleAnalyzeFood(ActionEvent event) {
 
-        if (txtFood.getText().isEmpty()) {
-            txtResult.setText("Veuillez entrer un aliment.");
+        if (txtIngredient.getText().isEmpty()) {
+            lblMessage.setText("Veuillez entrer un aliment.");
             return;
         }
 
-        txtResult.setText("Analyse en cours...");
+        lblMessage.setText("Analyse en cours...");
 
         new Thread(() -> {
-
             try {
 
                 lastNutritionValues =
                         NutritionService.getNutritionValues(
-                                txtFood.getText());
+                                txtIngredient.getText());
 
-                String result =
-                        "🔥 Calories: " + lastNutritionValues[0] + " kcal\n" +
-                                "🥩 Protéines: " + lastNutritionValues[1] + " g\n" +
-                                "🧈 Lipides: " + lastNutritionValues[2] + " g\n" +
-                                "🍞 Glucides: " + lastNutritionValues[3] + " g";
-
-                Platform.runLater(() ->
-                        txtResult.setText(result)
-                );
+                Platform.runLater(() -> {
+                    lblCalories.setText("🔥 " + lastNutritionValues[0] + " kcal");
+                    lblProteins.setText("🥩 " + lastNutritionValues[1] + " g");
+                    lblFats.setText("🧈 " + lastNutritionValues[2] + " g");
+                    lblCarbs.setText("🍞 " + lastNutritionValues[3] + " g");
+                    lblMessage.setText("");
+                });
 
             } catch (Exception e) {
 
                 Platform.runLater(() ->
-                        txtResult.setText("Erreur API.")
+                        lblMessage.setText("❌ Erreur API.")
                 );
             }
 
         }).start();
     }
+
+    // ==============================
+    // AJOUT AU JOURNAL
+    // ==============================
 
     @FXML
     void handleSaveToJournal(ActionEvent event) {
@@ -78,14 +96,14 @@ public class NutritionController {
         try {
 
             if (lastNutritionValues == null) {
-                txtResult.setText("Analyse d'abord un aliment !");
+                lblMessage.setText("Analyse d'abord un aliment !");
                 return;
             }
 
             NutritionLog log =
                     new NutritionLog(
                             Session.getConnectedUser().getIdUser(),
-                            txtFood.getText(),
+                            txtIngredient.getText(),
                             lastNutritionValues[0],
                             lastNutritionValues[1],
                             lastNutritionValues[2],
@@ -95,12 +113,16 @@ public class NutritionController {
 
             logService.add(log);
 
-            txtResult.appendText("\n\n✅ Ajouté au journal !");
+            lblMessage.setText("✅ Ajouté au journal !");
 
         } catch (Exception e) {
-            txtResult.setText("Erreur sauvegarde.");
+            lblMessage.setText("❌ Erreur sauvegarde.");
         }
     }
+
+    // ==============================
+    // AFFICHER JOURNAL
+    // ==============================
 
     @FXML
     void handleShowJournal(ActionEvent event) {
@@ -111,24 +133,31 @@ public class NutritionController {
                     logService.getByUser(
                             Session.getConnectedUser().getIdUser());
 
-            StringBuilder sb = new StringBuilder();
-
-            for (NutritionLog log : list) {
-
-                sb.append(log.getLogDate())
-                        .append(" - ")
-                        .append(log.getFoodName())
-                        .append(" - ")
-                        .append(log.getCalories())
-                        .append(" kcal\n");
+            if (list.isEmpty()) {
+                lblMessage.setText("Aucune entrée dans le journal.");
+                return;
             }
 
-            txtResult.setText(sb.toString());
+            double totalCalories = 0;
+
+            for (NutritionLog log : list) {
+                totalCalories += log.getCalories();
+            }
+
+            lblCalories.setText("🔥 Total Journal : " + totalCalories + " kcal");
+            lblProteins.setText("");
+            lblFats.setText("");
+            lblCarbs.setText("");
+            lblMessage.setText("Journal chargé avec succès.");
 
         } catch (Exception e) {
-            txtResult.setText("Erreur chargement journal.");
+            lblMessage.setText("❌ Erreur chargement journal.");
         }
     }
+
+    // ==============================
+    // TOTAL AUJOURD'HUI
+    // ==============================
 
     @FXML
     void handleTodayTotal(ActionEvent event) {
@@ -139,18 +168,20 @@ public class NutritionController {
                     logService.getTodayTotal(
                             Session.getConnectedUser().getIdUser());
 
-            txtResult.setText("Total aujourd'hui : " +
-                    total + " kcal");
+            lblCalories.setText("🔥 " + total + " kcal");
+            lblProteins.setText("");
+            lblFats.setText("");
+            lblCarbs.setText("");
+            lblMessage.setText("Total calorique du jour");
 
         } catch (Exception e) {
-            txtResult.setText("Erreur calcul total.");
+            lblMessage.setText("❌ Erreur calcul total.");
         }
     }
-    @FXML
-    private TextField txtPoids, txtTaille;
 
-    @FXML
-    private Label lblIMC, lblIMCRemark;
+    // ==============================
+    // CALCUL IMC
+    // ==============================
 
     @FXML
     void handleIMC(ActionEvent event) {
@@ -191,6 +222,10 @@ public class NutritionController {
         }
     }
 
+    // ==============================
+    // RETOUR
+    // ==============================
+
     @FXML
     void handleRetour(ActionEvent event) {
         try {
@@ -207,5 +242,4 @@ public class NutritionController {
             e.printStackTrace();
         }
     }
-
 }
