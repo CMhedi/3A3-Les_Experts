@@ -25,7 +25,7 @@ public class CallController {
     @FXML private Label callStatus;
     @FXML private Circle profileCircle;
     @FXML private Button acceptButton;
-    @FXML private Button rejectButton;   // ← ajouter cet fx:id dans le FXML
+    @FXML private Button rejectButton;
 
     private Stage stage;
     private MediaPlayer mediaPlayer;
@@ -49,6 +49,20 @@ public class CallController {
     // ✅ Protection contre les doubles clics
     private boolean isRecordingStarted = false;
 
+    /**
+     * Called automatically after FXML loading.
+     * Use this to verify that all FXML components are injected.
+     */
+    @FXML
+    public void initialize() {
+        System.out.println("📱 CallController initialized");
+        if (callerName == null) System.err.println("⚠️ callerName is NULL ! Check fx:id in FXML.");
+        if (callStatus == null) System.err.println("⚠️ callStatus is NULL ! Check fx:id in FXML.");
+        if (profileCircle == null) System.err.println("⚠️ profileCircle is NULL ! Check fx:id in FXML.");
+        if (acceptButton == null) System.err.println("⚠️ acceptButton is NULL ! Check fx:id in FXML.");
+        if (rejectButton == null) System.err.println("⚠️ rejectButton is NULL ! Check fx:id in FXML.");
+    }
+
     public void setCallerData(String name, Stage stage) {
         Platform.runLater(() -> {
             this.callerNameStr = name;
@@ -58,7 +72,7 @@ public class CallController {
                 this.callerName.setText(name);
                 System.out.println("📞 Incoming call from: " + name);
             } else {
-                System.err.println("❌ ERROR: callerName FXML component is NULL");
+                System.err.println("❌ ERROR: callerName FXML component is NULL – cannot set caller name.");
             }
 
             playIncomingCallSound();
@@ -118,31 +132,28 @@ public class CallController {
     }
 
     private void updateCallStatus() {
+        if (callStatus == null) return; // safety check
         String statusText = "Incoming call... " + remainingSeconds + "s";
+        callStatus.setText(statusText);
 
-        if (callStatus != null) {
-            callStatus.setText(statusText);
-
-            if (remainingSeconds > 20) {
-                callStatus.setStyle("-fx-text-fill: #b3b3b3; -fx-font-size: 14;");
-            } else if (remainingSeconds > 10) {
-                callStatus.setStyle("-fx-text-fill: #ff9500; -fx-font-size: 14;");
-            } else {
-                callStatus.setStyle("-fx-text-fill: #ff3b30; -fx-font-size: 14; -fx-font-weight: bold;");
-            }
+        if (remainingSeconds > 20) {
+            callStatus.setStyle("-fx-text-fill: #b3b3b3; -fx-font-size: 14;");
+        } else if (remainingSeconds > 10) {
+            callStatus.setStyle("-fx-text-fill: #ff9500; -fx-font-size: 14;");
+        } else {
+            callStatus.setStyle("-fx-text-fill: #ff3b30; -fx-font-size: 14; -fx-font-weight: bold;");
         }
     }
 
     @FXML
     public void handleAccept() {
         if (isRecordingStarted) {
-            System.out.println("⚠️ Accept déjà traité – ignoré");
+            System.out.println("⚠️ Accept already processed – ignoring");
             return;
         }
         isRecordingStarted = true;
         callAccepted = true;
 
-        // Désactiver les deux boutons
         if (acceptButton != null) acceptButton.setDisable(true);
         if (rejectButton != null) rejectButton.setDisable(true);
 
@@ -170,18 +181,16 @@ public class CallController {
 
     @FXML
     private void handleReject() {
-        // Si déjà accepté, on ignore le rejet
         if (callAccepted) {
             System.out.println("⚠️ Call already accepted – ignoring reject");
             return;
         }
         if (isRecordingStarted) {
-            System.out.println("⚠️ Reject déjà traité – ignoré");
+            System.out.println("⚠️ Reject already processed – ignoring");
             return;
         }
         isRecordingStarted = true;
 
-        // Désactiver les deux boutons
         if (acceptButton != null) acceptButton.setDisable(true);
         if (rejectButton != null) rejectButton.setDisable(true);
 

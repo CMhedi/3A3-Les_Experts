@@ -109,7 +109,7 @@ public class MessengerController implements Initializable {
     private List<Conversation> allConversations;
     private int selectedConversationId = -1;
     private int currentUserId = 3;  // valeur par défaut
-
+    private VoiceMessagePlayer voicePlayer = new VoiceMessagePlayer();
 
 
 
@@ -161,6 +161,7 @@ public class MessengerController implements Initializable {
         }
 
     }
+
 
     private boolean requestUserLogin() {
         TextInputDialog dialog = new TextInputDialog("2");
@@ -477,37 +478,122 @@ public class MessengerController implements Initializable {
             }
 
             // ✅ AFFICHER UN MESSAGE VOCAL
-            private void displayVocalMessage(VBox container, Message msg) {
-                Text textNode = new Text(msg.getContenu());
-                textNode.setFont(Font.font("Segoe UI Emoji", 14));
-                TextFlow textFlow = new TextFlow(textNode);
-                textFlow.setMaxWidth(300);
+            // ضع هذا الكود مكان displayVocalMessage() الموجود في setupMessagesList()
 
+            // ✅ AFFICHER UN MESSAGE VOCAL (محدث مع أزرار التشغيل)
+            private void displayVocalMessage(VBox container, Message msg) {
+                // محتوى الرسالة يحتوي على مسار الملف
+                String audioPath = msg.getContenu();
+
+                // استخرج اسم الملف فقط
+                String audioFileName = extractAudioFileName(audioPath);
+
+                // ========== إنشاء الـ UI ==========
+
+                // صندوق الرسالة الصوتية
+                HBox voiceBox = new HBox(12);
+                voiceBox.setAlignment(Pos.CENTER_LEFT);
+                voiceBox.setPadding(new Insets(10, 14, 10, 14));
+                voiceBox.setStyle("-fx-background-radius: 18 18 18 2; -fx-background-color: #efeff3;");
+
+                // إذا كانت من المستخدم الحالي
                 if (msg.getIdUser() == currentUserId) {
-                    textNode.setFill(Color.WHITE);
-                    textFlow.setStyle(
+                    voiceBox.setStyle(
                             "-fx-background-color: linear-gradient(to bottom right, red, #00c6ff);" +
-                                    "-fx-background-radius: 18 18 2 18;" +
-                                    "-fx-padding: 10 14;"
-                    );
-                } else {
-                    textNode.setFill(Color.web("#050505"));
-                    textFlow.setStyle(
-                            "-fx-background-color: #efeff3;" +
-                                    "-fx-background-radius: 18 18 18 2;" +
-                                    "-fx-padding: 10 14;"
+                                    "-fx-background-radius: 18 18 2 18;"
                     );
                 }
 
+                // ========== زر التشغيل/الإيقاف ==========
+                Button playStopBtn = new Button("▶️");
+                playStopBtn.setStyle(
+                        "-fx-background-color: transparent;" +
+                                "-fx-font-size: 20;" +
+                                "-fx-cursor: hand;" +
+                                "-fx-padding: 0 5;"
+                );
+
+                // ========== عرض اسم الملف ==========
+                Label audioLabel = new Label("🎵 " + audioFileName);
+                audioLabel.setFont(Font.font("Segoe UI", 12));
+                audioLabel.setStyle(
+                        "-fx-text-fill: " + (msg.getIdUser() == currentUserId ? "white" : "#050505") + ";"
+                );
+                audioLabel.setWrapText(false);
+
+                // ========== زر الحذف (اختياري) ==========
+                Button deleteBtn = new Button("✕");
+                deleteBtn.setStyle(
+                        "-fx-background-color: transparent;" +
+                                "-fx-text-fill: " + (msg.getIdUser() == currentUserId ? "white" : "#999") + ";" +
+                                "-fx-font-size: 12;" +
+                                "-fx-cursor: hand;"
+                );
+                deleteBtn.setVisible(msg.getIdUser() == currentUserId);
+                deleteBtn.setOnAction(e -> {
+                    if (messageDAO.deleteMessage(msg.getIdMessage())) {
+                        loadMessages(selectedConversationId);
+                    }
+                });
+
+                // ========== إضافة العناصر للصندوق ==========
+                voiceBox.getChildren().addAll(playStopBtn, audioLabel);
+                if (msg.getIdUser() == currentUserId) {
+                    voiceBox.getChildren().add(deleteBtn);
+                }
+
+                // ========== معالج الضغط على زر التشغيل ==========
+                final boolean[] isPlaying = {false};
+                playStopBtn.setOnAction(e -> {
+                    if (!isPlaying[0]) {
+                        // شغّل الملف
+                        String fullPath = "src/main/resources/" + audioPath;
+                        voicePlayer.playVoiceMessage(fullPath);
+                        playStopBtn.setText("⏸️");
+                        isPlaying[0] = true;
+                        System.out.println("▶️ تشغيل: " + audioFileName);
+                    } else {
+                        // أوقف الملف
+                        voicePlayer.stopPlayback();
+                        playStopBtn.setText("▶️");
+                        isPlaying[0] = false;
+                        System.out.println("⏹️ توقف: " + audioFileName);
+                    }
+                });
+
+                // ========== إضافة المدة الزمنية والتوقيت ==========
                 String time = msg.getDateEnvoi().format(DateTimeFormatter.ofPattern("HH:mm"));
                 String status = (msg.getIdUser() == currentUserId && "LU".equals(msg.getStatutMessage())) ? " ✓✓" : " ✓";
                 Label footer = new Label(time + (msg.getIdUser() == currentUserId ? status : ""));
                 footer.setStyle("-fx-font-size: 9px; -fx-text-fill: #bdc3c7; -fx-padding: 0 5;");
 
+                // ========== تجميع كل العناصر ==========
                 VBox messageBox = new VBox(3);
-                messageBox.getChildren().addAll(textFlow, footer);
+                messageBox.getChildren().addAll(voiceBox, footer);
                 container.getChildren().add(messageBox);
             }
+
+            /**
+             * استخرج اسم الملف من المسار الكامل
+             * مثال: "uploads/audio/voice_3_1771796105344.wav" → "voice_3_1771796105344.wav"
+             */
+            private String extractAudioFileName(String filePath) {
+                if (filePath == null || filePath.isEmpty()) {
+                    return "Unknown.wav";
+                }
+
+                if (filePath.contains("/")) {
+                    return filePath.substring(filePath.lastIndexOf("/") + 1);
+                }
+
+                if (filePath.contains("\\")) {
+                    return filePath.substring(filePath.lastIndexOf("\\") + 1);
+                }
+
+                return filePath;
+            }
+
+            // اضف هذه الدالة بعدها مباشرة:
 
             private void displayTextMessage(VBox container, Message msg) {
                 String originalText = msg.getContenu();
@@ -1460,7 +1546,16 @@ public class MessengerController implements Initializable {
 
     private void processVoiceToText(String audioFilePath) {
         try {
-            Model model = new Model("models/vosk-model-small-fr");
+            String modelPath = "src/main/resources/models/vosk-model-small-en-us-0.15";
+            File modelFolder = new File(modelPath);  // ✅ تعريف صحيح بدلاً من null
+
+            if (!modelFolder.exists()) {
+                System.err.println("❌ مجلد النموذج غير موجود: " + modelFolder.getAbsolutePath());
+                return;
+            }
+
+            Model model = new Model(modelFolder.getAbsolutePath());  // ✅ تعريف واحد فقط
+
             Recognizer recognizer = new Recognizer(model, 16000);
 
             InputStream ais = new FileInputStream(audioFilePath);
@@ -1486,10 +1581,10 @@ public class MessengerController implements Initializable {
             model.close();
 
         } catch (Exception e) {
+            System.err.println("❌ خطأ معالجة الصوت: " + e.getMessage());
             e.printStackTrace();
         }
     }
-
 
     private void stopRecordingAndSave(String audioPath) {
         try {
@@ -2006,4 +2101,5 @@ public class MessengerController implements Initializable {
         HttpResponse<String> response = httpClient.send(request, HttpResponse.BodyHandlers.ofString());
         System.out.println("📋 MT Engines: " + response.body());
     }
+
 }

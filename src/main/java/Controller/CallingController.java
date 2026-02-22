@@ -48,6 +48,7 @@ public class CallingController {
     private String callAudioPath;
     private boolean callAccepted = false;
 
+
     // Protection contre les doubles clics
     private boolean isHandled = false;
 
@@ -74,16 +75,21 @@ public class CallingController {
         this.callType = callType;
         this.messageDAO = messageDAO;
     }
+    // إضافة دالة لتشغيل الملفات الصوتية
+
 
     private void playCallingSound() {
         try {
-            URL resource = getClass().getResource("/sounds/Call.mp3");
+            String soundFile = "AUDIO_CALL".equals(callType) ? "/sounds/Call.mp3" : "/sounds/VideoCall.mp3";
+            URL resource = getClass().getResource(soundFile);
             if (resource != null) {
                 Media sound = new Media(resource.toString());
                 mediaPlayer = new MediaPlayer(sound);
                 mediaPlayer.setCycleCount(MediaPlayer.INDEFINITE);
                 mediaPlayer.play();
-                System.out.println("🔔 Son d'appel lancé...");
+                System.out.println("🔔 Son d'appel " + ( "AUDIO_CALL".equals(callType) ? "audio" : "vidéo") + " lancé...");
+            } else {
+                System.err.println("❌ Fichier son non trouvé: " + soundFile);
             }
         } catch (Exception e) {
             System.err.println("❌ Erreur son d'appel: " + e.getMessage());
