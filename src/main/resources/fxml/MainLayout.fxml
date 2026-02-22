@@ -24,7 +24,7 @@
         <StackPane maxWidth="270" minWidth="270" prefWidth="270" styleClass="sidebar">
 
             <!-- Background image -->
-            
+
 
             <!-- Artistic overlay -->
             <Region styleClass="sidebar-overlay" />

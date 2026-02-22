@@ -6,7 +6,9 @@ import Entities.UserApp;
 import Services.InscriptionService;
 import Services.PackService;
 import Services.UserService;
-import Utiles.CaptchaDialog; // ✅ ADD THIS
+import Services.WhatsAppService;
+import Services.EcoWhatsAppTemplates;
+import Utiles.CaptchaDialog;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
@@ -33,6 +35,8 @@ public class InscriptionListController {
     private final UserService userService = new UserService();
     private final PackService packService = new PackService();
 
+    private final WhatsAppService wa = new WhatsAppService();
+
     private final ObservableList<Inscription> master = FXCollections.observableArrayList();
     private final DateTimeFormatter fmt = DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm");
 
@@ -40,9 +44,13 @@ public class InscriptionListController {
     private Inscription selectedInscription = null;
     private HBox selectedRow = null;
 
-    // lookups id -> label (mais on n'affiche jamais les id)
+    // lookups (no IDs displayed)
     private final Map<Integer, String> userLabelById = new HashMap<>();
     private final Map<Integer, String> packLabelById = new HashMap<>();
+
+    // for WhatsApp context
+    private final Map<Integer, UserApp> userById = new HashMap<>();
+    private final Map<Integer, Pack> packById = new HashMap<>();
 
     @FXML
     private void initialize() {
@@ -51,9 +59,7 @@ public class InscriptionListController {
     }
 
     @FXML
-    private void onAdd() {
-        openForm(null);
-    }
+    private void onAdd() { openForm(null); }
 
     @FXML
     private void onEdit() {
@@ -77,7 +83,11 @@ public class InscriptionListController {
         Alert confirm = new Alert(Alert.AlertType.CONFIRMATION);
         confirm.setTitle("Supprimer");
         confirm.setHeaderText("Supprimer cette inscription ?");
-        confirm.setContentText("Utilisateur: " + user + "\nPack: " + pack + "\nMontant: " + selectedInscription.getMontantTotal() + " DT");
+        confirm.setContentText(
+                "Utilisateur: " + user +
+                        "\nPack: " + pack +
+                        "\nMontant: " + selectedInscription.getMontantTotal() + " DT"
+        );
 
         if (confirm.showAndWait().orElse(ButtonType.CANCEL) != ButtonType.OK) return;
 
@@ -97,8 +107,64 @@ public class InscriptionListController {
     }
 
     @FXML
-    private void onRefresh() {
-        refresh();
+    private void onRefresh() { refresh(); }
+
+    // ✅ New: WhatsApp manual send from list
+    @FXML
+    private void onWhatsApp() {
+        if (selectedInscription == null) {
+            showInfo("Sélection requise", "Sélectionne une inscription puis clique WhatsApp.");
+            return;
+        }
+
+        if (!wa.isConfigured()) {
+            showInfo("WhatsApp non configuré",
+                    "Ajoute les variables d'environnement:\nWHATSAPP_TOKEN\nWHATSAPP_PHONE_NUMBER_ID\n(WHATSAPP_API_VERSION optionnel)");
+            return;
+        }
+
+        try {
+            int uid = selectedInscription.getIdUser();
+            int pid = selectedInscription.getIdPack();
+
+            UserApp user = userById.get(uid);
+            Pack pack = packById.get(pid);
+
+            // choose template type
+            ChoiceDialog<EcoWhatsAppTemplates.Type> dlgType =
+                    new ChoiceDialog<>(EcoWhatsAppTemplates.Type.UPDATE, EcoWhatsAppTemplates.Type.values());
+            dlgType.setTitle("WhatsApp");
+            dlgType.setHeaderText("Type de message WhatsApp");
+            dlgType.setContentText("Choisir :");
+            Optional<EcoWhatsAppTemplates.Type> typeOpt = dlgType.showAndWait();
+            if (typeOpt.isEmpty()) return;
+
+            EcoWhatsAppTemplates.Type type = typeOpt.get();
+            String msg = EcoWhatsAppTemplates.build(type, user, pack, selectedInscription);
+
+            // phone
+            String phone = guessPhoneFromUser(user);
+            if (phone == null || phone.isBlank() || !phone.trim().startsWith("+")) {
+                TextInputDialog d = new TextInputDialog(phone == null ? "+216" : phone);
+                d.setTitle("Numéro WhatsApp");
+                d.setHeaderText("Entrer le numéro WhatsApp (format E.164)");
+                d.setContentText("Ex: +216XXXXXXXX");
+                Optional<String> in = d.showAndWait();
+                if (in.isEmpty()) return;
+                phone = in.get().trim();
+            }
+
+            WhatsAppService.SendResult res = wa.sendTextMessage(phone, msg);
+
+            if (res.ok) {
+                showInfo("WhatsApp envoyé ✅", "Message envoyé (HTTP " + res.statusCode + ").");
+            } else {
+                showInfo("Erreur WhatsApp ❌", "HTTP " + res.statusCode + "\n" + res.responseBody);
+            }
+
+        } catch (Exception e) {
+            showError(e);
+        }
     }
 
     private void refresh() {
@@ -125,8 +191,15 @@ public class InscriptionListController {
             if (q.isEmpty() || matchInscription(i, q)) visible.add(i);
         }
 
-        // tri : plus récent d'abord si possible (sinon stable)
-        visible.sort((a, b) -> formatDate(b.getDateInscription()).compareTo(formatDate(a.getDateInscription())));
+        // tri: plus récent d'abord
+        visible.sort((a, b) -> {
+            LocalDateTime da = toLocalDateTime(a.getDateInscription());
+            LocalDateTime db = toLocalDateTime(b.getDateInscription());
+            if (da == null && db == null) return 0;
+            if (da == null) return 1;
+            if (db == null) return -1;
+            return db.compareTo(da);
+        });
 
         for (Inscription i : visible) {
             rowsBox.getChildren().add(buildRow(i));
@@ -153,30 +226,11 @@ public class InscriptionListController {
 
         HBox row = new HBox(lUser, lPack, lDate, lMontant, lStatut);
         row.setSpacing(0);
-        row.setStyle("""
-                -fx-background-color: rgba(255,255,255,0.45);
-                -fx-border-color: rgba(0,0,0,0.08);
-                -fx-border-radius: 10;
-                -fx-background-radius: 10;
-                -fx-padding: 10;
-                """);
 
+        // ✅ CSS handles hover + base style (#rowsBox > .hbox ...)
         row.setOnMouseClicked(e -> {
             selectRow(row, i);
             if (e.getClickCount() == 2) onEdit();
-        });
-
-        row.setOnMouseEntered(e -> {
-            if (row != selectedRow) row.setStyle(row.getStyle() + "-fx-background-color: rgba(255,255,255,0.65);");
-        });
-        row.setOnMouseExited(e -> {
-            if (row != selectedRow) row.setStyle("""
-                -fx-background-color: rgba(255,255,255,0.45);
-                -fx-border-color: rgba(0,0,0,0.08);
-                -fx-border-radius: 10;
-                -fx-background-radius: 10;
-                -fx-padding: 10;
-                """);
         });
 
         return row;
@@ -184,24 +238,11 @@ public class InscriptionListController {
 
     private void selectRow(HBox row, Inscription i) {
         if (selectedRow != null) {
-            selectedRow.setStyle("""
-                -fx-background-color: rgba(255,255,255,0.45);
-                -fx-border-color: rgba(0,0,0,0.08);
-                -fx-border-radius: 10;
-                -fx-background-radius: 10;
-                -fx-padding: 10;
-                """);
+            selectedRow.getStyleClass().remove("row-selected");
         }
         selectedRow = row;
         selectedInscription = i;
-
-        row.setStyle("""
-                -fx-background-color: rgba(120, 72, 255, 0.18);
-                -fx-border-color: rgba(120, 72, 255, 0.55);
-                -fx-border-radius: 10;
-                -fx-background-radius: 10;
-                -fx-padding: 10;
-                """);
+        row.getStyleClass().add("row-selected");
     }
 
     private void clearSelection() {
@@ -221,9 +262,12 @@ public class InscriptionListController {
     private void preloadLookups() {
         userLabelById.clear();
         packLabelById.clear();
+        userById.clear();
+        packById.clear();
 
         try {
             for (Pack p : packService.getAll()) {
+                packById.put(p.getIdPack(), p);
                 packLabelById.put(p.getIdPack(), safe(p.getNom()));
             }
         } catch (Exception ignored) {}
@@ -231,18 +275,16 @@ public class InscriptionListController {
         try {
             for (UserApp u : userService.getAll()) {
                 Integer id = extractUserId(u);
-                if (id != null) userLabelById.put(id, buildUserLabel(u));
+                if (id != null) {
+                    userById.put(id, u);
+                    userLabelById.put(id, buildUserLabel(u));
+                }
             }
         } catch (Exception ignored) {}
     }
 
-    private String getPackLabel(int idPack) {
-        return packLabelById.getOrDefault(idPack, "Pack");
-    }
-
-    private String getUserLabel(int idUser) {
-        return userLabelById.getOrDefault(idUser, "Utilisateur");
-    }
+    private String getPackLabel(int idPack) { return packLabelById.getOrDefault(idPack, "Pack"); }
+    private String getUserLabel(int idUser) { return userLabelById.getOrDefault(idUser, "Utilisateur"); }
 
     private Integer extractUserId(UserApp u) {
         Integer id = tryIntGetter(u, "getIdUser");
@@ -288,6 +330,14 @@ public class InscriptionListController {
         }
     }
 
+    private static String guessPhoneFromUser(UserApp u) {
+        if (u == null) return null;
+        try { return String.valueOf(u.getClass().getMethod("getTelephone").invoke(u)); } catch (Exception ignored) {}
+        try { return String.valueOf(u.getClass().getMethod("getTel").invoke(u)); } catch (Exception ignored) {}
+        try { return String.valueOf(u.getClass().getMethod("getPhone").invoke(u)); } catch (Exception ignored) {}
+        return null;
+    }
+
     // =========================
     // Form dialog + date format
     // =========================
@@ -312,13 +362,19 @@ public class InscriptionListController {
     }
 
     private String formatDate(Object dateObj) {
-        if (dateObj == null) return "";
+        LocalDateTime ldt = toLocalDateTime(dateObj);
+        if (ldt == null) return dateObj == null ? "" : String.valueOf(dateObj);
+        return ldt.format(fmt);
+    }
+
+    private LocalDateTime toLocalDateTime(Object dateObj) {
+        if (dateObj == null) return null;
         try {
-            if (dateObj instanceof LocalDateTime ldt) return ldt.format(fmt);
-            if (dateObj instanceof java.sql.Timestamp ts) return ts.toLocalDateTime().format(fmt);
-            return dateObj.toString();
+            if (dateObj instanceof LocalDateTime ldt) return ldt;
+            if (dateObj instanceof java.sql.Timestamp ts) return ts.toLocalDateTime();
+            return null;
         } catch (Exception e) {
-            return "";
+            return null;
         }
     }
 

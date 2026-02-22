@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<VBox xmlns="http://javafx.com/javafx/21"
+      xmlns:fx="http://javafx.com/fxml/1"
+      fx:controller="controllers.WhatsAppDialogController"
+      stylesheets="@/css/app.css"
+      spacing="12" styleClass="dialog-root">
+
+    <padding>
+        <Insets top="16" right="16" bottom="16" left="16"/>
+    </padding>
+
+    <VBox spacing="4">
+        <Label text="WhatsApp Notification" styleClass="page-title"/>
+        <Label text="Prévisualiser puis envoyer un message WhatsApp (EcoAdventure)." styleClass="page-subtitle"/>
+    </VBox>
+
+    <VBox spacing="10" styleClass="dialog-card" style="-fx-padding: 14;">
+        <GridPane hgap="10" vgap="10">
+            <columnConstraints>
+                <ColumnConstraints percentWidth="28"/>
+                <ColumnConstraints percentWidth="72"/>
+            </columnConstraints>
+
+            <Label text="Téléphone :" GridPane.rowIndex="0" GridPane.columnIndex="0"/>
+            <TextField fx:id="txtPhone" promptText="+216XXXXXXXX" GridPane.rowIndex="0" GridPane.columnIndex="1"/>
+
+            <Label text="Type :" GridPane.rowIndex="1" GridPane.columnIndex="0"/>
+            <ComboBox fx:id="cbType" GridPane.rowIndex="1" GridPane.columnIndex="1"/>
+
+            <Label text="Message :" GridPane.rowIndex="2" GridPane.columnIndex="0"/>
+            <TextArea fx:id="txtMessage" prefRowCount="6" wrapText="true"
+                      GridPane.rowIndex="2" GridPane.columnIndex="1"/>
+        </GridPane>
+
+        <Label fx:id="lblStatus" text="" styleClass="muted"/>
+    </VBox>
+
+    <HBox spacing="10" alignment="CENTER_RIGHT">
+        <Button text="Fermer" onAction="#onClose" styleClass="btn-secondary"/>
+        <Button text="Envoyer WhatsApp" onAction="#onSend" styleClass="btn-primary"/>
+    </HBox>
+
+</VBox>

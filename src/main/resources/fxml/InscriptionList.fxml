@@ -30,7 +30,7 @@
         <Button text="Rafraîchir" onAction="#onRefresh" styleClass="btn-secondary"/>
     </HBox>
 
-    <Label fx:id="lblTotal" text="Affiché / Total : 0"/>
+    <Label fx:id="lblTotal" text="Affiché / Total : 0" styleClass="muted"/>
 
     <!-- ✅ TableWidget (custom) -->
     <ScrollPane fitToWidth="true" VBox.vgrow="ALWAYS">
@@ -51,6 +51,7 @@
     </ScrollPane>
 
     <HBox spacing="10" alignment="CENTER_RIGHT">
+        <Button text="WhatsApp" onAction="#onWhatsApp" styleClass="btn-secondary"/>
         <Button text="Modifier" onAction="#onEdit" styleClass="btn-secondary"/>
         <Button text="Supprimer" onAction="#onDelete" styleClass="btn-danger"/>
     </HBox>
