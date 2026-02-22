@@ -5,46 +5,56 @@
 
 <BorderPane xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1"
             fx:controller="controllers.EvenementClientController"
-            stylesheets="/styles/app.css" styleClass="root">
+            stylesheets="@/styles/app.css" styleClass="root">
 
     <left>
-        <VBox styleClass="sidebar" spacing="14" prefWidth="230">
+        <VBox styleClass="sidebar" spacing="16" prefWidth="240">
             <VBox spacing="6" styleClass="sidebarHeader">
                 <Label text="EcoAdventure" styleClass="brand"/>
                 <Label text="Espace Client" styleClass="mutedSidebar"/>
             </VBox>
 
-            <VBox spacing="6" styleClass="sidebarNav">
-                <Button text="🎫  Événements" styleClass="navItem navItemActive" onAction="#goToEvenements"/>
-                <Button text="📅  Mes Réservations" styleClass="navItem" onAction="#goToReservations"/>
+            <VBox spacing="8" styleClass="sidebarNav">
+                <Button text="🏠  Accueil" onAction="#goHome" styleClass="navItem"/>
+                <Button text="🎫  Événements" onAction="#goToEvenements" styleClass="navItem, navItemActive"/>
+                <Button text="📅  Mes Réservations" onAction="#goToReservations" styleClass="navItem"/>
             </VBox>
 
             <Region VBox.vgrow="ALWAYS"/>
-            <Separator/>
-            <Button text="⎋  Déconnexion" styleClass="navItem danger" onAction="#logout"/>
+            <Separator styleClass="sidebarSep"/>
+            <Button text="⎋  Déconnexion" onAction="#logout" styleClass="navItem, danger"/>
         </VBox>
     </left>
 
     <center>
         <VBox spacing="0">
             <HBox styleClass="topbar" spacing="12" alignment="CENTER_LEFT">
-                <Button text="← Accueil" onAction="#goHome" styleClass="ghostBtn"/>
-                <Label text="Événements Disponibles" styleClass="pageTitle"/>
+                <Label text="Événements" styleClass="pageTitle"/>
                 <Region HBox.hgrow="ALWAYS"/>
-                <HBox spacing="8" styleClass="searchBox" alignment="CENTER_LEFT">
+                <HBox styleClass="searchBox" spacing="8" alignment="CENTER_LEFT">
                     <Label text="🔎" styleClass="muted"/>
-                    <TextField fx:id="searchField" onKeyReleased="#onSearch" promptText="Chercher par titre ou lieu..." styleClass="searchInput"/>
+                    <TextField fx:id="searchField" onKeyReleased="#onSearch" promptText="Rechercher un événement..." styleClass="searchInput"/>
                 </HBox>
                 <Button text="Actualiser" onAction="#onRefresh" styleClass="secondaryBtn"/>
             </HBox>
 
-            <ScrollPane fitToWidth="true" styleClass="transparentScroll" VBox.vgrow="ALWAYS">
-                <content>
-                    <VBox fx:id="cardsContainer" spacing="20" styleClass="pageContent">
-                        <padding><Insets top="20" right="30" bottom="20" left="30"/></padding>
-                    </VBox>
-                </content>
-            </ScrollPane>
+            <VBox styleClass="page" spacing="14" VBox.vgrow="ALWAYS">
+                <padding><Insets top="18" right="18" bottom="18" left="18"/></padding>
+
+                <HBox alignment="CENTER_LEFT" spacing="10">
+                    <Label text="Découvrir nos aventures" styleClass="cardTitle" style="-fx-font-size: 16px;"/>
+                    <Label fx:id="lblInfo" text="(0)" styleClass="mutedText"/>
+                </HBox>
+
+                <ScrollPane fitToWidth="true" hbarPolicy="NEVER" vbarPolicy="AS_NEEDED"
+                            styleClass="transparentScroll" VBox.vgrow="ALWAYS">
+                    <content>
+                        <VBox fx:id="cardsContainer" spacing="15" styleClass="cardsContainer">
+                            <padding><Insets top="10" right="15" bottom="10" left="5"/></padding>
+                        </VBox>
+                    </content>
+                </ScrollPane>
+            </VBox>
         </VBox>
     </center>
 </BorderPane>

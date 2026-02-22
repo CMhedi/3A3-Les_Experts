@@ -4,49 +4,49 @@
 <?import javafx.scene.layout.*?>
 
 <BorderPane xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1"
-            fx:controller="controllers.ReservationAdminController" stylesheets="@/styles/app.css" styleClass="root">
+            fx:controller="controllers.ReservationAdminController"
+            stylesheets="@/styles/app.css" styleClass="root">
 
     <left>
-        <VBox styleClass="sidebar" spacing="15" prefWidth="250">
-            <VBox spacing="5" styleClass="sidebarHeader">
+        <VBox styleClass="sidebar" spacing="16" prefWidth="250">
+            <VBox spacing="6" styleClass="sidebarHeader">
                 <Label text="EcoAdventure" styleClass="brand"/>
                 <Label text="Admin Dashboard" styleClass="mutedSidebar"/>
             </VBox>
             <VBox spacing="10" styleClass="sidebarNav">
-                <Button text="🏠 Accueil" onAction="#goHome" styleClass="navItem"/>
-                <Button text="🎫 Événements" onAction="#goToEvents" styleClass="navItem"/>
-                <Button text="📅 Réservations" styleClass="navItem, navItemActive"/>
+                <Button text="🏠  Accueil" onAction="#goHome" styleClass="navItem"/>
+                <Button text="🎫  Événements" onAction="#goToEvents" styleClass="navItem"/>
+                <Button text="📅  Réservations" styleClass="navItem, navItemActive"/>
             </VBox>
+            <Region VBox.vgrow="ALWAYS"/>
+            <Separator styleClass="sidebarSep"/>
+            <Button text="⎋  Déconnexion" onAction="#onLogout" styleClass="navItem, danger"/>
         </VBox>
     </left>
 
     <center>
         <VBox spacing="0">
             <HBox styleClass="topbar" spacing="15" alignment="CENTER_LEFT">
-                <Label text="Liste des Réservations" styleClass="pageTitle"/>
+                <VBox spacing="2">
+                    <Label text="Gestion des Réservations" styleClass="pageTitle"/>
+                    <Label fx:id="lblStats" text="Analyse des données..." styleClass="mutedText" style="-fx-font-size: 12px;"/>
+                </VBox>
                 <Region HBox.hgrow="ALWAYS"/>
-                <HBox styleClass="searchBox">
-                    <TextField fx:id="searchReservationField" promptText="Chercher par ID Event..." onKeyReleased="#onSearchReservation" styleClass="searchInput"/>
+                <HBox styleClass="searchBox" spacing="8" alignment="CENTER_LEFT">
+                    <Label text="🔎" styleClass="muted"/>
+                    <TextField fx:id="searchReservationField" promptText="Filtrer par ID Event ou Statut..."
+                               onKeyReleased="#onSearchReservation" styleClass="searchInput"/>
                 </HBox>
-                <Button text="🗑 Supprimer" onAction="#onDeleteReservation" styleClass="dangerBtn" style="-fx-background-color: #e74c3c; -fx-text-fill: white;"/>
+                <Button text="🔄" onAction="#onRefresh" styleClass="secondaryBtn" style="-fx-font-size: 16px;"/>
             </HBox>
 
-            <VBox spacing="20" styleClass="pageContent" VBox.vgrow="ALWAYS">
-                <padding><Insets top="25" right="35" bottom="25" left="35"/></padding>
-
-                <TableView fx:id="reservationTable" VBox.vgrow="ALWAYS" styleClass="modern-table">
-                    <columns>
-                        <TableColumn fx:id="colId" text="ID Res" prefWidth="70"/>
-                        <TableColumn fx:id="colDate" text="Date" prefWidth="150"/>
-                        <TableColumn fx:id="colStatus" text="Statut" prefWidth="120"/>
-                        <TableColumn fx:id="colBillets" text="Billets" prefWidth="80"/>
-                        <TableColumn fx:id="colEventId" text="ID Event" prefWidth="100"/>
-                    </columns>
-                    <columnResizePolicy>
-                        <TableView fx:constant="CONSTRAINED_RESIZE_POLICY" />
-                    </columnResizePolicy>
-                </TableView>
-            </VBox>
+            <ScrollPane fitToWidth="true" hbarPolicy="NEVER" styleClass="transparentScroll" VBox.vgrow="ALWAYS">
+                <content>
+                    <VBox fx:id="cardsContainer" spacing="15" styleClass="pageContent">
+                        <padding><Insets top="25" right="35" bottom="25" left="35"/></padding>
+                    </VBox>
+                </content>
+            </ScrollPane>
         </VBox>
     </center>
 </BorderPane>
