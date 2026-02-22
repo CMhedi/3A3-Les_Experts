@@ -1,16 +1,10 @@
 package Controller;
-import Utiles.StompClientHandler;
-import Controller.CallController;
-import Controller.CallingController;
-import org.springframework.messaging.simp.stomp.StompSession;
-import java.nio.charset.StandardCharsets;
+
 import Entities.Conversation;
 import Entities.Message;
-import Services.interfaces.ConversationDAO;
-import Services.interfaces.GeminiService;
-import Services.interfaces.GifService;
-import Services.interfaces.MessageDAO;
+import Services.interfaces.*;
 import Utiles.AudioRecorder;
+import Utiles.StompClientHandler;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
@@ -60,14 +54,18 @@ import java.net.URL;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
+import java.nio.charset.StandardCharsets;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.*;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.Collectors;
 
 
 
+
 public class MessengerController implements Initializable {
+    private static final String BASE_URL =null ;
     @FXML
     private Button recordButton;
     @FXML
@@ -110,16 +108,28 @@ public class MessengerController implements Initializable {
     private ConversationDAO conversationDAO;
     private List<Conversation> allConversations;
     private int selectedConversationId = -1;
-    private int currentUserId = 2;  // valeur par défaut
+    private int currentUserId = 3;  // valeur par défaut
+
+
+
+
+    private String currentTargetLanguage = "fr"; // اللغة الافتراضية (نعرض بها الرسائل الأصلية)
+// conversationId -> projectId
+    private Map<Integer, String> translatedCache = new HashMap<>(); // messageId -> texte traduit
+    private final Set<Integer> translationInProgress = ConcurrentHashMap.newKeySet();
+    private Set<Integer> lastFiveMessageIds = new HashSet<>();
 
 
     private ObservableList<Message> chatMessages = FXCollections.observableArrayList();
     private StompClientHandler stompHandler;
+    private HttpClient httpClient;
+
+
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
         messageDAO = new MessageDAO();
         conversationDAO = new ConversationDAO();
-        currentUserId = 2;
+        currentUserId = 3;
         messagesList.setFocusTraversable(false);
         conversationsList.setFocusTraversable(false);
 
@@ -130,6 +140,8 @@ public class MessengerController implements Initializable {
         startAutoRefresh();
         gifService = new GifService("Filp4GHzXpQubEthmUu744ozFrXl464m");
         initializeStompClient();
+        httpClient = HttpClient.newHttpClient();
+
 
 // ✅ Add delay and null check
         if (stompHandler != null) {
@@ -497,11 +509,53 @@ public class MessengerController implements Initializable {
                 container.getChildren().add(messageBox);
             }
 
-            // ✅ AFFICHER UN MESSAGE TEXTE
             private void displayTextMessage(VBox container, Message msg) {
-                Text textNode = new Text(msg.getContenu());
-                textNode.setFont(Font.font("Segoe UI Emoji", 14));
+                String originalText = msg.getContenu();
+                String displayText = originalText;
 
+                // Si la langue cible n'est pas le français (langue source)
+                if (!"fr".equals(currentTargetLanguage)) {
+                    int msgId = msg.getIdMessage();
+                    String targetLang = currentTargetLanguage;
+
+                    // Ne traduire que si le message fait partie des 5 derniers
+                    if (lastFiveMessageIds.contains(msgId)) {
+                        // 1. Si déjà en cache, on affiche directement la traduction
+                        if (translatedCache.containsKey(msgId)) {
+                            displayText = translatedCache.get(msgId);
+                        }
+                        // 2. Sinon, si une traduction n'est pas déjà en cours, on la lance
+                        else if (translationInProgress.add(msgId)) {
+                            displayText = originalText + " ⏳"; // affichage temporaire
+
+                            new Thread(() -> {
+                                try {
+                                    String translated = GeminiService.translate(originalText, targetLang);
+                                    Platform.runLater(() -> {
+                                        translatedCache.put(msgId, translated);
+                                        translationInProgress.remove(msgId);
+                                        refreshSingleMessage(msgId);
+                                    });
+                                } catch (Exception e) {
+                                    e.printStackTrace();
+                                    Platform.runLater(() -> {
+                                        // Fallback : afficher le texte original avec un indicateur d'erreur
+                                        translatedCache.put(msgId, originalText + " ⚠️");
+                                        translationInProgress.remove(msgId);
+                                        refreshSingleMessage(msgId);
+                                    });
+                                }
+                            }).start();
+                        } else {
+                            // Traduction déjà en cours pour ce message
+                            displayText = originalText + " ⏳";
+                        }
+                    }
+                }
+
+                // Construction de l'affichage du message (bulle) avec displayText
+                Text textNode = new Text(displayText);
+                textNode.setFont(Font.font("Segoe UI Emoji", 14));
                 TextFlow textFlow = new TextFlow(textNode);
                 textFlow.setMaxWidth(300);
 
@@ -530,6 +584,7 @@ public class MessengerController implements Initializable {
                 messageBox.getChildren().addAll(textFlow, footer);
                 container.getChildren().add(messageBox);
             }
+
 
             // ✅ EXTRAIRE LE STATUT DE L'APPEL
             private String extractCallStatus(String content) {
@@ -732,8 +787,8 @@ public class MessengerController implements Initializable {
             alert.setContentText("Veuillez sélectionner une conversation d'abord !");
             alert.showAndWait();
             return;
-        }
 
+        }
         Conversation selectedConv = conversationsList.getSelectionModel().getSelectedItem();
         if (selectedConv == null) {
             Alert alert = new Alert(Alert.AlertType.WARNING);
@@ -1039,9 +1094,12 @@ public class MessengerController implements Initializable {
                 }
             });
         });
+        // ===== Ajout de l'option TRADUCTION =====
+        MenuItem translateItem = new MenuItem("Traduire la conversation 🌐");
+        translateItem.setOnAction(e -> showLanguageMenu(chatHeader));
 
         // Ajouter les options communes au menu
-        contextMenu.getItems().addAll(editTitle, deleteChat);
+        contextMenu.getItems().addAll(editTitle, deleteChat,translateItem);
 
         // ========== AFFICHER LE MENU CONTEXTUEL ==========
         contextMenu.show(chatHeader, Side.BOTTOM, 0, 0);
@@ -1320,6 +1378,17 @@ public class MessengerController implements Initializable {
 
     private void loadMessages(int conversationId) {
         List<Message> messages = messageDAO.getMessagesByConversation(conversationId);
+
+        // Trier par date (du plus ancien au plus récent)
+        messages.sort(Comparator.comparing(Message::getDateEnvoi));
+
+        // Mettre à jour l'ensemble des IDs des 5 derniers messages
+        lastFiveMessageIds.clear();
+        int size = messages.size();
+        for (int i = Math.max(0, size - 5); i < size; i++) {
+            lastFiveMessageIds.add(messages.get(i).getIdMessage());
+        }
+
         messagesList.setItems(FXCollections.observableArrayList(messages));
         if (!messages.isEmpty()) messagesList.scrollTo(messages.size() - 1);
     }
@@ -1714,6 +1783,8 @@ public class MessengerController implements Initializable {
         stage.show();
     }
 
+
+
     private void sendCallSignal(int conversationId, String callType) {
         if (stompHandler != null && stompHandler.isConnected()) {
             try {
@@ -1738,10 +1809,6 @@ public class MessengerController implements Initializable {
             System.out.println("⚠️ STOMP not connected – signal not sent");
         }
     }
-
-
-
-
 
 
     /**
@@ -1889,11 +1956,54 @@ private void makeStageDraggable(Parent root, Stage stage) {
         }
     }
 
+    private void showLanguageMenu(Node anchor) {
+        ContextMenu langMenu = new ContextMenu();
+        String[][] languages = {
+                {"Français", "fr"},
+                {"English", "en"},
+                {"العربية", "ar"},
+                {"Español", "es"},
+                {"Deutsch", "de"},
+                {"中文", "zh"},        // Chinois
+                {"日本語", "ja"},       // Japonais
+                {"Русский", "ru"}      // Russe
+        };
+        for (String[] lang : languages) {
+            MenuItem item = new MenuItem(lang[0]);
+            item.setOnAction(e -> {
+                currentTargetLanguage = lang[1];
+                loadMessages(selectedConversationId);
+            });
+            langMenu.getItems().add(item);
+        }
+        langMenu.show(anchor, Side.BOTTOM, 0, 0);
+    }
+
+    private void refreshSingleMessage(int messageId) {
+        Platform.runLater(() -> {
+            try {
+                loadMessages(selectedConversationId);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        });
+    }
     private void showAlert(String title, String message) {
         Alert alert = new Alert(Alert.AlertType.INFORMATION);
         alert.setTitle(title);
         alert.setHeaderText(null);
         alert.setContentText(message);
         alert.showAndWait();
+    }
+    public void listMTEngines() throws IOException, InterruptedException {
+        String url = BASE_URL + "/account/mtengines";
+        String authHeader = "";
+        HttpRequest request = HttpRequest.newBuilder()
+                .uri(URI.create(url))
+                .header("Authorization", authHeader)
+                .GET()
+                .build();
+        HttpResponse<String> response = httpClient.send(request, HttpResponse.BodyHandlers.ofString());
+        System.out.println("📋 MT Engines: " + response.body());
     }
 }

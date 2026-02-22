@@ -1,11 +1,12 @@
 package Services.interfaces;
 
+import org.json.JSONArray;
+import org.json.JSONObject;
+
 import java.net.URI;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
-import org.json.JSONArray;
-import org.json.JSONObject;
 
 public class GeminiService {
 
@@ -49,6 +50,27 @@ public class GeminiService {
         } else {
             return "Error Gemini API: " + response.statusCode() + "\n" + response.body();
         }
+    }
+
+    public static String translate(String text, String targetLanguageCode) throws Exception {
+        // Convertir le code en nom de langue lisible
+        String targetLanguageName;
+        switch (targetLanguageCode) {
+            case "fr": targetLanguageName = "French"; break;
+            case "en": targetLanguageName = "English"; break;
+            case "ar": targetLanguageName = "Arabic"; break;
+            case "es": targetLanguageName = "Spanish"; break;
+            case "de": targetLanguageName = "German"; break;
+            case "zh": targetLanguageName = "Chinese"; break;
+            case "ja": targetLanguageName = "Japanese"; break;
+            case "ru": targetLanguageName = "Russian"; break;
+            default: targetLanguageName = "English";
+        }
+        String prompt = String.format(
+                "Translate the following French text to %s. Output only the translated text, no explanation, no extra words.\n\nText: %s",
+                targetLanguageName, text
+        );
+        return askGemini(prompt);
     }
 
     public static void main(String[] args) throws Exception {
