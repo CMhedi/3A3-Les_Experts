@@ -230,7 +230,7 @@ public class NutritionController {
     void handleRetour(ActionEvent event) {
         try {
             Parent root = FXMLLoader.load(
-                    getClass().getResource("/gui/MainLayoutUser.fxml")
+                    getClass().getResource("/GUI/MainLayoutUser.fxml")
             );
 
             Stage stage = (Stage) ((Node) event.getSource())

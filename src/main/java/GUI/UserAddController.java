@@ -14,7 +14,6 @@ import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 import java.io.IOException;
-import java.util.Arrays;
 
 public class UserAddController {
 
@@ -172,10 +171,10 @@ public class UserAddController {
         try {
             Scene scene = btnEnregistrer.getScene();
             if (scene.getRoot() instanceof BorderPane mainPane) {
-                Parent root = FXMLLoader.load(getClass().getResource("/gui/AdminUsers.fxml"));
+                Parent root = FXMLLoader.load(getClass().getResource("/GUI/AdminUsers.fxml"));
                 mainPane.setCenter(root);
             } else {
-                Parent root = FXMLLoader.load(getClass().getResource("/gui/AdminUsers.fxml"));
+                Parent root = FXMLLoader.load(getClass().getResource("/GUI/AdminUsers.fxml"));
                 Stage stage = (Stage) btnEnregistrer.getScene().getWindow();
                 stage.getScene().setRoot(root);
             }

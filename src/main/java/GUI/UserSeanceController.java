@@ -11,7 +11,6 @@ import Services.interfaces.UserService;
 import exceptions.ValidationException;
 
 import javafx.fxml.FXML;
-import javafx.geometry.Pos;
 import javafx.scene.control.*;
 import javafx.scene.layout.*;
 import javafx.scene.image.Image;
@@ -394,7 +393,7 @@ public class UserSeanceController {
     private void handleRetour(javafx.event.ActionEvent event) {
 
         SceneUtils.loadScene(
-                "/gui/MainLayoutUser.fxml",
+                "/GUI/MainLayoutUser.fxml",
                 (javafx.scene.Node) event.getSource()
         );
     }

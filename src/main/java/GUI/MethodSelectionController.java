@@ -61,7 +61,7 @@ public class MethodSelectionController {
 
     private void goToVerifyCode() {
         try {
-            FXMLLoader loader = new FXMLLoader(getClass().getResource("/gui/ForgotPassword.fxml"));
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/GUI/ForgotPassword.fxml"));
             Parent root = loader.load();
 
             // Passi el data lel ForgotPasswordController

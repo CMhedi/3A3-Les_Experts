@@ -2,7 +2,6 @@ package GUI;
 
 import Entities.UserApp;
 import Services.interfaces.UserService;
-import GUI.UserUpdateController;
 import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -10,15 +9,11 @@ import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.geometry.Pos;
-import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
-import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.layout.*;
-import javafx.stage.Modality;
 import javafx.stage.Stage;
-import javafx.util.Callback;
 
 import java.io.IOException;
 import java.util.List;
@@ -113,7 +108,7 @@ public class AdminUsersController {
     @FXML
     void showAddModal(ActionEvent event) {
         try {
-            FXMLLoader loader = new FXMLLoader(getClass().getResource("/gui/UserAddForm.fxml"));
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/GUI/UserAddForm.fxml"));
             Parent addView = loader.load();
 
             // Baddel el blasa el bidha barka bel Form mta3 el Ajout
@@ -125,7 +120,7 @@ public class AdminUsersController {
 
     private void showEditPage(UserApp user) {
         try {
-            FXMLLoader loader = new FXMLLoader(getClass().getResource("/gui/UserUpdateForm.fxml"));
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/GUI/UserUpdateForm.fxml"));
 
             // 1. Load el view el loula (hedhi elli t-khali el @FXML y-welliw mouch null)
             Parent updateView = loader.load();
@@ -151,7 +146,7 @@ public class AdminUsersController {
 
             // Thabbet elli el root howa BorderPane (elli fih el fx:include)
             if (scene.getRoot() instanceof BorderPane mainPane) {
-                Parent root = FXMLLoader.load(getClass().getResource("/gui/AdminUsers.fxml"));
+                Parent root = FXMLLoader.load(getClass().getResource("/GUI/AdminUsers.fxml"));
                 mainPane.setCenter(root); // N-badlou ken el center, ma nmes-sh el Sidebar
             }
         } catch (IOException e) {

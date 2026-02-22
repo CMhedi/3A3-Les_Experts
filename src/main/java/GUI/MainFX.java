@@ -14,7 +14,7 @@ public class MainFX extends Application {
 
 
 
-        Parent root = FXMLLoader.load(getClass().getResource("/gui/UserManagement.fxml"));
+        Parent root = FXMLLoader.load(getClass().getResource("/GUI/UserManagement.fxml"));
         Scene scene = new Scene(root);
 
         stage.setScene(scene);

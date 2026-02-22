@@ -14,15 +14,18 @@ import java.io.IOException;
 public class SideBarUserController {
     @FXML
     void goToProfil(ActionEvent event) {
-        changeCenter("/gui/Profile.fxml");
+        changeCenter("/GUI/Profile.fxml");
     }
 
     @FXML
     void goToMyReclamations(ActionEvent event) {
-        changeCenter("/gui/AddReclamation.fxml");
+        changeCenter("/GUI/AddReclamation.fxml");
     }
 
-
+    @FXML
+    void goToNews(ActionEvent event) {
+        changeCenter("/GUI/NewsView.fxml");
+    }
     @FXML
     void goToActivities(ActionEvent event) {
        // SceneUtils.loadScene(
@@ -53,7 +56,7 @@ public class SideBarUserController {
     @FXML
     void handleLogout(ActionEvent event) throws IOException {
         Entities.Session.logout();
-        Parent root = FXMLLoader.load(getClass().getResource("/gui/Login.fxml"));
+        Parent root = FXMLLoader.load(getClass().getResource("/GUI/Login.fxml"));
         Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
         stage.setScene(new Scene(root));
     }

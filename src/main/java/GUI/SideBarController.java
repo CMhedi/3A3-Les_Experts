@@ -17,22 +17,22 @@ public class SideBarController {
     @FXML
     void goToReclamations(ActionEvent event) {
 
-        changeCenter("/gui/AdminReclamation.fxml", event);
+        changeCenter("/GUI/AdminReclamation.fxml", event);
     }
 
     @FXML
     void goToDashboard(ActionEvent event) {
-        changeCenter("/gui/AdminDashboard.fxml", event);
+        changeCenter("/GUI/AdminDashboard.fxml", event);
     }
     @FXML
     void goTogestionuser(ActionEvent event) {
-        changeCenter("/gui/AdminUsers.fxml", event);
+        changeCenter("/GUI/AdminUsers.fxml", event);
     }
    @FXML
     void handleLogout(ActionEvent event) { // ✅ Thabbet f'ism el méthode
         try {
             Entities.Session.logout();
-            Parent root = FXMLLoader.load(getClass().getResource("/gui/Login.fxml"));
+            Parent root = FXMLLoader.load(getClass().getResource("/GUI/Login.fxml"));
             Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
             stage.setScene(new Scene(root));
             stage.show();
@@ -63,7 +63,7 @@ public class SideBarController {
     }
     @FXML
     void goToProfil(ActionEvent event) {
-        changeCenter("/gui/Profile.fxml", event);
+        changeCenter("/GUI/Profile.fxml", event);
     }
 
 

@@ -222,8 +222,8 @@ public class UserReclamationController {
         });
     }
 
-    @FXML void switchToList(ActionEvent event) { navigateTo("/gui/ListReclamation.fxml", event); }
-    @FXML void switchToForm(ActionEvent event) { navigateTo("/gui/AddReclamation.fxml", event); }
+    @FXML void switchToList(ActionEvent event) { navigateTo("/GUI/ListReclamation.fxml", event); }
+    @FXML void switchToForm(ActionEvent event) { navigateTo("/GUI/AddReclamation.fxml", event); }
 
     private void navigateTo(String fxmlPath, ActionEvent event) {
         try {

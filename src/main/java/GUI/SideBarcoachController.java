@@ -16,7 +16,7 @@ public class SideBarcoachController{
 
     @FXML
     void goToProfil(ActionEvent event) {
-        changeCenter("/gui/Profile.fxml", event);
+        changeCenter("/GUI/Profile.fxml", event);
     }
 
     @FXML
@@ -86,7 +86,7 @@ public class SideBarcoachController{
     @FXML
     void handleLogout(ActionEvent event) throws IOException {
         Entities.Session.logout();
-        Parent root = FXMLLoader.load(getClass().getResource("/gui/Login.fxml"));
+        Parent root = FXMLLoader.load(getClass().getResource("/GUI/Login.fxml"));
         Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
         stage.setScene(new Scene(root));
     }

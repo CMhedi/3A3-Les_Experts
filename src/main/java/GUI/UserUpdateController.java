@@ -1,7 +1,6 @@
 package GUI;
 
 import Entities.UserApp;
-import GUI.AdminUsersController;
 import Services.interfaces.UserService;
 import enums.RoleUser;
 import javafx.collections.FXCollections;
@@ -14,12 +13,15 @@ import java.util.Arrays;
 public class UserUpdateController {
 
     @FXML private TextField txtNom, txtPrenom, txtEmail;
-    @FXML private PasswordField txtPassword; // Hada khassu ykoun f FXML darouri
+    @FXML private PasswordField txtPassword;         // الحقل المخفي (النقاط)
+    @FXML private TextField txtPasswordVisible;      // الحقل الظاهر (الكتيبة)
+    @FXML private Button btnTogglePassword;
     @FXML private ComboBox<String> comboRole;
 
     private UserApp currentUser;
     private UserService userService = new UserService();
     private AdminUsersController parentController;
+    private boolean isPasswordVisible = false;
 
     public void initData(UserApp user, AdminUsersController parent) {
         this.currentUser = user;
@@ -33,12 +35,34 @@ public class UserUpdateController {
 
         // Fill Data
         if (user != null) {
-            if (txtNom != null) txtNom.setText(user.getNom());
-            if (txtPrenom != null) txtPrenom.setText(user.getPrenom());
-            if (txtEmail != null) txtEmail.setText(user.getEmail());
-            if (comboRole != null && user.getRole() != null) {
+            txtNom.setText(user.getNom());
+            txtPrenom.setText(user.getPrenom());
+            txtEmail.setText(user.getEmail());
+
+            // وضع كلمة السر الحالية في الحقلين
+            txtPassword.setText(user.getMotDePasse());
+            txtPasswordVisible.setText(user.getMotDePasse());
+
+            if (user.getRole() != null) {
                 comboRole.setValue(user.getRole().name());
             }
+        }
+
+        // ربط الحقلين ببعضهم (أي تغيير في أحدهما ينتقل للآخر)
+        txtPassword.textProperty().bindBidirectional(txtPasswordVisible.textProperty());
+    }
+
+    @FXML
+    void togglePassword() {
+        isPasswordVisible = !isPasswordVisible;
+        if (isPasswordVisible) {
+            txtPasswordVisible.setVisible(true);
+            txtPassword.setVisible(false);
+            btnTogglePassword.setText("🙈"); // أيقونة الإخفاء
+        } else {
+            txtPasswordVisible.setVisible(false);
+            txtPassword.setVisible(true);
+            btnTogglePassword.setText("👁"); // أيقونة الإظهار
         }
     }
 
@@ -50,18 +74,16 @@ public class UserUpdateController {
                 return;
             }
 
-            // Update user object
+            // تحديث الكائن currentUser
             currentUser.setNom(txtNom.getText());
             currentUser.setPrenom(txtPrenom.getText());
             currentUser.setEmail(txtEmail.getText());
             currentUser.setRole(RoleUser.valueOf(comboRole.getValue()));
 
-            // Password update logic (if not empty)
-            if (txtPassword != null) {
-                String newPassword = txtPassword.getText();
-                if (newPassword != null && !newPassword.trim().isEmpty()) {
-                    currentUser.setMotDePasse(newPassword);
-                }
+            // تحديث كلمة السر (بما أنهما مرتبطان، نأخذ القيمة من أي منهما)
+            String updatedPassword = txtPassword.getText();
+            if (updatedPassword != null && !updatedPassword.trim().isEmpty()) {
+                currentUser.setMotDePasse(updatedPassword);
             }
 
             userService.update(currentUser);
@@ -84,6 +106,4 @@ public class UserUpdateController {
             parentController.showUserTable();
         }
     }
-
-
-    }
+}

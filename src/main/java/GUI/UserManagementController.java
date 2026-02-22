@@ -12,14 +12,13 @@ import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
-import javafx.scene.control.Alert.AlertType;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 import javafx.scene.input.MouseEvent; // HEDHI EL S7I7A
-import javafx.event.ActionEvent;
+import java.util.List;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.io.IOException;
-import java.net.URL;
-import java.util.ResourceBundle;
 
 public class UserManagementController {
 
@@ -43,7 +42,14 @@ public class UserManagementController {
 
 // 1. Setup ComboBoxes
 
-        comboRole.setItems(FXCollections.observableArrayList(RoleUser.values()));
+        // Njibu el lista mta3 el roles lkol
+        List<RoleUser> roles = new ArrayList<>(Arrays.asList(RoleUser.values()));
+
+// Na7iw el ADMIN menha (thabbet mel ism exact f-Enum mte3ek)
+        roles.remove(RoleUser.ADMIN);
+
+// Tawa n7ottou el lista el "ndhifa" fel ComboBox
+        comboRole.setItems(FXCollections.observableArrayList(roles));
 
         comboSpecialite.setItems(FXCollections.observableArrayList("FITNESS", "RUNNING", "FOOTBALL", "BASKETBALL", "YOGA", "AUTRE"));
 
@@ -367,7 +373,7 @@ public class UserManagementController {
             success.showAndWait();
 
             // ====== 6. Redirection Login ======
-            Parent root = FXMLLoader.load(getClass().getResource("/gui/Login.fxml"));
+            Parent root = FXMLLoader.load(getClass().getResource("/GUI/Login.fxml"));
             Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
             stage.setScene(new Scene(root));
             stage.centerOnScreen();
@@ -390,7 +396,7 @@ public class UserManagementController {
     void handleGoToLogin(MouseEvent event) {
         try {
 
-            Parent root = FXMLLoader.load(getClass().getResource("/gui/Login.fxml"));
+            Parent root = FXMLLoader.load(getClass().getResource("/GUI/Login.fxml"));
 
 
             Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
