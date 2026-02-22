@@ -1,28 +1,53 @@
-@import "theme.css";
+@import "app.css";
 
-.page {
-    -fx-background-color: linear-gradient(to bottom right, -ea-bg0, -ea-bg1, -ea-bg2);
-}
-
-.input {
-    -fx-background-color: rgba(255,255,255,0.07);
-    -fx-border-color: rgba(255,255,255,0.14);
-    -fx-background-radius: 12;
-    -fx-border-radius: 12;
-    -fx-padding: 9 12;
-    -fx-text-fill: -ea-text;
-    -fx-prompt-text-fill: -ea-faint;
-}
-
+/* Header row of custom TableWidget */
 .table-header {
-    -fx-background-color: rgba(255,255,255,0.08);
+    -fx-background-color: -ea-surface;
     -fx-background-radius: 14;
     -fx-border-radius: 14;
-    -fx-border-color: rgba(255,255,255,0.12);
-    -fx-padding: 10 12;
+    -fx-border-color: -ea-border;
+    -fx-border-width: 1;
 }
 
 .th {
-    -fx-text-fill: -ea-muted;
+    -fx-text-fill: -ea-slate;
     -fx-font-weight: 900;
+    -fx-padding: 10 12;
+    -fx-opacity: 0.95;
+}
+
+/* Search input */
+.input {
+    -fx-background-color: -ea-white;
+    -fx-background-radius: 12;
+    -fx-border-radius: 12;
+    -fx-border-color: -ea-border;
+    -fx-border-width: 1;
+    -fx-padding: 10 12;
+}
+
+/* Rows styling (works if rows are HBox added into rowsBox) */
+#rowsBox > .hbox {
+    -fx-background-color: -ea-white;
+    -fx-background-radius: 14;
+    -fx-border-radius: 14;
+    -fx-border-color: -ea-border;
+    -fx-border-width: 1;
+    -fx-effect: dropshadow(gaussian, rgba(15,23,42,0.06), 16, 0.10, 0, 6);
+}
+#rowsBox > .hbox:hover {
+    -fx-background-color: rgba(56,189,248,0.10);
+    -fx-border-color: rgba(56,189,248,0.35);
+}
+
+/* Cells inside rows (labels) */
+#rowsBox > .hbox .label {
+    -fx-padding: 10 12;
+    -fx-text-fill: -ea-slate;
+}
+
+/* Optional: if controller adds "row-selected" */
+.row-selected {
+    -fx-background-color: rgba(16,185,129,0.18) !important;
+    -fx-border-color: rgba(16,185,129,0.45) !important;
 }
