@@ -1,13 +1,9 @@
 /* =========================================================
    app.css — Eco-Sport & Adventure (GLOBAL UI)
-   Palette:
-   Forest #14532D | Emerald #10B981 | Sky #38BDF8 | Orange #F97316
-   Sand #F5F3E7 | Slate #0F172A | White #FFFFFF
-   Surface #F1F5F9 | Border #E2E8F0 | Muted #64748B
    ========================================================= */
 
-/* ---------- Design Tokens (variables) ---------- */
 .root, .page, .dialog-root, .page-root, .pack-page {
+    /* Palette */
     -ea-forest: #14532D;
     -ea-emerald: #10B981;
     -ea-sky: #38BDF8;
@@ -31,44 +27,36 @@
     -fx-font-family: "Inter", "Segoe UI", "Poppins", "System";
 }
 
-/* ---------- Page Backgrounds ---------- */
+/* Background global */
 .root, .pack-page {
     -fx-background-color: linear-gradient(to bottom right, -ea-sand, #D1FAE5);
 }
 
-.page, .page-root, .dialog-root {
-    -fx-background-color: transparent;
-}
-
-/* ---------- Typography helpers ---------- */
-.label {
-    -fx-text-fill: -ea-slate;
-}
+/* Typography */
+.label { -fx-text-fill: -ea-slate; }
 
 .title, .page-title, .dialog-title {
     -fx-text-fill: -ea-slate;
     -fx-font-size: 20px;
     -fx-font-weight: 800;
 }
-
 .subtitle, .page-subtitle, .muted, .hint, .label-muted {
     -fx-text-fill: -ea-muted;
 }
-
-.subtitle, .page-subtitle { -fx-font-size: 13px; }
+.page-subtitle { -fx-font-size: 13px; }
 .muted { -fx-font-size: 12.5px; }
 
-/* ---------- Topbar (generic) ---------- */
+/* Topbar */
 .topbar {
     -fx-background-color: rgba(255,255,255,0.92);
     -fx-background-radius: 16;
     -fx-border-radius: 16;
-    -fx-border-color: rgba(226,232,240,0.9);
+    -fx-border-color: rgba(226,232,240,0.95);
     -fx-border-width: 1;
     -fx-effect: dropshadow(gaussian, -ea-shadow, 20, 0.12, 0, 6);
 }
 
-/* ---------- Cards / Panels ---------- */
+/* Cards */
 .card, .content-card, .panel, .kpi, .profile, .dialog-card {
     -fx-background-color: -ea-white;
     -fx-background-radius: 18;
@@ -77,7 +65,6 @@
     -fx-border-width: 1;
     -fx-effect: dropshadow(gaussian, -ea-shadow, 22, 0.12, 0, 8);
 }
-
 .glass {
     -fx-background-color: rgba(255,255,255,0.86);
     -fx-background-radius: 18;
@@ -87,18 +74,32 @@
     -fx-effect: dropshadow(gaussian, -ea-shadow, 20, 0.10, 0, 6);
 }
 
-/* ---------- Buttons ---------- */
+/* Buttons base */
 .button {
     -fx-background-radius: 12;
     -fx-border-radius: 12;
     -fx-padding: 9 14;
     -fx-font-weight: 700;
     -fx-cursor: hand;
+
+    -fx-background-color: rgba(241,245,249,0.95);
+    -fx-border-color: -ea-border;
+    -fx-border-width: 1;
+    -fx-text-fill: -ea-slate;
+}
+.button:hover {
+    -fx-background-color: rgba(241,245,249,1);
+    -fx-border-color: rgba(56,189,248,0.45);
+}
+.button:pressed {
+    -fx-background-color: rgba(226,232,240,1);
 }
 
+/* Variants */
 .btn-primary {
     -fx-background-color: -ea-orange;
     -fx-text-fill: white;
+    -fx-border-color: transparent;
     -fx-effect: dropshadow(gaussian, rgba(249,115,22,0.28), 18, 0.20, 0, 6);
 }
 .btn-primary:hover { -fx-background-color: -ea-orange-hover; }
@@ -128,7 +129,7 @@
 }
 .btn-danger:pressed { -fx-background-color: rgba(239,68,68,0.30); }
 
-/* ---------- Inputs (TextField, ComboBox, DatePicker, Spinner) ---------- */
+/* Inputs */
 .text-field, .password-field, .text-area,
 .combo-box-base, .date-picker, .spinner {
     -fx-background-color: -ea-white;
@@ -140,7 +141,6 @@
     -fx-text-fill: -ea-slate;
     -fx-prompt-text-fill: rgba(100,116,139,0.85);
 }
-
 .text-area .content { -fx-background-color: transparent; }
 
 .text-field:focused, .password-field:focused, .text-area:focused,
@@ -149,31 +149,12 @@
     -fx-effect: dropshadow(gaussian, rgba(16,185,129,0.25), 14, 0.20, 0, 0);
 }
 
-/* ComboBox arrow */
-.combo-box .arrow-button, .date-picker .arrow-button {
-    -fx-background-color: transparent;
-}
-.combo-box .arrow, .date-picker .arrow {
-    -fx-background-color: -ea-muted;
-}
+.combo-box .arrow-button, .date-picker .arrow-button { -fx-background-color: transparent; }
+.combo-box .arrow, .date-picker .arrow { -fx-background-color: -ea-muted; }
 
-/* Spinner arrows */
-.spinner .increment-arrow-button, .spinner .decrement-arrow-button {
-    -fx-background-color: transparent;
-}
-.spinner .increment-arrow, .spinner .decrement-arrow {
-    -fx-background-color: -ea-muted;
-}
-
-/* ---------- ScrollPane ---------- */
-.scroll-pane {
-    -fx-background-color: transparent;
-    -fx-background-insets: 0;
-    -fx-padding: 0;
-}
-.scroll-pane > .viewport {
-    -fx-background-color: transparent;
-}
+/* ScrollPane */
+.scroll-pane { -fx-background-color: transparent; -fx-background-insets: 0; -fx-padding: 0; }
+.scroll-pane > .viewport { -fx-background-color: transparent; }
 .scroll-bar:vertical .thumb, .scroll-bar:horizontal .thumb {
     -fx-background-color: rgba(100,116,139,0.30);
     -fx-background-radius: 999;
@@ -183,18 +164,11 @@
     -fx-background-radius: 999;
 }
 
-/* ---------- Separators ---------- */
-.sep, .sep-light {
-    -fx-opacity: 1;
-}
-.sep {
-    -fx-background-color: -ea-border;
-}
-.sep-light {
-    -fx-background-color: rgba(226,232,240,0.70);
-}
+/* Separators */
+.sep { -fx-background-color: -ea-border; }
+.sep-light { -fx-background-color: rgba(226,232,240,0.70); }
 
-/* ---------- TableView (standard) ---------- */
+/* TableView */
 .table-view {
     -fx-background-color: -ea-white;
     -fx-background-radius: 16;
@@ -202,70 +176,27 @@
     -fx-border-color: -ea-border;
     -fx-border-width: 1;
 }
-
 .table-view .column-header-background {
     -fx-background-color: -ea-surface;
     -fx-background-radius: 16 16 0 0;
     -fx-border-color: -ea-border;
     -fx-border-width: 0 0 1 0;
 }
-
-.table-view .column-header, .table-view .filler {
-    -fx-background-color: transparent;
-}
-
+.table-view .column-header, .table-view .filler { -fx-background-color: transparent; }
 .table-view .column-header .label {
     -fx-text-fill: -ea-slate;
     -fx-font-weight: 800;
     -fx-opacity: 0.95;
 }
-
 .table-row-cell {
     -fx-background-color: -ea-white;
     -fx-border-color: transparent transparent -ea-border transparent;
     -fx-border-width: 0 0 1 0;
 }
 .table-row-cell:odd { -fx-background-color: #F8FAFC; }
-
-.table-row-cell:hover {
-    -fx-background-color: rgba(56,189,248,0.10);
-}
-
-.table-row-cell:selected {
-    -fx-background-color: rgba(16,185,129,0.18);
-}
-.table-cell {
-    -fx-padding: 10 10;
-    -fx-text-fill: -ea-slate;
-    -fx-border-color: transparent;
-}
-
-/* ---------- TabPane ---------- */
-.tab-pane {
-    -fx-background-color: transparent;
-}
-.tab-pane .tab-header-area {
-    -fx-padding: 0 0 10 0;
-}
-.tab-pane .tab-header-background {
-    -fx-background-color: transparent;
-}
-.tab {
-    -fx-background-color: rgba(241,245,249,0.92);
-    -fx-background-radius: 12;
-    -fx-border-radius: 12;
-    -fx-border-color: -ea-border;
-    -fx-border-width: 1;
-    -fx-padding: 6 10 6 10;
-}
-.tab:selected {
-    -fx-background-color: -ea-white;
-    -fx-border-color: rgba(16,185,129,0.55);
-}
-.tab .tab-label {
-    -fx-text-fill: -ea-slate;
-    -fx-font-weight: 800;
-}
+.table-row-cell:hover { -fx-background-color: rgba(56,189,248,0.10); }
+.table-row-cell:selected { -fx-background-color: rgba(16,185,129,0.18); }
+.table-cell { -fx-padding: 10 10; -fx-text-fill: -ea-slate; -fx-border-color: transparent; }
 
 /* =========================================================
    MAIN LAYOUT — Sidebar (MainLayout.fxml)
@@ -273,34 +204,18 @@
 .sidebar {
     -fx-background-color: linear-gradient(to bottom right, -ea-forest, -ea-emerald);
 }
+.sidebar-overlay { -fx-background-color: rgba(15,23,42,0.40); }
+.sidebar-content { -fx-padding: 18 14 18 14; }
 
-.sidebar-overlay {
-    -fx-background-color: rgba(15,23,42,0.40);
-}
-
-.sidebar-content {
-    -fx-padding: 18 14 18 14;
-}
-
-/* Brand */
 .logo-circle {
     -fx-background-color: rgba(255,255,255,0.16);
     -fx-background-radius: 999;
     -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.20), 12, 0.20, 0, 6);
 }
-.brand, .brand-sub, .profile-name, .profile-role, .avatar-text, .pill {
-    -fx-text-fill: white;
-}
-.brand {
-    -fx-font-size: 16px;
-    -fx-font-weight: 900;
-}
-.brand-sub {
-    -fx-font-size: 12px;
-    -fx-opacity: 0.80;
-}
+.brand, .brand-sub, .pill, .avatar-text { -fx-text-fill: white; }
+.brand { -fx-font-size: 16px; -fx-font-weight: 900; }
+.brand-sub { -fx-font-size: 12px; -fx-opacity: 0.80; }
 
-/* Profile Card on sidebar */
 .profile-card {
     -fx-background-color: rgba(255,255,255,0.12);
     -fx-background-radius: 16;
@@ -316,10 +231,6 @@
     -fx-border-width: 1;
     -fx-padding: 8;
 }
-
-/* Nav */
-.nav-list { -fx-padding: 6 0 0 0; }
-
 .nav-item {
     -fx-background-color: transparent;
     -fx-text-fill: rgba(255,255,255,0.92);
@@ -327,15 +238,11 @@
     -fx-alignment: CENTER_LEFT;
     -fx-padding: 10 12;
     -fx-background-radius: 12;
+    -fx-border-radius: 12;
 }
-.nav-item:hover {
-    -fx-background-color: rgba(255,255,255,0.14);
-}
-.nav-item:pressed {
-    -fx-background-color: rgba(255,255,255,0.20);
-}
+.nav-item:hover { -fx-background-color: rgba(255,255,255,0.14); }
+.nav-item:pressed { -fx-background-color: rgba(255,255,255,0.20); }
 
-/* Pills */
 .pill {
     -fx-background-color: rgba(16,185,129,0.30);
     -fx-background-radius: 999;
@@ -343,10 +250,5 @@
     -fx-font-weight: 900;
 }
 
-/* Content panel inside main layout */
-.content-card {
-    -fx-padding: 18;
-}
-.hint-row .hint-emoji {
-    -fx-font-size: 16px;
-}
+.content-card { -fx-padding: 18; }
+.hint-row .hint-emoji { -fx-font-size: 16px; }

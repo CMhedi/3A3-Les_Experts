@@ -1,51 +1,119 @@
-@import "theme.css";
+/* =========================================================
+   PackList.css — Eco-Sport & Adventure (LIGHT PRO)
+   Palette:
+   Forest #14532D | Emerald #10B981 | Sky #38BDF8 | Orange #F97316
+   Sand #F5F3E7 | Slate #0F172A | Surface #F1F5F9 | Border #E2E8F0 | Muted #64748B
+   ========================================================= */
 
-.pack-page { -fx-background-color: linear-gradient(to bottom right, -ea-bg0, -ea-bg1, -ea-bg2); }
+/* ✅ On supprime l'ancien thème sombre */
+/* @import "theme.css"; */
 
+.pack-page {
+    /* tokens local (pas besoin d’un autre fichier) */
+    -ea-forest: #14532D;
+    -ea-emerald: #10B981;
+    -ea-sky: #38BDF8;
+    -ea-orange: #F97316;
+    -ea-orange-hover: #EA580C;
+
+    -ea-sand: #F5F3E7;
+    -ea-slate: #0F172A;
+    -ea-white: #FFFFFF;
+
+    -ea-surface: #F1F5F9;
+    -ea-border: #E2E8F0;
+    -ea-muted: #64748B;
+
+    -ea-shadow: rgba(15,23,42,0.10);
+
+    -fx-background-color: linear-gradient(to bottom right, -ea-sand, #D1FAE5);
+}
+
+/* wrappers */
 .top-wrap { }
 .toolbar { }
 
+/* ---------- Search field ---------- */
 .search {
-    -fx-background-color: rgba(255,255,255,0.07);
-    -fx-border-color: rgba(255,255,255,0.14);
+    -fx-background-color: -ea-white;
+    -fx-border-color: -ea-border;
     -fx-background-radius: 12;
     -fx-border-radius: 12;
+    -fx-border-width: 1;
     -fx-padding: 9 12;
-    -fx-text-fill: -ea-text;
-    -fx-prompt-text-fill: -ea-faint;
+
+    -fx-text-fill: -ea-slate;
+    -fx-prompt-text-fill: rgba(100,116,139,0.85);
+}
+.search:focused {
+    -fx-border-color: -ea-emerald;
+    -fx-effect: dropshadow(gaussian, rgba(16,185,129,0.22), 14, 0.18, 0, 0);
 }
 
-.table-wrap {
-    -fx-background-color: transparent;
-}
+/* ---------- Table header ---------- */
+.table-wrap { -fx-background-color: transparent; }
 
 .table-header {
-    -fx-background-color: rgba(255,255,255,0.08);
+    -fx-background-color: -ea-surface;
     -fx-background-radius: 14;
     -fx-border-radius: 14;
-    -fx-border-color: rgba(255,255,255,0.12);
+    -fx-border-color: -ea-border;
+    -fx-border-width: 1;
     -fx-padding: 10 12;
 }
 
 .th {
-    -fx-text-fill: -ea-muted;
+    -fx-text-fill: -ea-slate;
     -fx-font-weight: 900;
+    -fx-opacity: 0.92;
 }
+
+/* ---------- Cards (rows / items) ---------- */
 .card {
-    -fx-background-color: rgba(255,255,255,0.06);
-    -fx-border-color: rgba(255,255,255,0.12);
+    -fx-background-color: -ea-white;
+    -fx-border-color: -ea-border;
+    -fx-border-width: 1;
     -fx-border-radius: 16;
     -fx-background-radius: 16;
     -fx-padding: 16;
+    -fx-effect: dropshadow(gaussian, -ea-shadow, 18, 0.12, 0, 6);
+}
+
+.card:hover {
+    -fx-border-color: rgba(56,189,248,0.55);
+    -fx-background-color: linear-gradient(to bottom right, -ea-white, rgba(56,189,248,0.06));
 }
 
 .card-title {
     -fx-font-size: 15px;
-    -fx-font-weight: 700;
+    -fx-font-weight: 900;
+    -fx-text-fill: -ea-slate;
 }
-/* Bas */
+
+/* If you have labels inside the card */
+.card .label {
+    -fx-text-fill: -ea-slate;
+}
+.card .muted, .card .label-muted {
+    -fx-text-fill: -ea-muted;
+}
+
+/* ---------- Bottom bar ---------- */
 .bottom-bar { }
+
 .total {
     -fx-font-weight: 900;
-    -fx-text-fill: -ea-text;
+    -fx-text-fill: -ea-forest;
 }
+
+/* Optional CTA button class if exists in FXML */
+.btn-reserver {
+    -fx-background-color: -ea-orange;
+    -fx-text-fill: white;
+    -fx-font-weight: 900;
+    -fx-background-radius: 12;
+    -fx-border-radius: 12;
+    -fx-padding: 9 14;
+}
+.btn-reserver:hover { -fx-background-color: -ea-orange-hover; }
+.btn-reserver:pressed { -fx-background-color: #C2410C; }

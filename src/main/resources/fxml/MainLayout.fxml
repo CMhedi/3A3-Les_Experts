@@ -24,14 +24,7 @@
         <StackPane maxWidth="270" minWidth="270" prefWidth="270" styleClass="sidebar">
 
             <!-- Background image -->
-            <ImageView fitWidth="270" preserveRatio="false" styleClass="sidebar-bg" StackPane.alignment="BOTTOM_LEFT">
-                <image>
-                    <Image url="@/assets/im.jpg" />
-                </image>
-                <effect>
-                    <GaussianBlur radius="2" />
-                </effect>
-            </ImageView>
+            
 
             <!-- Artistic overlay -->
             <Region styleClass="sidebar-overlay" />
