@@ -1,0 +1,100 @@
+/* ================= ROOT ================= */
+.root-bg {
+    -fx-background-color: linear-gradient(to bottom right, #0f2027, #203a43, #2c5364);
+    -fx-font-family: "Segoe UI";
+}
+
+/* ================= CARD ================= */
+.glass-card {
+    -fx-background-color: rgba(255,255,255,0.08);
+    -fx-background-radius: 25;
+    -fx-padding: 30;
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.5), 30, 0.3, 0, 12);
+}
+
+/* ================= BRAND ================= */
+.brand-row {
+    -fx-padding: 5 0 10 0;
+}
+
+.brand-eco {
+    -fx-text-fill: #f4b400;
+    -fx-font-size: 28px;
+    -fx-font-weight: bold;
+}
+
+.brand-adv {
+    -fx-text-fill: white;
+    -fx-font-size: 28px;
+    -fx-font-weight: bold;
+}
+
+.subtitle {
+    -fx-text-fill: rgba(255,255,255,0.8);
+    -fx-font-size: 13px;
+}
+
+/* ================= LABELS ================= */
+.field-label {
+    -fx-text-fill: white;
+    -fx-font-weight: 600;
+    -fx-font-size: 13px;
+}
+
+/* ================= TEXTAREA ================= */
+.token-area, .details-area {
+    -fx-background-radius: 15;
+    -fx-border-radius: 15;
+    -fx-border-width: 1;
+    -fx-border-color: rgba(255,255,255,0.2);
+}
+
+.token-area .content,
+.details-area .content {
+    -fx-background-color: rgba(0,0,0,0.25);
+    -fx-background-radius: 15;
+    -fx-padding: 12;
+}
+
+.token-area, .token-area .content {
+    -fx-text-fill: white;
+    -fx-prompt-text-fill: rgba(255,255,255,0.6);
+    -fx-font-size: 13px;
+}
+
+.details-area, .details-area .content {
+    -fx-text-fill: white;
+    -fx-font-size: 13px;
+}
+
+/* ================= BUTTONS ================= */
+.btn-primary {
+    -fx-background-color: #f4b400;
+    -fx-text-fill: black;
+    -fx-font-weight: bold;
+    -fx-background-radius: 15;
+    -fx-padding: 10 20;
+    -fx-cursor: hand;
+}
+
+.btn-primary:hover {
+    -fx-background-color: #ffd54f;
+}
+
+.btn-secondary {
+    -fx-background-color: rgba(255,255,255,0.15);
+    -fx-text-fill: white;
+    -fx-background-radius: 15;
+    -fx-padding: 10 20;
+    -fx-border-radius: 15;
+    -fx-border-color: rgba(255,255,255,0.2);
+}
+
+.btn-secondary:hover {
+    -fx-background-color: rgba(255,255,255,0.25);
+}
+
+/* ================= SEPARATOR ================= */
+.separator .line {
+    -fx-border-color: rgba(255,255,255,0.2);
+}

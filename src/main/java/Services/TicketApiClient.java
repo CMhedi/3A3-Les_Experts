@@ -43,8 +43,16 @@ public class TicketApiClient {
         return gson.fromJson(res.body(), VerifyResp.class);
     }
 
-    private record GenerateReq(int reservationId) {}
-    private record VerifyReq(String token) {}
+    // ✅ utiliser class au lieu de record pour éviter soucis modules/reflection
+    public static class GenerateReq {
+        public int reservationId;
+        public GenerateReq(int reservationId){ this.reservationId = reservationId; }
+    }
+
+    public static class VerifyReq {
+        public String token;
+        public VerifyReq(String token){ this.token = token; }
+    }
 
     public static class GenerateResp {
         public int reservationId;
@@ -55,6 +63,25 @@ public class TicketApiClient {
     public static class VerifyResp {
         public boolean valid;
         public boolean alreadyUsed;
+        public ReservationDetails details;
+    }
+
+    public static class ReservationDetails {
         public int reservationId;
+        public String statut;
+        public int nbPersonnes;
+        public int userId;
+        public int activiteId;
+
+        public String activiteNom;
+        public String typeActivite;
+        public String categorie;
+        public String niveau;
+
+        public double prixUnitaire;
+        public double total;
+
+        public boolean checkedIn;
+        public String checkinTime;
     }
 }

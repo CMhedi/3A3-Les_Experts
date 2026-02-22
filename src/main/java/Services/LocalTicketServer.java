@@ -18,11 +18,16 @@ public class LocalTicketServer {
 
         try {
             TicketService ticketService = new TicketService();
+
             server = HttpServer.create(new InetSocketAddress("127.0.0.1", 8090), 0);
 
+            // ---------------- GENERATE ----------------
             server.createContext("/api/tickets/generate", ex -> {
                 try {
-                    if (!"POST".equalsIgnoreCase(ex.getRequestMethod())) { ex.sendResponseHeaders(405, -1); return; }
+                    if (!"POST".equalsIgnoreCase(ex.getRequestMethod())) {
+                        ex.sendResponseHeaders(405, -1);
+                        return;
+                    }
 
                     String body = new String(ex.getRequestBody().readAllBytes(), StandardCharsets.UTF_8);
                     GenerateReq req = gson.fromJson(body, GenerateReq.class);
@@ -45,18 +50,24 @@ public class LocalTicketServer {
                     ex.getResponseHeaders().add("Content-Type", "application/json; charset=UTF-8");
                     ex.sendResponseHeaders(500, out.length);
                     try (OutputStream os = ex.getResponseBody()) { os.write(out); }
-                } finally { ex.close(); }
+                } finally {
+                    ex.close();
+                }
             });
 
+            // ---------------- VERIFY (DETAILS) ----------------
             server.createContext("/api/tickets/verify", ex -> {
                 try {
-                    if (!"POST".equalsIgnoreCase(ex.getRequestMethod())) { ex.sendResponseHeaders(405, -1); return; }
+                    if (!"POST".equalsIgnoreCase(ex.getRequestMethod())) {
+                        ex.sendResponseHeaders(405, -1);
+                        return;
+                    }
 
                     String body = new String(ex.getRequestBody().readAllBytes(), StandardCharsets.UTF_8);
                     VerifyReq req = gson.fromJson(body, VerifyReq.class);
                     if (req == null || req.token == null || req.token.isBlank()) throw new IllegalArgumentException("token manquant");
 
-                    var result = ticketService.verifyAndCheckIn(req.token);
+                    var result = ticketService.verifyAndCheckInWithDetails(req.token);
 
                     byte[] out = gson.toJson(result).getBytes(StandardCharsets.UTF_8);
                     ex.getResponseHeaders().add("Content-Type", "application/json; charset=UTF-8");
@@ -70,19 +81,23 @@ public class LocalTicketServer {
                     ex.getResponseHeaders().add("Content-Type", "application/json; charset=UTF-8");
                     ex.sendResponseHeaders(400, out.length);
                     try (OutputStream os = ex.getResponseBody()) { os.write(out); }
-                } finally { ex.close(); }
+                } finally {
+                    ex.close();
+                }
             });
 
             server.setExecutor(null);
             server.start();
-            System.out.println("[LocalTicketServer] http://127.0.0.1:8090 started");
+            System.out.println("[LocalTicketServer] started http://127.0.0.1:8090");
 
         } catch (Exception e) {
             throw new RuntimeException("Erreur démarrage serveur ticket: " + e.getMessage(), e);
         }
     }
 
+    // ----- req/resp -----
     private static class GenerateReq { int reservationId; }
     private static class VerifyReq { String token; }
+
     private record GenerateResp(int reservationId, String token, String pngBase64) {}
 }

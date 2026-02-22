@@ -5,7 +5,7 @@ import com.google.zxing.common.BitMatrix;
 import com.google.zxing.qrcode.QRCodeWriter;
 import com.google.zxing.client.j2se.MatrixToImageWriter;
 
-// ✅ IMPORTANT: mets ici le bon package de ta classe Database
+// ⚠️ change si ton package est différent
 import Utiles.MyDB;
 
 import javax.crypto.Mac;
@@ -18,7 +18,6 @@ import java.util.Base64;
 
 public class TicketService {
 
-    // ✅ Pas une API key externe: c’est TON secret interne
     private static final String TICKET_SECRET =
             System.getenv().getOrDefault("TICKET_SECRET", "CHANGE_ME_SUPER_SECRET_123");
 
@@ -28,10 +27,11 @@ public class TicketService {
         this.cnx = MyDB.getInstance().getConnection();
     }
 
+    // ========================= GENERATE =========================
+
     public TicketResult generateTicket(int reservationId) throws Exception {
         ReservationInfo info = loadReservationInfo(reservationId);
 
-        // ✅ règle métier
         if (!"CONFIRMEE".equalsIgnoreCase(info.statut)) {
             throw new IllegalStateException("Ticket possible uniquement si réservation CONFIRMEE.");
         }
@@ -40,46 +40,56 @@ public class TicketService {
         saveToken(reservationId, token);
 
         byte[] png = generateQrPngBytes("ECOA|" + token, 320, 320);
-
         return new TicketResult(reservationId, token, png);
     }
 
-    public VerifyResult verifyAndCheckIn(String token) throws Exception {
+    // ========================= VERIFY + DETAILS =========================
+
+    public VerifyDetailsResult verifyAndCheckInWithDetails(String token) throws Exception {
         ParsedToken pt = verifySignedToken(token);
 
-        String sql = """
-            SELECT id_res_act, checked_in
-            FROM reservation_activite
-            WHERE id_res_act = ? AND ticket_token = ?
+        // 1) vérifier ticket_token existe + état used
+        String checkSql = """
+            SELECT ra.id_res_act, ra.checked_in
+            FROM reservation_activite ra
+            WHERE ra.id_res_act = ? AND ra.ticket_token = ?
         """;
 
-        try (PreparedStatement ps = cnx.prepareStatement(sql)) {
+        boolean alreadyUsed;
+        try (PreparedStatement ps = cnx.prepareStatement(checkSql)) {
             ps.setInt(1, pt.reservationId);
             ps.setString(2, token);
 
             try (ResultSet rs = ps.executeQuery()) {
-                if (!rs.next()) return new VerifyResult(false, false, -1);
-
-                boolean used = rs.getInt("checked_in") == 1;
-                if (used) return new VerifyResult(true, true, pt.reservationId);
+                if (!rs.next()) {
+                    return new VerifyDetailsResult(false, false, null);
+                }
+                alreadyUsed = rs.getInt("checked_in") == 1;
             }
         }
 
-        String up = """
-            UPDATE reservation_activite
-            SET checked_in = 1, checkin_time = NOW()
-            WHERE id_res_act = ? AND ticket_token = ? AND checked_in = 0
-        """;
-
-        try (PreparedStatement ps = cnx.prepareStatement(up)) {
-            ps.setInt(1, pt.reservationId);
-            ps.setString(2, token);
-            int updated = ps.executeUpdate();
-            if (updated == 0) return new VerifyResult(true, true, pt.reservationId);
+        // 2) si pas utilisé -> check-in atomique
+        if (!alreadyUsed) {
+            String up = """
+                UPDATE reservation_activite
+                SET checked_in = 1, checkin_time = NOW()
+                WHERE id_res_act = ? AND ticket_token = ? AND checked_in = 0
+            """;
+            try (PreparedStatement ps = cnx.prepareStatement(up)) {
+                ps.setInt(1, pt.reservationId);
+                ps.setString(2, token);
+                int updated = ps.executeUpdate();
+                if (updated == 0) alreadyUsed = true;
+            }
         }
 
-        return new VerifyResult(true, false, pt.reservationId);
+        // 3) charger détails (après checkin)
+        ReservationDetails details = loadReservationDetails(pt.reservationId);
+
+        return new VerifyDetailsResult(true, alreadyUsed, details);
     }
+
+    // ========================= DB HELPERS =========================
 
     private ReservationInfo loadReservationInfo(int reservationId) throws SQLException {
         String sql = """
@@ -114,7 +124,62 @@ public class TicketService {
         }
     }
 
-    // ===== Token signé =====
+    private ReservationDetails loadReservationDetails(int reservationId) throws SQLException {
+
+        String sql = """
+            SELECT
+                ra.id_res_act,
+                ra.statut_res,
+                ra.nb_personnes,
+                ra.id_user,
+                ra.id_activite,
+                ra.checked_in,
+                ra.checkin_time,
+                a.nom AS activite_nom,
+                a.type_activite,
+                a.categorie_act,
+                a.niveau_act,
+                a.prix
+            FROM reservation_activite ra
+            JOIN activite a ON a.id_activite = ra.id_activite
+            WHERE ra.id_res_act = ?
+        """;
+
+        try (PreparedStatement ps = cnx.prepareStatement(sql)) {
+            ps.setInt(1, reservationId);
+            try (ResultSet rs = ps.executeQuery()) {
+                if (!rs.next()) throw new SQLException("Détails introuvables pour id_res_act=" + reservationId);
+
+                double prix = rs.getDouble("prix");
+                int nb = rs.getInt("nb_personnes");
+                double total = prix * nb;
+
+                Timestamp t = rs.getTimestamp("checkin_time");
+                String checkTime = (t == null) ? null : t.toString();
+
+                return new ReservationDetails(
+                        rs.getInt("id_res_act"),
+                        rs.getString("statut_res"),
+                        nb,
+                        rs.getInt("id_user"),
+                        rs.getInt("id_activite"),
+                        rs.getString("activite_nom"),
+                        rs.getString("type_activite"),
+                        rs.getString("categorie_act"),
+                        rs.getString("niveau_act"),
+                        prix,
+                        total,
+                        rs.getInt("checked_in") == 1,
+                        checkTime
+                );
+            }
+        }
+    }
+
+    // ========================= TOKEN SIGNING =========================
+    // token = base64url(payload).base64url(signature)
+    // payload = rid|uid|aid|iat
+
     private String createSignedToken(int rid, int uid, int aid) throws Exception {
         long iat = Instant.now().getEpochSecond();
         String payload = rid + "|" + uid + "|" + aid + "|" + iat;
@@ -162,7 +227,8 @@ public class TicketService {
         return r == 0;
     }
 
-    // ===== QR PNG =====
+    // ========================= QR PNG =========================
+
     private byte[] generateQrPngBytes(String text, int w, int h) throws Exception {
         QRCodeWriter writer = new QRCodeWriter();
         BitMatrix matrix = writer.encode(text, BarcodeFormat.QR_CODE, w, h);
@@ -172,9 +238,29 @@ public class TicketService {
         }
     }
 
+    // ========================= DTOs =========================
+
     public record TicketResult(int reservationId, String token, byte[] pngBytes) {}
-    public record VerifyResult(boolean valid, boolean alreadyUsed, int reservationId) {}
+
+    public record VerifyDetailsResult(boolean valid, boolean alreadyUsed, ReservationDetails details) {}
+
+    public record ReservationDetails(
+            int reservationId,
+            String statut,
+            int nbPersonnes,
+            int userId,
+            int activiteId,
+            String activiteNom,
+            String typeActivite,
+            String categorie,
+            String niveau,
+            double prixUnitaire,
+            double total,
+            boolean checkedIn,
+            String checkinTime
+    ) {}
 
     private record ReservationInfo(int reservationId, String statut, int userId, int activiteId) {}
+
     private record ParsedToken(int reservationId) {}
 }

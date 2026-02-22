@@ -19,12 +19,14 @@ module org.example.demo {
 
     requires org.apache.pdfbox;
 
+
     requires com.fasterxml.jackson.databind;
     requires com.fasterxml.jackson.core;
     requires com.fasterxml.jackson.annotation;
 
     opens Controllers to javafx.fxml;
     opens Models to javafx.base, javafx.fxml;
+    
 
     exports Controllers;
     exports org.example.demo;

@@ -58,6 +58,9 @@
                     <Button text="Fermer"
                             onAction="#fermer"
                             styleClass="secondary-button"/>
+                    <Button text="Scanner / Check-In"
+                            onAction="#openCheckIn"
+                            styleClass="secondary-button"/>
 
                 </HBox>
 

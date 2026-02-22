@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<AnchorPane xmlns:fx="http://javafx.com/fxml"
+            fx:controller="Controllers.CheckInController"
+            stylesheets="@checkin.css"
+            styleClass="root-bg">
+
+    <children>
+        <StackPane AnchorPane.topAnchor="0"
+                   AnchorPane.bottomAnchor="0"
+                   AnchorPane.leftAnchor="0"
+                   AnchorPane.rightAnchor="0">
+
+            <VBox spacing="18"
+                  alignment="CENTER"
+                  prefWidth="720"
+                  styleClass="glass-card">
+
+                <padding>
+                    <Insets top="35" right="40" bottom="35" left="40"/>
+                </padding>
+
+                <!-- LOGO -->
+                <VBox spacing="5" alignment="CENTER" styleClass="brand-row">
+                    <HBox spacing="5" alignment="CENTER">
+                        <Label text="Eco" styleClass="brand-eco"/>
+                        <Label text="Adventure" styleClass="brand-adv"/>
+                    </HBox>
+                    <Label text="Check-In sécurisé par QR Code"
+                           styleClass="subtitle"/>
+                </VBox>
+
+                <Separator/>
+
+                <!-- TOKEN -->
+                <VBox spacing="8" prefWidth="600">
+                    <Label text="Token QR (ECOA|...)" styleClass="field-label"/>
+                    <TextArea fx:id="tokenArea"
+                              styleClass="token-area"
+                              promptText="Colle ici le texte du QR"
+                              prefRowCount="4"/>
+                </VBox>
+
+                <!-- BUTTONS -->
+                <HBox spacing="15" alignment="CENTER">
+                    <Button text="Vérifier"
+                            onAction="#verify"
+                            styleClass="btn-primary"/>
+                    <Button text="Effacer"
+                            onAction="#clear"
+                            styleClass="btn-secondary"/>
+                </HBox>
+
+                <Separator/>
+
+                <!-- RESULT -->
+                <VBox spacing="8" prefWidth="600">
+                    <Label text="Détails Réservation"
+                           styleClass="field-label"/>
+                    <TextArea fx:id="detailsArea"
+                              editable="false"
+                              styleClass="details-area"
+                              prefRowCount="8"/>
+                </VBox>
+
+            </VBox>
+        </StackPane>
+    </children>
+</AnchorPane>
