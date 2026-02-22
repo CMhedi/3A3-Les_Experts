@@ -526,6 +526,36 @@
     -fx-text-fill: white;
     -fx-background-radius: 8;
     -fx-padding: 10 20;
+}/* Dialog Design */
+.dialog-pane {
+    -fx-background-color: white;
+    -fx-background-radius: 12;
+}
+.dialog-pane .header-panel {
+    -fx-background-color: #f8fafc;
+    -fx-padding: 15;
+}
+.dialog-pane .button-bar .button {
+    -fx-background-radius: 8;
+    -fx-cursor: hand;
+}
+.dialog-pane .button-bar .button:default {
+    -fx-background-color: #2563eb;
+    -fx-text-fill: white;
+}
+
+/* Spinner Design */
+.spinner {
+    -fx-background-color: white;
+    -fx-border-color: #e2e8f0;
+    -fx-border-radius: 8;
+}
+
+/* Navbar active item improvement */
+.navItemActive {
+    -fx-background-color: #1e293b !important;
+    -fx-text-fill: #ffffff !important;
+    -fx-font-weight: bold;
 }
 /* Ken t7eb el Scrollbar tji mziyna zeda */
 .table .scroll-bar:vertical .thumb,
