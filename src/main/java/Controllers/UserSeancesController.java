@@ -42,6 +42,7 @@ public class UserSeancesController {
             e.printStackTrace();
         }
     }
+
     @FXML
     private void goToIA(ActionEvent event) {
         switchScene(event, "/GUI/ChatbotUser.fxml");
@@ -50,5 +51,19 @@ public class UserSeancesController {
     @FXML
     public void goTopActivites(ActionEvent event) {
         switchScene(event, "/GUI/TopActivite.fxml");
+    }
+
+
+    @FXML
+    private void openLocalisation() {
+        try {
+            Parent root = FXMLLoader.load(getClass().getResource("/GUI/localisation.fxml"));
+            Stage stage = new Stage();
+            stage.setScene(new Scene(root));
+            stage.setTitle("EcoAdventure - Localisation");
+            stage.show();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 }

@@ -45,7 +45,6 @@
                 <Label text="Actions disponibles"
                        styleClass="card-title"/>
 
-                <!-- Boutons centrés -->
                 <Button text="✓ Réserver la séance"
                         onAction="#reserver"
                         styleClass="primary-btn"
@@ -55,8 +54,22 @@
                         onAction="#openAjouterActivite"
                         styleClass="secondary-btn"
                         prefWidth="260"/>
-                <Button text="Top 3 Client"  styleClass="primary-btn" onAction="#goTopActivites"/>
-                <Button text="Parler Avec Notre Chat"  styleClass="secondary-btn-btn" onAction="#goToIA"/>
+
+                <Button text="Top 3 Client"
+                        styleClass="primary-btn"
+                        onAction="#goTopActivites"
+                        prefWidth="260"/>
+
+                <Button text="Parler Avec Notre Chat"
+                        styleClass="secondary-btn-btn"
+                        onAction="#goToIA"
+                        prefWidth="260"/>
+
+                <!-- NOUVEAU BOUTON -->
+                <Button text="📍 Voir ma localisation"
+                        onAction="#openLocalisation"
+                        styleClass="primary-btn"
+                        prefWidth="260"/>
 
             </VBox>
         </StackPane>

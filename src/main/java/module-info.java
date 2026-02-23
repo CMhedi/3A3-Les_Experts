@@ -12,6 +12,7 @@ module org.example.demo {
     requires java.desktop;
 
     requires com.google.gson;
+    requires javafx.web;
 
     requires com.google.zxing;
     requires com.google.zxing.javase;
