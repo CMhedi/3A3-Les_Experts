@@ -1,11 +1,6 @@
 package GUI;
 
 import Entities.UserApp;
-<<<<<<< HEAD
-import Services.UserService;
-=======
-import Services.interfaces.UserService;
->>>>>>> origin/salma_integration
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
@@ -14,6 +9,7 @@ import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.input.MouseEvent;
 import javafx.stage.Stage;
+
 import java.io.IOException;
 import java.net.URL;
 import java.util.ResourceBundle;
@@ -26,7 +22,6 @@ public class ForgotPasswordController implements Initializable {
 
     private String correctCode;
     private UserApp currentUser;
-    private UserService us = new UserService();
 
     @Override
     public void initialize(URL url, ResourceBundle rb) {
@@ -47,7 +42,6 @@ public class ForgotPasswordController implements Initializable {
         });
     }
 
-
     public void initData(UserApp user, String code) {
         this.currentUser = user;
         this.correctCode = code;
@@ -55,9 +49,8 @@ public class ForgotPasswordController implements Initializable {
         if (lblEmailDisplay != null && user != null) {
             lblEmailDisplay.setText(user.getEmail());
         }
-        System.out.println("DEBUG: Interface prête pour " + user.getEmail() + " avec code: " + code);
+        System.out.println("DEBUG: Interface prête pour " + (user != null ? user.getEmail() : "null") + " avec code: " + code);
     }
-
 
     @FXML
     void handleAction() {
@@ -69,12 +62,11 @@ public class ForgotPasswordController implements Initializable {
                 Parent root = loader.load();
 
                 ResetPasswordController controller = loader.getController();
-
-
                 controller.setUserEmail(currentUser.getEmail());
 
                 Stage stage = (Stage) btnAction.getScene().getWindow();
                 stage.setScene(new Scene(root));
+                stage.show();
 
             } catch (IOException e) {
                 System.err.println("Erreur redirection ResetPassword: " + e.getMessage());
@@ -91,6 +83,7 @@ public class ForgotPasswordController implements Initializable {
             Parent root = FXMLLoader.load(getClass().getResource("/GUI/Login.fxml"));
             Stage stage = (Stage) btnAction.getScene().getWindow();
             stage.setScene(new Scene(root));
+            stage.show();
         } catch (IOException e) {
             e.printStackTrace();
         }

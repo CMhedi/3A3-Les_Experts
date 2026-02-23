@@ -1,25 +1,21 @@
 package GUI;
 
 import Entities.Reclamation;
-<<<<<<< HEAD
 import Services.ReclamationService;
-=======
-import GUI.utils.DialogUtils;
-import Services.interfaces.ReclamationService;
-import enums.StatutReclamation;
->>>>>>> origin/salma_integration
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.Alert;
 import javafx.scene.control.TextArea;
 import javafx.stage.Stage;
+
 import java.sql.SQLException;
 
 public class ReponsePopupController {
+
     @FXML private TextArea txtReponse;
 
     private Reclamation selectedRec;
-    private ReclamationService rs = new ReclamationService();
+    private final ReclamationService rs = new ReclamationService();
 
     private Runnable onSuccess;
 
@@ -30,21 +26,40 @@ public class ReponsePopupController {
 
     @FXML
     void handleEnvoyer(ActionEvent event) {
-        if (txtReponse.getText().trim().isEmpty()) {
-            DialogUtils.showError("Champs vide", "La réponse ne peut pas être vide");
+        String rep = (txtReponse.getText() == null) ? "" : txtReponse.getText().trim();
+
+        if (rep.isEmpty()) {
+            Alert a = new Alert(Alert.AlertType.ERROR);
+            a.setTitle("Champs vide");
+            a.setHeaderText(null);
+            a.setContentText("La réponse ne peut pas être vide");
+            a.show();
             return;
         }
+
+        if (selectedRec == null) {
+            Alert a = new Alert(Alert.AlertType.ERROR);
+            a.setTitle("Erreur");
+            a.setHeaderText(null);
+            a.setContentText("Aucune réclamation sélectionnée.");
+            a.show();
+            return;
+        }
+
         try {
+            rs.repondre(selectedRec.getIdReclamation(), rep);
 
-            rs.repondre(selectedRec.getIdReclamation(), txtReponse.getText());
+            if (onSuccess != null) onSuccess.run();
 
-            if (onSuccess != null) {
-                onSuccess.run();
-            }
+            ((Stage) txtReponse.getScene().getWindow()).close();
 
-            ((Stage)txtReponse.getScene().getWindow()).close();
         } catch (SQLException e) {
             e.printStackTrace();
+            Alert a = new Alert(Alert.AlertType.ERROR);
+            a.setTitle("Erreur SQL");
+            a.setHeaderText(null);
+            a.setContentText("Impossible d'envoyer la réponse.");
+            a.show();
         }
     }
 

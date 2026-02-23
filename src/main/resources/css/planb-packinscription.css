@@ -1,0 +1,91 @@
+.page {
+    -fx-background-color: linear-gradient(to bottom right, #0b1512, #0f1c18, #0a1210);
+    -fx-font-family: "Inter", "Segoe UI", Arial;
+}
+
+.topbar {
+    -fx-padding: 14 16;
+    -fx-background-color: rgba(255,255,255,0.06);
+    -fx-border-color: rgba(255,255,255,0.08);
+    -fx-border-width: 0 0 1 0;
+}
+
+.h1 {
+    -fx-text-fill: rgba(255,255,255,0.92);
+    -fx-font-size: 18px;
+    -fx-font-weight: 800;
+}
+
+.h2 {
+    -fx-text-fill: rgba(255,255,255,0.90);
+    -fx-font-size: 15px;
+    -fx-font-weight: 800;
+}
+
+.muted {
+    -fx-text-fill: rgba(255,255,255,0.60);
+}
+
+.output {
+    -fx-text-fill: rgba(255,255,255,0.85);
+    -fx-padding: 8 10;
+    -fx-background-color: rgba(255,255,255,0.06);
+    -fx-background-radius: 10;
+    -fx-border-color: rgba(255,255,255,0.10);
+    -fx-border-radius: 10;
+}
+
+.tabs .tab-header-area {
+    -fx-background-color: rgba(255,255,255,0.04);
+}
+
+.tab-pane *.tab-header-background {
+    -fx-background-color: rgba(255,255,255,0.04);
+}
+
+.tab-label {
+    -fx-text-fill: rgba(255,255,255,0.85);
+    -fx-font-weight: 700;
+}
+
+.label {
+    -fx-text-fill: rgba(255,255,255,0.78);
+}
+
+.text-field, .password-field, .combo-box {
+    -fx-background-color: rgba(255,255,255,0.08);
+    -fx-background-radius: 10;
+    -fx-border-radius: 10;
+    -fx-border-color: rgba(255,255,255,0.12);
+    -fx-text-fill: rgba(255,255,255,0.92);
+    -fx-prompt-text-fill: rgba(255,255,255,0.45);
+}
+
+.list-view {
+    -fx-background-color: rgba(255,255,255,0.06);
+    -fx-background-radius: 12;
+    -fx-border-radius: 12;
+    -fx-border-color: rgba(255,255,255,0.10);
+}
+
+.btn {
+    -fx-background-color: rgba(95,233,140,0.20);
+    -fx-text-fill: rgba(255,255,255,0.92);
+    -fx-font-weight: 800;
+    -fx-background-radius: 12;
+    -fx-padding: 9 14;
+    -fx-border-color: rgba(95,233,140,0.35);
+    -fx-border-radius: 12;
+    -fx-cursor: hand;
+}
+
+.btn-ghost {
+    -fx-background-color: rgba(255,255,255,0.06);
+    -fx-text-fill: rgba(255,255,255,0.88);
+    -fx-font-weight: 700;
+    -fx-background-radius: 12;
+    -fx-padding: 9 14;
+    -fx-border-color: rgba(255,255,255,0.12);
+    -fx-border-radius: 12;
+    -fx-cursor: hand;
+}

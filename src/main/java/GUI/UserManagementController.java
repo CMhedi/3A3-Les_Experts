@@ -1,12 +1,8 @@
 package GUI;
 
 import Entities.UserApp;
-<<<<<<< HEAD
-import Services.UserService;
-=======
 import GUI.utils.DialogUtils;
-import Services.interfaces.UserService;
->>>>>>> origin/salma_integration
+import Services.UserService;
 import enums.RoleUser;
 import javafx.beans.binding.Bindings;
 import javafx.collections.FXCollections;
@@ -19,219 +15,155 @@ import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
-import javafx.scene.input.MouseEvent; // HEDHI EL S7I7A
-<<<<<<< HEAD
+import javafx.scene.input.MouseEvent;
 
-=======
+import java.io.IOException;
 import java.util.List;
 import java.util.ArrayList;
 import java.util.Arrays;
->>>>>>> origin/salma_integration
-import java.io.IOException;
 
 public class UserManagementController {
 
     @FXML private TextField txtNom, txtPrenom, txtEmail, txtTel, txtAge, txtExperience;
     @FXML private PasswordField txtMdp;
     @FXML private ComboBox<RoleUser> comboRole;
-    @FXML private ComboBox<String> comboSpecialite; // Hasb el Enum fil SQL
-    @FXML private ComboBox<String> comboDispo;      // Hasb el Enum fil SQL
+    @FXML private ComboBox<String> comboSpecialite;
+    @FXML private ComboBox<String> comboDispo;
     @FXML private TextArea txtBio;
     @FXML private VBox paneCoach;
     @FXML private Button btnAjouter;
 
+    @FXML private Label errorNom, errorPrenom, errorEmail, errorTel, errorMdp, errorAge, errorExperience;
 
-    @FXML private Label errorNom, errorPrenom, errorEmail, errorTel, errorMdp,errorAge,errorExperience;
-
-    private UserService us = new UserService();
+    private final UserService us = new UserService();
 
     @FXML
-
     public void initialize() {
 
-// 1. Setup ComboBoxes
-
-        // Njibu el lista mta3 el roles lkol
+        // ===== 1) ComboBoxes =====
         List<RoleUser> roles = new ArrayList<>(Arrays.asList(RoleUser.values()));
-
-// Na7iw el ADMIN menha (thabbet mel ism exact f-Enum mte3ek)
-        roles.remove(RoleUser.ADMIN);
-
-// Tawa n7ottou el lista el "ndhifa" fel ComboBox
+        if (roles.contains(RoleUser.ADMIN)) roles.remove(RoleUser.ADMIN); // remove admin from public register
         comboRole.setItems(FXCollections.observableArrayList(roles));
 
         comboSpecialite.setItems(FXCollections.observableArrayList("FITNESS", "RUNNING", "FOOTBALL", "BASKETBALL", "YOGA", "AUTRE"));
-
         comboDispo.setItems(FXCollections.observableArrayList("MATIN", "SOIR", "JOURNEE_COMPLETE"));
 
-
-
-// 2. PaneCoach Visibility Logic
-
+        // ===== 2) Coach pane visibility =====
         paneCoach.visibleProperty().bind(Bindings.createBooleanBinding(
-
-                () -> comboRole.getValue() != null && comboRole.getValue().toString().equals("COACH"),
-
-                comboRole.valueProperty())
-
-        );
-
+                () -> comboRole.getValue() != null && comboRole.getValue() == RoleUser.COACH,
+                comboRole.valueProperty()
+        ));
         paneCoach.managedProperty().bind(paneCoach.visibleProperty());
-
-
 
         String emailRegex = "^[A-Za-z0-9+_.-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,6}$";
 
-
-
-// --- EL-KOUD MTE3EK (MA BDELTECH FIH) ---
+        // ===== 3) Validations (same logic, just safer) =====
 
         txtNom.textProperty().addListener((o, old, n) -> {
-
-            boolean valid = !n.isEmpty();
-
+            boolean valid = n != null && !n.trim().isEmpty();
             errorNom.setVisible(!valid);
-
             txtNom.setStyle(valid ? "" : "-fx-border-color: red;");
-
         });
 
-
+        txtPrenom.textProperty().addListener((o, old, n) -> {
+            boolean valid = n != null && !n.trim().isEmpty();
+            errorPrenom.setVisible(!valid);
+            txtPrenom.setStyle(valid ? "" : "-fx-border-color: red;");
+        });
 
         txtEmail.textProperty().addListener((obs, oldV, newV) -> {
-
-            if (newV.isEmpty()) {
-
+            String v = newV == null ? "" : newV.trim();
+            if (v.isEmpty()) {
                 errorEmail.setText("⚠️ L'email est obligatoire");
-
                 errorEmail.setVisible(true);
-
                 txtEmail.setStyle("-fx-border-color: red;");
-
-            } else if (!newV.contains("@")) {
-
+            } else if (!v.contains("@")) {
                 errorEmail.setText("⚠️ Il manque le symbole '@'");
-
                 errorEmail.setVisible(true);
-
                 txtEmail.setStyle("-fx-border-color: red;");
-
-            } else if (!newV.contains(".")) {
-
+            } else if (!v.contains(".")) {
                 errorEmail.setText("⚠️ Il manque le point '.' (ex: .com)");
-
                 errorEmail.setVisible(true);
-
                 txtEmail.setStyle("-fx-border-color: red;");
-
-            } else if (!newV.matches(emailRegex)) {
-
+            } else if (!v.matches(emailRegex)) {
                 errorEmail.setText("⚠️ Format invalide (ex: nom@domaine.com)");
-
                 errorEmail.setVisible(true);
-
                 txtEmail.setStyle("-fx-border-color: red;");
-
             } else {
-
                 errorEmail.setVisible(false);
-
                 txtEmail.setStyle("");
-
             }
-
         });
-
-
 
         txtTel.textProperty().addListener((obs, oldV, newV) -> {
+            String v = newV == null ? "" : newV.trim();
 
-            if (newV.length() > 8) txtTel.setText(oldV);
-
-            if (newV.isEmpty()) {
-
-                errorTel.setText("⚠️ Le téléphone est obligatoire");
-
-                errorTel.setVisible(true);
-
-            } else if (!newV.matches("\\d*")) {
-
-                errorTel.setText("⚠️ Utilisez uniquement des chiffres");
-
-                errorTel.setVisible(true);
-
-                txtTel.setStyle("-fx-border-color: red;");
-
-            } else if (newV.length() != 8) {
-
-                errorTel.setText("⚠️ Il faut exactement 8 chiffres (" + newV.length() + "/8)");
-
-                errorTel.setVisible(true);
-
-                txtTel.setStyle("-fx-border-color: red;");
-
-            } else {
-
-                errorTel.setVisible(false);
-
-                txtTel.setStyle("");
-
+            if (v.length() > 8) {
+                txtTel.setText(oldV);
+                return;
             }
 
+            if (v.isEmpty()) {
+                errorTel.setText("⚠️ Le téléphone est obligatoire");
+                errorTel.setVisible(true);
+                txtTel.setStyle("-fx-border-color: red;");
+            } else if (!v.matches("\\d*")) {
+                errorTel.setText("⚠️ Utilisez uniquement des chiffres");
+                errorTel.setVisible(true);
+                txtTel.setStyle("-fx-border-color: red;");
+            } else if (v.length() != 8) {
+                errorTel.setText("⚠️ Il faut exactement 8 chiffres (" + v.length() + "/8)");
+                errorTel.setVisible(true);
+                txtTel.setStyle("-fx-border-color: red;");
+            } else {
+                errorTel.setVisible(false);
+                txtTel.setStyle("");
+            }
         });
-
-
 
         txtMdp.textProperty().addListener((o, old, n) -> {
-
-            boolean valid = n.length() >= 6;
-
+            boolean valid = n != null && n.length() >= 6;
             errorMdp.setVisible(!valid);
-
             txtMdp.setStyle(valid ? "" : "-fx-border-color: red;");
-
         });
 
-
-
-// --- ZIEDA LEL-COACH (NAFS EL-STYLE) ---
-
-
-
-// Validation Âge
-
-        // Validation Âge (18-40 ans) - Blast el-Alert l-9dima
+        // ===== Coach: Age validation =====
         txtAge.textProperty().addListener((obs, oldV, newV) -> {
+            // validate only if coach
+            if (comboRole.getValue() != RoleUser.COACH) {
+                errorAge.setVisible(false);
+                txtAge.setStyle("");
+                return;
+            }
+
+            String v = newV == null ? "" : newV.trim();
             try {
-                if (newV.isEmpty()) {
+                if (v.isEmpty()) {
                     errorAge.setText("⚠️ Âge obligatoire");
                     errorAge.setVisible(true);
                     txtAge.setStyle("-fx-border-color: red;");
-                } else if (!newV.matches("\\d+")) {
+                } else if (!v.matches("\\d+")) {
                     errorAge.setText("⚠️ Utilisez uniquement des chiffres");
                     errorAge.setVisible(true);
                     txtAge.setStyle("-fx-border-color: red;");
                 } else {
-                    int ageVal = Integer.parseInt(newV);
-
+                    int ageVal = Integer.parseInt(v);
                     if (ageVal < 18) {
                         errorAge.setText("⚠️ Minimum 18 ans pour un Coach");
                         errorAge.setVisible(true);
                         txtAge.setStyle("-fx-border-color: red;");
                     } else if (ageVal > 40) {
-                        // Hna el-check mta3 40 sna
                         errorAge.setText("⚠️ L'âge max est 40 ans");
                         errorAge.setVisible(true);
                         txtAge.setStyle("-fx-border-color: red;");
                     } else {
-                        // Kol chay mrigel
                         errorAge.setVisible(false);
                         txtAge.setStyle("");
                     }
                 }
 
-                // Faza zeyda: Na3mlu "trigger" lel expérience bech t-thabbet rouha m3a l-âge jdid
-                if (!txtExperience.getText().isEmpty()) {
+                // trigger experience re-check
+                if (txtExperience.getText() != null && !txtExperience.getText().isEmpty()) {
                     txtExperience.setText(txtExperience.getText());
                 }
 
@@ -242,42 +174,48 @@ public class UserManagementController {
             }
         });
 
-
-// Validation Expérience (Label dynamique - Zero Alerts)
+        // ===== Coach: Experience validation =====
         txtExperience.textProperty().addListener((obs, oldV, newV) -> {
+            if (comboRole.getValue() != RoleUser.COACH) {
+                errorExperience.setVisible(false);
+                txtExperience.setStyle("");
+                return;
+            }
+
             try {
-                String ageText = txtAge.getText();
+                String ageText = txtAge.getText() == null ? "" : txtAge.getText().trim();
+                String expText = newV == null ? "" : newV.trim();
+
                 if (ageText.isEmpty()) {
                     errorExperience.setText("⚠️ Saisissez d'abord l'âge");
                     errorExperience.setVisible(true);
+                    txtExperience.setStyle("-fx-border-color: red;");
                     return;
                 }
 
                 int ageVal = Integer.parseInt(ageText);
 
-                if (newV.isEmpty()) {
+                if (expText.isEmpty()) {
                     errorExperience.setText("⚠️ Expérience obligatoire");
                     errorExperience.setVisible(true);
                     txtExperience.setStyle("-fx-border-color: red;");
-                } else if (!newV.matches("\\d+")) {
+                } else if (!expText.matches("\\d+")) {
                     errorExperience.setText("⚠️ Utilisez uniquement des chiffres");
                     errorExperience.setVisible(true);
                     txtExperience.setStyle("-fx-border-color: red;");
                 } else {
-                    int expVal = Integer.parseInt(newV);
-                    int ageActif = ageVal - 18; // Logic mta3 el logic l-9dima
+                    int expVal = Integer.parseInt(expText);
+                    int ageActif = ageVal - 18;
 
                     if (expVal < 0) {
                         errorExperience.setText("⚠️ L'expérience ne peut pas être négative");
                         errorExperience.setVisible(true);
                         txtExperience.setStyle("-fx-border-color: red;");
                     } else if (expVal > ageActif) {
-                        // El message el dynamique kima tlabt
                         errorExperience.setText("⚠️ Avec " + ageVal + " ans, l'expérience max est " + ageActif + " ans (âge actif)");
                         errorExperience.setVisible(true);
                         txtExperience.setStyle("-fx-border-color: red;");
                     } else {
-                        // Kol chay mrigel
                         errorExperience.setVisible(false);
                         txtExperience.setStyle("");
                     }
@@ -289,27 +227,25 @@ public class UserManagementController {
             }
         });
 
-
-
-// 2. Disable Button (Zidtlek fiha el-check mta3 el-Coach kemel)
+        // ===== 4) Disable Button binding =====
         btnAjouter.disableProperty().bind(
                 txtNom.textProperty().isEmpty()
+                        .or(txtPrenom.textProperty().isEmpty())
                         .or(txtEmail.textProperty().isEmpty())
                         .or(txtTel.textProperty().length().isNotEqualTo(8))
                         .or(txtMdp.textProperty().length().lessThan(6))
                         .or(comboRole.valueProperty().isNull())
                         .or(Bindings.createBooleanBinding(() -> {
-                                    boolean isEmailInvalid = !txtEmail.getText().matches(emailRegex);
+                                    boolean isEmailInvalid = txtEmail.getText() == null || !txtEmail.getText().matches(emailRegex);
 
-                                    // Ken ekhtar Coach, lezem n-zidou thabtou fil Specialité wel Disponibilité
                                     if (comboRole.getValue() == RoleUser.COACH) {
-                                        return isEmailInvalid ||
-                                                errorAge.isVisible() ||
-                                                errorExperience.isVisible() ||
-                                                txtAge.getText().isEmpty() ||
-                                                txtExperience.getText().isEmpty() ||
-                                                comboSpecialite.getValue() == null || // <--- Zieda hna
-                                                comboDispo.getValue() == null;      // <--- Zieda hna
+                                        return isEmailInvalid
+                                                || errorAge.isVisible()
+                                                || errorExperience.isVisible()
+                                                || txtAge.getText() == null || txtAge.getText().isEmpty()
+                                                || txtExperience.getText() == null || txtExperience.getText().isEmpty()
+                                                || comboSpecialite.getValue() == null
+                                                || comboDispo.getValue() == null;
                                     }
                                     return isEmailInvalid;
                                 },
@@ -320,19 +256,17 @@ public class UserManagementController {
                                 txtAge.textProperty(),
                                 txtExperience.textProperty(),
                                 comboSpecialite.valueProperty(),
-                                comboDispo.valueProperty() // <--- Ma n-sewech el-listener hna
+                                comboDispo.valueProperty()
                         ))
         );
 
-
         btnAjouter.setStyle("-fx-background-color: #3498DB; -fx-text-fill: white; -fx-background-radius: 25;");
-
     }
+
     @FXML
     void handleAjouter(ActionEvent event) {
         try {
-
-            // ====== 1. Nettoyage des champs ======
+            // ====== 1) Clean fields ======
             String nom = txtNom.getText().trim();
             String prenom = txtPrenom.getText().trim();
             String email = txtEmail.getText().trim();
@@ -347,40 +281,27 @@ public class UserManagementController {
             u.setMotDePasse(mdp);
             u.setRole(comboRole.getValue());
 
-            // ====== 2. Génération Avatar PRO ======
+            // ====== 2) Avatar URL ======
             String fullName = nom + " " + prenom;
-
-            String encodedName = java.net.URLEncoder.encode(
-                    fullName,
-                    java.nio.charset.StandardCharsets.UTF_8
-            );
-
-            String avatarUrl =
-                    "https://ui-avatars.com/api/?name=" +
-                            encodedName +
-                            "&background=random&color=fff&size=200";
-
+            String encodedName = java.net.URLEncoder.encode(fullName, java.nio.charset.StandardCharsets.UTF_8);
+            String avatarUrl = "https://ui-avatars.com/api/?name=" + encodedName + "&background=random&color=fff&size=200";
             u.setImageUrl(avatarUrl);
 
-            // ====== 3. Infos Coach ======
+            // ====== 3) Coach fields ======
             if (comboRole.getValue() == RoleUser.COACH) {
                 u.setAge(Integer.parseInt(txtAge.getText().trim()));
                 u.setExperience(txtExperience.getText().trim());
                 u.setSpecialite(comboSpecialite.getValue());
                 u.setDisponibilite(comboDispo.getValue());
-                u.setBioCertifs(txtBio.getText().trim());
+                u.setBioCertifs(txtBio.getText() == null ? "" : txtBio.getText().trim());
             }
 
-            // ====== 4. Ajout DB ======
+            // ====== 4) Save DB (hashing inside UserService.add()) ======
             us.add(u);
 
-            // ====== 5. Message succès ======
-            DialogUtils.showInfo(
-                    "Succès",
-                    "✅ Compte créé avec succès !"
-            );
+            DialogUtils.showInfo("Succès", "✅ Compte créé avec succès !");
 
-            // ====== 6. Redirection Login ======
+            // ====== 5) Redirect Login ======
             Parent root = FXMLLoader.load(getClass().getResource("/GUI/Login.fxml"));
             Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
             stage.setScene(new Scene(root));
@@ -395,21 +316,13 @@ public class UserManagementController {
 
     @FXML
     void handleGoToLogin(MouseEvent event) {
-
-
         try {
-
             Parent root = FXMLLoader.load(getClass().getResource("/GUI/Login.fxml"));
-
-
             Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
-
-
             stage.setScene(new Scene(root));
             stage.show();
-
         } catch (IOException e) {
-            System.err.println(" Erreur: Ma l9itich el fichier Login.fxml!");
+            System.err.println("Erreur: Ma l9itich el fichier Login.fxml!");
             e.printStackTrace();
         }
     }

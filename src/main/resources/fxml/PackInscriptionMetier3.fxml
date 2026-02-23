@@ -1,0 +1,158 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<BorderPane xmlns="http://javafx.com/javafx/21"
+            xmlns:fx="http://javafx.com/fxml/1"
+            fx:controller="controllers.PackInscriptionPlanBController"
+            stylesheets="@../css/planb-packinscription.css">
+
+styleClass="page">
+
+    <top>
+        <HBox spacing="12" alignment="CENTER_LEFT" styleClass="topbar" BorderPane.alignment="CENTER">
+            <Label text="Plan B — Pack  Inscription Engines" styleClass="h1"/>
+            <Region HBox.hgrow="ALWAYS"/>
+            <Button text="Retour" onAction="#handleBack" styleClass="btn-ghost"/>
+        </HBox>
+    </top>
+
+    <center>
+        <TabPane styleClass="tabs" tabClosingPolicy="UNAVAILABLE">
+            <!-- ================= Pricing ================= -->
+            <Tab text="Pricing">
+                <VBox spacing="14" padding="18">
+                    <Label text="Dynamic Pricing Simulator" styleClass="h2"/>
+
+                    <GridPane hgap="12" vgap="12">
+                        <columnConstraints>
+                            <ColumnConstraints minWidth="160"/>
+                            <ColumnConstraints hgrow="ALWAYS"/>
+                        </columnConstraints>
+
+                        <Label text="Base Price" GridPane.rowIndex="0" GridPane.columnIndex="0"/>
+                        <TextField fx:id="pBase" promptText="ex: 50" GridPane.rowIndex="0" GridPane.columnIndex="1"/>
+
+                        <Label text="Occupancy (0..1)" GridPane.rowIndex="1" GridPane.columnIndex="0"/>
+                        <TextField fx:id="pOcc" promptText="ex: 0.75" GridPane.rowIndex="1" GridPane.columnIndex="1"/>
+
+                        <Label text="Day (MON..SUN)" GridPane.rowIndex="2" GridPane.columnIndex="0"/>
+                        <TextField fx:id="pDay" promptText="ex: SATURDAY" GridPane.rowIndex="2" GridPane.columnIndex="1"/>
+
+                        <Label text="Lead Hours" GridPane.rowIndex="3" GridPane.columnIndex="0"/>
+                        <TextField fx:id="pLead" promptText="ex: 12" GridPane.rowIndex="3" GridPane.columnIndex="1"/>
+                    </GridPane>
+
+                    <HBox spacing="10">
+                        <Button text="Simuler" onAction="#doPricing" styleClass="btn"/>
+                        <Label fx:id="pOut" text="—" styleClass="output"/>
+                    </HBox>
+
+                    <Label text="Rules Applied" styleClass="muted"/>
+                    <ListView fx:id="pRules" prefHeight="160" styleClass="list"/>
+                </VBox>
+            </Tab>
+
+            <!-- ================= Promo ================= -->
+            <Tab text="Promo">
+                <VBox spacing="14" padding="18">
+                    <Label text="Promo Engine (DB-free)" styleClass="h2"/>
+
+                    <GridPane hgap="12" vgap="12">
+                        <columnConstraints>
+                            <ColumnConstraints minWidth="160"/>
+                            <ColumnConstraints hgrow="ALWAYS"/>
+                        </columnConstraints>
+
+                        <Label text="User Key" GridPane.rowIndex="0" GridPane.columnIndex="0"/>
+                        <TextField fx:id="cUser" promptText="ex: user#5" GridPane.rowIndex="0" GridPane.columnIndex="1"/>
+
+                        <Label text="Amount" GridPane.rowIndex="1" GridPane.columnIndex="0"/>
+                        <TextField fx:id="cAmount" promptText="ex: 62.5" GridPane.rowIndex="1" GridPane.columnIndex="1"/>
+
+                        <Label text="Promo Code" GridPane.rowIndex="2" GridPane.columnIndex="0"/>
+                        <TextField fx:id="cCode" promptText="ECO10 / WELCOME20 / WEEKEND15" GridPane.rowIndex="2" GridPane.columnIndex="1"/>
+
+                        <Label text="Date (YYYY-MM-DD)" GridPane.rowIndex="3" GridPane.columnIndex="0"/>
+                        <TextField fx:id="cDate" promptText="ex: 2026-03-01" GridPane.rowIndex="3" GridPane.columnIndex="1"/>
+                    </GridPane>
+
+                    <HBox spacing="10">
+                        <Button text="Valider" onAction="#doPromo" styleClass="btn"/>
+                        <Button text="Consommer" onAction="#consumePromo" styleClass="btn-ghost"/>
+                        <Label fx:id="cOut" text="—" styleClass="output"/>
+                    </HBox>
+
+                    <Label text="Tip: clique Consommer بعد ما تعمل inscription confirm" styleClass="muted"/>
+                </VBox>
+            </Tab>
+
+            <!-- ================= Workflow ================= -->
+            <Tab text="Workflow">
+                <VBox spacing="14" padding="18">
+                    <Label text="Inscription Workflow (State Machine)" styleClass="h2"/>
+
+                    <HBox spacing="12" alignment="CENTER_LEFT">
+                        <Label text="Current State"/>
+                        <ComboBox fx:id="wState" prefWidth="220"/>
+                        <Label text="Action"/>
+                        <ComboBox fx:id="wAction" prefWidth="220"/>
+                        <Button text="Transition" onAction="#doWorkflow" styleClass="btn"/>
+                    </HBox>
+
+                    <Label fx:id="wOut" text="—" styleClass="output"/>
+                    <Label text="Use this logic in your Inscription flows (Draft->Pending->Confirmed)" styleClass="muted"/>
+                </VBox>
+            </Tab>
+
+            <!-- ================= Policy ================= -->
+            <Tab text="Policy">
+                <VBox spacing="14" padding="18">
+                    <Label text="Cancellation Policy Calculator" styleClass="h2"/>
+
+                    <HBox spacing="12" alignment="CENTER_LEFT">
+                        <Label text="Hours Before"/>
+                        <TextField fx:id="kHours" promptText="ex: 20" prefWidth="200"/>
+                        <Button text="Compute" onAction="#doPolicy" styleClass="btn"/>
+                    </HBox>
+
+                    <Label fx:id="kOut" text="—" styleClass="output"/>
+                    <Label text="Use penalty % to decide refund / restrictions" styleClass="muted"/>
+                </VBox>
+            </Tab>
+
+            <!-- ================= Risk ================= -->
+            <Tab text="Risk">
+                <VBox spacing="14" padding="18">
+                    <Label text="Risk Scoring (Anti-Abuse)" styleClass="h2"/>
+
+                    <GridPane hgap="12" vgap="12">
+                        <columnConstraints>
+                            <ColumnConstraints minWidth="160"/>
+                            <ColumnConstraints hgrow="ALWAYS"/>
+                        </columnConstraints>
+
+                        <Label text="Cancels" GridPane.rowIndex="0" GridPane.columnIndex="0"/>
+                        <TextField fx:id="rCancels" promptText="ex: 2" GridPane.rowIndex="0" GridPane.columnIndex="1"/>
+
+                        <Label text="No-Shows" GridPane.rowIndex="1" GridPane.columnIndex="0"/>
+                        <TextField fx:id="rNoShows" promptText="ex: 1" GridPane.rowIndex="1" GridPane.columnIndex="1"/>
+
+                        <Label text="Last-Minute Cancels" GridPane.rowIndex="2" GridPane.columnIndex="0"/>
+                        <TextField fx:id="rLast" promptText="ex: 1" GridPane.rowIndex="2" GridPane.columnIndex="1"/>
+
+                        <Label text="Complaints" GridPane.rowIndex="3" GridPane.columnIndex="0"/>
+                        <TextField fx:id="rComplaints" promptText="ex: 0" GridPane.rowIndex="3" GridPane.columnIndex="1"/>
+                    </GridPane>
+
+                    <HBox spacing="10">
+                        <Button text="Score" onAction="#doRisk" styleClass="btn"/>
+                        <Label fx:id="rOut" text="—" styleClass="output"/>
+                    </HBox>
+                </VBox>
+            </Tab>
+        </TabPane>
+    </center>
+</BorderPane>

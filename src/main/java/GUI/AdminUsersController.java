@@ -1,12 +1,8 @@
 package GUI;
 
 import Entities.UserApp;
-<<<<<<< HEAD
-import Services.UserService;
-=======
 import GUI.utils.DialogUtils;
-import Services.interfaces.UserService;
->>>>>>> origin/salma_integration
+import Services.UserService;
 import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -44,54 +40,10 @@ public class AdminUsersController {
             @Override
             protected void updateItem(UserApp user, boolean empty) {
                 super.updateItem(user, empty);
+
                 if (empty || user == null) {
                     setGraphic(null);
-<<<<<<< HEAD
                     return;
-=======
-                } else {
-
-                    HBox card = new HBox(20);
-                    card.setAlignment(Pos.CENTER_LEFT);
-                    card.setStyle("-fx-padding: 15; -fx-background-color: white; -fx-border-color: #f1f5f9; -fx-border-width: 0 0 1 0;");
-
-                    // 2. Avatar (أول حرف من الاسم)
-                    Label avatar = new Label(user.getNom().substring(0, 1).toUpperCase());
-                    avatar.setStyle("-fx-background-color: #143D30; -fx-text-fill: white; -fx-font-weight: bold; " +
-                            "-fx-min-width: 45; -fx-min-height: 45; -fx-background-radius: 25; -fx-alignment: center;");
-
-
-                    VBox info = new VBox(5);
-                    Label name = new Label(user.getNom() + " " + user.getPrenom());
-                    name.setStyle("-fx-font-weight: bold; -fx-font-size: 15px;");
-                    Label email = new Label(user.getEmail());
-                    email.setStyle("-fx-text-fill: #64748b; -fx-font-size: 13px;");
-                    info.getChildren().addAll(name, email);
-
-                    Label roleBadge = new Label(user.getRole().toString());
-                    String badgeStyle = "-fx-padding: 3 10; -fx-background-radius: 12; -fx-font-size: 11px; -fx-font-weight: bold; -fx-text-fill: white;";
-                    if (user.getRole().toString().equals("ADMIN")) badgeStyle += "-fx-background-color: #1e293b;";
-                    else if (user.getRole().toString().equals("COACH")) badgeStyle += "-fx-background-color: #143D30;";
-                    else badgeStyle += "-fx-background-color: #94a3b8;";
-                    roleBadge.setStyle(badgeStyle);
-
-                    Region spacer = new Region();
-                    HBox.setHgrow(spacer, Priority.ALWAYS);
-
-                    HBox actions = new HBox(10);
-                    Button btnEdit = new Button("✏️");
-                    btnEdit.setStyle("-fx-background-color: #e0f2fe; -fx-text-fill: #0284c7; -fx-cursor: hand;");
-                    btnEdit.setOnAction(e -> showEditPage(user));
-
-                    Button btnDel = new Button("🗑️");
-                    btnDel.setStyle("-fx-background-color: #fee2e2; -fx-text-fill: #ef4444; -fx-cursor: hand;");
-                    btnDel.setOnAction(e -> handleDeleteUser(user));
-
-                    actions.getChildren().addAll(btnEdit, btnDel);
-
-                    card.getChildren().addAll(avatar, info, roleBadge, spacer, actions);
-                    setGraphic(card);
->>>>>>> origin/salma_integration
                 }
 
                 HBox card = new HBox(20);
@@ -152,6 +104,7 @@ public class AdminUsersController {
                 });
             } catch (Exception e) {
                 e.printStackTrace();
+                Platform.runLater(() -> DialogUtils.showError("Erreur", "Impossible de charger les utilisateurs."));
             }
         }).start();
     }
@@ -161,37 +114,26 @@ public class AdminUsersController {
         try {
             FXMLLoader loader = new FXMLLoader(getClass().getResource("/GUI/UserAddForm.fxml"));
             Parent addView = loader.load();
-<<<<<<< HEAD
-=======
-
->>>>>>> origin/salma_integration
             mainContent.getChildren().setAll(addView);
         } catch (IOException e) {
             e.printStackTrace();
+            DialogUtils.showError("Erreur", "Impossible d'ouvrir le formulaire d'ajout.");
         }
     }
 
     private void showEditPage(UserApp user) {
         try {
-<<<<<<< HEAD
-            FXMLLoader loader = new FXMLLoader(getClass().getResource("/gui/UserUpdateForm.fxml"));
-            Parent updateView = loader.load();
-
-            GUI.UserUpdateController controller = loader.getController();
-=======
             FXMLLoader loader = new FXMLLoader(getClass().getResource("/GUI/UserUpdateForm.fxml"));
-
             Parent updateView = loader.load();
 
             GUI.UserUpdateController controller = loader.getController();
-
->>>>>>> origin/salma_integration
             controller.initData(user, this);
 
             mainContent.getChildren().setAll(updateView);
 
         } catch (IOException e) {
             e.printStackTrace();
+            DialogUtils.showError("Erreur", "Impossible d'ouvrir le formulaire de modification.");
         }
     }
 
@@ -201,38 +143,22 @@ public class AdminUsersController {
             Scene scene = stage.getScene();
 
             if (scene.getRoot() instanceof BorderPane mainPane) {
-<<<<<<< HEAD
-                Parent root = FXMLLoader.load(getClass().getResource("/gui/AdminUsers.fxml"));
-                mainPane.setCenter(root);
-=======
                 Parent root = FXMLLoader.load(getClass().getResource("/GUI/AdminUsers.fxml"));
-                mainPane.setCenter(root); // N-badlou ken el center, ma nmes-sh el Sidebar
->>>>>>> origin/salma_integration
+                mainPane.setCenter(root); // change center only
             }
         } catch (IOException e) {
             System.err.println("❌ Erreur navigation: " + e.getMessage());
+            DialogUtils.showError("Erreur", "Navigation impossible vers AdminUsers.");
         }
     }
 
     private void handleDeleteUser(UserApp user) {
-<<<<<<< HEAD
-        Alert alert = new Alert(Alert.AlertType.CONFIRMATION,
-                "Supprimer " + (user.getNom() != null ? user.getNom() : "") + " ?",
-                ButtonType.YES, ButtonType.NO);
+        if (user == null) return;
 
-        alert.showAndWait().ifPresent(response -> {
-            if (response == ButtonType.YES) {
-                try {
-                    userService.delete(user.getIdUser());
-                    userList.remove(user);
-                    userListView.refresh();
-                } catch (Exception e) {
-                    new Alert(Alert.AlertType.ERROR, "Erreur suppression: " + e.getMessage()).show();
-                }
-=======
+        String nom = user.getNom() != null ? user.getNom() : "";
         boolean confirm = DialogUtils.showConfirmation(
                 "Suppression",
-                "Voulez-vous vraiment supprimer l'utilisateur : " + user.getNom() + " ?"
+                "Voulez-vous vraiment supprimer l'utilisateur : " + nom + " ?"
         );
 
         if (confirm) {
@@ -240,12 +166,10 @@ public class AdminUsersController {
                 userService.delete(user.getIdUser());
                 userList.remove(user);
                 userListView.refresh();
-
                 DialogUtils.showInfo("Succès", "Utilisateur supprimé !");
-
             } catch (Exception e) {
+                e.printStackTrace();
                 DialogUtils.showError("Erreur suppression", "❌ Impossible de supprimer : " + e.getMessage());
->>>>>>> origin/salma_integration
             }
         }
     }

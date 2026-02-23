@@ -4,90 +4,111 @@ import Entities.UserApp;
 import Utiles.MyDB;
 import enums.RoleUser;
 
+import org.mindrot.jbcrypt.BCrypt;
+
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
-<<<<<<< HEAD:src/main/java/Services/UserService.java
 import java.util.Locale;
 
-=======
-import org.mindrot.jbcrypt.BCrypt;
->>>>>>> origin/salma_integration:src/main/java/Services/interfaces/UserService.java
 public class UserService implements IGenericService<UserApp> {
+
     private final Connection cnx = MyDB.getInstance().getConnection();
 
     @Override
     public void add(UserApp u) throws SQLException {
-        String req = "INSERT INTO user_app (nom, prenom, email, telephone, image_url, role, mot_de_passe, age, experience, specialite, bio_certifs, disponibilite) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+        String req = "INSERT INTO user_app (nom, prenom, email, telephone, image_url, role, mot_de_passe, age, experience, specialite, bio_certifs, disponibilite) " +
+                "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
 
-        PreparedStatement ps = cnx.prepareStatement(req);
-        ps.setString(1, u.getNom());
-        ps.setString(2, u.getPrenom());
-        ps.setString(3, u.getEmail());
-        ps.setString(4, u.getTelephone());
-        ps.setString(5, u.getImageUrl());
-        ps.setString(6, safeRoleName(u.getRole()));
-        ps.setString(7, u.getMotDePasse());
-<<<<<<< HEAD:src/main/java/Services/UserService.java
+        try (PreparedStatement ps = cnx.prepareStatement(req)) {
+            ps.setString(1, u.getNom());
+            ps.setString(2, u.getPrenom());
+            ps.setString(3, u.getEmail());
+            ps.setString(4, u.getTelephone());
+            ps.setString(5, u.getImageUrl());
+            ps.setString(6, safeRoleName(u.getRole()));
 
-=======
-        String hashedPassword = BCrypt.hashpw(u.getMotDePasse(), BCrypt.gensalt());
-        ps.setString(7, hashedPassword);
-        // Logic bech n-sabbu data el Coach barka
->>>>>>> origin/salma_integration:src/main/java/Services/interfaces/UserService.java
-        if (u.getRole() == RoleUser.COACH) {
-            ps.setInt(8, u.getAge());
-            ps.setString(9, u.getExperience());
-            ps.setString(10, u.getSpecialite());
-            ps.setString(11, u.getBioCertifs());
-            ps.setString(12, u.getDisponibilite());
-        } else {
-            ps.setNull(8, Types.INTEGER);
-            ps.setNull(9, Types.VARCHAR);
-            ps.setNull(10, Types.VARCHAR);
-            ps.setNull(11, Types.VARCHAR);
-            ps.setNull(12, Types.VARCHAR);
+            // ✅ Hash password قبل ما نخزّنو في DB
+            String hashedPassword = BCrypt.hashpw(u.getMotDePasse(), BCrypt.gensalt());
+            ps.setString(7, hashedPassword);
+
+            // ✅ Coach-only fields
+            if (u.getRole() == RoleUser.COACH) {
+                ps.setInt(8, u.getAge());
+                ps.setString(9, u.getExperience());
+                ps.setString(10, u.getSpecialite());
+                ps.setString(11, u.getBioCertifs());
+                ps.setString(12, u.getDisponibilite());
+            } else {
+                ps.setNull(8, Types.INTEGER);
+                ps.setNull(9, Types.VARCHAR);
+                ps.setNull(10, Types.VARCHAR);
+                ps.setNull(11, Types.VARCHAR);
+                ps.setNull(12, Types.VARCHAR);
+            }
+
+            ps.executeUpdate();
+            System.out.println("✅ Utilisateur ajouté avec succès !");
         }
-
-        ps.executeUpdate();
-        System.out.println("✅ Utilisateur ajouté avec succès !");
     }
 
     @Override
     public List<UserApp> getAll() throws SQLException {
         List<UserApp> list = new ArrayList<>();
         String req = "SELECT * FROM user_app";
-        Statement st = cnx.createStatement();
-        ResultSet rs = st.executeQuery(req);
-        while (rs.next()) {
-            list.add(mapResultSetToUser(rs));
+
+        try (Statement st = cnx.createStatement();
+             ResultSet rs = st.executeQuery(req)) {
+            while (rs.next()) {
+                list.add(mapResultSetToUser(rs));
+            }
         }
         return list;
     }
 
     @Override
     public void update(UserApp u) throws SQLException {
-        String req = "UPDATE user_app SET nom=?, prenom=?, email=?, telephone=?, image_url=?, mot_de_passe=?, role=?, age=?, experience=?, specialite=?, bio_certifs=?, disponibilite=? WHERE id_user=?";
+        String req = "UPDATE user_app SET nom=?, prenom=?, email=?, telephone=?, image_url=?, mot_de_passe=?, role=?, age=?, experience=?, specialite=?, bio_certifs=?, disponibilite=? " +
+                "WHERE id_user=?";
 
-        PreparedStatement ps = cnx.prepareStatement(req);
-        ps.setString(1, u.getNom());
-        ps.setString(2, u.getPrenom());
-        ps.setString(3, u.getEmail());
-        ps.setString(4, u.getTelephone());
-        ps.setString(5, u.getImageUrl());
-        ps.setString(6, u.getMotDePasse());
-        ps.setString(7, safeRoleName(u.getRole()));
+        try (PreparedStatement ps = cnx.prepareStatement(req)) {
+            ps.setString(1, u.getNom());
+            ps.setString(2, u.getPrenom());
+            ps.setString(3, u.getEmail());
+            ps.setString(4, u.getTelephone());
+            ps.setString(5, u.getImageUrl());
 
-        ps.setInt(8, u.getAge());
-        ps.setString(9, u.getExperience());
-        ps.setString(10, u.getSpecialite());
-        ps.setString(11, u.getBioCertifs());
-        ps.setString(12, u.getDisponibilite());
+            // ✅ إذا تحب دايمًا تعمل hash وقت update:
+            // - إذا motDePasse جاي raw => hash
+            // - إذا جاي déjà hash => خليه
+            String pwd = u.getMotDePasse();
+            if (pwd != null && !pwd.isBlank() && !pwd.startsWith("$2a$") && !pwd.startsWith("$2b$") && !pwd.startsWith("$2y$")) {
+                pwd = BCrypt.hashpw(pwd, BCrypt.gensalt());
+            }
+            ps.setString(6, pwd);
 
-        ps.setInt(13, u.getIdUser());
+            ps.setString(7, safeRoleName(u.getRole()));
 
-        ps.executeUpdate();
-        System.out.println("✅ User mis à jour avec succès !");
+            // Coach fields (إذا مش coach ينجموا يكونوا null)
+            if (u.getRole() == RoleUser.COACH) {
+                ps.setInt(8, u.getAge());
+                ps.setString(9, u.getExperience());
+                ps.setString(10, u.getSpecialite());
+                ps.setString(11, u.getBioCertifs());
+                ps.setString(12, u.getDisponibilite());
+            } else {
+                ps.setNull(8, Types.INTEGER);
+                ps.setNull(9, Types.VARCHAR);
+                ps.setNull(10, Types.VARCHAR);
+                ps.setNull(11, Types.VARCHAR);
+                ps.setNull(12, Types.VARCHAR);
+            }
+
+            ps.setInt(13, u.getIdUser());
+
+            ps.executeUpdate();
+            System.out.println("✅ User mis à jour avec succès !");
+        }
     }
 
     @Override
@@ -103,23 +124,21 @@ public class UserService implements IGenericService<UserApp> {
     @Override
     public UserApp getById(int id) throws SQLException {
         String req = "SELECT * FROM user_app WHERE id_user = ?";
-        PreparedStatement ps = cnx.prepareStatement(req);
-        ps.setInt(1, id);
-        ResultSet rs = ps.executeQuery();
-        if (rs.next()) {
-            return mapResultSetToUser(rs);
+        try (PreparedStatement ps = cnx.prepareStatement(req)) {
+            ps.setInt(1, id);
+            try (ResultSet rs = ps.executeQuery()) {
+                if (rs.next()) return mapResultSetToUser(rs);
+            }
         }
         return null;
     }
 
     public UserApp findByEmail(String email) {
-        try {
-            String query = "SELECT * FROM user_app WHERE email = ?";
-            PreparedStatement ps = cnx.prepareStatement(query);
+        String query = "SELECT * FROM user_app WHERE email = ?";
+        try (PreparedStatement ps = cnx.prepareStatement(query)) {
             ps.setString(1, email);
-            ResultSet rs = ps.executeQuery();
-            if (rs.next()) {
-                return mapResultSetToUser(rs);
+            try (ResultSet rs = ps.executeQuery()) {
+                if (rs.next()) return mapResultSetToUser(rs);
             }
         } catch (SQLException e) {
             System.out.println("❌ Erreur findByEmail: " + e.getMessage());
@@ -131,7 +150,7 @@ public class UserService implements IGenericService<UserApp> {
         String sql = "UPDATE user_app SET mot_de_passe = ? WHERE email = ?";
         try (PreparedStatement ps = cnx.prepareStatement(sql)) {
             String hashed = BCrypt.hashpw(newPassword, BCrypt.gensalt());
-            ps.setString(1, newPassword);
+            ps.setString(1, hashed); // ✅ كان غلط: كنت تحط newPassword raw
             ps.setString(2, email);
             ps.executeUpdate();
         }
@@ -147,7 +166,7 @@ public class UserService implements IGenericService<UserApp> {
         u.setImageUrl(rs.getString("image_url"));
         u.setMotDePasse(rs.getString("mot_de_passe"));
 
-        // ✅ FIX: role ممكن يكون NULL/فارغ/مختلف في DB
+        // ✅ role safe parsing
         u.setRole(parseRole(rs.getString("role")));
 
         u.setAge(rs.getInt("age"));
@@ -162,7 +181,8 @@ public class UserService implements IGenericService<UserApp> {
     public List<UserApp> getAllCoachs() {
         List<UserApp> list = new ArrayList<>();
         String req = "SELECT * FROM user_app WHERE role = 'COACH'";
-        try (Statement st = cnx.createStatement(); ResultSet rs = st.executeQuery(req)) {
+        try (Statement st = cnx.createStatement();
+             ResultSet rs = st.executeQuery(req)) {
             while (rs.next()) {
                 list.add(mapResultSetToUser(rs));
             }
@@ -208,5 +228,11 @@ public class UserService implements IGenericService<UserApp> {
             System.out.println("⚠️ Role غير معروف في DB: '" + raw + "' => fallback");
             return defaultRole();
         }
+    }
+
+    // (اختياري) helper للـ login: تتحقق من password
+    public boolean checkPassword(String rawPassword, String hashedFromDb) {
+        if (rawPassword == null || hashedFromDb == null) return false;
+        return BCrypt.checkpw(rawPassword, hashedFromDb);
     }
 }

@@ -2,18 +2,22 @@ package controllers;
 
 import Entities.Activite;
 import Entities.Pack;
+import GUI.utils.SceneUtils;
 import Services.PackInscriptionMetierService;
 import Services.PackInscriptionMetierService.PriceBreakdown;
-import javafx.beans.property.BooleanProperty;
-import javafx.beans.property.ReadOnlyObjectWrapper;
-import javafx.beans.property.SimpleBooleanProperty;
+import javafx.beans.binding.Bindings;
 import javafx.collections.FXCollections;
-import javafx.collections.ObservableList;
+import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
+import javafx.geometry.Pos;
+import javafx.scene.Node;
 import javafx.scene.control.*;
-import javafx.scene.control.cell.CheckBoxTableCell;
+import javafx.scene.layout.HBox;
+import javafx.scene.layout.Priority;
+import javafx.scene.layout.VBox;
 
 import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -36,39 +40,22 @@ public class PackInscriptionBuilderController {
     @FXML private Label lblTotal;
     @FXML private Label lblDetails;
 
-    @FXML private TableView<ActiviteSelection> tvActivites;
-    @FXML private TableColumn<ActiviteSelection, Boolean> colSelect;
-    @FXML private TableColumn<ActiviteSelection, String> colNom;
-    @FXML private TableColumn<ActiviteSelection, String> colCategorie;
-    @FXML private TableColumn<ActiviteSelection, String> colNiveau;
-    @FXML private TableColumn<ActiviteSelection, BigDecimal> colPrix;
+    // ✅ Table Widget (بدون TableView)
+    @FXML private VBox vbRows;          // rows container
+    @FXML private Label lblSelected;    // "X selected" (اختياري)
 
     @FXML private Button btnCalculer;
     @FXML private Button btnInscrire;
 
-    private final ObservableList<ActiviteSelection> activitesVm = FXCollections.observableArrayList();
+    private final List<ActiviteRow> rows = new ArrayList<>();
 
     @FXML
     private void initialize() {
 
-        // ✅ JavaFX 21: set policy here (NOT in FXML)
-        if (tvActivites != null) {
-            tvActivites.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY);
-        }
-
         spNbPersonnes.setValueFactory(new SpinnerValueFactory.IntegerSpinnerValueFactory(1, 200, 1));
         spNbPersonnes.setEditable(true);
 
-        colSelect.setCellValueFactory(cellData -> cellData.getValue().selectedProperty());
-        colSelect.setCellFactory(CheckBoxTableCell.forTableColumn(colSelect));
-
-        colNom.setCellValueFactory(cellData -> new ReadOnlyObjectWrapper<>(cellData.getValue().getNom()));
-        colCategorie.setCellValueFactory(cellData -> new ReadOnlyObjectWrapper<>(cellData.getValue().getCategorie()));
-        colNiveau.setCellValueFactory(cellData -> new ReadOnlyObjectWrapper<>(cellData.getValue().getNiveau()));
-        colPrix.setCellValueFactory(cellData -> new ReadOnlyObjectWrapper<>(cellData.getValue().getPrix()));
-
-        tvActivites.setItems(activitesVm);
-
+        // load packs
         try {
             cbPack.getItems().setAll(service.getActivePacks());
         } catch (Exception e) {
@@ -79,6 +66,9 @@ public class PackInscriptionBuilderController {
             if (newV != null) {
                 loadActivitesForPack(newV);
                 clearPriceLabels();
+            } else {
+                clearRows();
+                clearPriceLabels();
             }
         });
 
@@ -86,35 +76,63 @@ public class PackInscriptionBuilderController {
 
         btnCalculer.setOnAction(e -> safeRecalc());
         btnInscrire.setOnAction(e -> onCreateDraftInscription());
+
+        // disable inscription إذا ما فمّاش pack ولا اختيار
+        btnInscrire.disableProperty().bind(
+                cbPack.valueProperty().isNull()
+                        .or(Bindings.createBooleanBinding(
+                                () -> countSelected() < 1,
+                                // re-evaluate on recalc triggers
+                                spNbPersonnes.valueProperty(),
+                                txtCoupon.textProperty()
+                        ))
+        );
+
+        // recalc إذا coupon تبدّل
+        txtCoupon.textProperty().addListener((obs, o, n) -> safeRecalc());
     }
 
     private void loadActivitesForPack(Pack pack) {
         try {
             List<Activite> list = service.getActivitesByPack(pack.getIdPack());
-            activitesVm.clear();
+
+            clearRows();
 
             for (Activite a : list) {
-                ActiviteSelection vm = new ActiviteSelection(a);
+                ActiviteRow row = new ActiviteRow(a);
 
-                // ✅ enforce max activities
-                vm.selectedProperty().addListener((obs, oldVal, newVal) -> {
+                // enforce max activities
+                row.chk.selectedProperty().addListener((obs, oldVal, newVal) -> {
                     if (newVal && countSelected() > pack.getNbActivitesMax()) {
-                        vm.setSelected(false);
-                        showWarning("Limite atteinte",
-                                "Max activités pour ce pack = " + pack.getNbActivitesMax());
+                        row.chk.setSelected(false);
+                        showWarning("Limite atteinte", "Max activités pour ce pack = " + pack.getNbActivitesMax());
+                        return;
                     }
+                    updateSelectedCount();
+                    safeRecalc();
                 });
 
-                // ✅ recalc on selection change
-                vm.selectedProperty().addListener((obs, oldVal, newVal) -> safeRecalc());
-
-                activitesVm.add(vm);
+                rows.add(row);
+                vbRows.getChildren().add(row.root);
             }
 
             lblMaxAct.setText("Max activités : " + pack.getNbActivitesMax());
+            updateSelectedCount();
 
         } catch (Exception e) {
             showError("Erreur DB", "Impossible de charger les activités.\n" + e.getMessage());
+        }
+    }
+
+    private void clearRows() {
+        rows.clear();
+        if (vbRows != null) vbRows.getChildren().clear();
+        updateSelectedCount();
+    }
+
+    private void updateSelectedCount() {
+        if (lblSelected != null) {
+            lblSelected.setText(countSelected() + " sélectionnée(s)");
         }
     }
 
@@ -133,9 +151,9 @@ public class PackInscriptionBuilderController {
         int nb = spNbPersonnes.getValue() == null ? 1 : spNbPersonnes.getValue();
         String coupon = txtCoupon.getText();
 
-        List<Integer> selectedActIds = activitesVm.stream()
-                .filter(ActiviteSelection::isSelected)
-                .map(vm -> vm.getActivite().getIdActivite())
+        List<Integer> selectedActIds = rows.stream()
+                .filter(r -> r.chk.isSelected())
+                .map(r -> r.activite.getIdActivite())
                 .collect(Collectors.toList());
 
         PriceBreakdown pb = service.computePrice(pack.getIdPack(), selectedActIds, nb, coupon);
@@ -159,10 +177,15 @@ public class PackInscriptionBuilderController {
         int nb = spNbPersonnes.getValue() == null ? 1 : spNbPersonnes.getValue();
         String coupon = txtCoupon.getText();
 
-        List<Integer> selectedActIds = activitesVm.stream()
-                .filter(ActiviteSelection::isSelected)
-                .map(vm -> vm.getActivite().getIdActivite())
+        List<Integer> selectedActIds = rows.stream()
+                .filter(r -> r.chk.isSelected())
+                .map(r -> r.activite.getIdActivite())
                 .collect(Collectors.toList());
+
+        if (selectedActIds.isEmpty()) {
+            showWarning("Activité requise", "Sélectionne au moins une activité.");
+            return;
+        }
 
         if (selectedActIds.size() > pack.getNbActivitesMax()) {
             showWarning("Limite atteinte", "Max activités = " + pack.getNbActivitesMax());
@@ -178,7 +201,6 @@ public class PackInscriptionBuilderController {
                     coupon
             );
 
-            // ✅ DB enum compatible: EN_ATTENTE / VALIDEE / ANNULEE / CONFIRMEE
             showInfo("✅ Inscription créée",
                     "Inscription créée avec succès.\nID = " + id +
                             "\nStatut = EN_ATTENTE\nRéservations activités = EN_ATTENTE.");
@@ -190,7 +212,7 @@ public class PackInscriptionBuilderController {
 
     private int countSelected() {
         int c = 0;
-        for (ActiviteSelection vm : activitesVm) if (vm.isSelected()) c++;
+        for (ActiviteRow r : rows) if (r.chk.isSelected()) c++;
         return c;
     }
 
@@ -233,31 +255,42 @@ public class PackInscriptionBuilderController {
         a.showAndWait();
     }
 
-    // ===== VM (TableView) =====
-    public static class ActiviteSelection {
-        private final Activite activite;
-        private final BooleanProperty selected = new SimpleBooleanProperty(false);
+    @FXML
+    public void handleBack(ActionEvent event) {
+        SceneUtils.loadScene("/GUI/MainLayout.fxml", (Node) event.getSource());
+    }
 
-        public ActiviteSelection(Activite activite) {
-            this.activite = activite;
+    // ===== Table Widget Row =====
+    private static class ActiviteRow {
+        final Activite activite;
+        final CheckBox chk = new CheckBox();
+        final HBox root = new HBox(12);
+
+        ActiviteRow(Activite a) {
+            this.activite = a;
+
+            root.getStyleClass().add("tw-row");
+            root.setAlignment(Pos.CENTER_LEFT);
+
+            Label nom = new Label(nvl(a.getNom()));
+            nom.getStyleClass().add("tw-cell");
+            nom.setMaxWidth(Double.MAX_VALUE);
+            HBox.setHgrow(nom, Priority.ALWAYS);
+
+            Label cat = new Label(a.getCategorieAct() == null ? "" : a.getCategorieAct().name());
+            cat.getStyleClass().addAll("tw-cell", "tw-chip");
+
+            Label niv = new Label(a.getNiveauAct() == null ? "" : a.getNiveauAct().name());
+            niv.getStyleClass().addAll("tw-cell", "tw-chip");
+
+            Label prix = new Label(a.getPrix() == null ? "0" : a.getPrix().toPlainString() + " DT");
+            prix.getStyleClass().addAll("tw-cell", "tw-price");
+
+            chk.getStyleClass().add("tw-check");
+
+            root.getChildren().addAll(chk, nom, cat, niv, prix);
         }
 
-        public Activite getActivite() { return activite; }
-
-        public BooleanProperty selectedProperty() { return selected; }
-        public boolean isSelected() { return selected.get(); }
-        public void setSelected(boolean v) { selected.set(v); }
-
-        public String getNom() { return activite.getNom(); }
-
-        public String getCategorie() {
-            return activite.getCategorieAct() == null ? "" : activite.getCategorieAct().name();
-        }
-
-        public String getNiveau() {
-            return activite.getNiveauAct() == null ? "" : activite.getNiveauAct().name();
-        }
-
-        public BigDecimal getPrix() { return activite.getPrix(); }
+        private static String nvl(String s) { return s == null ? "" : s; }
     }
 }

@@ -32,30 +32,17 @@ public class SideBarController {
 
     @FXML
     void goToReclamations(ActionEvent event) {
-<<<<<<< HEAD
         changeCenter("/gui/AdminReclamation.fxml");
-=======
-
-        changeCenter("/GUI/AdminReclamation.fxml", event);
->>>>>>> origin/salma_integration
     }
 
     @FXML
     void goToDashboard(ActionEvent event) {
-<<<<<<< HEAD
         changeCenter("/gui/AdminDashboard.fxml");
-=======
-        changeCenter("/GUI/AdminDashboard.fxml", event);
->>>>>>> origin/salma_integration
     }
 
     @FXML
     void goTogestionuser(ActionEvent event) {
-<<<<<<< HEAD
         changeCenter("/gui/AdminUsers.fxml");
-=======
-        changeCenter("/GUI/AdminUsers.fxml", event);
->>>>>>> origin/salma_integration
     }
 
     @FXML
@@ -81,8 +68,10 @@ public class SideBarController {
     @FXML
     void handleLogout(ActionEvent event) {
         try {
+            // Session.logout();
             Entities.Session.logout();
-            Parent root = FXMLLoader.load(getClass().getResource("/GUI/Login.fxml"));
+
+            Parent root = FXMLLoader.load(getClass().getResource("/gui/Login.fxml"));
             Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
             stage.setScene(new Scene(root));
             stage.show();
@@ -99,7 +88,7 @@ public class SideBarController {
         try {
             BorderPane mainPane = getHostBorderPane();
             if (mainPane == null) {
-                // معناها الـ Sidebar ماهاش داخل BorderPane (ولا مازال ما attached)
+                System.out.println("❌ Sidebar n'est pas attachée à un BorderPane (root).");
                 return;
             }
 
@@ -116,17 +105,11 @@ public class SideBarController {
             e.printStackTrace();
         }
     }
-<<<<<<< HEAD
 
     private BorderPane getHostBorderPane() {
         if (sidebarRoot == null || sidebarRoot.getScene() == null) return null;
         if (sidebarRoot.getScene().getRoot() instanceof BorderPane bp) return bp;
         return null;
-=======
-    @FXML
-    void goToProfil(ActionEvent event) {
-        changeCenter("/GUI/Profile.fxml", event);
->>>>>>> origin/salma_integration
     }
 
     private void loadScene(String fxmlPath, ActionEvent event) {
@@ -139,7 +122,6 @@ public class SideBarController {
 
             Parent root = FXMLLoader.load(url);
 
-            // نحافظو على نفس الـ window size (اختياري)
             Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
             double w = stage.getWidth();
             double h = stage.getHeight();

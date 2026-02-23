@@ -1,12 +1,8 @@
 package GUI;
 
 import Entities.UserApp;
-<<<<<<< HEAD
-import Services.UserService;
-=======
 import GUI.utils.DialogUtils;
-import Services.interfaces.UserService;
->>>>>>> origin/salma_integration
+import Services.UserService;
 import enums.RoleUser;
 import javafx.beans.binding.Bindings;
 import javafx.collections.FXCollections;
@@ -18,6 +14,7 @@ import javafx.scene.control.*;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
+
 import java.io.IOException;
 
 public class UserAddController {
@@ -26,26 +23,25 @@ public class UserAddController {
     @FXML private PasswordField txtPassword;
     @FXML private ComboBox<String> comboRole, comboSpecialite, comboDispo;
     @FXML private Button btnEnregistrer;
-    @FXML private Label errorNom, errorPrenom, errorEmail, errorPassword, errorAge, errorSpec, errorDispo,errorExperience;
+    @FXML private Label errorNom, errorPrenom, errorEmail, errorPassword, errorAge, errorSpec, errorDispo, errorExperience;
     @FXML private VBox coachFieldsContainer;
 
-    private UserService userService = new UserService();
+    private final UserService userService = new UserService();
     private final String emailRegex = "^[A-Za-z0-9+_.-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,6}$";
 
     @FXML
     public void initialize() {
+
         comboRole.setItems(FXCollections.observableArrayList("USER_SIMPLE", "ADMIN", "COACH"));
         comboSpecialite.setItems(FXCollections.observableArrayList("FITNESS", "YOGA", "RUNNING", "BASKETBALL"));
         comboDispo.setItems(FXCollections.observableArrayList("MATIN", "SOIR", "JOURNEE_COMPLETE"));
 
         Label[] labels = {errorNom, errorPrenom, errorEmail, errorPassword, errorAge, errorSpec, errorDispo, errorExperience};
         for (Label lb : labels) {
-            if (lb != null) {
-                lb.managedProperty().bind(lb.visibleProperty());
-            }
+            if (lb != null) lb.managedProperty().bind(lb.visibleProperty());
         }
 
-        // 3. مستمعات التحقق (Listeners)
+        // ================= Validation =================
         txtNom.textProperty().addListener((o, old, n) ->
                 updateFieldValidation(txtNom, errorNom, n.trim().isEmpty(), "⚠️ Nom obligatoire"));
 
@@ -53,13 +49,14 @@ public class UserAddController {
                 updateFieldValidation(txtPrenom, errorPrenom, n.trim().isEmpty(), "⚠️ Prénom obligatoire"));
 
         txtEmail.textProperty().addListener((obs, oldV, newV) -> {
-            if (newV.isEmpty()) {
+            String v = (newV == null) ? "" : newV.trim();
+            if (v.isEmpty()) {
                 updateFieldValidation(txtEmail, errorEmail, true, "⚠️ L'email est obligatoire");
-            } else if (!newV.contains("@")) {
+            } else if (!v.contains("@")) {
                 updateFieldValidation(txtEmail, errorEmail, true, "⚠️ Il manque le symbole '@'");
-            } else if (!newV.contains(".")) {
+            } else if (!v.contains(".")) {
                 updateFieldValidation(txtEmail, errorEmail, true, "⚠️ Il manque le point '.'");
-            } else if (!newV.matches(emailRegex)) {
+            } else if (!v.matches(emailRegex)) {
                 updateFieldValidation(txtEmail, errorEmail, true, "⚠️ Format invalide");
             } else {
                 updateFieldValidation(txtEmail, errorEmail, false, "");
@@ -67,20 +64,38 @@ public class UserAddController {
         });
 
         txtPassword.textProperty().addListener((o, old, n) ->
-                updateFieldValidation(txtPassword, errorPassword, n.length() < 6, "⚠️ Minimum 6 caractères"));
+                updateFieldValidation(txtPassword, errorPassword, n == null || n.length() < 6, "⚠️ Minimum 6 caractères"));
 
         txtAge.textProperty().addListener((o, old, n) -> {
+            // âge فقط للـ COACH
+            if (!"COACH".equals(comboRole.getValue())) {
+                if (errorAge != null) errorAge.setVisible(false);
+                txtAge.setStyle("-fx-border-color: #e2e8f0; -fx-border-width: 1; -fx-border-radius: 8; -fx-background-color: #f8fafc; -fx-text-fill: #1e293b;");
+                return;
+            }
+            if (n == null || n.trim().isEmpty()) {
+                updateFieldValidation(txtAge, errorAge, true, "⚠️ Âge obligatoire");
+                return;
+            }
             try {
-                int age = Integer.parseInt(n);
+                int age = Integer.parseInt(n.trim());
                 updateFieldValidation(txtAge, errorAge, age < 18 || age > 40, "⚠️ Âge entre 18-40");
             } catch (Exception e) {
                 updateFieldValidation(txtAge, errorAge, true, "⚠️ Entrez un nombre");
             }
         });
-        txtExperience.textProperty().addListener((obs, oldV, newV) -> {
-            String ageText = txtAge.getText();
 
-            // 1. التحقق إذا كان العمر فارغ
+        txtExperience.textProperty().addListener((obs, oldV, newV) -> {
+            // experience فقط للـ COACH
+            if (!"COACH".equals(comboRole.getValue())) {
+                if (errorExperience != null) errorExperience.setVisible(false);
+                txtExperience.setStyle("-fx-border-color: #e2e8f0; -fx-border-width: 1; -fx-border-radius: 8; -fx-background-color: #f8fafc; -fx-text-fill: #1e293b;");
+                return;
+            }
+
+            String ageText = (txtAge.getText() == null) ? "" : txtAge.getText().trim();
+            String expText = (newV == null) ? "" : newV.trim();
+
             if (ageText.isEmpty()) {
                 updateFieldValidation(txtExperience, errorExperience, true, "⚠️ Saisissez d'abord l'âge");
                 return;
@@ -90,16 +105,15 @@ public class UserAddController {
                 int ageVal = Integer.parseInt(ageText);
                 int ageActif = ageVal - 18;
 
-                // 2. التحقق من المدخلات
-                if (newV.isEmpty()) {
+                if (expText.isEmpty()) {
                     updateFieldValidation(txtExperience, errorExperience, true, "⚠️ Expérience obligatoire");
-                } else if (!newV.matches("\\d+")) {
+                } else if (!expText.matches("\\d+")) {
                     updateFieldValidation(txtExperience, errorExperience, true, "⚠️ Utilisez uniquement des chiffres");
                 } else {
-                    int expVal = Integer.parseInt(newV);
+                    int expVal = Integer.parseInt(expText);
 
                     if (expVal < 0) {
-                        updateFieldValidation(txtExperience, errorExperience, true, "⚠️ Ne يمكن pas être négative");
+                        updateFieldValidation(txtExperience, errorExperience, true, "⚠️ Ne peut pas être négative");
                     } else if (expVal > ageActif) {
                         String msg = "⚠️ Max " + ageActif + " ans (âge actif: " + ageVal + "-18)";
                         updateFieldValidation(txtExperience, errorExperience, true, msg);
@@ -112,9 +126,17 @@ public class UserAddController {
             }
         });
 
-        // 4. منطق الكوتش
+        // ================= Coach fields visible only if COACH =================
         coachFieldsContainer.visibleProperty().bind(comboRole.valueProperty().isEqualTo("COACH"));
         coachFieldsContainer.managedProperty().bind(coachFieldsContainer.visibleProperty());
+
+        // ✅ re-check coach validation when role changes
+        comboRole.valueProperty().addListener((obs, o, n) -> {
+            if (!"COACH".equals(n)) {
+                if (errorAge != null) errorAge.setVisible(false);
+                if (errorExperience != null) errorExperience.setVisible(false);
+            }
+        });
 
         setupButtonBinding();
     }
@@ -132,44 +154,71 @@ public class UserAddController {
             field.setStyle("-fx-border-color: #e2e8f0; -fx-border-width: 1; -fx-border-radius: 8; -fx-background-color: #f8fafc; -fx-text-fill: #1e293b;");
         }
     }
+
     private void setupButtonBinding() {
         btnEnregistrer.disableProperty().bind(
                 txtNom.textProperty().isEmpty()
+                        .or(txtPrenom.textProperty().isEmpty())
                         .or(txtEmail.textProperty().isEmpty())
-                        .or(errorEmail.visibleProperty())
-                        .or(errorNom.visibleProperty())
                         .or(txtPassword.textProperty().length().lessThan(6))
                         .or(comboRole.valueProperty().isNull())
+                        .or(errorEmail.visibleProperty())
+                        .or(errorNom.visibleProperty())
+                        .or(errorPrenom.visibleProperty())
+                        .or(errorPassword.visibleProperty())
                         .or(Bindings.createBooleanBinding(() -> {
-                            if ("COACH".equals(comboRole.getValue())) {
-                                return errorAge.isVisible() || errorExperience.isVisible() || comboSpecialite.getValue() == null;
-                            }
-                            return false;
-                        }, comboRole.valueProperty(), errorAge.visibleProperty(), errorExperience.visibleProperty(), comboSpecialite.valueProperty()))
+                                    if ("COACH".equals(comboRole.getValue())) {
+                                        boolean specMissing = comboSpecialite.getValue() == null;
+                                        boolean dispoMissing = comboDispo.getValue() == null;
+                                        return (errorAge != null && errorAge.isVisible())
+                                                || (errorExperience != null && errorExperience.isVisible())
+                                                || specMissing
+                                                || dispoMissing;
+                                    }
+                                    return false;
+                                }, comboRole.valueProperty(),
+                                comboSpecialite.valueProperty(),
+                                comboDispo.valueProperty(),
+                                errorAge.visibleProperty(),
+                                errorExperience.visibleProperty()))
         );
     }
+
     @FXML
     void handleAdd() {
         try {
             UserApp newUser = new UserApp();
-            newUser.setNom(txtNom.getText());
-            newUser.setPrenom(txtPrenom.getText());
-            newUser.setEmail(txtEmail.getText());
+            newUser.setNom(txtNom.getText().trim());
+            newUser.setPrenom(txtPrenom.getText().trim());
+            newUser.setEmail(txtEmail.getText().trim());
             newUser.setRole(RoleUser.valueOf(comboRole.getValue()));
-            newUser.setMotDePasse(txtPassword.getText());
+            newUser.setMotDePasse(txtPassword.getText()); // hashing يتحلّ في UserService.add()
+
+            // ✅ Coach fields (only if coach)
+            if (newUser.getRole() == RoleUser.COACH) {
+                newUser.setAge(parseIntOrZero(txtAge.getText()));
+                newUser.setExperience(txtExperience.getText() == null ? "" : txtExperience.getText().trim());
+                newUser.setSpecialite(comboSpecialite.getValue());
+                newUser.setDisponibilite(comboDispo.getValue());
+            }
 
             userService.add(newUser);
-            DialogUtils.showInfo(
-                    "Succès",
-                    "✅ Utilisateur ajouté avec succès!"
-            );
+
+            DialogUtils.showInfo("Succès", "✅ Utilisateur ajouté avec succès!");
             handleCancel();
 
         } catch (Exception e) {
-            DialogUtils.showError(
-                    "Erreur",
-                    "❌ Erreur: " + e.getMessage()
-            );
+            e.printStackTrace();
+            DialogUtils.showError("Erreur", "❌ Erreur: " + e.getMessage());
+        }
+    }
+
+    private int parseIntOrZero(String v) {
+        try {
+            if (v == null || v.trim().isEmpty()) return 0;
+            return Integer.parseInt(v.trim());
+        } catch (Exception e) {
+            return 0;
         }
     }
 
@@ -177,14 +226,16 @@ public class UserAddController {
     void handleCancel() {
         try {
             Scene scene = btnEnregistrer.getScene();
+            Parent root = FXMLLoader.load(getClass().getResource("/GUI/AdminUsers.fxml"));
+
             if (scene.getRoot() instanceof BorderPane mainPane) {
-                Parent root = FXMLLoader.load(getClass().getResource("/GUI/AdminUsers.fxml"));
                 mainPane.setCenter(root);
             } else {
-                Parent root = FXMLLoader.load(getClass().getResource("/GUI/AdminUsers.fxml"));
                 Stage stage = (Stage) btnEnregistrer.getScene().getWindow();
                 stage.getScene().setRoot(root);
             }
-        } catch (IOException e) { e.printStackTrace(); }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 }
