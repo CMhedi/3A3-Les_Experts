@@ -1,7 +1,7 @@
 package test.java.Services;
 
 import Entities.UserApp;
-import Services.interfaces.UserService;
+import Services.UserService;
 import enums.RoleUser;
 import org.junit.jupiter.api.*;
 import static org.junit.jupiter.api.Assertions.*;

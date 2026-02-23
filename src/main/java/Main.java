@@ -3,9 +3,9 @@ import Entities.Seance;
 import Entities.UserApp;
 import enums.RoleUser;
 import enums.StatutSeance;
-import Services.interfaces.PlanningService;
-import Services.interfaces.SeanceService;
-import Services.interfaces.UserService;
+import Services.PlanningService;
+import Services.SeanceService;
+import Services.UserService;
 import exceptions.ValidationException;
 
 import java.time.LocalDate;

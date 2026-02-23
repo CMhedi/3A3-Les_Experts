@@ -1,7 +1,7 @@
 package GUI;
 
 import Entities.UserApp;
-import Services.interfaces.UserService;
+import Services.UserService;
 import enums.RoleUser;
 import javafx.beans.binding.Bindings;
 import javafx.collections.FXCollections;
@@ -14,7 +14,6 @@ import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 import java.io.IOException;
-import java.util.Arrays;
 
 public class UserAddController {
 

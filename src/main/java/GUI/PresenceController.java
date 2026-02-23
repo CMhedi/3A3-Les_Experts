@@ -2,7 +2,7 @@ package GUI;
 
 import Entities.ReservationSeance;
 import Entities.Seance;
-import Services.interfaces.ReservationSeanceService;
+import Services.ReservationSeanceService;
 import enums.StatutPresence;
 import javafx.animation.FadeTransition;
 import javafx.beans.property.SimpleStringProperty;

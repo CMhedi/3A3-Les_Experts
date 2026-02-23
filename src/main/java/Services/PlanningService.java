@@ -1,8 +1,7 @@
-package Services.interfaces;
+package Services;
 
 import Entities.Planning;
-import Services.interfaces.IGenericService;
-import Services.interfaces.validation.PlanningValidator;
+import Services.validation.PlanningValidator;
 import Utiles.MyDB;
 
 import java.sql.*;

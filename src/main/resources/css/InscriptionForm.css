@@ -1,0 +1,22 @@
+@import "app.css";
+
+/* Form container */
+.page {
+    -fx-background-color: rgba(255,255,255,0.88);
+    -fx-background-radius: 18;
+    -fx-border-radius: 18;
+    -fx-border-color: rgba(226,232,240,0.95);
+    -fx-border-width: 1;
+    -fx-effect: dropshadow(gaussian, rgba(15,23,42,0.10), 22, 0.12, 0, 8);
+}
+
+/* Labels in grid */
+.grid-pane .label {
+    -fx-font-weight: 800;
+}
+
+/* Discount label emphasis */
+#lblDiscount {
+    -fx-text-fill: -ea-emerald;
+    -fx-font-weight: 900;
+}

@@ -2,7 +2,7 @@ package GUI;
 
 import Entities.Reclamation;
 import Entities.Session;
-import Services.interfaces.ReclamationService;
+import Services.ReclamationService;
 import enums.StatutReclamation;
 import javafx.application.Platform;
 import javafx.collections.FXCollections;

@@ -1,18 +1,19 @@
-package Services.interfaces;
+package Services;
 
 import Entities.UserApp;
-import enums.RoleUser;
 import Utiles.MyDB;
+import enums.RoleUser;
+
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 
 public class UserService implements IGenericService<UserApp> {
-    private Connection cnx = MyDB.getInstance().getConnection();
+    private final Connection cnx = MyDB.getInstance().getConnection();
 
     @Override
     public void add(UserApp u) throws SQLException {
-        // Query fiha el colonnes el jdod el kol
         String req = "INSERT INTO user_app (nom, prenom, email, telephone, image_url, role, mot_de_passe, age, experience, specialite, bio_certifs, disponibilite) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
 
         PreparedStatement ps = cnx.prepareStatement(req);
@@ -21,10 +22,9 @@ public class UserService implements IGenericService<UserApp> {
         ps.setString(3, u.getEmail());
         ps.setString(4, u.getTelephone());
         ps.setString(5, u.getImageUrl());
-        ps.setString(6, u.getRole().name());
+        ps.setString(6, safeRoleName(u.getRole()));
         ps.setString(7, u.getMotDePasse());
 
-        // Logic bech n-sabbu data el Coach barka
         if (u.getRole() == RoleUser.COACH) {
             ps.setInt(8, u.getAge());
             ps.setString(9, u.getExperience());
@@ -32,7 +32,6 @@ public class UserService implements IGenericService<UserApp> {
             ps.setString(11, u.getBioCertifs());
             ps.setString(12, u.getDisponibilite());
         } else {
-            // Ken mouch coach, n-khalliw el blayes ferghin (NULL)
             ps.setNull(8, Types.INTEGER);
             ps.setNull(9, Types.VARCHAR);
             ps.setNull(10, Types.VARCHAR);
@@ -67,9 +66,8 @@ public class UserService implements IGenericService<UserApp> {
         ps.setString(4, u.getTelephone());
         ps.setString(5, u.getImageUrl());
         ps.setString(6, u.getMotDePasse());
-        ps.setString(7, u.getRole().name());
+        ps.setString(7, safeRoleName(u.getRole()));
 
-        // Coach fields fil Update
         ps.setInt(8, u.getAge());
         ps.setString(9, u.getExperience());
         ps.setString(10, u.getSpecialite());
@@ -128,7 +126,6 @@ public class UserService implements IGenericService<UserApp> {
         }
     }
 
-    // Helper method bech ma n-3awduch el mapping dima
     private UserApp mapResultSetToUser(ResultSet rs) throws SQLException {
         UserApp u = new UserApp();
         u.setIdUser(rs.getInt("id_user"));
@@ -138,9 +135,10 @@ public class UserService implements IGenericService<UserApp> {
         u.setTelephone(rs.getString("telephone"));
         u.setImageUrl(rs.getString("image_url"));
         u.setMotDePasse(rs.getString("mot_de_passe"));
-        u.setRole(RoleUser.valueOf(rs.getString("role")));
 
-        // Mapping el blayes el jdod mta3 el Coach
+        // ✅ FIX: role ممكن يكون NULL/فارغ/مختلف في DB
+        u.setRole(parseRole(rs.getString("role")));
+
         u.setAge(rs.getInt("age"));
         u.setExperience(rs.getString("experience"));
         u.setSpecialite(rs.getString("specialite"));
@@ -161,5 +159,43 @@ public class UserService implements IGenericService<UserApp> {
             System.out.println("❌ Erreur getAllCoachs: " + e.getMessage());
         }
         return list;
+    }
+
+    // ===================== SAFE ROLE PARSING =====================
+
+    private RoleUser defaultRole() {
+        String[] candidates = {"USER", "CLIENT", "MEMBER", "ADMIN", "COACH"};
+        for (String c : candidates) {
+            try { return RoleUser.valueOf(c); } catch (Exception ignored) {}
+        }
+        return (RoleUser.values().length > 0) ? RoleUser.values()[0] : null;
+    }
+
+    private String safeRoleName(RoleUser r) {
+        if (r != null) return r.name();
+        RoleUser d = defaultRole();
+        return d != null ? d.name() : null;
+    }
+
+    private RoleUser parseRole(String raw) {
+        if (raw == null) return defaultRole();
+
+        String v = raw.trim();
+        if (v.isEmpty()) return defaultRole();
+
+        v = v.toUpperCase(Locale.ROOT)
+                .replace("ROLE_", "")
+                .replace("-", "_")
+                .replace(" ", "_");
+
+        if (v.equals("UTILISATEUR") || v.equals("CUSTOMER")) v = "USER";
+        if (v.equals("ADMINISTRATEUR")) v = "ADMIN";
+
+        try {
+            return RoleUser.valueOf(v);
+        } catch (Exception e) {
+            System.out.println("⚠️ Role غير معروف في DB: '" + raw + "' => fallback");
+            return defaultRole();
+        }
     }
 }

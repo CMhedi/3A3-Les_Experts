@@ -1,8 +1,7 @@
 package GUI;
 
 import Entities.UserApp;
-import GUI.AdminUsersController;
-import Services.interfaces.UserService;
+import Services.UserService;
 import enums.RoleUser;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;

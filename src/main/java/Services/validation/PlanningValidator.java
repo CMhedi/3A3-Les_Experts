@@ -1,4 +1,4 @@
-package Services.interfaces.validation;
+package Services.validation;
 
 import Entities.Planning;
 import exceptions.ValidationException;

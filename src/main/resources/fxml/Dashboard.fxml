@@ -1,0 +1,194 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<BorderPane xmlns="http://javafx.com/javafx/21"
+            xmlns:fx="http://javafx.com/fxml/1"
+            fx:controller="controllers.DashboardAllController"
+            stylesheets="@/css/dashboard.css"
+            styleClass="root">
+
+    <top>
+        <HBox spacing="12" alignment="CENTER_LEFT" styleClass="topbar">
+            <padding>
+                <Insets top="12" right="16" bottom="12" left="16"/>
+            </padding>
+
+            <Label text="EcoAdventure • Dashboard Global" styleClass="title"/>
+            <Region HBox.hgrow="ALWAYS"/>
+            <Label fx:id="lblDate" text="date" styleClass="muted"/>
+            <Button text="Actualiser" onAction="#onRefresh" styleClass="btn-primary"/>
+        </HBox>
+    </top>
+
+    <center>
+        <VBox spacing="14">
+            <padding>
+                <Insets top="16" right="16" bottom="16" left="16"/>
+            </padding>
+
+            <!-- KPI ROW -->
+            <HBox spacing="12">
+                <VBox styleClass="kpi">
+                    <padding>
+                        <Insets top="12" right="12" bottom="12" left="12"/>
+                    </padding>
+                    <Label text="Packs" styleClass="kpi-title"/>
+                    <Label fx:id="kpiPacks" text="0" styleClass="kpi-value"/>
+                </VBox>
+
+                <VBox styleClass="kpi">
+                    <padding>
+                        <Insets top="12" right="12" bottom="12" left="12"/>
+                    </padding>
+                    <Label text="Users" styleClass="kpi-title"/>
+                    <Label fx:id="kpiUsers" text="0" styleClass="kpi-value"/>
+                </VBox>
+
+                <VBox styleClass="kpi">
+                    <padding>
+                        <Insets top="12" right="12" bottom="12" left="12"/>
+                    </padding>
+                    <Label text="Inscriptions" styleClass="kpi-title"/>
+                    <Label fx:id="kpiInscr" text="0" styleClass="kpi-value"/>
+                </VBox>
+
+                <VBox styleClass="kpi">
+                    <padding>
+                        <Insets top="12" right="12" bottom="12" left="12"/>
+                    </padding>
+                    <Label text="Revenue" styleClass="kpi-title"/>
+                    <Label fx:id="kpiRevenue" text="0 DT" styleClass="kpi-value"/>
+                </VBox>
+            </HBox>
+
+            <!-- TOP + LOYAL -->
+            <GridPane hgap="12" vgap="12">
+                <columnConstraints>
+                    <ColumnConstraints percentWidth="65"/>
+                    <ColumnConstraints percentWidth="35"/>
+                </columnConstraints>
+
+                <VBox GridPane.columnIndex="0" styleClass="panel" spacing="10">
+                    <padding>
+                        <Insets top="14" right="14" bottom="14" left="14"/>
+                    </padding>
+
+                    <Label text="🔥 Top Packs (les plus activés)" styleClass="panel-title"/>
+
+                    <TableView fx:id="tblTopPacks" prefHeight="220" styleClass="table">
+                        <columns>
+                            <TableColumn fx:id="colPack" text="Pack" prefWidth="220"/>
+                            <TableColumn fx:id="colNb" text="Inscriptions" prefWidth="120"/>
+                            <TableColumn fx:id="colPrix" text="Prix" prefWidth="100"/>
+                            <TableColumn fx:id="colStatut" text="Statut" prefWidth="120"/>
+                        </columns>
+                    </TableView>
+                </VBox>
+
+                <VBox GridPane.columnIndex="1" styleClass="panel" spacing="10">
+                    <padding>
+                        <Insets top="14" right="14" bottom="14" left="14"/>
+                    </padding>
+
+                    <Label text="🏆 User le plus fidèle" styleClass="panel-title"/>
+
+                    <VBox styleClass="profile" spacing="8">
+                        <padding>
+                            <Insets top="12" right="12" bottom="12" left="12"/>
+                        </padding>
+
+                        <Label fx:id="lblLoyalName" text="—" styleClass="profile-name"/>
+                        <Label fx:id="lblLoyalEmail" text="—" styleClass="muted"/>
+                        <Separator/>
+                        <HBox spacing="10" alignment="CENTER_LEFT">
+                            <Label text="Inscriptions:" styleClass="muted"/>
+                            <Label fx:id="lblLoyalCount" text="0" styleClass="profile-metric"/>
+                        </HBox>
+                    </VBox>
+                </VBox>
+            </GridPane>
+
+            <!-- ALL CLASSES IN ONE PAGE -->
+            <TabPane tabClosingPolicy="UNAVAILABLE" styleClass="tabs" prefHeight="320">
+
+                <Tab text="Pack">
+                    <content>
+                        <TableView fx:id="tblPacks" prefHeight="300"/>
+                    </content>
+                </Tab>
+
+                <Tab text="Inscription">
+                    <content>
+                        <TableView fx:id="tblInscriptions" prefHeight="300"/>
+                    </content>
+                </Tab>
+
+                <Tab text="UserApp">
+                    <content>
+                        <TableView fx:id="tblUsers" prefHeight="300"/>
+                    </content>
+                </Tab>
+
+                <Tab text="Activite">
+                    <content>
+                        <TableView fx:id="tblActivites" prefHeight="300"/>
+                    </content>
+                </Tab>
+
+                <Tab text="Evenement">
+                    <content>
+                        <TableView fx:id="tblEvenements" prefHeight="300"/>
+                    </content>
+                </Tab>
+
+                <Tab text="Reservation Activite">
+                    <content>
+                        <TableView fx:id="tblResAct" prefHeight="300"/>
+                    </content>
+                </Tab>
+
+                <Tab text="Reservation Evenement">
+                    <content>
+                        <TableView fx:id="tblResEvt" prefHeight="300"/>
+                    </content>
+                </Tab>
+
+                <Tab text="Planning">
+                    <content>
+                        <TableView fx:id="tblPlanning" prefHeight="300"/>
+                    </content>
+                </Tab>
+
+                <Tab text="Seance">
+                    <content>
+                        <TableView fx:id="tblSeances" prefHeight="300"/>
+                    </content>
+                </Tab>
+
+                <Tab text="Reclamation">
+                    <content>
+                        <TableView fx:id="tblReclamations" prefHeight="300"/>
+                    </content>
+                </Tab>
+
+                <Tab text="Conversation">
+                    <content>
+                        <TableView fx:id="tblConversations" prefHeight="300"/>
+                    </content>
+                </Tab>
+
+                <Tab text="Message">
+                    <content>
+                        <TableView fx:id="tblMessages" prefHeight="300"/>
+                    </content>
+                </Tab>
+
+            </TabPane>
+
+        </VBox>
+    </center>
+
+</BorderPane>

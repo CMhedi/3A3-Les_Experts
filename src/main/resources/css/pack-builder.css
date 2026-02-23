@@ -1,0 +1,39 @@
+@import "app.css";
+
+/* Titles */
+.section-title {
+    -fx-text-fill: -ea-slate;
+    -fx-font-size: 14px;
+    -fx-font-weight: 900;
+}
+
+.label-muted {
+    -fx-text-fill: -ea-muted;
+    -fx-font-weight: 800;
+}
+
+.price-value {
+    -fx-text-fill: -ea-forest;
+    -fx-font-weight: 900;
+}
+
+.price-discount {
+    -fx-text-fill: -ea-emerald;
+    -fx-font-weight: 900;
+}
+
+.total-label {
+    -fx-text-fill: -ea-slate;
+    -fx-font-weight: 900;
+}
+
+.total-value {
+    -fx-text-fill: -ea-orange;
+    -fx-font-size: 18px;
+    -fx-font-weight: 900;
+}
+
+.details {
+    -fx-text-fill: -ea-muted;
+    -fx-opacity: 0.95;
+}

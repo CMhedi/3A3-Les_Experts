@@ -1,4 +1,4 @@
-package Services.interfaces;
+package Services;
 
 import Entities.NutritionLog;
 import Utiles.MyDB;

@@ -1,9 +1,8 @@
 package GUI;
 
 import Entities.Reclamation;
-import Services.interfaces.ReclamationService;
+import Services.ReclamationService;
 import enums.StatutReclamation;
-import GUI.ReponsePopupController;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;

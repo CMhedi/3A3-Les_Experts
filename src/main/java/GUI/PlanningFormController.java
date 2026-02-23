@@ -2,7 +2,7 @@ package GUI;
 
 import Entities.Planning;
 import GUI.utils.DialogUtils;
-import Services.interfaces.PlanningService;
+import Services.PlanningService;
 import exceptions.ValidationException;
 
 import javafx.fxml.FXML;

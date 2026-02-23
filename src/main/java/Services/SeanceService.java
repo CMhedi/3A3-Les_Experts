@@ -1,8 +1,8 @@
-package Services.interfaces;
+package Services;
 
 import Entities.Seance;
 import enums.StatutSeance;
-import Services.interfaces.validation.SeanceValidator;
+import Services.validation.SeanceValidator;
 import Utiles.MyDB;
 
 import java.sql.*;

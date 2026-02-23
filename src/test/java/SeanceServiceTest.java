@@ -1,5 +1,5 @@
 import Entities.Seance;
-import Services.interfaces.SeanceService;
+import Services.SeanceService;
 import enums.StatutSeance;
 import exceptions.ValidationException;
 import org.junit.jupiter.api.*;

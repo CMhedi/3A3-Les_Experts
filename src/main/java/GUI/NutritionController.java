@@ -2,8 +2,8 @@ package GUI;
 
 import Entities.NutritionLog;
 import Entities.Session;
-import Services.interfaces.NutritionLogService;
-import Services.interfaces.NutritionService;
+import Services.NutritionLogService;
+import Services.NutritionService;
 import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;

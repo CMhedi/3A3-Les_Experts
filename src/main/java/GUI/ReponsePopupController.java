@@ -1,8 +1,7 @@
 package GUI;
 
 import Entities.Reclamation;
-import Services.interfaces.ReclamationService;
-import enums.StatutReclamation;
+import Services.ReclamationService;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.Alert;

@@ -1,12 +1,137 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<?import javafx.scene.layout.*?>
+<?import javafx.scene.shape.Circle?>
 
-<BorderPane xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1" prefHeight="700.0" prefWidth="1100.0">
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.effect.GaussianBlur?>
+<?import javafx.scene.image.Image?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.Region?>
+<?import javafx.scene.layout.StackPane?>
+<?import javafx.scene.layout.VBox?>
+
+<BorderPane styleClass="root"
+            stylesheets="@/css/app.css"
+            xmlns="http://javafx.com/javafx/21"
+            xmlns:fx="http://javafx.com/fxml/1"
+            fx:controller="controllers.MainLayoutController">
+
+    <!-- ===================== SIDEBAR ===================== -->
     <left>
-        <fx:include source="SideBar.fxml" />
+        <StackPane maxWidth="270" minWidth="270" prefWidth="270" styleClass="sidebar">
+
+            <!-- Background image -->
+
+
+            <!-- Artistic overlay -->
+            <Region styleClass="sidebar-overlay" />
+
+            <!-- Content -->
+            <VBox fx:id="sidebarContent" spacing="14" styleClass="sidebar-content">
+
+                <!-- Brand (LOGO + Title) -->
+                <HBox spacing="10" alignment="CENTER_LEFT" styleClass="brand-wrap">
+
+                    <StackPane prefWidth="48" prefHeight="48" maxWidth="48" maxHeight="48" styleClass="logo-circle">
+                        <ImageView fitWidth="48" fitHeight="48" preserveRatio="false" styleClass="brand-logo">
+                            <image>
+                                <Image url="@/assets/logo.jpg"/>
+                            </image>
+                            <clip>
+                                <Circle centerX="24" centerY="24" radius="24"/>
+                            </clip>
+                        </ImageView>
+                    </StackPane>
+
+                    <VBox spacing="2">
+                        <Label styleClass="brand" text="EcoAdventure" />
+                        <Label styleClass="brand-sub" text="Admin Panel • 3A3" />
+                    </VBox>
+
+                </HBox>
+
+                <!-- Profile -->
+                <VBox spacing="10" styleClass="profile-card">
+                    <HBox alignment="CENTER_LEFT" spacing="10">
+                        <StackPane styleClass="avatar">
+                            <Label styleClass="avatar-text" text="E" />
+                        </StackPane>
+
+                        <VBox spacing="2">
+                            <Label styleClass="profile-name" text="Eco Support" />
+                            <Label styleClass="profile-role" text="Manager" />
+                        </VBox>
+                    </HBox>
+                </VBox>
+
+                <!-- Separator -->
+                <Region styleClass="sep" />
+
+                <!-- Nav -->
+                <VBox spacing="6" styleClass="nav-list">
+                    <Button fx:id="btnDashboard" onAction="#openDashboard" styleClass="nav-item" text="Accueil" />
+                    <Button fx:id="btnInsights" onAction="#openInsights" styleClass="nav-item" text="Insights" />
+                    <Button fx:id="btnPacks" onAction="#openPacks" styleClass="nav-item" text="Packs" />
+                    <Button fx:id="btnInscriptions" onAction="#openInscriptions" styleClass="nav-item" text="Inscriptions" />
+                    <Button fx:id="btnPackBuilder"
+                            text="Pack Builder"
+                            onAction="#openPackBuilder"
+                            styleClass="nav-item"/>
+                    <Button onAction="#openSideBar" styleClass="nav-item" text="⬅️ Retour Sidebar" />
+                    <Button onAction="#logout" styleClass="nav-item" text="Déconnexion" />
+                </VBox>
+
+                <Region VBox.vgrow="ALWAYS" />
+
+            </VBox>
+        </StackPane>
     </left>
 
+    <!-- ===================== TOPBAR ===================== -->
+    <top>
+        <HBox fx:id="topbar" alignment="CENTER_LEFT" spacing="12" styleClass="topbar">
+            <padding>
+                <Insets bottom="14" left="18" right="18" top="14" />
+            </padding>
+
+            <!-- Page title -->
+            <VBox spacing="2">
+                <Label styleClass="title" text="EcoAdventure - Admin" />
+                <Label styleClass="subtitle" text="Gestion professionnelle des packs &amp; inscriptions" />
+            </VBox>
+
+            <Region HBox.hgrow="ALWAYS" />
+
+            <!-- Status + action -->
+            <HBox alignment="CENTER_RIGHT" spacing="10">
+                <Label styleClass="pill" text="En ligne" />
+                <Button onAction="#logout" styleClass="btn-secondary" text="Déconnexion" />
+            </HBox>
+        </HBox>
+    </top>
+
+    <!-- ===================== CENTER ===================== -->
     <center>
-        <fx:include source="AdminDashboard.fxml" />
+        <StackPane fx:id="contentPane" styleClass="page">
+            <VBox maxWidth="640" spacing="10" styleClass="glass content-card">
+                <Label styleClass="page-subtitle" text="Choisissez une section dans la sidebar." />
+
+                <HBox alignment="CENTER_LEFT" spacing="10" styleClass="hint-row">
+                    <Label styleClass="hint-emoji" text="✨" />
+                    <Label styleClass="hint" text="Astuce : passe la souris sur le menu pour voir les effets et transitions." />
+                </HBox>
+
+                <Region styleClass="sep-light" />
+
+                <HBox alignment="CENTER_LEFT" spacing="10">
+                    <Label styleClass="hint-emoji" text="🚀" />
+                    <Label styleClass="hint" text="Tip pro : commence par Packs ثم Inscriptions باش تراجع العلاقات والقيود FK." />
+                </HBox>
+            </VBox>
+        </StackPane>
     </center>
+
 </BorderPane>

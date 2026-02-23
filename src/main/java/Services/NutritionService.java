@@ -1,4 +1,4 @@
-package Services.interfaces;
+package Services;
 
 import org.json.JSONArray;
 import org.json.JSONObject;

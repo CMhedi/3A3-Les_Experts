@@ -4,8 +4,8 @@ import Entities.Seance;
 import Entities.UserApp;
 import GUI.utils.DialogUtils;
 import GUI.utils.SceneUtils;
-import Services.interfaces.SeanceService;
-import Services.interfaces.UserService;
+import Services.SeanceService;
+import Services.UserService;
 
 import javafx.beans.property.*;
 import javafx.collections.FXCollections;
@@ -25,7 +25,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import Entities.Session;
-import Entities.UserApp;
 import enums.RoleUser;
 public class AdminSeanceController {
 

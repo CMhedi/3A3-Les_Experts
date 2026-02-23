@@ -1,5 +1,5 @@
 import Entities.Planning;
-import Services.interfaces.PlanningService;
+import Services.PlanningService;
 import exceptions.ValidationException;
 import org.junit.jupiter.api.*;
 

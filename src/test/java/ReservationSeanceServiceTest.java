@@ -1,5 +1,5 @@
-import Services.interfaces.ReservationSeanceService;
-import Services.interfaces.SeanceService;
+import Services.ReservationSeanceService;
+import Services.SeanceService;
 import Entities.Seance;
 import exceptions.ValidationException;
 import org.junit.jupiter.api.*;

@@ -4,14 +4,13 @@ import Entities.Seance;
 import Entities.UserApp;
 import GUI.utils.DialogUtils;
 import GUI.utils.SceneUtils;
-import Services.interfaces.GoogleCalendarService;
-import Services.interfaces.ReservationSeanceService;
-import Services.interfaces.SeanceService;
-import Services.interfaces.UserService;
+import Services.GoogleCalendarService;
+import Services.ReservationSeanceService;
+import Services.SeanceService;
+import Services.UserService;
 import exceptions.ValidationException;
 
 import javafx.fxml.FXML;
-import javafx.geometry.Pos;
 import javafx.scene.control.*;
 import javafx.scene.layout.*;
 import javafx.scene.image.Image;

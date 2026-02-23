@@ -1,7 +1,7 @@
 package GUI;
 
 import Entities.UserApp;
-import Services.interfaces.UserService;
+import Services.UserService;
 import enums.RoleUser;
 import javafx.beans.binding.Bindings;
 import javafx.collections.FXCollections;
@@ -12,14 +12,11 @@ import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
-import javafx.scene.control.Alert.AlertType;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 import javafx.scene.input.MouseEvent; // HEDHI EL S7I7A
-import javafx.event.ActionEvent;
+
 import java.io.IOException;
-import java.net.URL;
-import java.util.ResourceBundle;
 
 public class UserManagementController {
 

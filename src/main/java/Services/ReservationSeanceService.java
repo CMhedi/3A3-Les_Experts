@@ -1,4 +1,4 @@
-package Services.interfaces;
+package Services;
 
 import Entities.ReservationSeance;
 import Entities.UserApp;
@@ -6,7 +6,7 @@ import enums.StatutPresence;
 import enums.StatutReservationSeance;
 import exceptions.ValidationException;
 import Utiles.MyDB;
-import Services.interfaces.validation.ReservationSeanceValidator;
+import Services.validation.ReservationSeanceValidator;
 
 import java.sql.*;
 import java.util.ArrayList;

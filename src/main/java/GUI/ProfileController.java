@@ -1,7 +1,7 @@
 package GUI;
 
 import Entities.UserApp;
-import Services.interfaces.UserService;
+import Services.UserService;
 import Entities.Session;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
