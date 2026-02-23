@@ -143,6 +143,9 @@ public class ConversationDAO {
         } catch (SQLException e) { return false; }
     }
 
+
+
+
     public List<Conversation> searchConversations(String query, int currentUserId) {
         List<Conversation> list = new ArrayList<>();
         String sql = "SELECT c.* FROM conversation c " +
@@ -157,23 +160,6 @@ public class ConversationDAO {
             }
         } catch (SQLException e) { return list; }
         return list;
-    }
-    public String getOtherUserName(int conversationId, int currentUserId) {
-        String sql = "SELECT u.nom FROM users u " +
-                "JOIN conversation_members cm ON u.id_user = cm.user_id " +
-                "WHERE cm.conversation_id = ? AND u.id_user != ?";
-        Connection connection = null;
-        try (PreparedStatement stmt = connection.prepareStatement(sql)) {
-            stmt.setInt(1, conversationId);
-            stmt.setInt(2, currentUserId);
-            ResultSet rs = stmt.executeQuery();
-            if (rs.next()) {
-                return rs.getString("nom");
-            }
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-        return "Utilisateur inconnu";
     }
 
 }

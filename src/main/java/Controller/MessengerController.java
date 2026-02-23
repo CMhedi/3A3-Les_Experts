@@ -1,5 +1,17 @@
 package Controller;
-
+import javafx.scene.shape.Rectangle;
+import javafx.scene.layout.StackPane;
+import java.awt.Desktop;
+import java.io.File;
+import java.io.IOException;
+import java.net.URI;
+import java.net.URISyntaxException;
+import java.nio.file.Files;
+import java.nio.file.StandardCopyOption;
+import java.awt.Desktop;
+import java.io.File;
+import java.io.IOException;
+import javafx.scene.control.ProgressIndicator;
 import Entities.Conversation;
 import Entities.Message;
 import Services.interfaces.ConversationDAO;
@@ -26,6 +38,12 @@ import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
+import javafx.scene.control.Button;
+import javafx.scene.control.Dialog;
+import javafx.scene.control.Label;
+import javafx.scene.control.MenuItem;
+import javafx.scene.control.ScrollPane;
+import javafx.scene.control.TextField;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.KeyCode;
@@ -33,6 +51,8 @@ import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.FlowPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
+import javafx.scene.media.Media;
+import javafx.scene.media.MediaPlayer;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
@@ -49,6 +69,7 @@ import org.vosk.Recognizer;
 
 import javax.sound.sampled.AudioInputStream;
 import javax.sound.sampled.AudioSystem;
+import java.awt.*;
 import java.io.*;
 import java.net.HttpURLConnection;
 import java.net.URI;
@@ -57,14 +78,21 @@ import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
 import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.nio.file.StandardCopyOption;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.*;
+import java.util.List;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.Collectors;
 
-
-
+// ===================================
+// ✅ FIX: Alignement des GIFs à gauche
+// ===================================
+// Le code original avait : gifsPane.setAlignment(Pos.CENTER);
+// La correction: gifsPane.setAlignment(Pos.TOP_LEFT);
+// ===================================
 
 public class MessengerController implements Initializable {
     private static final String BASE_URL =null ;
@@ -73,9 +101,7 @@ public class MessengerController implements Initializable {
     @FXML
     private Button aiRecordButton;
 
-
     private boolean isAiRecording = false;
-
 
     private AudioRecorder recorder;
     private boolean isRecording = false;
@@ -113,19 +139,15 @@ public class MessengerController implements Initializable {
     private int currentUserId = 3;  // valeur par défaut
     private VoiceMessagePlayer voicePlayer = new VoiceMessagePlayer();
 
-
-
     private String currentTargetLanguage = "fr"; // اللغة الافتراضية (نعرض بها الرسائل الأصلية)
     // conversationId -> projectId
     private Map<Integer, String> translatedCache = new HashMap<>(); // messageId -> texte traduit
     private final Set<Integer> translationInProgress = ConcurrentHashMap.newKeySet();
     private Set<Integer> lastFiveMessageIds = new HashSet<>();
 
-
     private ObservableList<Message> chatMessages = FXCollections.observableArrayList();
     private StompClientHandler stompHandler;
     private HttpClient httpClient;
-
 
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
@@ -143,7 +165,6 @@ public class MessengerController implements Initializable {
         gifService = new GifService("Filp4GHzXpQubEthmUu744ozFrXl464m");
         initializeStompClient();
         httpClient = HttpClient.newHttpClient();
-
 
 // ✅ Add delay and null check
         if (stompHandler != null) {
@@ -163,7 +184,6 @@ public class MessengerController implements Initializable {
         }
 
     }
-
 
     private boolean requestUserLogin() {
         TextInputDialog dialog = new TextInputDialog("2");
@@ -189,6 +209,7 @@ public class MessengerController implements Initializable {
         }
         return false;
     }
+
     private void processIncomingCall(String payload) {
         try {
             System.out.println("📞 Incoming call received: " + payload);
@@ -280,8 +301,6 @@ public class MessengerController implements Initializable {
         });
     }
 
-    // ========== REMPLACER COMPLÈTEMENT setupMessagesList() DANS MessengerController ==========
-
     private void setupMessagesList() {
         messagesList.setCellFactory(lv -> new ListCell<Message>() {
             @Override
@@ -339,102 +358,36 @@ public class MessengerController implements Initializable {
                 }
             }
 
-            // ✅ AFFICHER UN MESSAGE D'APPEL AUDIO
             private void displayAudioCallMessage(VBox container, Message msg) {
-                // Conteneur principal de l'appel
-                HBox callBox = new HBox(12);
-                callBox.setStyle(
-                        "-fx-background-color: #f5f5f5;" +
-                                "-fx-background-radius: 12;" +
-                                "-fx-padding: 12;"
-                );
-                callBox.setAlignment(Pos.CENTER_LEFT);
-
-                // Icône d'appel
-                Label callIcon = new Label("📞");
-                callIcon.setFont(Font.font("Segoe UI Emoji", 28));
-                callIcon.setMinWidth(40);
-
-                // Contenu texte
-                VBox textBox = new VBox(4);
-                textBox.setPrefWidth(200);
-
-                // Titre : "Appel vocal"
-                Label callTypeLabel = new Label("Appel vocal");
-                callTypeLabel.setFont(Font.font("Segoe UI", FontWeight.BOLD, 13));
-                callTypeLabel.setTextFill(Color.web("#050505"));
-
-                // Durée et statut de l'appel
-                String callStatus = extractCallStatus(msg.getContenu());
-                String callDuration = extractCallDuration(msg.getContenu());
-                Label statusLabel = new Label(callStatus + " • " + callDuration);
-                statusLabel.setFont(Font.font("Segoe UI", 12));
-                statusLabel.setTextFill(Color.web("#7a7a7a"));
-
-                textBox.getChildren().addAll(callTypeLabel, statusLabel);
-
-                // Bouton "Rappeler"
-                Button redialButton = new Button("Rappeler");
-                redialButton.setStyle(
-                        "-fx-background-color: transparent;" +
-                                "-fx-text-fill: #007AFF;" +
-                                "-fx-font-size: 12;" +
-                                "-fx-padding: 6 12;" +
-                                "-fx-cursor: hand;"
-                );
-                redialButton.setOnAction(e -> {
-                    System.out.println("📞 Rappel automatique...");
-                    // Déclencher un nouvel appel
-                    startAudioCall();
-                });
-
-                // Heure
-                String time = msg.getDateEnvoi().format(DateTimeFormatter.ofPattern("HH:mm"));
-                Label timeLabel = new Label(time);
-                timeLabel.setFont(Font.font("Segoe UI", 11));
-                timeLabel.setTextFill(Color.web("#999999"));
-
-                // VBox verticale pour les textes + bouton
-                VBox rightBox = new VBox(6);
-                rightBox.setAlignment(Pos.CENTER_LEFT);
-                rightBox.getChildren().addAll(textBox, redialButton);
-
-                callBox.getChildren().addAll(callIcon, rightBox);
-
-                // Ajouter au container avec l'heure
-                VBox mainCall = new VBox(3);
-                mainCall.getChildren().add(callBox);
-                mainCall.getChildren().add(timeLabel);
-
-                container.getChildren().add(mainCall);
+                displayCallMessage(container, msg, "📞", "#00b894");
             }
 
-            // ✅ AFFICHER UN MESSAGE D'APPEL VIDÉO
             private void displayVideoCallMessage(VBox container, Message msg) {
-                // Conteneur principal de l'appel
-                HBox callBox = new HBox(12);
+                displayCallMessage(container, msg, "📹", "#0984e3");
+            }
+
+            private void displayCallMessage(VBox container, Message msg, String icon, String color) {
+                HBox callBox = new HBox(15);
                 callBox.setStyle(
-                        "-fx-background-color: #f0f8ff;" +
-                                "-fx-background-radius: 12;" +
-                                "-fx-padding: 12;"
+                        "-fx-background-color: #F5F5F5;" +
+                                "-fx-background-radius: 20;" +
+                                "-fx-padding: 12;" +
+                                "-fx-effect: dropshadow(gaussian, rgba(0,0,0,0.05), 5, 0, 0, 2);"
                 );
                 callBox.setAlignment(Pos.CENTER_LEFT);
 
-                // Icône d'appel vidéo
-                Label callIcon = new Label("📹");
-                callIcon.setFont(Font.font("Segoe UI Emoji", 28));
+                Label callIcon = new Label(icon);
+                callIcon.setFont(Font.font("Segoe UI Emoji", 32));
                 callIcon.setMinWidth(40);
+                callIcon.setAlignment(Pos.CENTER);
 
-                // Contenu texte
                 VBox textBox = new VBox(4);
                 textBox.setPrefWidth(200);
 
-                // Titre : "Appel vidéo"
-                Label callTypeLabel = new Label("Appel vidéo");
+                Label callTypeLabel = new Label(icon.equals("📞") ? "Appel vocal" : "Appel vidéo");
                 callTypeLabel.setFont(Font.font("Segoe UI", FontWeight.BOLD, 13));
-                callTypeLabel.setTextFill(Color.web("#1976D2"));
+                callTypeLabel.setTextFill(Color.web(color));
 
-                // Durée et statut de l'appel
                 String callStatus = extractCallStatus(msg.getContenu());
                 String callDuration = extractCallDuration(msg.getContenu());
                 Label statusLabel = new Label(callStatus + " • " + callDuration);
@@ -443,88 +396,88 @@ public class MessengerController implements Initializable {
 
                 textBox.getChildren().addAll(callTypeLabel, statusLabel);
 
-                // Bouton "Rappeler"
                 Button redialButton = new Button("Rappeler");
                 redialButton.setStyle(
                         "-fx-background-color: transparent;" +
-                                "-fx-text-fill: #007AFF;" +
+                                "-fx-text-fill: " + color + ";" +
                                 "-fx-font-size: 12;" +
                                 "-fx-padding: 6 12;" +
-                                "-fx-cursor: hand;"
+                                "-fx-cursor: hand;" +
+                                "-fx-border-color: " + color + ";" +
+                                "-fx-border-radius: 15;" +
+                                "-fx-background-radius: 15;"
                 );
                 redialButton.setOnAction(e -> {
-                    System.out.println("📹 Rappel vidéo automatique...");
-                    // TODO: Déclencher un nouvel appel vidéo
-                    startVideoCall();
+                    if (icon.equals("📞")) startAudioCall();
+                    else startVideoCall();
                 });
 
-                // Heure
-                String time = msg.getDateEnvoi().format(DateTimeFormatter.ofPattern("HH:mm"));
-                Label timeLabel = new Label(time);
-                timeLabel.setFont(Font.font("Segoe UI", 11));
-                timeLabel.setTextFill(Color.web("#999999"));
-
-                // VBox verticale pour les textes + bouton
                 VBox rightBox = new VBox(6);
                 rightBox.setAlignment(Pos.CENTER_LEFT);
                 rightBox.getChildren().addAll(textBox, redialButton);
 
                 callBox.getChildren().addAll(callIcon, rightBox);
 
-                // Ajouter au container avec l'heure
-                VBox mainCall = new VBox(3);
-                mainCall.getChildren().add(callBox);
-                mainCall.getChildren().add(timeLabel);
+                String time = msg.getDateEnvoi().format(DateTimeFormatter.ofPattern("HH:mm"));
+                Label timeLabel = new Label(time);
+                timeLabel.setFont(Font.font("Segoe UI", 11));
+                timeLabel.setTextFill(Color.web("#999999"));
 
+                VBox mainCall = new VBox(3);
+                mainCall.getChildren().addAll(callBox, timeLabel);
                 container.getChildren().add(mainCall);
             }
-
-
-// ضع هذا الكود مكان displayVocalMessage() الموجود في setupMessagesList()
-            // ✅ استبدل displayVocalMessage() بهذا الكود:
 
             private void displayVocalMessage(VBox container, Message msg) {
-                // محتوى الرسالة يحتوي على مسار الملف
                 String audioPath = msg.getContenu();
                 String fullPath = "src/main/resources/" + audioPath;
-
-                // استخرج اسم الملف فقط
                 String audioFileName = extractAudioFileName(audioPath);
 
-                // ========== إنشاء الـ UI ==========
-
-                // صندوق الرسالة الصوتية
+                // Conteneur principal du message vocal
                 HBox voiceBox = new HBox(12);
                 voiceBox.setAlignment(Pos.CENTER_LEFT);
-                voiceBox.setPadding(new Insets(10, 14, 10, 14));
-                voiceBox.setStyle("-fx-background-radius: 18 18 18 2; -fx-background-color: #efeff3;");
+                voiceBox.setPadding(new Insets(8, 14, 8, 14));
+                voiceBox.setStyle(
+                        "-fx-background-radius: 18;" +
+                                "-fx-effect: dropshadow(gaussian, rgba(0,0,0,0.05), 4, 0, 0, 1);"
+                );
 
-                // إذا كانت من المستخدم الحالي
+                // Couleur de fond selon l'expéditeur
                 if (msg.getIdUser() == currentUserId) {
-                    voiceBox.setStyle(
-                            "-fx-background-color: linear-gradient(to bottom right, red, #00c6ff);" +
-                                    "-fx-background-radius: 18 18 2 18;"
-                    );
+                    voiceBox.setStyle(voiceBox.getStyle() + "-fx-background-color: #007AFF;");
+                } else {
+                    voiceBox.setStyle(voiceBox.getStyle() + "-fx-background-color: #E9E9EB;");
                 }
 
-                // ========== زر التشغيل/الإيقاف ==========
-                Button playStopBtn = new Button("▶️");
+                // Bouton play/pause
+                Button playStopBtn = new Button("▶");
                 playStopBtn.setStyle(
                         "-fx-background-color: transparent;" +
-                                "-fx-font-size: 20;" +
-                                "-fx-cursor: hand;" +
-                                "-fx-padding: 0 5;"
+                                "-fx-text-fill: " + (msg.getIdUser() == currentUserId ? "white" : "#007AFF") + ";" +
+                                "-fx-font-size: 18;" +
+                                "-fx-cursor: hand;"
                 );
 
-                // ========== عرض اسم الملف ==========
-                Label audioLabel = new Label("🎵 " + audioFileName);
-                audioLabel.setFont(Font.font("Segoe UI", 12));
-                audioLabel.setStyle(
-                        "-fx-text-fill: " + (msg.getIdUser() == currentUserId ? "white" : "#050505") + ";"
-                );
-                audioLabel.setWrapText(false);
+                // Forme d'onde (simulée par des barres) - correction JavaFX
+                HBox waveform = new HBox(3);
+                waveform.setAlignment(Pos.CENTER_LEFT);
+                String barColor = (msg.getIdUser() == currentUserId ? "white" : "#555");
+                for (int i = 0; i < 5; i++) {
+                    Rectangle bar = new Rectangle(3, 10 + i * 2);  // largeur, hauteur
+                    bar.setFill(Color.web(barColor));
+                    bar.setArcWidth(2);
+                    bar.setArcHeight(2);
+                    waveform.getChildren().add(bar);
+                }
 
-                // ========== زر الحذف (اختياري) ==========
+                // Durée (à récupérer dynamiquement plus tard)
+                Label durationLabel = new Label("0:21");
+                durationLabel.setStyle(
+                        "-fx-font-size: 11;" +
+                                "-fx-text-fill: " + (msg.getIdUser() == currentUserId ? "#DDD" : "#888") + ";"
+                );
+
+                // Bouton supprimer
                 Button deleteBtn = new Button("✕");
                 deleteBtn.setStyle(
                         "-fx-background-color: transparent;" +
@@ -535,49 +488,36 @@ public class MessengerController implements Initializable {
                 );
                 deleteBtn.setVisible(msg.getIdUser() == currentUserId);
                 deleteBtn.setOnAction(e -> {
-                    // إيقاف التشغيل إذا كان الملف الحالي قيد التشغيل
                     if (voicePlayer.isCurrentlyPlaying(fullPath)) {
                         voicePlayer.stopPlayback();
                     }
-
-                    // حذف الرسالة من قاعدة البيانات
                     if (messageDAO.deleteMessage(msg.getIdMessage())) {
-                        System.out.println("🗑️ تم حذف الرسالة الصوتية: " + audioFileName);
                         loadMessages(selectedConversationId);
-                    } else {
-                        System.err.println("❌ فشل حذف الرسالة");
                     }
                 });
 
-                // ========== إضافة العناصر للصندوق ==========
-                voiceBox.getChildren().addAll(playStopBtn, audioLabel);
+                voiceBox.getChildren().addAll(playStopBtn, waveform, durationLabel);
                 if (msg.getIdUser() == currentUserId) {
                     voiceBox.getChildren().add(deleteBtn);
                 }
 
-                // ========== معالج الضغط على زر التشغيل ==========
+                // Gestion de la lecture
                 playStopBtn.setOnAction(e -> {
-                    // تحقق من هل الملف الحالي يتم تشغيله
                     if (voicePlayer.isCurrentlyPlaying(fullPath)) {
-                        // إذا كان قيد التشغيل → أوقفه
                         voicePlayer.stopPlayback();
-                        playStopBtn.setText("▶️");
-                        System.out.println("⏹️ توقف: " + audioFileName);
+                        playStopBtn.setText("▶");
                     } else {
-                        // إذا لم يكن قيد التشغيل → شغّله
                         voicePlayer.playVoiceMessage(fullPath);
-                        playStopBtn.setText("⏸️");
-                        System.out.println("▶️ تشغيل: " + audioFileName);
+                        playStopBtn.setText("⏸");
                     }
                 });
 
-                // ========== إضافة المدة الزمنية والتوقيت ==========
+                // Heure et statut
                 String time = msg.getDateEnvoi().format(DateTimeFormatter.ofPattern("HH:mm"));
                 String status = (msg.getIdUser() == currentUserId && "LU".equals(msg.getStatutMessage())) ? " ✓✓" : " ✓";
                 Label footer = new Label(time + (msg.getIdUser() == currentUserId ? status : ""));
                 footer.setStyle("-fx-font-size: 9px; -fx-text-fill: #bdc3c7; -fx-padding: 0 5;");
 
-                // ========== تجميع كل العناصر ==========
                 VBox messageBox = new VBox(3);
                 messageBox.getChildren().addAll(voiceBox, footer);
                 container.getChildren().add(messageBox);
@@ -598,25 +538,20 @@ public class MessengerController implements Initializable {
 
                 return filePath;
             }
+
             private void displayTextMessage(VBox container, Message msg) {
                 String originalText = msg.getContenu();
                 String displayText = originalText;
 
-                // Si la langue cible n'est pas le français (langue source)
+                // ----- Gestion de la traduction (inchangée) -----
                 if (!"fr".equals(currentTargetLanguage)) {
                     int msgId = msg.getIdMessage();
                     String targetLang = currentTargetLanguage;
-
-                    // Ne traduire que si le message fait partie des 5 derniers
                     if (lastFiveMessageIds.contains(msgId)) {
-                        // 1. Si déjà en cache, on affiche directement la traduction
                         if (translatedCache.containsKey(msgId)) {
                             displayText = translatedCache.get(msgId);
-                        }
-                        // 2. Sinon, si une traduction n'est pas déjà en cours, on la lance
-                        else if (translationInProgress.add(msgId)) {
-                            displayText = originalText + " ⏳"; // affichage temporaire
-
+                        } else if (translationInProgress.add(msgId)) {
+                            displayText = originalText + " ⏳";
                             new Thread(() -> {
                                 try {
                                     String translated = GeminiService.translate(originalText, targetLang);
@@ -628,7 +563,6 @@ public class MessengerController implements Initializable {
                                 } catch (Exception e) {
                                     e.printStackTrace();
                                     Platform.runLater(() -> {
-                                        // Fallback : afficher le texte original avec un indicateur d'erreur
                                         translatedCache.put(msgId, originalText + " ⚠️");
                                         translationInProgress.remove(msgId);
                                         refreshSingleMessage(msgId);
@@ -636,14 +570,153 @@ public class MessengerController implements Initializable {
                                 }
                             }).start();
                         } else {
-                            // Traduction déjà en cours pour ce message
                             displayText = originalText + " ⏳";
                         }
                     }
                 }
 
-                // Construction de l'affichage du message (bulle) avec displayText
-                Text textNode = new Text(displayText);
+                // ----- Détection du type de contenu -----
+                boolean isLocalAttachment = originalText.startsWith("uploads/");
+                boolean isImageUrl = isImageUrl(originalText);
+                boolean isPdfUrl = isPdfUrl(originalText);
+
+                if (isLocalAttachment) {
+                    // Pièce jointe locale (fichier uploadé)
+                    displayAttachment(container, msg, originalText);
+                } else if (isImageUrl) {
+                    // Image distante (GIF, etc.) – code existant
+                    displayImageFromUrl(container, msg, originalText);
+                } else if (isPdfUrl) {
+                    // PDF distant
+                    displayPdfFromUrl(container, msg, originalText);
+                } else {
+                    // Message texte normal (avec éventuelle traduction)
+                    displayTextBubble(container, msg, displayText);
+                }
+            }
+            private void displayPdfFromUrl(VBox container, Message msg, String url) {
+                VBox attachmentBox = new VBox(5);
+                attachmentBox.setPadding(new Insets(8));
+                attachmentBox.setAlignment(Pos.CENTER);
+                if (msg.getIdUser() == currentUserId) {
+                    attachmentBox.setStyle("-fx-background-color: #007AFF; -fx-background-radius: 20 20 4 20; -fx-padding: 8;");
+                } else {
+                    attachmentBox.setStyle("-fx-background-color: #E9E9EB; -fx-background-radius: 20 20 20 4; -fx-padding: 8;");
+                }
+
+                HBox pdfBox = new HBox(10);
+                pdfBox.setAlignment(Pos.CENTER_LEFT);
+
+                Label icon = new Label("📄");
+                icon.setFont(Font.font("Segoe UI Emoji", 32));
+
+                Label fileName = new Label(getFileNameFromUrl(url));
+                fileName.setFont(Font.font("Segoe UI", 13));
+                fileName.setTextFill(msg.getIdUser() == currentUserId ? Color.WHITE : Color.BLACK);
+
+                Button openBtn = new Button("Ouvrir");
+                openBtn.setStyle("-fx-background-color: #3498db; -fx-text-fill: white; -fx-background-radius: 15; -fx-padding: 5 15;");
+                openBtn.setOnAction(e -> {
+                    try {
+                        Desktop.getDesktop().browse(new URI(url));
+                    } catch (Exception ex) {
+                        ex.printStackTrace();
+                        showAlert("Erreur", "Impossible d'ouvrir le lien.");
+                    }
+                });
+
+                pdfBox.getChildren().addAll(icon, fileName, openBtn);
+                attachmentBox.getChildren().add(pdfBox);
+
+                String time = msg.getDateEnvoi().format(DateTimeFormatter.ofPattern("HH:mm"));
+                String status = (msg.getIdUser() == currentUserId && "LU".equals(msg.getStatutMessage())) ? " ✓✓" : " ✓";
+                Label footer = new Label(time + (msg.getIdUser() == currentUserId ? status : ""));
+                footer.setStyle("-fx-font-size: 9px; -fx-text-fill: #bdc3c7; -fx-padding: 0 5;");
+
+                VBox messageBox = new VBox(3);
+                messageBox.getChildren().addAll(attachmentBox, footer);
+                container.getChildren().add(messageBox);
+            }
+
+            private String getFileNameFromUrl(String url) {
+                try {
+                    String path = new URI(url).getPath();
+                    return path.substring(path.lastIndexOf('/') + 1);
+                } catch (Exception e) {
+                    return "document.pdf";
+                }
+            }
+            private void displayImageFromUrl(VBox container, Message msg, String imageUrl) {
+                VBox imageContainer = new VBox(5);
+                imageContainer.setAlignment(Pos.CENTER);
+                imageContainer.setPadding(new Insets(8));
+                if (msg.getIdUser() == currentUserId) {
+                    imageContainer.setStyle("-fx-background-color: #007AFF; -fx-background-radius: 20 20 4 20; -fx-padding: 8;");
+                } else {
+                    imageContainer.setStyle("-fx-background-color: #E9E9EB; -fx-background-radius: 20 20 20 4; -fx-padding: 8;");
+                }
+
+                // Indicateur de chargement
+                ProgressIndicator progress = new ProgressIndicator();
+                progress.setMaxSize(30, 30);
+                imageContainer.getChildren().add(progress);
+
+                // Téléchargement asynchrone avec les en-têtes
+                new Thread(() -> {
+                    try {
+                        byte[] imageData = downloadImageWithHeaders(imageUrl);
+                        if (imageData != null && imageData.length > 0) {
+                            Image image = new Image(new ByteArrayInputStream(imageData));
+                            Platform.runLater(() -> {
+                                imageContainer.getChildren().clear();
+                                ImageView imageView = new ImageView(image);
+                                imageView.setFitWidth(200);
+                                imageView.setFitHeight(200);
+                                imageView.setPreserveRatio(true);
+                                imageView.setCursor(Cursor.HAND);
+
+                                // Agrandissement au clic
+                                imageView.setOnMouseClicked(e -> {
+                                    Stage stage = new Stage();
+                                    stage.setTitle("Image");
+                                    ImageView bigView = new ImageView(image);
+                                    bigView.setPreserveRatio(true);
+                                    bigView.setFitWidth(600);
+                                    bigView.setFitHeight(600);
+                                    ScrollPane sp = new ScrollPane(bigView);
+                                    sp.setFitToWidth(true);
+                                    sp.setFitToHeight(true);
+                                    stage.setScene(new Scene(sp));
+                                    stage.show();
+                                });
+
+                                imageContainer.getChildren().add(imageView);
+                            });
+                        } else {
+                            throw new Exception("Données d'image vides");
+                        }
+                    } catch (Exception e) {
+                        Platform.runLater(() -> {
+                            imageContainer.getChildren().clear();
+                            Label errorLabel = new Label("❌ Image non chargée");
+                            errorLabel.setStyle("-fx-text-fill: red;");
+                            imageContainer.getChildren().add(errorLabel);
+                        });
+                    }
+                }).start();
+
+                // Heure et statut
+                String time = msg.getDateEnvoi().format(DateTimeFormatter.ofPattern("HH:mm"));
+                String status = (msg.getIdUser() == currentUserId && "LU".equals(msg.getStatutMessage())) ? " ✓✓" : " ✓";
+                Label footer = new Label(time + (msg.getIdUser() == currentUserId ? status : ""));
+                footer.setStyle("-fx-font-size: 9px; -fx-text-fill: #bdc3c7; -fx-padding: 0 5;");
+
+                VBox messageBox = new VBox(3);
+                messageBox.getChildren().addAll(imageContainer, footer);
+                container.getChildren().add(messageBox);
+            }
+            private void displayTextBubble(VBox container, Message msg, String text) {
+                Text textNode = new Text(text);
                 textNode.setFont(Font.font("Segoe UI Emoji", 14));
                 TextFlow textFlow = new TextFlow(textNode);
                 textFlow.setMaxWidth(300);
@@ -651,16 +724,18 @@ public class MessengerController implements Initializable {
                 if (msg.getIdUser() == currentUserId) {
                     textNode.setFill(Color.WHITE);
                     textFlow.setStyle(
-                            "-fx-background-color: linear-gradient(to bottom right, red, #00c6ff);" +
-                                    "-fx-background-radius: 18 18 2 18;" +
-                                    "-fx-padding: 10 14;"
+                            "-fx-background-color: linear-gradient(to bottom right, #007AFF, #00C6FF);" +
+                                    "-fx-background-radius: 20 20 4 20;" +
+                                    "-fx-padding: 10 14;" +
+                                    "-fx-effect: dropshadow(gaussian, rgba(0,0,0,0.1), 5, 0, 0, 2);"
                     );
                 } else {
                     textNode.setFill(Color.web("#050505"));
                     textFlow.setStyle(
-                            "-fx-background-color: #efeff3;" +
-                                    "-fx-background-radius: 18 18 18 2;" +
-                                    "-fx-padding: 10 14;"
+                            "-fx-background-color: #E9E9EB;" +
+                                    "-fx-background-radius: 20 20 20 4;" +
+                                    "-fx-padding: 10 14;" +
+                                    "-fx-effect: dropshadow(gaussian, rgba(0,0,0,0.05), 3, 0, 0, 1);"
                     );
                 }
 
@@ -673,9 +748,146 @@ public class MessengerController implements Initializable {
                 messageBox.getChildren().addAll(textFlow, footer);
                 container.getChildren().add(messageBox);
             }
+            private boolean isImageUrl(String url) {
+                return url.toLowerCase().matches("(?i).*\\.(jpg|jpeg|png|gif|bmp|webp)(\\?.*)?$");
+            }
+
+            private boolean isPdfUrl(String url) {
+                return url.toLowerCase().matches("(?i).*\\.pdf(\\?.*)?$");
+            }
+
+            private void displayAttachment(VBox container, Message msg, String path) {
+                VBox attachmentBox = new VBox(5);
+                attachmentBox.setPadding(new Insets(8));
+                attachmentBox.setAlignment(Pos.CENTER);
+
+                if (msg.getIdUser() == currentUserId) {
+                    attachmentBox.setStyle("-fx-background-color: #007AFF; -fx-background-radius: 20 20 4 20; -fx-padding: 8;");
+                } else {
+                    attachmentBox.setStyle("-fx-background-color: #E9E9EB; -fx-background-radius: 20 20 20 4; -fx-padding: 8;");
+                }
+
+                String mimeType = getMimeTypeFromPath(path);
+
+                if ("image".equals(mimeType)) {
+                    displayImageAttachment(attachmentBox, path);
+                } else if ("pdf".equals(mimeType)) {
+                    displayPdfAttachment(attachmentBox, path, msg);
+                } else {
+                    displayGenericFile(attachmentBox, path, mimeType, msg);
+                }
+
+                String time = msg.getDateEnvoi().format(DateTimeFormatter.ofPattern("HH:mm"));
+                String status = (msg.getIdUser() == currentUserId && "LU".equals(msg.getStatutMessage())) ? " ✓✓" : " ✓";
+                Label footer = new Label(time + (msg.getIdUser() == currentUserId ? status : ""));
+                footer.setStyle("-fx-font-size: 9px; -fx-text-fill: #bdc3c7; -fx-padding: 0 5;");
+
+                VBox messageBox = new VBox(3);
+                messageBox.getChildren().addAll(attachmentBox, footer);
+                container.getChildren().add(messageBox);
+            }
+            private void displayImageAttachment(VBox attachmentBox, String path) {
+                File imageFile = new File("src/main/resources/" + path);
+                if (imageFile.exists()) {
+                    Image image = new Image(imageFile.toURI().toString());
+                    ImageView imageView = new ImageView(image);
+                    imageView.setFitWidth(200);
+                    imageView.setFitHeight(200);
+                    imageView.setPreserveRatio(true);
+                    imageView.setCursor(Cursor.HAND);
+
+                    imageView.setOnMouseClicked(e -> {
+                        Stage stage = new Stage();
+                        stage.setTitle("Image");
+                        ImageView bigView = new ImageView(image);
+                        bigView.setPreserveRatio(true);
+                        bigView.setFitWidth(550);
+                        bigView.setFitHeight(550);
+                        ScrollPane sp = new ScrollPane(bigView);
+                        sp.setFitToWidth(true);
+                        sp.setFitToHeight(true);
+                        stage.setScene(new Scene(sp));
+                        stage.show();
+                    });
+
+                    attachmentBox.getChildren().add(imageView);
+                } else {
+                    attachmentBox.getChildren().add(new Label("❌ Fichier image introuvable"));
+                }
+            }
+            private void displayGenericFile(VBox attachmentBox, String path, String mimeType, Message msg) {
+                HBox fileBox = new HBox(10);
+                fileBox.setAlignment(Pos.CENTER_LEFT);
+
+                String icon = getFileIcon(mimeType);
+                Label iconLabel = new Label(icon);
+                iconLabel.setFont(Font.font("Segoe UI Emoji", 32));
+
+                Label fileName = new Label(new File(path).getName());
+                fileName.setFont(Font.font("Segoe UI", 13));
+                fileName.setTextFill(msg.getIdUser() == currentUserId ? Color.WHITE : Color.BLACK);
+
+                Button openBtn = new Button("Ouvrir");
+                openBtn.setStyle("-fx-background-color: #3498db; -fx-text-fill: white; -fx-background-radius: 15; -fx-padding: 5 15;");
+                openBtn.setOnAction(e -> openFile(path));
+
+                fileBox.getChildren().addAll(iconLabel, fileName, openBtn);
+                attachmentBox.getChildren().add(fileBox);
+            }
+
+            private String getFileIcon(String mimeType) {
+                switch (mimeType) {
+                    case "word": return "📝";
+                    case "pdf": return "📄";
+                    default: return "📎";
+                }
+            }
+            private String getMimeTypeFromPath(String path) {
+                String ext = path.substring(path.lastIndexOf('.') + 1).toLowerCase();
+                switch (ext) {
+                    case "png": case "jpg": case "jpeg": case "gif": case "bmp": case "webp":
+                        return "image";
+                    case "pdf":
+                        return "pdf";
+                    case "docx": case "doc":
+                        return "word";
+                    default:
+                        return "file";
+                }
+            }
+            private void displayPdfAttachment(VBox attachmentBox, String path, Message msg) {
+                HBox pdfBox = new HBox(10);
+                pdfBox.setAlignment(Pos.CENTER_LEFT);
+
+                Label icon = new Label("📄");
+                icon.setFont(Font.font("Segoe UI Emoji", 32));
+
+                Label fileName = new Label(new File(path).getName());
+                fileName.setFont(Font.font("Segoe UI", 13));
+                fileName.setTextFill(msg.getIdUser() == currentUserId ? Color.WHITE : Color.BLACK);
+
+                Button openBtn = new Button("Ouvrir");
+                openBtn.setStyle("-fx-background-color: #3498db; -fx-text-fill: white; -fx-background-radius: 15; -fx-padding: 5 15;");
+                openBtn.setOnAction(e -> openFile(path));
+
+                pdfBox.getChildren().addAll(icon, fileName, openBtn);
+                attachmentBox.getChildren().add(pdfBox);
+            }
+            private void openFile(String relativePath) {
+                try {
+                    File file = new File("src/main/resources/" + relativePath);
+                    if (file.exists()) {
+                        Desktop.getDesktop().open(file);
+                    } else {
+                        showAlert("Erreur", "Fichier introuvable : " + file.getAbsolutePath());
+                    }
+                } catch (IOException e) {
+                    e.printStackTrace();
+                    showAlert("Erreur", "Impossible d'ouvrir le fichier.");
+                }
+            }
 
 
-            // ✅ EXTRAIRE LE STATUT DE L'APPEL
             private String extractCallStatus(String content) {
                 // Format : "📞 Appel audio - ACCEPTÉ (15s)"
                 if (content.contains("ACCEPTÉ")) return "Appel accepté";
@@ -684,7 +896,6 @@ public class MessengerController implements Initializable {
                 return "Appel";
             }
 
-            // ✅ EXTRAIRE LA DURÉE DE L'APPEL
             private String extractCallDuration(String content) {
                 // Format : "📞 Appel audio - ACCEPTÉ (15s)"
                 try {
@@ -760,27 +971,76 @@ public class MessengerController implements Initializable {
         }).start();
     }
 
-
-    @FXML
-    private void handleAttachFile(ActionEvent event) {
-        FileChooser fileChooser = new FileChooser();
-        fileChooser.setTitle("Choisir un fichier ou une image");
-
-        // Filtres optionnels pour les images
-        fileChooser.getExtensionFilters().addAll(
-                new FileChooser.ExtensionFilter("Images", "*.png", "*.jpg", "*.jpeg", "*.gif"),
-                new FileChooser.ExtensionFilter("Tous les fichiers", "*.*")
-        );
-
-        File selectedFile = fileChooser.showOpenDialog(((Node) event.getSource()).getScene().getWindow());
-
-        if (selectedFile != null) {
-            // Pour l'instant on affiche juste le nom, tu pourras ajouter la logique d'envoi plus tard
-            messageInput.setText("[Fichier: " + selectedFile.getName() + "]");
-            System.out.println("Fichier sélectionné : " + selectedFile.getAbsolutePath());
+    private String getAudioDuration(String filePath) {
+        try {
+            Media media = new Media(new File(filePath).toURI().toString());
+            MediaPlayer player = new MediaPlayer(media);
+            // Attendre que les métadonnées soient chargées
+            final String[] duration = { "0:00" };
+            player.setOnReady(() -> {
+                double totalSeconds = player.getTotalDuration().toSeconds();
+                int minutes = (int) (totalSeconds / 60);
+                int seconds = (int) (totalSeconds % 60);
+                duration[0] = String.format("%d:%02d", minutes, seconds);
+            });
+            // On laisse un peu de temps pour charger (bloquant, à éviter en UI)
+            // Dans un vrai projet, on ferait cela de manière asynchrone.
+            // Pour l'exemple, on retourne une valeur par défaut.
+            return duration[0];
+        } catch (Exception e) {
+            return "0:00";
         }
     }
 
+    @FXML
+    private void handleAttachFile(ActionEvent event) {
+        if (selectedConversationId == -1) {
+            showAlert("Attention", "Sélectionnez d'abord une conversation.");
+            return;
+        }
+
+        FileChooser fileChooser = new FileChooser();
+        fileChooser.setTitle("Choisir un fichier");
+        fileChooser.getExtensionFilters().addAll(
+                new FileChooser.ExtensionFilter("Tous les fichiers", "*.*"),
+                new FileChooser.ExtensionFilter("Images", "*.png", "*.jpg", "*.jpeg", "*.gif"),
+                new FileChooser.ExtensionFilter("PDF", "*.pdf"),
+                new FileChooser.ExtensionFilter("Documents", "*.docx", "*.xlsx", "*.pptx")
+        );
+
+        File selectedFile = fileChooser.showOpenDialog(((Node) event.getSource()).getScene().getWindow());
+        if (selectedFile != null) {
+            String uploadedPath = uploadFile(selectedFile);
+            if (uploadedPath != null) {
+                // Optionnel : stocker le type MIME dans la base
+                String typeMessage = "FICHIER";
+                Message msg = new Message(typeMessage, uploadedPath, "ENVOYE", LocalDateTime.now(), selectedConversationId, currentUserId);
+                if (messageDAO.addMessage(msg)) {
+                    loadMessages(selectedConversationId);
+                }
+            } else {
+                showAlert("Erreur", "Échec de l'upload du fichier.");
+            }
+        }
+    }
+
+    private String uploadFile(File file) {
+        try {
+            String uploadDir = "src/main/resources/uploads/files/";
+            File destDir = new File(uploadDir);
+            if (!destDir.exists()) destDir.mkdirs();
+
+            String fileName = System.currentTimeMillis() + "_" + file.getName();
+            File destFile = new File(destDir, fileName);
+
+            Files.copy(file.toPath(), destFile.toPath(), StandardCopyOption.REPLACE_EXISTING);
+
+            return "uploads/files/" + fileName;
+        } catch (IOException e) {
+            e.printStackTrace();
+            return null;
+        }
+    }
     // Hadhi bech tzid el "Bulle" mte3 el message fel Assistant AI
     private void addBotBubble(String text, boolean isUser) {
         if (botMessagesContainer == null) return;
@@ -863,8 +1123,6 @@ public class MessengerController implements Initializable {
         Button sourceBtn = (Button) event.getSource();
         emojiMenu.show(sourceBtn, Side.TOP, 0, -10);
     }
-
-    // --- LE RESTE DU CODE (SANS CHANGEMENT DE LOGIC) ---
 
     @FXML
     private void showChatOptions() {
@@ -1438,8 +1696,6 @@ public class MessengerController implements Initializable {
         });
     }
 
-
-
     @FXML
     private void sendMessage() {
         if (selectedConversationId == -1) return;
@@ -1610,7 +1866,6 @@ public class MessengerController implements Initializable {
         }
     }
 
-
     @FXML
     private void handleVoiceInput() {
         System.out.println("Micro cliqué !");
@@ -1776,7 +2031,6 @@ public class MessengerController implements Initializable {
         }
     }
 
-
     private GifService gifService;
 
     @FXML
@@ -1809,7 +2063,7 @@ public class MessengerController implements Initializable {
         gifsPane.setHgap(15);
         gifsPane.setVgap(15);
         gifsPane.setPadding(new Insets(10));
-        gifsPane.setAlignment(Pos.CENTER);
+        gifsPane.setAlignment(Pos.TOP_LEFT);  // ✅ CORRECTION : GIFs sur le côté gauche au lieu du centre
 
         // ScrollPane
         ScrollPane scrollPane = new ScrollPane(gifsPane);
@@ -2037,7 +2291,6 @@ public class MessengerController implements Initializable {
         }
     }
 
-
     /**
      * Initialise le gestionnaire STOMP pour la communication WebSocket.
      * Cette méthode crée une instance de StompClientHandler avec l'URL du serveur,
@@ -2089,7 +2342,6 @@ public class MessengerController implements Initializable {
         }
     }
 
-
     // ========== UPDATED: startVideoCall() ==========
     @FXML
     private void startVideoCall() {
@@ -2134,7 +2386,7 @@ public class MessengerController implements Initializable {
             errorAlert.showAndWait();
         }
     }
-    // ========== BONUS : startVideoCall() AVEC ENREGISTREMENT ==========
+
     private void makeStageDraggable(Parent root, Stage stage) {
         final double[] xOffset = {0};
         final double[][] yOffset = {{0}};
@@ -2148,9 +2400,8 @@ public class MessengerController implements Initializable {
         });
     }
 
-// Dans MessengerController.java
-
     private CallController currentIncomingCallController; // Pour stocker l'instance du récepteur
+
     private void onIncomingCallReceived(String senderName, int senderId, int conversationId, String callType) {
         Platform.runLater(() -> {
             try {
@@ -2215,6 +2466,7 @@ public class MessengerController implements Initializable {
             }
         });
     }
+
     private void showAlert(String title, String message) {
         Alert alert = new Alert(Alert.AlertType.INFORMATION);
         alert.setTitle(title);
@@ -2222,6 +2474,7 @@ public class MessengerController implements Initializable {
         alert.setContentText(message);
         alert.showAndWait();
     }
+
     public void listMTEngines() throws IOException, InterruptedException {
         String url = BASE_URL + "/account/mtengines";
         String authHeader = "";
@@ -2233,5 +2486,4 @@ public class MessengerController implements Initializable {
         HttpResponse<String> response = httpClient.send(request, HttpResponse.BodyHandlers.ofString());
         System.out.println("📋 MT Engines: " + response.body());
     }
-
 }

@@ -107,6 +107,11 @@
                         <font><Font name="Segoe UI Emoji" size="22.0" /></font>
                     </Button>
 
+                    <Button onAction="#handleAttachFile" style="-fx-background-color: transparent; -fx-text-fill: #8e8e8e; -fx-cursor: hand;" text="📎">
+                        <font><Font name="Segoe UI Emoji" size="22.0" /></font>
+                    </Button>
+
+
                     <TextField fx:id="messageInput" onKeyPressed="#handleKeyPress" promptText="Repondre..." HBox.hgrow="ALWAYS"
                                style="-fx-padding: 10 18; -fx-background-radius: 25; -fx-background-color: #f0f2f5; -fx-border-color: transparent;" />
 
