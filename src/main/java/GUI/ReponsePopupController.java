@@ -1,7 +1,13 @@
 package GUI;
 
 import Entities.Reclamation;
+<<<<<<< HEAD
 import Services.ReclamationService;
+=======
+import GUI.utils.DialogUtils;
+import Services.interfaces.ReclamationService;
+import enums.StatutReclamation;
+>>>>>>> origin/salma_integration
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.Alert;
@@ -15,18 +21,17 @@ public class ReponsePopupController {
     private Reclamation selectedRec;
     private ReclamationService rs = new ReclamationService();
 
-    // 1. Khalli esm wa7ed barka bech ma t-enghalatch
     private Runnable onSuccess;
 
     public void setData(Reclamation r, Runnable callback) {
         this.selectedRec = r;
-        this.onSuccess = callback; // Hna t-3abbi el onSuccess s7i7
+        this.onSuccess = callback;
     }
 
     @FXML
     void handleEnvoyer(ActionEvent event) {
         if (txtReponse.getText().trim().isEmpty()) {
-            new Alert(Alert.AlertType.ERROR, "La réponse ne peut pas être vide").show();
+            DialogUtils.showError("Champs vide", "La réponse ne peut pas être vide");
             return;
         }
         try {

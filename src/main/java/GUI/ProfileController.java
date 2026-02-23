@@ -183,7 +183,7 @@ public class ProfileController implements Initializable {
 
             // Image par défaut
             Image defaultImage =
-                    new Image(getClass().getResourceAsStream("/gui/default-user.png"));
+                    new Image(getClass().getResourceAsStream("/GUI/default-user.png"));
             profileCircle.setFill(new ImagePattern(defaultImage));
 
         } catch (Exception e) {
@@ -228,7 +228,7 @@ public class ProfileController implements Initializable {
     void handleLogout(ActionEvent event) {
         try {
             Session.setConnectedUser(null);
-            Parent root = FXMLLoader.load(getClass().getResource("/gui/Login.fxml"));
+            Parent root = FXMLLoader.load(getClass().getResource("/GUI/Login.fxml"));
             Stage stage = (Stage) mainStackPane.getScene().getWindow();
             stage.setScene(new Scene(root));
         } catch (Exception e) { e.printStackTrace(); }

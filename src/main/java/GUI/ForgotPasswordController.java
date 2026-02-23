@@ -1,7 +1,11 @@
 package GUI;
 
 import Entities.UserApp;
+<<<<<<< HEAD
 import Services.UserService;
+=======
+import Services.interfaces.UserService;
+>>>>>>> origin/salma_integration
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
@@ -61,7 +65,7 @@ public class ForgotPasswordController implements Initializable {
 
         if (correctCode != null && enteredCode.equals(correctCode)) {
             try {
-                FXMLLoader loader = new FXMLLoader(getClass().getResource("/gui/ResetPassword.fxml"));
+                FXMLLoader loader = new FXMLLoader(getClass().getResource("/GUI/ResetPassword.fxml"));
                 Parent root = loader.load();
 
                 ResetPasswordController controller = loader.getController();
@@ -84,7 +88,7 @@ public class ForgotPasswordController implements Initializable {
     @FXML
     void handleBackToLogin(MouseEvent event) {
         try {
-            Parent root = FXMLLoader.load(getClass().getResource("/gui/Login.fxml"));
+            Parent root = FXMLLoader.load(getClass().getResource("/GUI/Login.fxml"));
             Stage stage = (Stage) btnAction.getScene().getWindow();
             stage.setScene(new Scene(root));
         } catch (IOException e) {

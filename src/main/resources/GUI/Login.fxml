@@ -1,50 +1,59 @@
 <?xml version="1.0" encoding="UTF-8"?>
-        <?import javafx.scene.control.*?>
-        <?import javafx.scene.layout.*?>
-        <?import javafx.scene.text.*?>
-        <?import javafx.scene.image.*?>
-        <?import javafx.scene.shape.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.text.*?>
+<?import javafx.scene.image.*?>
+<?import javafx.scene.shape.*?>
 
 <HBox prefHeight="600.0" prefWidth="1000.0" stylesheets="@styleuser.css" xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1" fx:controller="GUI.LoginController">
+    <children>
+        <AnchorPane prefWidth="500.0" style="-fx-background-color: #2a7760; -fx-background-radius: 0 50 50 0;">
+            <children>
+                <Circle fill="#ffffff11" radius="200.0" AnchorPane.bottomAnchor="-50.0" AnchorPane.leftAnchor="-50.0" />
+                <VBox alignment="CENTER" spacing="15.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                    <children>
+                        <ImageView fitHeight="120.0" fitWidth="120.0" pickOnBounds="true" preserveRatio="true">
+                            <image><Image url="@logo_eco.png" /></image>
+                        </ImageView>
+                        <Label style="-fx-font-style: italic; -fx-font-size: 16;" text="Bon retour parmi nous !" textFill="WHITE" />
+                    </children>
+                </VBox>
+            </children>
+        </AnchorPane>
 
-<children>
-    <AnchorPane prefWidth="500.0" style="-fx-background-color: #2a7760; -fx-background-radius: 0 50 50 0;">
-        <children>
-            <Circle fill="#ffffff11" radius="200.0" AnchorPane.bottomAnchor="-50.0" AnchorPane.leftAnchor="-50.0" />
-            <VBox alignment="CENTER" spacing="15.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
-                <children>
-                    <ImageView fitHeight="120.0" fitWidth="120.0" pickOnBounds="true" preserveRatio="true">
-                        <image><Image url="@logo_eco.png" /></image>
-                    </ImageView>
+        <VBox alignment="CENTER" spacing="20.0" style="-fx-background-color: white; -fx-padding: 50;" HBox.hgrow="ALWAYS">
+            <children>
+                <Label style="-fx-font-weight: bold; -fx-font-size: 32;" text="Connexion" textFill="#1B4D3E" />
 
-                    <Label text="Bon retour parmi nous !" textFill="WHITE" style="-fx-font-style: italic; -fx-font-size: 16;" />
-                </children>
-            </VBox>
-        </children>
-    </AnchorPane>
+                <VBox maxWidth="350.0" spacing="15.0">
+                    <children>
+                        <TextField fx:id="txtEmail" prefHeight="45.0" promptText="Email" styleClass="modern-input" />
 
-    <VBox alignment="CENTER" HBox.hgrow="ALWAYS" spacing="20.0" style="-fx-background-color: white; -fx-padding: 50;">
-        <children>
-            <Label text="Connexion" textFill="#1B4D3E" style="-fx-font-weight: bold; -fx-font-size: 32;" />
+                        <HBox alignment="CENTER_LEFT" prefHeight="45.0" styleClass="modern-input" style="-fx-padding: 0 5 0 0;">
+                            <children>
+                                <StackPane HBox.hgrow="ALWAYS">
+                                    <children>
+                                        <PasswordField fx:id="txtMdp" promptText="Mot de passe" style="-fx-background-color: transparent; -fx-border-color: transparent;" />
+                                        <TextField fx:id="txtMdpVisible" visible="false" promptText="Mot de passe" style="-fx-background-color: transparent; -fx-border-color: transparent;" />
+                                    </children>
+                                </StackPane>
+                                <Button fx:id="btnToggleMdp" onAction="#togglePassword" style="-fx-background-color: transparent; -fx-cursor: hand; -fx-font-size: 16;" text="👁" textFill="#1b4d3e" />
+                            </children>
+                        </HBox>
+                    </children>
+                </VBox>
 
-            <VBox spacing="10.0" maxWidth="350.0">
-                <TextField fx:id="txtEmail" promptText="Email" styleClass="modern-input" prefHeight="45.0" />
-                <PasswordField fx:id="txtMdp" promptText="Mot de passe" styleClass="modern-input" prefHeight="45.0" />
-            </VBox>
+                <Button onAction="#handleLogin" prefHeight="45.0" prefWidth="350.0" styleClass="main-button" text="SE CONNECTER" />
 
-            <Button onAction="#handleLogin" prefHeight="45.0" prefWidth="350.0" text="SE CONNECTER" styleClass="main-button" />
-            <Label onMouseClicked="#handleForgotPassword"
-                   text="Mot de passe oublié ?"
-                   textFill="#3498DB"
-                   style="-fx-cursor: hand; -fx-font-size: 12px;" />
-            <HBox alignment="CENTER" spacing="5.0">
+                <Label onMouseClicked="#handleForgotPassword" style="-fx-cursor: hand; -fx-font-size: 12px;" text="Mot de passe oublié ?" textFill="#3498DB" />
 
-                <children>
-                    <Label text="Pas encore de compte ?" textFill="#7f8c8d" />
-                    <Label onMouseClicked="#goToRegister" text="S'inscrire" textFill="#3498DB" style="-fx-cursor: hand; -fx-font-weight: bold;" />
-                </children>
-            </HBox>
-        </children>
-    </VBox>
-</children>
+                <HBox alignment="CENTER" spacing="5.0">
+                    <children>
+                        <Label text="Pas encore de compte ?" textFill="#7f8c8d" />
+                        <Label onMouseClicked="#goToRegister" style="-fx-cursor: hand; -fx-font-weight: bold;" text="S'inscrire" textFill="#3498DB" />
+                    </children>
+                </HBox>
+            </children>
+        </VBox>
+    </children>
 </HBox>

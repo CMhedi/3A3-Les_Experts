@@ -41,10 +41,19 @@
                                     <ComboBox fx:id="comboRole" maxWidth="Infinity" prefHeight="45" style="-fx-background-color: #f8fafc; -fx-border-color: #e2e8f0; -fx-border-radius: 8;"/>
                                 </VBox>
 
-
                                 <VBox spacing="8" GridPane.columnIndex="0" GridPane.rowIndex="2" GridPane.columnSpan="2">
-                                    <Label text="NOUVEAU MOT DE PASSE (LAISSER VIDE SI PAS DE CHANGEMENT)" style="-fx-font-weight: 800; -fx-font-size: 11; -fx-text-fill: #64748b;"/>
-                                    <PasswordField fx:id="txtPassword" prefHeight="45" style="-fx-background-color: #f8fafc; -fx-border-color: #e2e8f0; -fx-border-radius: 8;"/>
+                                    <Label text="MOT DE PASSE (VISIBLE/MODIFIABLE)" style="-fx-font-weight: 800; -fx-font-size: 11; -fx-text-fill: #64748b;"/>
+                                    <HBox alignment="CENTER_LEFT">
+                                        <children>
+                                            <StackPane HBox.hgrow="ALWAYS">
+                                                <children>
+                                                    <PasswordField fx:id="txtPassword" prefHeight="45" style="-fx-background-color: #f8fafc; -fx-border-color: #e2e8f0; -fx-border-radius: 8 0 0 8;" />
+                                                    <TextField fx:id="txtPasswordVisible" visible="false" prefHeight="45" style="-fx-background-color: #f8fafc; -fx-border-color: #e2e8f0; -fx-border-radius: 8 0 0 8;" />
+                                                </children>
+                                            </StackPane>
+                                            <Button fx:id="btnTogglePassword" onAction="#togglePassword" text="👁" prefHeight="45" prefWidth="50" style="-fx-background-color: #e2e8f0; -fx-background-radius: 0 8 8 0; -fx-cursor: hand; -fx-font-size: 16;"/>
+                                        </children>
+                                    </HBox>
                                 </VBox>
                             </children>
                         </GridPane>

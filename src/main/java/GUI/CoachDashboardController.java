@@ -5,9 +5,15 @@ import Entities.Seance;
 import Entities.UserApp;
 import GUI.utils.DialogUtils;
 import GUI.utils.SceneUtils;
+<<<<<<< HEAD
 import Services.PlanningService;
 import Services.ReservationSeanceService;
 import Services.SeanceService;
+=======
+import Services.interfaces.PlanningService;
+import Services.interfaces.ReservationSeanceService;
+import Services.interfaces.SeanceService;
+>>>>>>> origin/salma_integration
 import com.itextpdf.text.*;
 import com.itextpdf.text.Font;
 import com.itextpdf.text.Image;
@@ -333,7 +339,7 @@ public class CoachDashboardController {
     private void handleRetour(ActionEvent event) {
 
         SceneUtils.loadScene(
-                "/gui/MainLayoutcoach.fxml",
+                "/GUI/MainLayoutcoach.fxml",
                 (Node) event.getSource()
         );
     }

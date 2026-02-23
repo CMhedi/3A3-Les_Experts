@@ -32,17 +32,30 @@ public class SideBarController {
 
     @FXML
     void goToReclamations(ActionEvent event) {
+<<<<<<< HEAD
         changeCenter("/gui/AdminReclamation.fxml");
+=======
+
+        changeCenter("/GUI/AdminReclamation.fxml", event);
+>>>>>>> origin/salma_integration
     }
 
     @FXML
     void goToDashboard(ActionEvent event) {
+<<<<<<< HEAD
         changeCenter("/gui/AdminDashboard.fxml");
+=======
+        changeCenter("/GUI/AdminDashboard.fxml", event);
+>>>>>>> origin/salma_integration
     }
 
     @FXML
     void goTogestionuser(ActionEvent event) {
+<<<<<<< HEAD
         changeCenter("/gui/AdminUsers.fxml");
+=======
+        changeCenter("/GUI/AdminUsers.fxml", event);
+>>>>>>> origin/salma_integration
     }
 
     @FXML
@@ -69,7 +82,7 @@ public class SideBarController {
     void handleLogout(ActionEvent event) {
         try {
             Entities.Session.logout();
-            Parent root = FXMLLoader.load(getClass().getResource("/gui/Login.fxml"));
+            Parent root = FXMLLoader.load(getClass().getResource("/GUI/Login.fxml"));
             Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
             stage.setScene(new Scene(root));
             stage.show();
@@ -103,11 +116,17 @@ public class SideBarController {
             e.printStackTrace();
         }
     }
+<<<<<<< HEAD
 
     private BorderPane getHostBorderPane() {
         if (sidebarRoot == null || sidebarRoot.getScene() == null) return null;
         if (sidebarRoot.getScene().getRoot() instanceof BorderPane bp) return bp;
         return null;
+=======
+    @FXML
+    void goToProfil(ActionEvent event) {
+        changeCenter("/GUI/Profile.fxml", event);
+>>>>>>> origin/salma_integration
     }
 
     private void loadScene(String fxmlPath, ActionEvent event) {

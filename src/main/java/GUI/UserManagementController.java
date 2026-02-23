@@ -1,7 +1,12 @@
 package GUI;
 
 import Entities.UserApp;
+<<<<<<< HEAD
 import Services.UserService;
+=======
+import GUI.utils.DialogUtils;
+import Services.interfaces.UserService;
+>>>>>>> origin/salma_integration
 import enums.RoleUser;
 import javafx.beans.binding.Bindings;
 import javafx.collections.FXCollections;
@@ -15,7 +20,13 @@ import javafx.scene.control.*;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 import javafx.scene.input.MouseEvent; // HEDHI EL S7I7A
+<<<<<<< HEAD
 
+=======
+import java.util.List;
+import java.util.ArrayList;
+import java.util.Arrays;
+>>>>>>> origin/salma_integration
 import java.io.IOException;
 
 public class UserManagementController {
@@ -40,7 +51,14 @@ public class UserManagementController {
 
 // 1. Setup ComboBoxes
 
-        comboRole.setItems(FXCollections.observableArrayList(RoleUser.values()));
+        // Njibu el lista mta3 el roles lkol
+        List<RoleUser> roles = new ArrayList<>(Arrays.asList(RoleUser.values()));
+
+// Na7iw el ADMIN menha (thabbet mel ism exact f-Enum mte3ek)
+        roles.remove(RoleUser.ADMIN);
+
+// Tawa n7ottou el lista el "ndhifa" fel ComboBox
+        comboRole.setItems(FXCollections.observableArrayList(roles));
 
         comboSpecialite.setItems(FXCollections.observableArrayList("FITNESS", "RUNNING", "FOOTBALL", "BASKETBALL", "YOGA", "AUTRE"));
 
@@ -357,37 +375,31 @@ public class UserManagementController {
             us.add(u);
 
             // ====== 5. Message succès ======
-            Alert success = new Alert(Alert.AlertType.INFORMATION);
-            success.setTitle("Succès");
-            success.setHeaderText(null);
-            success.setContentText("✅ Compte créé avec succès !");
-            success.showAndWait();
+            DialogUtils.showInfo(
+                    "Succès",
+                    "✅ Compte créé avec succès !"
+            );
 
             // ====== 6. Redirection Login ======
-            Parent root = FXMLLoader.load(getClass().getResource("/gui/Login.fxml"));
+            Parent root = FXMLLoader.load(getClass().getResource("/GUI/Login.fxml"));
             Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
             stage.setScene(new Scene(root));
             stage.centerOnScreen();
             stage.show();
 
         } catch (Exception e) {
-            showAlert("Erreur", "Impossible d'ajouter l'utilisateur: " + e.getMessage());
+            DialogUtils.showError("Erreur", "Impossible d'ajouter l'utilisateur: " + e.getMessage());
             e.printStackTrace();
         }
     }
-    // Fonction sghira bech ma n-3awduch el-koud mta3 el-Alert
-    private void showAlert(String title, String content) {
-        Alert alert = new Alert(Alert.AlertType.WARNING);
-        alert.setTitle(title);
-        alert.setHeaderText(null);
-        alert.setContentText(content);
-        alert.showAndWait();
-    }
+
     @FXML
     void handleGoToLogin(MouseEvent event) {
+
+
         try {
 
-            Parent root = FXMLLoader.load(getClass().getResource("/gui/Login.fxml"));
+            Parent root = FXMLLoader.load(getClass().getResource("/GUI/Login.fxml"));
 
 
             Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();

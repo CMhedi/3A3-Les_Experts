@@ -1,7 +1,12 @@
 package GUI;
 
 import Entities.UserApp;
+<<<<<<< HEAD
 import Services.UserService;
+=======
+import GUI.utils.DialogUtils;
+import Services.interfaces.UserService;
+>>>>>>> origin/salma_integration
 import enums.RoleUser;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -13,12 +18,15 @@ import java.util.Arrays;
 public class UserUpdateController {
 
     @FXML private TextField txtNom, txtPrenom, txtEmail;
-    @FXML private PasswordField txtPassword; // Hada khassu ykoun f FXML darouri
+    @FXML private PasswordField txtPassword;
+    @FXML private TextField txtPasswordVisible;
+    @FXML private Button btnTogglePassword;
     @FXML private ComboBox<String> comboRole;
 
     private UserApp currentUser;
     private UserService userService = new UserService();
     private AdminUsersController parentController;
+    private boolean isPasswordVisible = false;
 
     public void initData(UserApp user, AdminUsersController parent) {
         this.currentUser = user;
@@ -32,12 +40,34 @@ public class UserUpdateController {
 
         // Fill Data
         if (user != null) {
-            if (txtNom != null) txtNom.setText(user.getNom());
-            if (txtPrenom != null) txtPrenom.setText(user.getPrenom());
-            if (txtEmail != null) txtEmail.setText(user.getEmail());
-            if (comboRole != null && user.getRole() != null) {
+            txtNom.setText(user.getNom());
+            txtPrenom.setText(user.getPrenom());
+            txtEmail.setText(user.getEmail());
+
+            // وضع كلمة السر الحالية في الحقلين
+            txtPassword.setText(user.getMotDePasse());
+            txtPasswordVisible.setText(user.getMotDePasse());
+
+            if (user.getRole() != null) {
                 comboRole.setValue(user.getRole().name());
             }
+        }
+
+        // ربط الحقلين ببعضهم (أي تغيير في أحدهما ينتقل للآخر)
+        txtPassword.textProperty().bindBidirectional(txtPasswordVisible.textProperty());
+    }
+
+    @FXML
+    void togglePassword() {
+        isPasswordVisible = !isPasswordVisible;
+        if (isPasswordVisible) {
+            txtPasswordVisible.setVisible(true);
+            txtPassword.setVisible(false);
+            btnTogglePassword.setText("🙈"); // أيقونة الإخفاء
+        } else {
+            txtPasswordVisible.setVisible(false);
+            txtPassword.setVisible(true);
+            btnTogglePassword.setText("👁"); // أيقونة الإظهار
         }
     }
 
@@ -45,27 +75,22 @@ public class UserUpdateController {
     void handleUpdate() {
         try {
             if (comboRole.getValue() == null) {
-                new Alert(Alert.AlertType.WARNING, "Veuillez choisir un rôle!").show();
+                DialogUtils.showWarning("Attention", "Veuillez choisir un rôle !");
                 return;
             }
 
-            // Update user object
             currentUser.setNom(txtNom.getText());
             currentUser.setPrenom(txtPrenom.getText());
             currentUser.setEmail(txtEmail.getText());
             currentUser.setRole(RoleUser.valueOf(comboRole.getValue()));
 
-            // Password update logic (if not empty)
-            if (txtPassword != null) {
-                String newPassword = txtPassword.getText();
-                if (newPassword != null && !newPassword.trim().isEmpty()) {
-                    currentUser.setMotDePasse(newPassword);
-                }
+            String updatedPassword = txtPassword.getText();
+            if (updatedPassword != null && !updatedPassword.trim().isEmpty()) {
+                currentUser.setMotDePasse(updatedPassword);
             }
 
             userService.update(currentUser);
-            new Alert(Alert.AlertType.INFORMATION, "✅ Utilisateur mis à jour !").showAndWait();
-
+            DialogUtils.showInfo("Succès", "✅ Utilisateur mis à jour avec succès !");
             if (parentController != null) {
                 parentController.loadUserData();
                 parentController.showUserTable();
@@ -73,8 +98,7 @@ public class UserUpdateController {
 
         } catch (Exception e) {
             e.printStackTrace();
-            new Alert(Alert.AlertType.ERROR, "Erreur: " + e.getMessage()).show();
-        }
+            DialogUtils.showError("Erreur", "Impossible de mettre à jour : " + e.getMessage());        }
     }
 
     @FXML
@@ -83,6 +107,4 @@ public class UserUpdateController {
             parentController.showUserTable();
         }
     }
-
-
-    }
+}

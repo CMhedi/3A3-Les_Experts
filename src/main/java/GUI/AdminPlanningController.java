@@ -306,7 +306,7 @@ public class AdminPlanningController {
     private void handleRetour(javafx.event.ActionEvent event) {
 
         SceneUtils.loadScene(
-                "/gui/AdminDashboard.fxml",
+                "/GUI/AdminDashboard.fxml",
                 (javafx.scene.Node) event.getSource()
         );
     }

@@ -393,7 +393,7 @@ public class UserSeanceController {
     private void handleRetour(javafx.event.ActionEvent event) {
 
         SceneUtils.loadScene(
-                "/gui/MainLayoutUser.fxml",
+                "/GUI/MainLayoutUser.fxml",
                 (javafx.scene.Node) event.getSource()
         );
     }

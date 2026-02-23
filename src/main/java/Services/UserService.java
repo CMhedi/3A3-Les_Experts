@@ -7,8 +7,12 @@ import enums.RoleUser;
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
+<<<<<<< HEAD:src/main/java/Services/UserService.java
 import java.util.Locale;
 
+=======
+import org.mindrot.jbcrypt.BCrypt;
+>>>>>>> origin/salma_integration:src/main/java/Services/interfaces/UserService.java
 public class UserService implements IGenericService<UserApp> {
     private final Connection cnx = MyDB.getInstance().getConnection();
 
@@ -24,7 +28,13 @@ public class UserService implements IGenericService<UserApp> {
         ps.setString(5, u.getImageUrl());
         ps.setString(6, safeRoleName(u.getRole()));
         ps.setString(7, u.getMotDePasse());
+<<<<<<< HEAD:src/main/java/Services/UserService.java
 
+=======
+        String hashedPassword = BCrypt.hashpw(u.getMotDePasse(), BCrypt.gensalt());
+        ps.setString(7, hashedPassword);
+        // Logic bech n-sabbu data el Coach barka
+>>>>>>> origin/salma_integration:src/main/java/Services/interfaces/UserService.java
         if (u.getRole() == RoleUser.COACH) {
             ps.setInt(8, u.getAge());
             ps.setString(9, u.getExperience());
@@ -120,6 +130,7 @@ public class UserService implements IGenericService<UserApp> {
     public void updatePassword(String email, String newPassword) throws SQLException {
         String sql = "UPDATE user_app SET mot_de_passe = ? WHERE email = ?";
         try (PreparedStatement ps = cnx.prepareStatement(sql)) {
+            String hashed = BCrypt.hashpw(newPassword, BCrypt.gensalt());
             ps.setString(1, newPassword);
             ps.setString(2, email);
             ps.executeUpdate();

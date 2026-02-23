@@ -40,7 +40,7 @@ public class ResetPasswordController {
             new Alert(Alert.AlertType.INFORMATION, "Succès ! Votre mot de passe a été réinitialisé.").show();
 
 
-            Parent root = FXMLLoader.load(getClass().getResource("/gui/Login.fxml"));
+            Parent root = FXMLLoader.load(getClass().getResource("/GUI/Login.fxml"));
             Stage stage = (Stage) txtNewPass.getScene().getWindow();
             stage.setScene(new Scene(root));
 

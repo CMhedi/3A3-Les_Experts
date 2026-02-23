@@ -97,7 +97,7 @@ public class AdminReclamationController {
         alert.getDialogPane().setContent(textArea);
 
         // N-zidou el CSS mta3ek bech el popup mat-jish sghira w "Windows"
-        alert.getDialogPane().getStylesheets().add(getClass().getResource("/gui/style_admin.css").toExternalForm());
+        alert.getDialogPane().getStylesheets().add(getClass().getResource("/GUI/style_admin.css").toExternalForm());
         alert.getDialogPane().getStyleClass().add("my-custom-dialog");
 
         alert.showAndWait();
@@ -166,7 +166,7 @@ public class AdminReclamationController {
             return;
         }
         try {
-            FXMLLoader loader = new FXMLLoader(getClass().getResource("/gui/ReponsePopup.fxml"));
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/GUI/ReponsePopup.fxml"));
             Parent root = loader.load();
 
             ReponsePopupController popupCtrl = loader.getController();
