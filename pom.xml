@@ -17,7 +17,6 @@
 
     <dependencies>
 
-        <!-- JavaFX -->
         <dependency>
             <groupId>org.openjfx</groupId>
             <artifactId>javafx-controls</artifactId>
@@ -30,11 +29,16 @@
             <version>${javafx.version}</version>
         </dependency>
 
-        <!-- MySQL JDBC -->
         <dependency>
             <groupId>com.mysql</groupId>
             <artifactId>mysql-connector-j</artifactId>
             <version>8.0.33</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.json</groupId>
+            <artifactId>json</artifactId>
+            <version>20231013</version>
         </dependency>
 
     </dependencies>
@@ -42,7 +46,6 @@
     <build>
         <plugins>
 
-            <!-- Java compiler -->
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>
@@ -52,7 +55,6 @@
                 </configuration>
             </plugin>
 
-            <!-- JavaFX runner -->
             <plugin>
                 <groupId>org.openjfx</groupId>
                 <artifactId>javafx-maven-plugin</artifactId>
@@ -64,5 +66,4 @@
 
         </plugins>
     </build>
-
 </project>
