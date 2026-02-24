@@ -1,16 +1,14 @@
 package Controller;
+import javafx.scene.media.MediaView;
 import javafx.scene.shape.Rectangle;
 import javafx.scene.layout.StackPane;
 import java.awt.Desktop;
 import java.io.File;
 import java.io.IOException;
 import java.net.URI;
-import java.net.URISyntaxException;
 import java.nio.file.Files;
 import java.nio.file.StandardCopyOption;
-import java.awt.Desktop;
-import java.io.File;
-import java.io.IOException;
+
 import javafx.scene.control.ProgressIndicator;
 import Entities.Conversation;
 import Entities.Message;
@@ -18,7 +16,7 @@ import Services.interfaces.ConversationDAO;
 import Services.interfaces.GeminiService;
 import Services.interfaces.GifService;
 import Services.interfaces.MessageDAO;
-import Utiles.AudioRecorder;
+import Services.interfaces.AudioRecorder;
 import Utiles.StompClientHandler;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import javafx.animation.KeyFrame;
@@ -69,17 +67,13 @@ import org.vosk.Recognizer;
 
 import javax.sound.sampled.AudioInputStream;
 import javax.sound.sampled.AudioSystem;
-import java.awt.*;
 import java.io.*;
 import java.net.HttpURLConnection;
-import java.net.URI;
 import java.net.URL;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
 import java.nio.charset.StandardCharsets;
-import java.nio.file.Files;
-import java.nio.file.StandardCopyOption;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.*;
@@ -334,6 +328,14 @@ public class MessengerController implements Initializable {
                             mainContainer.setAlignment(Pos.CENTER_LEFT);
                         }
                     }
+                    else if ("VIDEO".equals(msg.getTypeMessage())) {
+                        displayVideoMessage(mainContainer, msg);
+                        if (msg.getIdUser() == currentUserId) {
+                            mainContainer.setAlignment(Pos.CENTER_RIGHT);
+                        } else {
+                            mainContainer.setAlignment(Pos.CENTER_LEFT);
+                        }
+                    }
 
                     // ✅ CAS 4 : MESSAGES TEXTE
                     else {
@@ -356,8 +358,326 @@ public class MessengerController implements Initializable {
                         }
                     }
                 }
+
+            }
+            private HBox buildFileBubble(Message msg) {
+                HBox box = new HBox(10);
+                box.setAlignment(Pos.CENTER_LEFT);
+                box.setPadding(new Insets(10, 14, 10, 14));
+                box.setMaxWidth(280);
+                if (msg.getIdUser() == currentUserId) {
+                    box.setStyle(
+                            "-fx-background-color: #007AFF;" +
+                                    "-fx-background-radius: 18 18 4 18;"
+                    );
+                } else {
+                    box.setStyle(
+                            "-fx-background-color: #E9E9EB;" +
+                                    "-fx-background-radius: 18 18 18 4;"
+                    );
+                }
+                return box;
             }
 
+            private void finishBubble(VBox container, Message msg, javafx.scene.layout.Region bubble) {
+                String time = msg.getDateEnvoi().format(DateTimeFormatter.ofPattern("HH:mm"));
+                String status = (msg.getIdUser() == currentUserId && "LU".equals(msg.getStatutMessage())) ? " ✓✓" : " ✓";
+                Label footer = new Label(time + (msg.getIdUser() == currentUserId ? status : ""));
+                footer.setStyle("-fx-font-size: 9px; -fx-text-fill: #bdc3c7; -fx-padding: 2 2 0 2;");
+                if (msg.getIdUser() == currentUserId) footer.setAlignment(Pos.CENTER_RIGHT);
+
+                VBox messageBox = new VBox(3, bubble, footer);
+                messageBox.setMaxWidth(bubble.getMaxWidth() + 12);
+                container.getChildren().add(messageBox);
+            }
+            private void displayVideoMessage(VBox container, Message msg) {
+                String videoPath = msg.getContenu();
+                String fullPath = "C:\\wamp\\htdocs\\" + videoPath.replace("/", "\\");
+
+                final int THUMB_W = 220;
+                final int THUMB_H = 160;
+
+                // ── Thumbnail StackPane ───────────────────────────────────────────
+                StackPane thumbStack = new StackPane();
+                thumbStack.setPrefSize(THUMB_W, THUMB_H);
+                thumbStack.setMaxSize(THUMB_W, THUMB_H);
+                thumbStack.setMinSize(THUMB_W, THUMB_H);
+                thumbStack.setCursor(Cursor.HAND);
+
+                // Dark background (shown while loading or if no thumbnail)
+                javafx.scene.shape.Rectangle bg = new javafx.scene.shape.Rectangle(THUMB_W, THUMB_H, Color.web("#1a1a2e"));
+                bg.setArcWidth(24); bg.setArcHeight(24);
+
+                // Thumbnail image (filled by MediaPlayer snapshot)
+                ImageView thumbView = new ImageView();
+                thumbView.setFitWidth(THUMB_W);
+                thumbView.setFitHeight(THUMB_H);
+                thumbView.setPreserveRatio(false);
+
+                // Dark gradient overlay
+                javafx.scene.shape.Rectangle overlay = new javafx.scene.shape.Rectangle(THUMB_W, THUMB_H);
+                overlay.setFill(new javafx.scene.paint.LinearGradient(
+                        0, 0, 0, 1, true,
+                        javafx.scene.paint.CycleMethod.NO_CYCLE,
+                        new javafx.scene.paint.Stop(0, Color.color(0,0,0,0.1)),
+                        new javafx.scene.paint.Stop(1, Color.color(0,0,0,0.5))
+                ));
+                overlay.setArcWidth(24); overlay.setArcHeight(24);
+
+                // ── Play button ───────────────────────────────────────────────────
+                StackPane playCircle = new StackPane();
+                javafx.scene.shape.Circle circle = new javafx.scene.shape.Circle(26, Color.color(1,1,1,0.9));
+                circle.setStyle("-fx-effect: dropshadow(gaussian, rgba(0,0,0,0.5), 10, 0, 0, 2);");
+                Label playIcon = new Label("▶");
+                playIcon.setStyle("-fx-text-fill: #111; -fx-font-size: 18px; -fx-padding: 0 0 0 3;");
+                playCircle.getChildren().addAll(circle, playIcon);
+
+                // ── Duration badge bottom-right ───────────────────────────────────
+                Label durationLabel = new Label("•••");
+                durationLabel.setStyle(
+                        "-fx-background-color: rgba(0,0,0,0.7);" +
+                                "-fx-text-fill: white;" +
+                                "-fx-font-size: 11px;" +
+                                "-fx-background-radius: 5;" +
+                                "-fx-padding: 2 6;"
+                );
+                StackPane.setAlignment(durationLabel, Pos.BOTTOM_RIGHT);
+                StackPane.setMargin(durationLabel, new Insets(0, 8, 8, 0));
+
+                thumbStack.getChildren().addAll(bg, thumbView, overlay, playCircle, durationLabel);
+
+                // Clip to rounded corners
+                javafx.scene.shape.Rectangle clip = new javafx.scene.shape.Rectangle(THUMB_W, THUMB_H);
+                clip.setArcWidth(24); clip.setArcHeight(24);
+                thumbStack.setClip(clip);
+
+                // ── Load thumbnail + real duration asynchronously ─────────────────
+                new Thread(() -> {
+                    File videoFile = new File(fullPath);
+                    if (!videoFile.exists()) return;
+                    Platform.runLater(() -> {
+                        try {
+                            Media media = new Media(videoFile.toURI().toString());
+                            MediaPlayer mp = new MediaPlayer(media);
+
+                            mp.setOnReady(() -> {
+                                // ✅ Get real duration on ready
+                                double totalSecs = mp.getTotalDuration().toSeconds();
+                                int mins = (int)(totalSecs / 60);
+                                int secs = (int)(totalSecs % 60);
+                                durationLabel.setText(String.format("%d:%02d", mins, secs));
+
+                                // Seek to 10% of video to get a nice thumbnail frame
+                                double seekTo = Math.min(1.5, totalSecs * 0.1);
+                                mp.seek(Duration.seconds(seekTo));
+                            });
+
+                            // ✅ Snapshot after seeking
+                            mp.setOnStopped(() -> {
+                                javafx.scene.media.MediaView mv = new javafx.scene.media.MediaView(mp);
+                                mv.setFitWidth(THUMB_W);
+                                mv.setFitHeight(THUMB_H);
+                                mv.setPreserveRatio(false);
+                                // Add to a temporary scene to allow snapshot
+                                StackPane tempPane = new StackPane(mv);
+                                tempPane.setPrefSize(THUMB_W, THUMB_H);
+                                new Scene(tempPane); // needed for snapshot
+                                javafx.scene.SnapshotParameters sp = new javafx.scene.SnapshotParameters();
+                                sp.setFill(Color.BLACK);
+                                javafx.scene.image.WritableImage snap = tempPane.snapshot(sp, null);
+                                if (snap != null && snap.getWidth() > 1) {
+                                    thumbView.setImage(snap);
+                                }
+                                mp.dispose();
+                            });
+
+                            // currentTime listener → stop after seeking to capture frame
+                            mp.currentTimeProperty().addListener((obs, oldT, newT) -> {
+                                if (newT.greaterThan(Duration.seconds(0.5))) {
+                                    mp.stop(); // triggers onStopped → snapshot
+                                }
+                            });
+
+                            mp.play();
+
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                            Platform.runLater(() -> durationLabel.setText("—"));
+                        }
+                    });
+                }).start();
+
+                // ── Hover effect ──────────────────────────────────────────────────
+                thumbStack.setOnMouseEntered(e -> circle.setFill(Color.color(1,1,1,1.0)));
+                thumbStack.setOnMouseExited(e  -> circle.setFill(Color.color(1,1,1,0.9)));
+
+                // ── Click → open player ───────────────────────────────────────────
+                thumbStack.setOnMouseClicked(e -> openVideoPlayer(fullPath));
+
+                // ── Timestamp footer ──────────────────────────────────────────────
+                String time = msg.getDateEnvoi().format(DateTimeFormatter.ofPattern("HH:mm"));
+                String status = (msg.getIdUser() == currentUserId && "LU".equals(msg.getStatutMessage())) ? " ✓✓" : " ✓";
+                Label footer = new Label(time + (msg.getIdUser() == currentUserId ? status : ""));
+                footer.setStyle("-fx-font-size: 9px; -fx-text-fill: #bdc3c7; -fx-padding: 2 2 0 2;");
+                if (msg.getIdUser() == currentUserId) footer.setAlignment(Pos.CENTER_RIGHT);
+
+                // ── Tight wrapper bubble (NO extra padding/color stretching) ──────
+                // ✅ KEY FIX: use HBox to prevent full-width stretch
+                HBox bubbleWrapper = new HBox(thumbStack);
+                bubbleWrapper.setMaxWidth(THUMB_W + 16);
+                bubbleWrapper.setPrefWidth(THUMB_W + 16);
+                bubbleWrapper.setPadding(new Insets(4));
+
+                if (msg.getIdUser() == currentUserId) {
+                    bubbleWrapper.setStyle(
+                            "-fx-background-color: #007AFF;" +
+                                    "-fx-background-radius: 18 18 4 18;"
+                    );
+                } else {
+                    bubbleWrapper.setStyle(
+                            "-fx-background-color: #E9E9EB;" +
+                                    "-fx-background-radius: 18 18 18 4;"
+                    );
+                }
+
+                VBox messageBox = new VBox(3);
+                messageBox.getChildren().addAll(bubbleWrapper, footer);
+                // ✅ Prevent messageBox from stretching full width
+                messageBox.setMaxWidth(THUMB_W + 24);
+
+                container.getChildren().add(messageBox);
+            }
+            private void playVideo(String filePath) {
+                try {
+                    File videoFile = new File(filePath);
+                    if (!videoFile.exists()) {
+                        showAlert("Erreur", "Fichier vidéo introuvable : " + filePath);
+                        return;
+                    }
+
+                    Media media = new Media(videoFile.toURI().toString());
+                    MediaPlayer mediaPlayer = new MediaPlayer(media);
+                    MediaView mediaView = new MediaView(mediaPlayer);
+
+                    StackPane root = new StackPane(mediaView);
+                    root.setStyle("-fx-background-color: black;");
+
+                    Scene scene = new Scene(root, 800, 600);
+                    Stage stage = new Stage();
+                    stage.setTitle("Lecture vidéo");
+                    stage.setScene(scene);
+                    stage.show();
+
+                    mediaPlayer.play();
+
+                    // Stop playback when window is closed
+                    stage.setOnCloseRequest(e -> mediaPlayer.stop());
+                } catch (Exception e) {
+                    e.printStackTrace();
+                    showAlert("Erreur", "Impossible de lire la vidéo : " + e.getMessage());
+                }
+            }
+            private void openVideoPlayer(String fullPath) {
+                File videoFile = new File(fullPath);
+                if (!videoFile.exists()) {
+                    showAlert("Erreur", "Fichier vidéo introuvable :\n" + fullPath);
+                    return;
+                }
+
+                try {
+                    Media media = new Media(videoFile.toURI().toString());
+                    MediaPlayer mediaPlayer = new MediaPlayer(media);
+                    javafx.scene.media.MediaView mediaView = new javafx.scene.media.MediaView(mediaPlayer);
+
+                    // ── Controls ─────────────────────────────────────────────────
+                    Button playPauseBtn = new Button("⏸");
+                    playPauseBtn.setStyle(
+                            "-fx-background-color: transparent; -fx-text-fill: white;" +
+                                    "-fx-font-size: 20px; -fx-cursor: hand;"
+                    );
+
+                    javafx.scene.control.Slider timeSlider = new javafx.scene.control.Slider();
+                    timeSlider.setStyle("-fx-accent: #007AFF;");
+                    HBox.setHgrow(timeSlider, javafx.scene.layout.Priority.ALWAYS);
+
+                    Label timeLabel = new Label("0:00");
+                    timeLabel.setStyle("-fx-text-fill: white; -fx-font-size: 12px; -fx-min-width: 40;");
+
+                    HBox controls = new HBox(12, playPauseBtn, timeSlider, timeLabel);
+                    controls.setAlignment(Pos.CENTER_LEFT);
+                    controls.setPadding(new Insets(10, 16, 10, 16));
+                    controls.setStyle("-fx-background-color: rgba(0,0,0,0.80);");
+
+                    // ── Layout ────────────────────────────────────────────────────
+                    StackPane videoArea = new StackPane(mediaView);
+                    videoArea.setStyle("-fx-background-color: black;");
+
+                    javafx.scene.layout.BorderPane root = new javafx.scene.layout.BorderPane();
+                    root.setCenter(videoArea);
+                    root.setBottom(controls);
+                    root.setStyle("-fx-background-color: black;");
+
+                    // Bind size to window
+                    mediaView.fitWidthProperty().bind(videoArea.widthProperty());
+                    mediaView.fitHeightProperty().bind(videoArea.heightProperty());
+                    mediaView.setPreserveRatio(true);
+
+                    // ── Wire controls ─────────────────────────────────────────────
+                    mediaPlayer.setOnReady(() -> {
+                        timeSlider.setMax(mediaPlayer.getTotalDuration().toSeconds());
+                    });
+
+                    mediaPlayer.currentTimeProperty().addListener((obs, oldT, newT) -> {
+                        if (!timeSlider.isValueChanging()) {
+                            timeSlider.setValue(newT.toSeconds());
+                        }
+                        int s = (int) newT.toSeconds();
+                        timeLabel.setText(String.format("%d:%02d", s / 60, s % 60));
+                    });
+
+                    timeSlider.valueChangingProperty().addListener((obs, wasChanging, isChanging) -> {
+                        if (!isChanging) {
+                            mediaPlayer.seek(Duration.seconds(timeSlider.getValue()));
+                        }
+                    });
+
+                    timeSlider.setOnMouseClicked(e -> {
+                        mediaPlayer.seek(Duration.seconds(timeSlider.getValue()));
+                    });
+
+                    mediaPlayer.setOnEndOfMedia(() -> {
+                        playPauseBtn.setText("▶");
+                        mediaPlayer.seek(Duration.ZERO);
+                        mediaPlayer.pause();
+                    });
+
+                    playPauseBtn.setOnAction(e -> {
+                        if (mediaPlayer.getStatus() == MediaPlayer.Status.PLAYING) {
+                            mediaPlayer.pause();
+                            playPauseBtn.setText("▶");
+                        } else {
+                            mediaPlayer.play();
+                            playPauseBtn.setText("⏸");
+                        }
+                    });
+
+                    // ── Stage ─────────────────────────────────────────────────────
+                    Stage stage = new Stage();
+                    stage.setTitle("▶  " + videoFile.getName());
+                    stage.setScene(new Scene(root, 800, 520, Color.BLACK));
+                    stage.setOnCloseRequest(e -> {
+                        mediaPlayer.stop();
+                        mediaPlayer.dispose();
+                    });
+                    stage.show();
+
+                    mediaPlayer.play();
+
+                } catch (Exception e) {
+                    e.printStackTrace();
+                    showAlert("Erreur", "Impossible de lire la vidéo : " + e.getMessage());
+                }
+            }
             private void displayAudioCallMessage(VBox container, Message msg) {
                 displayCallMessage(container, msg, "📞", "#00b894");
             }
@@ -430,78 +750,105 @@ public class MessengerController implements Initializable {
 
             private void displayVocalMessage(VBox container, Message msg) {
                 String audioPath = msg.getContenu();
-                String fullPath = "src/main/resources/" + audioPath;
-                String audioFileName = extractAudioFileName(audioPath);
+                String fullPath = "C:\\wamp\\htdocs\\" + audioPath.replace("/", "\\");
 
-                // Conteneur principal du message vocal
                 HBox voiceBox = new HBox(12);
                 voiceBox.setAlignment(Pos.CENTER_LEFT);
                 voiceBox.setPadding(new Insets(8, 14, 8, 14));
-                voiceBox.setStyle(
-                        "-fx-background-radius: 18;" +
-                                "-fx-effect: dropshadow(gaussian, rgba(0,0,0,0.05), 4, 0, 0, 1);"
-                );
-
-                // Couleur de fond selon l'expéditeur
                 if (msg.getIdUser() == currentUserId) {
-                    voiceBox.setStyle(voiceBox.getStyle() + "-fx-background-color: #007AFF;");
+                    voiceBox.setStyle("-fx-background-radius: 18; -fx-background-color: #007AFF;");
                 } else {
-                    voiceBox.setStyle(voiceBox.getStyle() + "-fx-background-color: #E9E9EB;");
+                    voiceBox.setStyle("-fx-background-radius: 18; -fx-background-color: #E9E9EB;");
                 }
 
-                // Bouton play/pause
+                // ── Play button ───────────────────────────────────────────────────
                 Button playStopBtn = new Button("▶");
                 playStopBtn.setStyle(
                         "-fx-background-color: transparent;" +
                                 "-fx-text-fill: " + (msg.getIdUser() == currentUserId ? "white" : "#007AFF") + ";" +
-                                "-fx-font-size: 18;" +
-                                "-fx-cursor: hand;"
+                                "-fx-font-size: 18; -fx-cursor: hand;"
                 );
 
-                // Forme d'onde (simulée par des barres) - correction JavaFX
+                // ── Waveform bars ─────────────────────────────────────────────────
                 HBox waveform = new HBox(3);
                 waveform.setAlignment(Pos.CENTER_LEFT);
                 String barColor = (msg.getIdUser() == currentUserId ? "white" : "#555");
                 for (int i = 0; i < 5; i++) {
-                    Rectangle bar = new Rectangle(3, 10 + i * 2);  // largeur, hauteur
+                    Rectangle bar = new Rectangle(3, 10 + i * 2);
                     bar.setFill(Color.web(barColor));
                     bar.setArcWidth(2);
                     bar.setArcHeight(2);
                     waveform.getChildren().add(bar);
                 }
 
-                // Durée (à récupérer dynamiquement plus tard)
-                Label durationLabel = new Label("0:21");
+                // ── Duration label (real, loaded async) ───────────────────────────
+                Label durationLabel = new Label("⏳");
                 durationLabel.setStyle(
                         "-fx-font-size: 11;" +
                                 "-fx-text-fill: " + (msg.getIdUser() == currentUserId ? "#DDD" : "#888") + ";"
                 );
 
-                // Bouton supprimer
+                new Thread(() -> {
+                    try {
+                        File audioFile = new File(fullPath);
+                        if (audioFile.exists()) {
+                            Platform.runLater(() -> {
+                                try {
+                                    Media media = new Media(audioFile.toURI().toString());
+                                    MediaPlayer tempPlayer = new MediaPlayer(media);
+                                    tempPlayer.setOnReady(() -> {
+                                        double totalSecs = tempPlayer.getTotalDuration().toSeconds();
+                                        int mins = (int)(totalSecs / 60);
+                                        int secs = (int)(totalSecs % 60);
+                                        durationLabel.setText(String.format("%d:%02d", mins, secs));
+                                        tempPlayer.dispose();
+                                    });
+                                    tempPlayer.setOnError(() -> {
+                                        durationLabel.setText("—");
+                                        tempPlayer.dispose();
+                                    });
+                                } catch (Exception e) {
+                                    durationLabel.setText("—");
+                                }
+                            });
+                        } else {
+                            Platform.runLater(() -> durationLabel.setText("?"));
+                        }
+                    } catch (Exception e) {
+                        Platform.runLater(() -> durationLabel.setText("—"));
+                    }
+                }).start();
+
+                // ── AI button ─────────────────────────────────────────────────────
+                Button aiBtn = new Button("🤖");
+                aiBtn.setStyle(
+                        "-fx-background-color: transparent;" +
+                                "-fx-text-fill: " + (msg.getIdUser() == currentUserId ? "white" : "#007AFF") + ";" +
+                                "-fx-font-size: 14; -fx-cursor: hand;"
+                );
+                aiBtn.setTooltip(new Tooltip("Répondre avec IA"));
+                aiBtn.setOnAction(e -> handleAiReplyFromVoice(fullPath));
+
+                // ── Delete button ─────────────────────────────────────────────────
                 Button deleteBtn = new Button("✕");
                 deleteBtn.setStyle(
                         "-fx-background-color: transparent;" +
                                 "-fx-text-fill: " + (msg.getIdUser() == currentUserId ? "white" : "#999") + ";" +
-                                "-fx-font-size: 14;" +
-                                "-fx-cursor: hand;" +
-                                "-fx-padding: 0 3;"
+                                "-fx-font-size: 14; -fx-cursor: hand; -fx-padding: 0 3;"
                 );
                 deleteBtn.setVisible(msg.getIdUser() == currentUserId);
                 deleteBtn.setOnAction(e -> {
-                    if (voicePlayer.isCurrentlyPlaying(fullPath)) {
-                        voicePlayer.stopPlayback();
-                    }
-                    if (messageDAO.deleteMessage(msg.getIdMessage())) {
-                        loadMessages(selectedConversationId);
-                    }
+                    if (voicePlayer.isCurrentlyPlaying(fullPath)) voicePlayer.stopPlayback();
+                    if (messageDAO.deleteMessage(msg.getIdMessage())) loadMessages(selectedConversationId);
                 });
 
-                voiceBox.getChildren().addAll(playStopBtn, waveform, durationLabel);
+                // ✅ NOW add all children — after all are declared
+                voiceBox.getChildren().addAll(playStopBtn, waveform, durationLabel, aiBtn);
                 if (msg.getIdUser() == currentUserId) {
                     voiceBox.getChildren().add(deleteBtn);
                 }
 
-                // Gestion de la lecture
+                // ── Play action ───────────────────────────────────────────────────
                 playStopBtn.setOnAction(e -> {
                     if (voicePlayer.isCurrentlyPlaying(fullPath)) {
                         voicePlayer.stopPlayback();
@@ -512,7 +859,7 @@ public class MessengerController implements Initializable {
                     }
                 });
 
-                // Heure et statut
+                // ── Footer ────────────────────────────────────────────────────────
                 String time = msg.getDateEnvoi().format(DateTimeFormatter.ofPattern("HH:mm"));
                 String status = (msg.getIdUser() == currentUserId && "LU".equals(msg.getStatutMessage())) ? " ✓✓" : " ✓";
                 Label footer = new Label(time + (msg.getIdUser() == currentUserId ? status : ""));
@@ -521,6 +868,238 @@ public class MessengerController implements Initializable {
                 VBox messageBox = new VBox(3);
                 messageBox.getChildren().addAll(voiceBox, footer);
                 container.getChildren().add(messageBox);
+            }
+            private void handleAiReplyFromVoice(String audioFilePath) {
+                // Show loading indicator
+                Stage loadingStage = new Stage();
+                VBox loadingBox = new VBox(15);
+                loadingBox.setAlignment(Pos.CENTER);
+                loadingBox.setPadding(new Insets(30));
+                loadingBox.setStyle("-fx-background-color: white; -fx-background-radius: 15;");
+
+                ProgressIndicator spinner = new ProgressIndicator();
+                spinner.setMaxSize(50, 50);
+                Label loadingLabel = new Label("🤖 L'IA transcrit et analyse...");
+                loadingLabel.setStyle("-fx-font-size: 14px;");
+                loadingBox.getChildren().addAll(spinner, loadingLabel);
+
+                loadingStage.setScene(new Scene(loadingBox, 280, 140));
+                loadingStage.setTitle("IA en cours...");
+                loadingStage.show();
+
+                new Thread(() -> {
+                    try {
+                        // ── STEP 1: Transcribe audio → text ──────────────────────────
+                        String transcribedText = transcribeAudioFile(audioFilePath);
+
+                        if (transcribedText == null || transcribedText.trim().isEmpty()) {
+                            Platform.runLater(() -> {
+                                loadingStage.close();
+                                showAlert("IA", "Je n'ai pas pu comprendre l'audio.");
+                            });
+                            return;
+                        }
+
+                        Platform.runLater(() -> loadingLabel.setText("💬 Transcription: \"" + transcribedText + "\"\n\n🤖 Gemini réfléchit..."));
+
+                        // ── STEP 2: Send to Gemini ────────────────────────────────────
+                        String aiResponse = GeminiService.askGemini(
+                                "Tu es un assistant vocal. L'utilisateur a dit: \"" + transcribedText + "\". " +
+                                        "Réponds de manière courte et naturelle (max 2 phrases), comme si tu parlais à voix haute."
+                        );
+
+                        Platform.runLater(() -> loadingLabel.setText("🔊 Génération audio..."));
+
+                        // ── STEP 3: Convert AI response → Audio (TTS) ────────────────
+                        String ttsAudioPath = generateTTS(aiResponse);
+
+                        Platform.runLater(() -> {
+                            loadingStage.close();
+
+                            // Show dialog with transcription + AI response + options
+                            showAiReplyDialog(transcribedText, aiResponse, ttsAudioPath);
+                        });
+
+                    } catch (Exception ex) {
+                        ex.printStackTrace();
+                        Platform.runLater(() -> {
+                            loadingStage.close();
+                            showAlert("Erreur IA", ex.getMessage());
+                        });
+                    }
+                }).start();
+            }
+
+            // ── Transcribe using Vosk ─────────────────────────────────────────────────
+            private String transcribeAudioFile(String audioFilePath) {
+                try {
+                    String modelPath = "src/main/resources/models/vosk-model-small-en-us-0.15";
+                    Model model = new Model(modelPath);
+                    Recognizer recognizer = new Recognizer(model, 16000);
+
+                    FileInputStream fis = new FileInputStream(audioFilePath);
+                    byte[] buffer = new byte[4096];
+                    int bytesRead;
+                    while ((bytesRead = fis.read(buffer)) != -1) {
+                        recognizer.acceptWaveForm(buffer, bytesRead);
+                    }
+                    fis.close();
+
+                    String json = recognizer.getFinalResult();
+                    recognizer.close();
+                    model.close();
+
+                    ObjectMapper mapper = new ObjectMapper();
+                    return mapper.readTree(json).get("text").asText();
+
+                } catch (Exception e) {
+                    e.printStackTrace();
+                    return null;
+                }
+            }
+
+            // ── TTS: Windows SAPI (no external API needed) ───────────────────────────
+            private String generateTTS(String text) {
+                try {
+                    String outputPath = "C:\\wamp\\htdocs\\uploads\\Audio\\ai_reply_" +
+                            System.currentTimeMillis() + ".wav";
+                    new File("C:\\wamp\\htdocs\\uploads\\Audio").mkdirs();
+
+                    // Use Windows built-in TTS via PowerShell
+                    String psScript = String.format(
+                            "Add-Type -AssemblyName System.Speech; " +
+                                    "$synth = New-Object System.Speech.Synthesis.SpeechSynthesizer; " +
+                                    "$synth.SetOutputToWaveFile('%s'); " +
+                                    "$synth.Speak('%s'); " +
+                                    "$synth.Dispose();",
+                            outputPath,
+                            text.replace("'", " ").replace("\"", " ")  // escape quotes
+                    );
+
+                    ProcessBuilder pb = new ProcessBuilder(
+                            "powershell", "-Command", psScript
+                    );
+                    pb.redirectErrorStream(true);
+                    Process process = pb.start();
+                    process.waitFor();
+
+                    File outputFile = new File(outputPath);
+                    return outputFile.exists() ? outputPath : null;
+
+                } catch (Exception e) {
+                    e.printStackTrace();
+                    return null;
+                }
+            }
+
+            // ── Show result dialog ────────────────────────────────────────────────────
+            private void showAiReplyDialog(String transcription, String aiText, String ttsPath) {
+                Stage dialog = new Stage();
+                dialog.setTitle("🤖 Réponse IA");
+
+                VBox root = new VBox(16);
+                root.setPadding(new Insets(20));
+                root.setStyle("-fx-background-color: #f8f9fa;");
+
+                // Transcription bubble
+                Label transTitle = new Label("🎤 Vous avez dit :");
+                transTitle.setStyle("-fx-font-size: 12px; -fx-text-fill: #888;");
+
+                Label transText = new Label("\"" + transcription + "\"");
+                transText.setWrapText(true);
+                transText.setStyle(
+                        "-fx-background-color: #007AFF; -fx-text-fill: white;" +
+                                "-fx-padding: 10 14; -fx-background-radius: 16; -fx-font-size: 13px;"
+                );
+
+                // AI response bubble
+                Label aiTitle = new Label("🤖 Réponse IA :");
+                aiTitle.setStyle("-fx-font-size: 12px; -fx-text-fill: #888;");
+
+                Label aiLabel = new Label(aiText);
+                aiLabel.setWrapText(true);
+                aiLabel.setMaxWidth(380);
+                aiLabel.setStyle(
+                        "-fx-background-color: #E9E9EB; -fx-text-fill: #111;" +
+                                "-fx-padding: 10 14; -fx-background-radius: 16; -fx-font-size: 13px;"
+                );
+
+                // Buttons
+                HBox buttons = new HBox(10);
+                buttons.setAlignment(Pos.CENTER);
+
+                // ▶ Play AI audio
+                Button playBtn = new Button("▶ Écouter");
+                playBtn.setStyle(
+                        "-fx-background-color: #007AFF; -fx-text-fill: white;" +
+                                "-fx-background-radius: 20; -fx-padding: 8 20; -fx-cursor: hand;"
+                );
+                playBtn.setDisable(ttsPath == null);
+                if (ttsPath != null) {
+                    playBtn.setOnAction(e -> {
+                        try {
+                            Media media = new Media(new File(ttsPath).toURI().toString());
+                            MediaPlayer player = new MediaPlayer(media);
+                            player.play();
+                            playBtn.setText("⏸ En cours...");
+                            player.setOnEndOfMedia(() -> {
+                                playBtn.setText("▶ Écouter");
+                                player.dispose();
+                            });
+                        } catch (Exception ex) {
+                            ex.printStackTrace();
+                        }
+                    });
+                }
+
+                // 📤 Send as vocal message
+                Button sendVoiceBtn = new Button("📤 Envoyer vocal");
+                sendVoiceBtn.setStyle(
+                        "-fx-background-color: #34c759; -fx-text-fill: white;" +
+                                "-fx-background-radius: 20; -fx-padding: 8 20; -fx-cursor: hand;"
+                );
+                sendVoiceBtn.setDisable(ttsPath == null);
+                if (ttsPath != null) {
+                    sendVoiceBtn.setOnAction(e -> {
+                        // Copy to Audio folder with proper name and save as vocal message
+                        String relativePath = "uploads/Audio/" + new File(ttsPath).getName();
+                        messageDAO.addVocalMessage(relativePath, selectedConversationId, currentUserId);
+                        loadMessages(selectedConversationId);
+                        dialog.close();
+                    });
+                }
+
+                // 💬 Send as text message
+                Button sendTextBtn = new Button("💬 Envoyer texte");
+                sendTextBtn.setStyle(
+                        "-fx-background-color: #5856d6; -fx-text-fill: white;" +
+                                "-fx-background-radius: 20; -fx-padding: 8 20; -fx-cursor: hand;"
+                );
+                sendTextBtn.setOnAction(e -> {
+                    Message msg = new Message("TEXTE", aiText, "ENVOYE",
+                            LocalDateTime.now(), selectedConversationId, currentUserId);
+                    messageDAO.addMessage(msg);
+                    loadMessages(selectedConversationId);
+                    dialog.close();
+                });
+
+                Button closeBtn = new Button("✕ Fermer");
+                closeBtn.setStyle(
+                        "-fx-background-color: #ff3b30; -fx-text-fill: white;" +
+                                "-fx-background-radius: 20; -fx-padding: 8 16; -fx-cursor: hand;"
+                );
+                closeBtn.setOnAction(e -> dialog.close());
+
+                buttons.getChildren().addAll(playBtn, sendVoiceBtn, sendTextBtn, closeBtn);
+
+                root.getChildren().addAll(transTitle, transText, aiTitle, aiLabel, buttons);
+
+                ScrollPane sp = new ScrollPane(root);
+                sp.setFitToWidth(true);
+                sp.setStyle("-fx-background-color: #f8f9fa;");
+
+                dialog.setScene(new Scene(sp, 440, 380));
+                dialog.show();
             }
 
             private String extractAudioFileName(String filePath) {
@@ -576,6 +1155,7 @@ public class MessengerController implements Initializable {
                 }
 
                 // ----- Détection du type de contenu -----
+
                 boolean isLocalAttachment = originalText.startsWith("uploads/");
                 boolean isImageUrl = isImageUrl(originalText);
                 boolean isPdfUrl = isPdfUrl(originalText);
@@ -647,73 +1227,74 @@ public class MessengerController implements Initializable {
                 }
             }
             private void displayImageFromUrl(VBox container, Message msg, String imageUrl) {
-                VBox imageContainer = new VBox(5);
-                imageContainer.setAlignment(Pos.CENTER);
-                imageContainer.setPadding(new Insets(8));
-                if (msg.getIdUser() == currentUserId) {
-                    imageContainer.setStyle("-fx-background-color: #007AFF; -fx-background-radius: 20 20 4 20; -fx-padding: 8;");
-                } else {
-                    imageContainer.setStyle("-fx-background-color: #E9E9EB; -fx-background-radius: 20 20 20 4; -fx-padding: 8;");
-                }
+                StackPane imageStack = new StackPane();
+                imageStack.setPrefSize(220, 220);
+                imageStack.setMaxSize(220, 220);
+                imageStack.setStyle("-fx-background-color: #1a1a2e; -fx-background-radius: 16;");
 
-                // Indicateur de chargement
                 ProgressIndicator progress = new ProgressIndicator();
-                progress.setMaxSize(30, 30);
-                imageContainer.getChildren().add(progress);
+                progress.setMaxSize(36, 36);
+                imageStack.getChildren().add(progress);
 
-                // Téléchargement asynchrone avec les en-têtes
+                // Rounded clip
+                javafx.scene.shape.Rectangle clip = new javafx.scene.shape.Rectangle(220, 220);
+                clip.setArcWidth(24);
+                clip.setArcHeight(24);
+                imageStack.setClip(clip);
+
                 new Thread(() -> {
                     try {
                         byte[] imageData = downloadImageWithHeaders(imageUrl);
-                        if (imageData != null && imageData.length > 0) {
-                            Image image = new Image(new ByteArrayInputStream(imageData));
-                            Platform.runLater(() -> {
-                                imageContainer.getChildren().clear();
+                        if (imageData == null || imageData.length == 0) throw new Exception("Empty");
+                        Image image = new Image(new ByteArrayInputStream(imageData));
+                        Platform.runLater(() -> {
+                            if (!image.isError()) {
                                 ImageView imageView = new ImageView(image);
-                                imageView.setFitWidth(200);
-                                imageView.setFitHeight(200);
+                                imageView.setFitWidth(220);
+                                imageView.setFitHeight(220);
                                 imageView.setPreserveRatio(true);
                                 imageView.setCursor(Cursor.HAND);
+                                imageStack.getChildren().setAll(imageView);
 
-                                // Agrandissement au clic
-                                imageView.setOnMouseClicked(e -> {
+                                // Click → fullscreen
+                                imageStack.setOnMouseClicked(e -> {
                                     Stage stage = new Stage();
-                                    stage.setTitle("Image");
                                     ImageView bigView = new ImageView(image);
                                     bigView.setPreserveRatio(true);
-                                    bigView.setFitWidth(600);
-                                    bigView.setFitHeight(600);
+                                    bigView.setFitWidth(700);
+                                    bigView.setFitHeight(700);
                                     ScrollPane sp = new ScrollPane(bigView);
-                                    sp.setFitToWidth(true);
-                                    sp.setFitToHeight(true);
-                                    stage.setScene(new Scene(sp));
+                                    sp.setStyle("-fx-background-color: black;");
+                                    stage.setScene(new Scene(sp, 700, 700, Color.BLACK));
                                     stage.show();
                                 });
-
-                                imageContainer.getChildren().add(imageView);
-                            });
-                        } else {
-                            throw new Exception("Données d'image vides");
-                        }
-                    } catch (Exception e) {
-                        Platform.runLater(() -> {
-                            imageContainer.getChildren().clear();
-                            Label errorLabel = new Label("❌ Image non chargée");
-                            errorLabel.setStyle("-fx-text-fill: red;");
-                            imageContainer.getChildren().add(errorLabel);
+                            } else {
+                                imageStack.getChildren().setAll(new Label("❌"));
+                            }
                         });
+                    } catch (Exception e) {
+                        Platform.runLater(() -> imageStack.getChildren().setAll(new Label("❌")));
                     }
                 }).start();
 
-                // Heure et statut
-                String time = msg.getDateEnvoi().format(DateTimeFormatter.ofPattern("HH:mm"));
-                String status = (msg.getIdUser() == currentUserId && "LU".equals(msg.getStatutMessage())) ? " ✓✓" : " ✓";
-                Label footer = new Label(time + (msg.getIdUser() == currentUserId ? status : ""));
-                footer.setStyle("-fx-font-size: 9px; -fx-text-fill: #bdc3c7; -fx-padding: 0 5;");
+                // ── Tight bubble wrapper ──────────────────────────────────────────
+                HBox bubbleWrapper = new HBox(imageStack);
+                bubbleWrapper.setMaxWidth(232);
+                bubbleWrapper.setPrefWidth(232);
+                bubbleWrapper.setPadding(new Insets(4));
+                if (msg.getIdUser() == currentUserId) {
+                    bubbleWrapper.setStyle(
+                            "-fx-background-color: #007AFF;" +
+                                    "-fx-background-radius: 18 18 4 18;"
+                    );
+                } else {
+                    bubbleWrapper.setStyle(
+                            "-fx-background-color: #E9E9EB;" +
+                                    "-fx-background-radius: 18 18 18 4;"
+                    );
+                }
 
-                VBox messageBox = new VBox(3);
-                messageBox.getChildren().addAll(imageContainer, footer);
-                container.getChildren().add(messageBox);
+                finishBubble(container, msg, bubbleWrapper);
             }
             private void displayTextBubble(VBox container, Message msg, String text) {
                 Text textNode = new Text(text);
@@ -755,67 +1336,95 @@ public class MessengerController implements Initializable {
             private boolean isPdfUrl(String url) {
                 return url.toLowerCase().matches("(?i).*\\.pdf(\\?.*)?$");
             }
-
             private void displayAttachment(VBox container, Message msg, String path) {
-                VBox attachmentBox = new VBox(5);
-                attachmentBox.setPadding(new Insets(8));
-                attachmentBox.setAlignment(Pos.CENTER);
-
-                if (msg.getIdUser() == currentUserId) {
-                    attachmentBox.setStyle("-fx-background-color: #007AFF; -fx-background-radius: 20 20 4 20; -fx-padding: 8;");
-                } else {
-                    attachmentBox.setStyle("-fx-background-color: #E9E9EB; -fx-background-radius: 20 20 20 4; -fx-padding: 8;");
-                }
-
                 String mimeType = getMimeTypeFromPath(path);
 
                 if ("image".equals(mimeType)) {
-                    displayImageAttachment(attachmentBox, path);
+                    // ✅ NEW: pass container + msg + path directly (3 args)
+                    displayImageAttachment(container, msg, path);
+
                 } else if ("pdf".equals(mimeType)) {
-                    displayPdfAttachment(attachmentBox, path, msg);
+                    HBox bubbleWrapper = buildFileBubble(msg);
+                    displayPdfAttachment(bubbleWrapper, path, msg);
+                    finishBubble(container, msg, bubbleWrapper);
+
                 } else {
-                    displayGenericFile(attachmentBox, path, mimeType, msg);
+                    HBox bubbleWrapper = buildFileBubble(msg);
+                    displayGenericFile(bubbleWrapper, path, mimeType, msg);
+                    finishBubble(container, msg, bubbleWrapper);
                 }
-
-                String time = msg.getDateEnvoi().format(DateTimeFormatter.ofPattern("HH:mm"));
-                String status = (msg.getIdUser() == currentUserId && "LU".equals(msg.getStatutMessage())) ? " ✓✓" : " ✓";
-                Label footer = new Label(time + (msg.getIdUser() == currentUserId ? status : ""));
-                footer.setStyle("-fx-font-size: 9px; -fx-text-fill: #bdc3c7; -fx-padding: 0 5;");
-
-                VBox messageBox = new VBox(3);
-                messageBox.getChildren().addAll(attachmentBox, footer);
-                container.getChildren().add(messageBox);
             }
-            private void displayImageAttachment(VBox attachmentBox, String path) {
-                File imageFile = new File("src/main/resources/" + path);
+            private void displayImageAttachment(VBox container, Message msg, String path) {
+                File imageFile = new File("C:\\wamp\\htdocs\\" + path.replace("/", "\\"));
+
+                // ── Tight image bubble ────────────────────────────────────────────
+                StackPane imageStack = new StackPane();
+                imageStack.setPrefSize(220, 220);
+                imageStack.setMaxSize(220, 220);
+                imageStack.setStyle(
+                        "-fx-background-color: #1a1a2e;" +
+                                "-fx-background-radius: 16;" +
+                                "-fx-cursor: hand;"
+                );
+
+                ImageView imageView = new ImageView();
+                imageView.setFitWidth(220);
+                imageView.setFitHeight(220);
+                imageView.setPreserveRatio(true);
+
+                // Rounded clip
+                javafx.scene.shape.Rectangle clip = new javafx.scene.shape.Rectangle(220, 220);
+                clip.setArcWidth(24);
+                clip.setArcHeight(24);
+                imageStack.setClip(clip);
+
+                imageStack.getChildren().add(imageView);
+
                 if (imageFile.exists()) {
                     Image image = new Image(imageFile.toURI().toString());
-                    ImageView imageView = new ImageView(image);
-                    imageView.setFitWidth(200);
-                    imageView.setFitHeight(200);
-                    imageView.setPreserveRatio(true);
-                    imageView.setCursor(Cursor.HAND);
+                    imageView.setImage(image);
 
-                    imageView.setOnMouseClicked(e -> {
+                    // Click → fullscreen
+                    imageStack.setOnMouseClicked(e -> {
                         Stage stage = new Stage();
                         stage.setTitle("Image");
                         ImageView bigView = new ImageView(image);
                         bigView.setPreserveRatio(true);
-                        bigView.setFitWidth(550);
-                        bigView.setFitHeight(550);
+                        bigView.setFitWidth(700);
+                        bigView.setFitHeight(700);
                         ScrollPane sp = new ScrollPane(bigView);
                         sp.setFitToWidth(true);
                         sp.setFitToHeight(true);
-                        stage.setScene(new Scene(sp));
+                        sp.setStyle("-fx-background-color: black;");
+                        stage.setScene(new Scene(sp, 700, 700, Color.BLACK));
                         stage.show();
                     });
-
-                    attachmentBox.getChildren().add(imageView);
                 } else {
-                    attachmentBox.getChildren().add(new Label("❌ Fichier image introuvable"));
+                    Label err = new Label("❌ Image introuvable");
+                    err.setStyle("-fx-text-fill: #ff6b6b; -fx-font-size: 12px;");
+                    imageStack.getChildren().add(err);
                 }
+
+                // ── Tight bubble wrapper ──────────────────────────────────────────
+                HBox bubbleWrapper = new HBox(imageStack);
+                bubbleWrapper.setMaxWidth(232);
+                bubbleWrapper.setPrefWidth(232);
+                bubbleWrapper.setPadding(new Insets(4));
+                if (msg.getIdUser() == currentUserId) {
+                    bubbleWrapper.setStyle(
+                            "-fx-background-color: #007AFF;" +
+                                    "-fx-background-radius: 18 18 4 18;"
+                    );
+                } else {
+                    bubbleWrapper.setStyle(
+                            "-fx-background-color: #E9E9EB;" +
+                                    "-fx-background-radius: 18 18 18 4;"
+                    );
+                }
+
+                finishBubble(container, msg, bubbleWrapper);
             }
-            private void displayGenericFile(VBox attachmentBox, String path, String mimeType, Message msg) {
+            private void displayGenericFile(HBox attachmentBox, String path, String mimeType, Message msg) {
                 HBox fileBox = new HBox(10);
                 fileBox.setAlignment(Pos.CENTER_LEFT);
 
@@ -855,7 +1464,7 @@ public class MessengerController implements Initializable {
                         return "file";
                 }
             }
-            private void displayPdfAttachment(VBox attachmentBox, String path, Message msg) {
+            private void displayPdfAttachment(HBox attachmentBox, String path, Message msg) {
                 HBox pdfBox = new HBox(10);
                 pdfBox.setAlignment(Pos.CENTER_LEFT);
 
@@ -875,7 +1484,7 @@ public class MessengerController implements Initializable {
             }
             private void openFile(String relativePath) {
                 try {
-                    File file = new File("src/main/resources/" + relativePath);
+                    File file = new File("C:\\wamp\\htdocs\\" + relativePath.replace("/", "\\"));
                     if (file.exists()) {
                         Desktop.getDesktop().open(file);
                     } else {
@@ -1004,16 +1613,31 @@ public class MessengerController implements Initializable {
         fileChooser.getExtensionFilters().addAll(
                 new FileChooser.ExtensionFilter("Tous les fichiers", "*.*"),
                 new FileChooser.ExtensionFilter("Images", "*.png", "*.jpg", "*.jpeg", "*.gif"),
+                new FileChooser.ExtensionFilter("Vidéos", "*.mp4", "*.avi", "*.mov", "*.mkv", "*.flv", "*.wmv"),
                 new FileChooser.ExtensionFilter("PDF", "*.pdf"),
                 new FileChooser.ExtensionFilter("Documents", "*.docx", "*.xlsx", "*.pptx")
         );
 
         File selectedFile = fileChooser.showOpenDialog(((Node) event.getSource()).getScene().getWindow());
         if (selectedFile != null) {
-            String uploadedPath = uploadFile(selectedFile);
+            // Determine file type
+            String fileName = selectedFile.getName().toLowerCase();
+            String typeMessage;
+            String uploadSubDir;
+
+            if (fileName.matches(".*\\.(mp4|avi|mov|mkv|flv|wmv)$")) {
+                typeMessage = "VIDEO";
+                uploadSubDir = "video";
+            } else if (fileName.matches(".*\\.(png|jpg|jpeg|gif|bmp|webp)$")) {
+                typeMessage = "FICHIER"; // or you could keep as FICHIER with image preview
+                uploadSubDir = "files";
+            } else {
+                typeMessage = "FICHIER";
+                uploadSubDir = "files";
+            }
+
+            String uploadedPath = uploadFile(selectedFile, uploadSubDir);
             if (uploadedPath != null) {
-                // Optionnel : stocker le type MIME dans la base
-                String typeMessage = "FICHIER";
                 Message msg = new Message(typeMessage, uploadedPath, "ENVOYE", LocalDateTime.now(), selectedConversationId, currentUserId);
                 if (messageDAO.addMessage(msg)) {
                     loadMessages(selectedConversationId);
@@ -1024,18 +1648,27 @@ public class MessengerController implements Initializable {
         }
     }
 
-    private String uploadFile(File file) {
+    private String uploadFile(File file, String subDir) {
         try {
-            String uploadDir = "src/main/resources/uploads/files/";
+            // Base upload directory (adjust if needed)
+            String baseDir = "C:\\wamp\\htdocs\\uploads\\";
+            String uploadDir = baseDir + subDir;
             File destDir = new File(uploadDir);
-            if (!destDir.exists()) destDir.mkdirs();
 
+            // Create directory if it doesn't exist
+            if (!destDir.exists()) {
+                destDir.mkdirs();
+            }
+
+            // Generate unique filename to avoid overwrites
             String fileName = System.currentTimeMillis() + "_" + file.getName();
             File destFile = new File(destDir, fileName);
 
+            // Copy the file
             Files.copy(file.toPath(), destFile.toPath(), StandardCopyOption.REPLACE_EXISTING);
 
-            return "uploads/files/" + fileName;
+            // Return relative path to store in database (e.g., "uploads/video/12345_video.mp4")
+            return "uploads/" + subDir + "/" + fileName;
         } catch (IOException e) {
             e.printStackTrace();
             return null;
@@ -1776,17 +2409,19 @@ public class MessengerController implements Initializable {
     private void handleRecordButton() {
         try {
             if (!isRecording) {
-                // Générer un nom unique pour chaque vocal
                 String fileName = "voice_" + currentUserId + "_" + System.currentTimeMillis() + ".wav";
-                String audioPath = "src/main/resources/uploads/audio/" + fileName;
+
+                // ✅ NEW PATH
+                String audioPath = "C:\\wamp\\htdocs\\uploads\\Audio\\" + fileName;
+
+                // Create directory if needed
+                new File("C:\\wamp\\htdocs\\uploads\\Audio").mkdirs();
 
                 recorder = new AudioRecorder();
                 recorder.startRecording(audioPath);
-
                 recordButton.setText("Stop");
                 isRecording = true;
 
-                // Timeline pour arrêter automatiquement après 2 minutes
                 Timeline stopTimeline = new Timeline(new KeyFrame(Duration.minutes(2), e -> {
                     if (isRecording) stopRecordingAndSave(audioPath);
                 }));
@@ -1794,8 +2429,7 @@ public class MessengerController implements Initializable {
                 stopTimeline.play();
 
             } else {
-                // Arrêt manuel
-                String audioPath = recorder.getAudioFilePath(); // Ajouter getter dans AudioRecorder
+                String audioPath = recorder.getAudioFilePath();
                 stopRecordingAndSave(audioPath);
             }
         } catch (Exception e) {
@@ -1844,21 +2478,17 @@ public class MessengerController implements Initializable {
             e.printStackTrace();
         }
     }
-
     private void stopRecordingAndSave(String audioPath) {
         try {
             recorder.stopRecording();
             recordButton.setText("🎙️");
             isRecording = false;
 
-            // Ajouter le message vocal dans la base de données
-            messageDAO.addVocalMessage("uploads/audio/" + new File(audioPath).getName(),
-                    selectedConversationId, currentUserId);
+            // ✅ NEW relative path stored in DB
+            String relativePath = "uploads/Audio/" + new File(audioPath).getName();
+            messageDAO.addVocalMessage(relativePath, selectedConversationId, currentUserId);
 
-            // Rafraîchir la conversation pour afficher le message vocal
             loadMessages(selectedConversationId);
-
-            // --- Nouvelle ligne : transformer audio → texte ---
             processVoiceToText(audioPath);
 
         } catch (Exception e) {

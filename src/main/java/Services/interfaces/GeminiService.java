@@ -10,7 +10,7 @@ import java.net.http.HttpResponse;
 
 public class GeminiService {
 
-    private static final String API_KEY = "AIzaSyBwlAatML2QtspCnyV16MRYdYPdIcbmnCM";
+    private static final String API_KEY = "AIzaSyCnR6RA8KRo4wWGkJlGTZBZJ85L6rnnnSU";
     private static final String API_URL = "https://generativelanguage.googleapis.com/v1beta/openai/chat/completions";
 
     public static String askGemini(String userQuery) throws Exception {
