@@ -49,7 +49,7 @@ public class TopActiviteController {
 
         } catch (Exception e) {
             e.printStackTrace();
-            new Alert(Alert.AlertType.ERROR, "Erreur chargement Top Activités").show();
+            new Alert(Alert.AlertType.ERROR, "Erreur chargement Top Clients").show();
         }
     }
 

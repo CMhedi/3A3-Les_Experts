@@ -1,14 +1,10 @@
-/* =====================================================
-   ROOT
-===================================================== */
+/* ================= ROOT ================= */
 .root-bg {
     -fx-font-family: "Segoe UI";
     -fx-background-color: linear-gradient(to bottom right, #0f3d2e, #194c3b);
 }
 
-/* =====================================================
-   TOP BAR
-===================================================== */
+/* ================= TOP BAR ================= */
 .topbar {
     -fx-padding: 14 18;
     -fx-background-color: #194c3b;
@@ -16,31 +12,24 @@
     -fx-border-width: 0 0 1 0;
 }
 
-/* =====================================================
-   BRAND
-===================================================== */
+/* ================= BRAND ================= */
 .brand {
     -fx-text-fill: white;
     -fx-font-size: 20px;
     -fx-font-weight: bold;
 }
-
 .brand-accent {
     -fx-text-fill: #f4b400;
     -fx-font-size: 20px;
     -fx-font-weight: bold;
 }
 
-/* =====================================================
-   CONTENT WRAPPER
-===================================================== */
+/* ================= CONTENT WRAPPER ================= */
 .content-wrap {
-    -fx-padding: 26;
+    -fx-padding: 30;
 }
 
-/* =====================================================
-   PREMIUM GLASS CARD
-===================================================== */
+/* ================= CARD ================= */
 .card {
     -fx-background-color: rgba(255,255,255,0.16);
     -fx-background-radius: 26;
@@ -50,39 +39,40 @@
     -fx-border-radius: 26;
 
     -fx-padding: 34;
-    -fx-max-width: 1000;
+    -fx-max-width: 1200;
+
+    /* Donne assez de hauteur pour la map */
+    -fx-pref-height: 760;
 
     -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.35), 30, 0.30, 0, 10);
 }
 
-/* =====================================================
-   TITLE
-===================================================== */
+/* ================= TITLE ================= */
 .card-title {
     -fx-text-fill: white;
-    -fx-font-size: 20px;
+    -fx-font-size: 22px;
     -fx-font-weight: bold;
 }
 
-/* =====================================================
-   MAP WRAPPER (IMPORTANT FIX)
-===================================================== */
+/* ================= MAP WRAPPER ================= */
 .map-view {
-    -fx-background-color: rgba(0,0,0,0.20);
+    -fx-background-color: rgba(0,0,0,0.25);
     -fx-background-radius: 20;
 
     -fx-border-radius: 20;
-    -fx-border-color: rgba(255,255,255,0.22);
+    -fx-border-color: rgba(255,255,255,0.25);
     -fx-border-width: 1;
 
     -fx-padding: 6;
 
+    /* IMPORTANT: hauteur pour éviter les zones grises */
+    -fx-min-height: 600;
+    -fx-pref-height: 650;
+
     -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.25), 15, 0.2, 0, 6);
 }
 
-/* =====================================================
-   BUTTON STYLE (RETURN)
-===================================================== */
+/* ================= BUTTON ================= */
 .secondary-btn {
     -fx-background-color: rgba(255,255,255,0.14);
     -fx-text-fill: white;
@@ -97,12 +87,10 @@
 
     -fx-cursor: hand;
 }
-
 .secondary-btn:hover {
-    -fx-background-color: rgba(255,255,255,0.20);
+    -fx-background-color: rgba(255,255,255,0.22);
     -fx-translate-y: -2;
 }
-
 .secondary-btn:pressed {
     -fx-translate-y: 0;
     -fx-opacity: 0.92;

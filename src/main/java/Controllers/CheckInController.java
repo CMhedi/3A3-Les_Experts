@@ -40,7 +40,7 @@ public class CheckInController {
             String raw = tokenArea.getText();
             String token = normalizeToken(raw);
 
-            // ✅ DEBUG affichage de ce que tu as collé
+            //  Ddebug affichage de ce que j ai colle
             detailsArea.setText("DEBUG:\nRaw = " + raw + "\n\nToken normalisé = " + token);
 
             if (token.isBlank()) {
@@ -79,7 +79,7 @@ public class CheckInController {
                             "Nb Personnes : " + d.nbPersonnes + "\n" +
                             "Prix Unitaire : " + d.prixUnitaire + "\n" +
                             "TOTAL : " + d.total + "\n" +
-                            "Checked-in : " + (d.checkedIn ? "OUI ✅" : "NON") + "\n" +
+                            "Checked-in : " + (d.checkedIn ? "OUI ✅" : "NON ❌") + "\n" +
                             "Heure : " + (d.checkinTime == null ? "-" : d.checkinTime);
 
             detailsArea.setText(out);

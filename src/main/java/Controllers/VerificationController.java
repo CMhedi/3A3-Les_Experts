@@ -24,7 +24,7 @@ public class VerificationController {
     // callback: appelé à chaque erreur (tentative ratée)
     private Runnable onWrongAttempt;
 
-    private static final String CHARS = "ABCDEFGHJKLMNPQRSTUVWXYZ23456789";
+    private static final String CHARS = "ABCDEFGHJKLMNPQRSTUVWXYZ123456789";
     private static final SecureRandom RANDOM = new SecureRandom();
 
     @FXML

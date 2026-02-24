@@ -71,7 +71,7 @@ public class RecuReservationController {
         }
     }
 
-    // If you still use it somewhere, keep it
+
     @FXML
     private void retour(ActionEvent event) {
         ((Stage)((Node)event.getSource()).getScene().getWindow()).close();

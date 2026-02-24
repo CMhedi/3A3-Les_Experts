@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import javafx.geometry.Insets?>
 <?import javafx.scene.layout.*?>
 <?import javafx.scene.control.*?>
 <?import javafx.scene.web.WebView?>
@@ -15,9 +14,7 @@
             <Label text="Eco " styleClass="brand"/>
             <Label text="Adventure" styleClass="brand-accent"/>
             <Region HBox.hgrow="ALWAYS"/>
-            <Button text="Retour"
-                    onAction="#close"
-                    styleClass="secondary-btn"/>
+            <Button text="Retour" onAction="#close" styleClass="secondary-btn"/>
         </HBox>
     </top>
 
@@ -25,14 +22,13 @@
         <StackPane styleClass="content-wrap">
             <VBox spacing="18" alignment="CENTER" styleClass="card">
 
-                <Label text="📍 Votre position actuelle"
-                       styleClass="card-title"/>
+                <Label text="📍 Votre position actuelle" styleClass="card-title"/>
 
-                <!-- ✅ wrapper stylé -->
-                <StackPane styleClass="map-view">
+                <!-- ✅ IMPORTANT: la WebView doit grandir -->
+                <StackPane styleClass="map-view" VBox.vgrow="ALWAYS">
                     <WebView fx:id="webView"
-                             prefHeight="500"
-                             prefWidth="800"/>
+                             maxWidth="Infinity"
+                             maxHeight="Infinity"/>
                 </StackPane>
 
             </VBox>

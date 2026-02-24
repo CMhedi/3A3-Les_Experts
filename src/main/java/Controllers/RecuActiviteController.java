@@ -76,12 +76,12 @@ public class RecuActiviteController {
     @FXML
     private void downloadPdf(ActionEvent event) {
         try {
-            // 1) snapshot du reçu (la carte entière)
+            // snapshot du recu
             SnapshotParameters params = new SnapshotParameters();
             WritableImage fxImage = receiptCard.snapshot(params, null);
             BufferedImage bufferedImage = SwingFXUtils.fromFXImage(fxImage, null);
 
-            // 2) choisir l'endroit de sauvegarde
+            // choisir l endroit de sauvegarde
             FileChooser fc = new FileChooser();
             fc.setTitle("Enregistrer le reçu en PDF");
             fc.getExtensionFilters().add(new FileChooser.ExtensionFilter("PDF Files", "*.pdf"));
@@ -94,7 +94,7 @@ public class RecuActiviteController {
                 file = new File(file.getAbsolutePath() + ".pdf");
             }
 
-            // 3) créer PDF avec la taille exacte de l'image
+            // 3) créer pdf avec la taille exacte de l image
             try (PDDocument doc = new PDDocument()) {
                 float width = bufferedImage.getWidth();
                 float height = bufferedImage.getHeight();
