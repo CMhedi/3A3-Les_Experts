@@ -164,7 +164,25 @@ public class EvenementController {
 
         return card;
     }
+// ===== NEW MAPPING FOR DASHBOARD =====
 
+    @FXML
+    private void goToDashboard() {
+        try {
+            // Njibou el Stage mel cardsContainer walla mel searchField
+            Stage stage = (Stage) cardsContainer.getScene().getWindow();
+
+            // 1. Mapping lèl page jdida elli khdemneha
+            // 2. SceneNavigator.go (Stage, Path, Titre)
+            SceneNavigator.go(stage, "/views/AdminDashboard.fxml", "EcoAdventure - Dashboard Statistiques");
+
+            System.out.println("Navigation vers le Dashboard réussie !");
+        } catch (Exception e) {
+            System.err.println("Erreur navigation Dashboard: " + e.getMessage());
+            // Alert sghira ken el path ghalet
+            new Alert(Alert.AlertType.ERROR, "Impossible d'ouvrir le Dashboard. Vérifiez le chemin /views/AdminDashboard.fxml").show();
+        }
+    }
     // ===== Exception Handling Fixed =====
 
     private void deleteEvent(Evenement e) {

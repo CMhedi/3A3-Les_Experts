@@ -15,8 +15,12 @@
                 <Button text="🏠 Accueil" onAction="#goHome" styleClass="navItem"/>
                 <Button text="🎫 Événements" styleClass="navItem, navItemActive"/>
                 <Button text="📅 Réservations" onAction="#goToReservations" styleClass="navItem"/>
-            </VBox>
-        </VBox>
+                <Button fx:id="btnDashboard"
+                        text="📊 Dashboard"
+                        onAction="#goToDashboard"
+                        maxWidth="Infinity"
+                        styleClass="sidebar-button" />
+            </VBox></VBox>
     </left>
     <center>
         <VBox spacing="0">
