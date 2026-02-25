@@ -10,6 +10,7 @@
         <Button onAction="#goToevenement" maxWidth="Infinity" text="Evenement" styleClass="nav-btn-user" style="-fx-background-color: transparent; -fx-text-fill: white; -fx-alignment: CENTER_LEFT; -fx-cursor: hand;"/>
         <Button onAction="#goToActivities" maxWidth="Infinity" text="Mes Activités" styleClass="nav-btn-user" style="-fx-background-color: transparent; -fx-text-fill: white; -fx-alignment: CENTER_LEFT; -fx-cursor: hand;"/>
         <Button onAction="#goToplanning" maxWidth="Infinity" text="Planning" styleClass="nav-btn-user" style="-fx-background-color: transparent; -fx-text-fill: white; -fx-alignment: CENTER_LEFT; -fx-cursor: hand;"/>
+        <Button onAction="#goToMessengerie" maxWidth="Infinity" text="Messengerie" styleClass="nav-btn-user" style="-fx-background-color: transparent; -fx-text-fill: white; -fx-alignment: CENTER_LEFT; -fx-cursor: hand;"/>
 
         <Region VBox.vgrow="ALWAYS" />
 

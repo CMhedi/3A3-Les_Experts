@@ -14,6 +14,8 @@ import java.io.IOException;
 public class SideBarcoachController{
 
 
+    private BorderPane mainContent;
+
     @FXML
     void goToProfil(ActionEvent event) {
         changeCenter("/GUI/Profile.fxml", event);
@@ -63,7 +65,27 @@ public class SideBarcoachController{
             );
         }
     }
-
+    @FXML
+    private void goToMessengerie(ActionEvent event) {
+        try {
+            // Chercher le BorderPane principal (ID "mainPaneUser" ou "mainPaneCoach" selon votre layout)
+            BorderPane mainPane = (BorderPane) ((Node) event.getSource()).getScene().lookup("#mainPaneUser");
+            if (mainPane != null) {
+                Parent root = FXMLLoader.load(getClass().getResource("/GUI/MessengerApp.fxml"));
+                mainPane.setCenter(root);
+            } else {
+                // Fallback : charger la vue dans une nouvelle scène si le BorderPane n'est pas trouvé
+                Parent root = FXMLLoader.load(getClass().getResource("/GUI/MessengerApp.fxml"));
+                Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
+                stage.setScene(new Scene(root));
+                stage.centerOnScreen();
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+            // Optionnel : afficher une alerte
+            DialogUtils.showError("Erreur", "Impossible d'ouvrir la messagerie.");
+        }
+    }
     private void changeCenter(String fxmlPath, ActionEvent event) {
         try {
 

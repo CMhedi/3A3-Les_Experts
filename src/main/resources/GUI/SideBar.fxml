@@ -14,6 +14,7 @@
         <Button onAction="#goToDashboard" maxWidth="Infinity" text="Dashboard" style="-fx-background-color: transparent; -fx-text-fill: white;"/>
         <Button onAction="#goToReclamations" maxWidth="Infinity" text="Réclamations" style="-fx-background-color: transparent; -fx-text-fill: white;"/>
         <Button onAction="#goTogestionuser" maxWidth="Infinity" text="Gestion des utilisateurs" style="-fx-background-color: transparent; -fx-text-fill: white;"/>
+        <Button onAction="#goToMessengerie" maxWidth="Infinity" text="Messengerie" styleClass="nav-btn-user" style="-fx-background-color: transparent; -fx-text-fill: white; -fx-alignment: CENTER_LEFT; -fx-cursor: hand;"/>
         <Button onAction="#goToProfil" maxWidth="Infinity" text="Mon Profil" style="-fx-background-color: transparent; -fx-text-fill: white;"/>
         <Button onAction="#goToPlanning"
                 maxWidth="Infinity"

@@ -1,5 +1,6 @@
 package GUI;
 
+import GUI.utils.DialogUtils;
 import GUI.utils.SceneUtils;
 import javafx.application.Platform;
 import javafx.event.ActionEvent;
@@ -58,6 +59,27 @@ public class SideBarController {
                 "/admin.css",
                 (Node) event.getSource()
         );
+    }
+    @FXML
+    private void goToMessengerie(ActionEvent event) {
+        try {
+            // Chercher le BorderPane principal (ID "mainPaneUser" ou "mainPaneCoach" selon votre layout)
+            BorderPane mainPane = (BorderPane) ((Node) event.getSource()).getScene().lookup("#mainPaneUser");
+            if (mainPane != null) {
+                Parent root = FXMLLoader.load(getClass().getResource("/GUI/MessengerApp.fxml"));
+                mainPane.setCenter(root);
+            } else {
+                // Fallback : charger la vue dans une nouvelle scène si le BorderPane n'est pas trouvé
+                Parent root = FXMLLoader.load(getClass().getResource("/GUI/MessengerApp.fxml"));
+                Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
+                stage.setScene(new Scene(root));
+                stage.centerOnScreen();
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+            // Optionnel : afficher une alerte
+            DialogUtils.showError("Erreur", "Impossible d'ouvrir la messagerie.");
+        }
     }
 
     @FXML

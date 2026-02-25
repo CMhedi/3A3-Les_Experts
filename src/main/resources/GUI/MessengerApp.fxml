@@ -1,0 +1,161 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.shape.Circle?>
+<?import javafx.scene.text.Font?>
+
+<BorderPane prefHeight="650.0" prefWidth="1100.0"
+            style="-fx-background-color: #ffffff;"
+            xmlns="http://javafx.com/javafx/21"
+            xmlns:fx="http://javafx.com/fxml/1"
+            fx:controller="controllers.MessengerController">
+
+    <top>
+        <VBox>
+            <HBox alignment="CENTER_LEFT" spacing="15"
+                  style="-fx-padding: 15; -fx-background-color: #ffffff; -fx-border-color: #efefef; -fx-border-width: 0 0 1 0;">
+                <Label style="-fx-font-size: 26; -fx-font-weight: bold; -fx-text-fill: #000;" text="Messages" />
+                <Region HBox.hgrow="ALWAYS" />
+
+                <Button onAction="#toggleAI"
+                        style="-fx-background-color: #f0f2f5; -fx-background-radius: 20; -fx-cursor: hand;"
+                        text="🤖 IA Assistant">
+                    <padding>
+                        <Insets bottom="8.0" left="15.0" right="15.0" top="8.0" />
+                    </padding>
+                </Button>
+
+                <Button fx:id="aiRecordButton" onAction="#handleAiRecord"
+                        style="-fx-background-color: transparent; -fx-text-fill: #8e8e8e; -fx-cursor: hand;" text="🎙️">
+                    <font><Font name="Segoe UI Emoji" size="22.0" /></font>
+                </Button>
+
+                <Button onAction="#addNewConversation"
+                        style="-fx-background-color: #0095f6; -fx-text-fill: white; -fx-background-radius: 8; -fx-font-weight: bold; -fx-cursor: hand;"
+                        text="+ Nouveau">
+                    <padding>
+                        <Insets bottom="8.0" left="15.0" right="15.0" top="8.0" />
+                    </padding>
+                </Button>
+            </HBox>
+        </VBox>
+    </top>
+
+    <center>
+        <HBox>
+            <!-- LEFT SIDEBAR: Conversations List Only -->
+            <VBox style="-fx-border-color: #efefef; -fx-border-width: 0 1 0 0; -fx-min-width: 300; -fx-max-width: 300;">
+                <VBox style="-fx-padding: 15;">
+                    <TextField fx:id="searchField" promptText="Rechercher..."
+                               style="-fx-padding: 10; -fx-background-radius: 20; -fx-background-color: #efefef;" />
+                </VBox>
+                <ListView fx:id="conversationsList" VBox.vgrow="ALWAYS"
+                          style="-fx-background-color: transparent; -fx-selection-bar: #f0f2f5;"/>
+            </VBox>
+
+            <!-- CENTER: Chat Messages Display -->
+            <VBox HBox.hgrow="ALWAYS">
+                <HBox fx:id="chatHeader" alignment="CENTER_LEFT" spacing="15"
+                      style="-fx-padding: 15; -fx-border-color: #efefef; -fx-border-width: 0 0 1 0;">
+                    <Circle fill="#e0e0e0" radius="20" />
+                    <VBox HBox.hgrow="ALWAYS">
+                        <Label fx:id="chatUserName" style="-fx-font-size: 16; -fx-font-weight: bold;" text="Sélectionnez un chat" />
+                        <Label fx:id="chatStatus" style="-fx-font-size: 12; -fx-text-fill: #0095f6;" text="En ligne" />
+                    </VBox>
+
+                    <!-- Audio Call Button -->
+                    <Button  onAction="#startAudioCall" style="-fx-background-color: transparent; -fx-text-fill: #00b1ff; -fx-cursor: hand;" text="☎️">
+                        <font><Font name="Segoe UI Emoji" size="18.0" /></font>
+                        <padding>
+                            <Insets bottom="8.0" left="12.0" right="12.0" top="8.0" />
+                        </padding>
+                    </Button>
+
+                    <!-- Video Call Button -->
+                    <Button onAction="#startVideoCall" style="-fx-background-color: transparent; -fx-text-fill: #00b1ff; -fx-cursor: hand;" text="📹">
+                        <font><Font name="Segoe UI Emoji" size="18.0" /></font>
+                        <padding>
+                            <Insets bottom="8.0" left="12.0" right="12.0" top="8.0" />
+                        </padding>
+                    </Button>
+
+                    <Button onAction="#showChatOptions" style="-fx-background-color: transparent; -fx-cursor: hand;" text="⋮">
+                        <font><Font size="20.0" /></font>
+                    </Button>
+                </HBox>
+
+                <!-- Messages will display here using ListView -->
+                <ListView fx:id="messagesList" VBox.vgrow="ALWAYS"
+                          style="-fx-background-color: white; -fx-selection-bar: #f0f2f5;"/>
+
+                <!-- Message Input Area -->
+                <HBox alignment="CENTER_LEFT" spacing="12"
+                      style="-fx-padding: 15; -fx-border-color: #efefef; -fx-border-width: 1 0 0 0;">
+
+                    <Button onAction="#showEmojiPicker" style="-fx-background-color: transparent; -fx-text-fill: #ffcc00;" text="😊">
+                        <font><Font name="Segoe UI Emoji" size="22.0" /></font>
+                    </Button>
+
+                    <Button onAction="#openGifPicker" style="-fx-background-color: transparent; -fx-text-fill: #ff6b9d; -fx-cursor: hand;" text="🎬">
+                        <font><Font name="Segoe UI Emoji" size="22.0" /></font>
+                    </Button>
+
+                    <Button fx:id="recordButton" onAction="#handleRecordButton"
+                            style="-fx-background-color: transparent; -fx-text-fill: #8e8e8e; -fx-cursor: hand;" text="🎙️">
+                        <font><Font name="Segoe UI Emoji" size="22.0" /></font>
+                    </Button>
+
+                    <Button onAction="#handleAttachFile" style="-fx-background-color: transparent; -fx-text-fill: #8e8e8e; -fx-cursor: hand;" text="📎">
+                        <font><Font name="Segoe UI Emoji" size="22.0" /></font>
+                    </Button>
+
+
+                    <TextField fx:id="messageInput" onKeyPressed="#handleKeyPress" promptText="Repondre..." HBox.hgrow="ALWAYS"
+                               style="-fx-padding: 10 18; -fx-background-radius: 25; -fx-background-color: #f0f2f5; -fx-border-color: transparent;" />
+
+                    <Button onAction="#sendLike" style="-fx-background-color: transparent; -fx-text-fill: #ed4956;" text="❤️">
+                        <font><Font name="Segoe UI Emoji" size="22.0" /></font>
+                    </Button>
+
+                    <Button onAction="#sendMessage" style="-fx-background-color: transparent; -fx-text-fill: #0084ff;" text="➤">
+                        <font><Font size="22.0" /></font>
+                    </Button>
+                </HBox>
+            </VBox>
+        </HBox>
+    </center>
+
+    <right>
+        <VBox fx:id="aiPanel" prefWidth="300.0" spacing="10"
+              style="-fx-background-color: #fafafa; -fx-border-color: #efefef; -fx-border-width: 0 0 0 1;">
+            <padding><Insets bottom="15" left="15" right="15" top="15" /></padding>
+
+            <HBox alignment="CENTER_LEFT" spacing="10">
+                <Circle fill="#00d1b2" radius="5" />
+                <Label style="-fx-font-weight: bold; -fx-font-size: 15;" text="Assistant AI" />
+                <Region HBox.hgrow="ALWAYS" />
+                <Label text="Online" style="-fx-font-size: 10; -fx-text-fill: #00d1b2;" />
+            </HBox>
+
+            <ScrollPane fitToWidth="true" hbarPolicy="NEVER"
+                        style="-fx-background-color: transparent; -fx-background: transparent;" VBox.vgrow="ALWAYS">
+                <VBox fx:id="botMessagesContainer" spacing="12" />
+            </ScrollPane>
+
+            <VBox spacing="8" style="-fx-padding: 5 0 0 0;">
+                <HBox spacing="5">
+                    <TextField fx:id="botInput" promptText="Posez une question..." HBox.hgrow="ALWAYS"
+                               style="-fx-background-radius: 15; -fx-background-color: white; -fx-border-color: #ddd; -fx-border-radius: 15; -fx-padding: 8;" />
+                    <Button onAction="#askBot"
+                            style="-fx-background-color: #00d1b2; -fx-text-fill: white; -fx-background-radius: 50; -fx-font-weight: bold; -fx-cursor: hand;"
+                            text="?" prefWidth="35" prefHeight="35" />
+                </HBox>
+                <Label text="L'IA peut générer des erreurs." alignment="CENTER" maxWidth="Infinity"
+                       style="-fx-font-size: 9; -fx-text-fill: #aaa;" />
+            </VBox>
+        </VBox>
+    </right>
+
+</BorderPane>
