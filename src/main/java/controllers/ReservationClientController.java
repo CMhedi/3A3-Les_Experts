@@ -32,7 +32,6 @@ public class ReservationClientController {
     private final ReservationEvenementService service = new ReservationEvenementService();
     private List<ReservationEvenement> allReservations;
 
-    // --- CONFIGURATION API PDFSHIFT ---
     private final String API_KEY = "sk_d37f1a91b211235dd61ee19e3438b61e2e1ded0d";
 
     @FXML
@@ -82,7 +81,7 @@ public class ReservationClientController {
         Region spacer = new Region();
         HBox.setHgrow(spacer, Priority.ALWAYS);
 
-        // Bouton PDF avec icône
+        // Bouton PDF
         Button btnPdf = new Button("📄 PDF");
         btnPdf.setStyle("-fx-background-color: #27ae60; -fx-text-fill: white; -fx-font-weight: bold; -fx-cursor: hand; -fx-background-radius: 8;");
         btnPdf.setOnAction(e -> handleDownloadPdf(res));
@@ -105,7 +104,6 @@ public class ReservationClientController {
             String fileName = "Ticket_Adventure_" + res.getIdResEvt() + ".pdf";
             Path path = Paths.get(userHome, "Downloads", fileName);
 
-            // --- DESIGN HTML/CSS DU TICKET ---
             String htmlContent = "<html><head><style>" +
                     "body { font-family: 'Segoe UI', sans-serif; background-color: #f4f7f6; display: flex; justify-content: center; padding: 20px; }" +
                     ".ticket { width: 500px; background: white; border-radius: 15px; overflow: hidden; box-shadow: 0 10px 20px rgba(0,0,0,0.1); border-left: 10px solid #27ae60; }" +
@@ -144,7 +142,6 @@ public class ReservationClientController {
                     .POST(HttpRequest.BodyPublishers.ofString(jsonPayload))
                     .build();
 
-            // Afficher un petit indicateur si possible ou changer le curseur
             client.sendAsync(request, HttpResponse.BodyHandlers.ofFile(path))
                     .thenAccept(response -> {
                         if (response.statusCode() == 200 || response.statusCode() == 201) {
@@ -174,7 +171,7 @@ public class ReservationClientController {
     }
 
     @FXML private void onRefresh() { searchField.clear(); loadAll(); }
-    @FXML private void goToEvents(ActionEvent event) { switchScene(event, "/views/reservation_list.fxml"); }
+    @FXML private void goToEvents(ActionEvent event) { switchScene(event, "/views/EvenementClient.fxml"); }
     @FXML private void goHome(ActionEvent event) { switchScene(event, "/views/Home.fxml"); }
     @FXML private void onLogout(ActionEvent event) { switchScene(event, "/views/Home.fxml"); }
 

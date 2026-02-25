@@ -32,7 +32,7 @@ public class EvenementClientController {
     private List<Evenement> allEvenements;
 
     // --- API CONFIG ---
-    private final String WEATHER_API_KEY = "VOTRE_OPENWEATHER_KEY";
+    private final String WEATHER_API_KEY = "ba052da226f1813069d54ebd059266ce";
 
     @FXML
     public void initialize() {
@@ -157,9 +157,9 @@ public class EvenementClientController {
 
     @FXML private void onRefresh() { searchField.clear(); loadAll(); }
     @FXML private void goToEvenements(ActionEvent event) { loadAll(); }
-    @FXML private void goToReservations(ActionEvent event) { switchScene(event, "/views/client_reservations.fxml"); }
+    @FXML private void goToReservations(ActionEvent event) { switchScene(event, "/views/reservation_list.fxml"); }
     @FXML private void goHome(ActionEvent event) { switchScene(event, "/views/Home.fxml"); }
-    @FXML private void logout(ActionEvent event) { switchScene(event, "/views/Login.fxml"); }
+    @FXML private void logout(ActionEvent event) { switchScene(event, "/views/Home.fxml"); }
 
     private void switchScene(ActionEvent event, String fxmlPath) {
         try {
