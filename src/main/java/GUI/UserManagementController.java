@@ -3,6 +3,15 @@ package GUI;
 import Entities.UserApp;
 import GUI.utils.DialogUtils;
 import Services.UserService;
+import com.google.api.client.auth.oauth2.Credential;
+import com.google.api.client.extensions.java6.auth.oauth2.AuthorizationCodeInstalledApp;
+import com.google.api.client.extensions.jetty.auth.oauth2.LocalServerReceiver;
+import com.google.api.client.googleapis.auth.oauth2.GoogleAuthorizationCodeFlow;
+import com.google.api.client.googleapis.auth.oauth2.GoogleClientSecrets;
+import com.google.api.client.googleapis.javanet.GoogleNetHttpTransport;
+import com.google.api.client.json.gson.GsonFactory;
+import com.google.api.services.oauth2.Oauth2;
+import com.google.api.services.oauth2.model.Userinfo;
 import enums.RoleUser;
 import javafx.beans.binding.Bindings;
 import javafx.collections.FXCollections;
@@ -18,6 +27,8 @@ import javafx.stage.Stage;
 import javafx.scene.input.MouseEvent;
 
 import java.io.IOException;
+import java.io.InputStreamReader;
+import java.io.Reader;
 import java.util.List;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -262,7 +273,62 @@ public class UserManagementController {
 
         btnAjouter.setStyle("-fx-background-color: #3498DB; -fx-text-fill: white; -fx-background-radius: 25;");
     }
+    @FXML
+    void handleGoogleLogin(ActionEvent event) {
+        try {
+            // قراءة الملف من الـ resources
+            Reader reader = new InputStreamReader(getClass().getResourceAsStream("/client_secrets.json"));
+            GoogleClientSecrets clientSecrets = GoogleClientSecrets.load(GsonFactory.getDefaultInstance(), reader);
 
+            GoogleAuthorizationCodeFlow flow = new GoogleAuthorizationCodeFlow.Builder(
+                    GoogleNetHttpTransport.newTrustedTransport(),
+                    GsonFactory.getDefaultInstance(),
+                    clientSecrets,
+                    Arrays.asList("email", "profile", "openid"))
+                    .build();
+
+            LocalServerReceiver receiver = new LocalServerReceiver.Builder().setPort(8888).build();
+            Credential credential = new AuthorizationCodeInstalledApp(flow, receiver).authorize("user");
+
+            Oauth2 oauth2 = new Oauth2.Builder(GoogleNetHttpTransport.newTrustedTransport(), GsonFactory.getDefaultInstance(), credential).setApplicationName("EcoApp").build();
+            Userinfo userinfo = oauth2.userinfo().get().execute();
+
+            UserApp user = us.findByEmail(userinfo.getEmail());
+
+            if (user == null) {
+                user = new UserApp();
+                user.setNom(userinfo.getFamilyName());
+                user.setPrenom(userinfo.getGivenName());
+                user.setEmail(userinfo.getEmail());
+
+                // استعملنا USER_SIMPLE كيف ما موجود في الـ Enum متاعك
+                user.setRole(RoleUser.USER_SIMPLE);
+
+                user.setImageUrl(userinfo.getPicture());
+                user.setTelephone("00000000"); // ديفولت
+                user.setMotDePasse("GOOGLE_PASS_" + userinfo.getId());
+
+                us.add(user);
+
+                DialogUtils.showInfo("Bienvenue", "Compte créé via Google !");
+            }
+
+            Entities.Session.setConnectedUser(user);
+            System.out.println("Connecté en tant que: " + userinfo.getEmail());
+            redirectToHome(event);
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            DialogUtils.showError("Erreur", "Connexion Google échouée.");
+        }
+    }
+
+    private void redirectToHome(ActionEvent event) throws IOException {
+        Parent root = FXMLLoader.load(getClass().getResource("/GUI/MainLayoutUser.fxml")); // بدلو بمسار صفحتك
+        Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
+        stage.setScene(new Scene(root));
+        stage.show();
+    }
     @FXML
     void handleAjouter(ActionEvent event) {
         try {
