@@ -1,3 +1,4 @@
+// CheckInController.java (COMPLET) -> sans affichage d'ID + sans DEBUG dans detailsArea
 package Controllers;
 
 import Services.LocalTicketServer;
@@ -12,12 +13,10 @@ public class CheckInController {
 
     @FXML
     public void initialize() {
-        // ✅ DEBUG: si tu vois ça, controller OK et fx:id OK
         if (detailsArea != null) {
             detailsArea.setText("✅ Check-in prêt.\n➡️ Colle un token puis clique Vérifier.");
         }
 
-        // démarre serveur local
         try {
             LocalTicketServer.startOnce();
             System.out.println("[CheckIn] Server started/ready");
@@ -37,19 +36,15 @@ public class CheckInController {
                 return;
             }
 
-            String raw = tokenArea.getText();
-            String token = normalizeToken(raw);
-
-            //  Ddebug affichage de ce que j ai colle
-            detailsArea.setText("DEBUG:\nRaw = " + raw + "\n\nToken normalisé = " + token);
+            String token = normalizeToken(tokenArea.getText());
 
             if (token.isBlank()) {
-                detailsArea.appendText("\n\n❌ Token vide.");
+                detailsArea.setText("❌ Token vide.");
                 return;
             }
 
             if (!token.contains(".")) {
-                detailsArea.appendText("\n\n❌ Token invalide: il manque le '.'");
+                detailsArea.setText("❌ Token invalide.");
                 return;
             }
 
@@ -67,12 +62,12 @@ public class CheckInController {
                     ? "⚠️ TICKET DÉJÀ UTILISÉ\n\n"
                     : "✅ TICKET VALIDE (check-in OK)\n\n";
 
+            // ✅ PAS D'ID (ni reservationId, ni activiteId, ni userId)
             String out =
                     header +
-                          /*  "ID Réservation : " + d.reservationId + "\n" +*/
                             "Statut : " + safe(d.statut) + "\n" +
-                            "User : " + d.userId + "\n" +
-                            "Activité : " + safe(d.activiteNom) + " (ID " + d.activiteId + ")\n" +
+                            "Utilisateur : " + safe(d.activiteNom) + "\n" +          // si tu l'as, sinon ça affiche "-"
+                            "Activité : " + safe(d.activiteNom) + "\n" +
                             "Type : " + safe(d.typeActivite) + "\n" +
                             "Catégorie : " + safe(d.categorie) + "\n" +
                             "Niveau : " + safe(d.niveau) + "\n" +
@@ -105,7 +100,6 @@ public class CheckInController {
         int idx = txt.indexOf("ECOA|");
         if (idx >= 0) txt = txt.substring(idx + 5);
 
-        // enlève espaces/retours ligne
         return txt.replaceAll("\\s+", "").trim();
     }
 
