@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.geometry.Insets?>
+
+<AnchorPane xmlns:fx="http://javafx.com/fxml"
+            fx:controller="Controllers.DisponibiliteCategorieController"
+            stylesheets="@dispoCategorie.css"
+            styleClass="root-bg">
+    <children>
+
+        <VBox spacing="12" AnchorPane.topAnchor="0" AnchorPane.bottomAnchor="0"
+              AnchorPane.leftAnchor="0" AnchorPane.rightAnchor="0">
+
+            <padding>
+                <Insets top="18" right="18" bottom="18" left="18"/>
+            </padding>
+
+            <HBox spacing="10" alignment="CENTER_LEFT">
+                <Label text="Disponibilité par catégorie" style="-fx-font-size:18px; -fx-font-weight:bold;"/>
+                <Region HBox.hgrow="ALWAYS"/>
+                <Button text="Rafraîchir" onAction="#refresh"/>
+                <Button text="Retour" onAction="#retour"/>
+            </HBox>
+
+            <TableView fx:id="table" VBox.vgrow="ALWAYS">
+
+                <columns>
+                    <TableColumn fx:id="catCol" text="Catégorie" prefWidth="170"/>
+                    <TableColumn fx:id="capCol" text="Capacité" prefWidth="120"/>
+                    <TableColumn fx:id="resCol" text="Réservées" prefWidth="120"/>
+                    <TableColumn fx:id="restCol" text="Restantes" prefWidth="120"/>
+                    <TableColumn fx:id="statCol" text="Statut" prefWidth="140"/>
+                </columns>
+
+            </TableView>
+
+        </VBox>
+
+    </children>
+</AnchorPane>

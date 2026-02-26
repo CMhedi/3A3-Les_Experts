@@ -26,7 +26,7 @@
                 </padding>
 
                 <!-- Titre -->
-                <Label text="Détails de la Séance"
+                <Label text="Détails de l'Activité"
                        styleClass="title-label"/>
 
                 <Separator styleClass="separator-modern"/>
