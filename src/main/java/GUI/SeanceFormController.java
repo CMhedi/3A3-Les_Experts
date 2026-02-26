@@ -176,10 +176,10 @@ public class SeanceFormController {
             showValidationError(e.getMessage());
 
         } catch (Exception e) {
-
+            e.printStackTrace();  // ← Affiche l'erreur complète dans la console
             DialogUtils.showError(
                     "Erreur",
-                    "Erreur lors de l'enregistrement."
+                    "Erreur lors de l'enregistrement : " + e.getMessage()
             );
         }
     }

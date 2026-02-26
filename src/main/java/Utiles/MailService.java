@@ -1,10 +1,12 @@
 package Utiles;
 
-// ⚠️ THABBET FIL IMPORTS HEDHOM:
-import javax.mail.*;
-import javax.mail.internet.InternetAddress;
-import javax.mail.internet.MimeMessage;
+import jakarta.mail.*;
+import jakarta.mail.internet.*;
+import jakarta.mail.internet.MimeMessage;
+import jakarta.mail.internet.InternetAddress;
+
 import java.util.Properties;
+// etc.
 
 public class MailService {
     public static void sendOTP(String recipientEmail, String otpCode) {
@@ -21,7 +23,7 @@ public class MailService {
         String password = "ndjn tmoz wgih kfqx"; // Lezem App Password mel Google
 
         // ✅ Tasli7 el Session wel Authenticator (javax.mail)
-        Session session = Session.getInstance(props, new javax.mail.Authenticator() {
+        Session session = Session.getInstance(props, new Authenticator() {
             @Override
             protected PasswordAuthentication getPasswordAuthentication() {
                 return new PasswordAuthentication(myEmail, password);

@@ -130,7 +130,7 @@ public class MessengerController implements Initializable {
     private ConversationDAO conversationDAO;
     private List<Conversation> allConversations;
     private int selectedConversationId = -1;
-    private int currentUserId = 3;  // valeur par défaut
+    private int currentUserId = 66;  // valeur par défaut
     private VoiceMessagePlayer voicePlayer = new VoiceMessagePlayer();
 
     private String currentTargetLanguage = "fr"; // اللغة الافتراضية (نعرض بها الرسائل الأصلية)
@@ -147,7 +147,7 @@ public class MessengerController implements Initializable {
     public void initialize(URL url, ResourceBundle resourceBundle) {
         messageDAO = new MessageDAO();
         conversationDAO = new ConversationDAO();
-        currentUserId = 3;
+        currentUserId = 66;
         messagesList.setFocusTraversable(false);
         conversationsList.setFocusTraversable(false);
 
