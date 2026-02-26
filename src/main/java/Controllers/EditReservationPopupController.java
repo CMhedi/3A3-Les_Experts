@@ -118,7 +118,7 @@ public class EditReservationPopupController {
                     String subject = "EcoAdventure - Reservation update";
                     String body =
                             "Hello " + user.prenom + " " + user.nom + ",\n\n" +
-                                    "Your reservation #" + reservation.getId() + " has been updated:\n" +
+                                    "Your reservation " + reservation.getId() + " has been updated:\n" +
                                     "- Status: " + finalNewStatut + "\n" +
                                     "- Participants: " + finalNewNb + "\n\n" +
                                     "EcoAdventure Team";

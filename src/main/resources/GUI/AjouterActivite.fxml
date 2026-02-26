@@ -84,10 +84,10 @@
                     </VBox>
 
                     <!-- Image URL -->
-                    <VBox spacing="6" GridPane.rowIndex="4" GridPane.columnIndex="0" GridPane.columnSpan="2" styleClass="field">
-                        <Label text="Image URL (optionnel)" styleClass="form-label"/>
-                        <TextField fx:id="imageField" promptText="https://..." styleClass="input"/>
-                    </VBox>
+                      <VBox spacing="6" GridPane.rowIndex="4" GridPane.columnIndex="0" GridPane.columnSpan="2" styleClass="field">
+                          <Label text="Image URL (optionnel)" styleClass="form-label"/>
+                          <TextField fx:id="imageField" promptText="https://..." styleClass="input"/>
+                      </VBox>
 
                 </GridPane>
 

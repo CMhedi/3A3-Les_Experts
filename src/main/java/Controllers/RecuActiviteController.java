@@ -1,26 +1,26 @@
+// ===== RecuActiviteController.java (COMPLET - compatible avec ton fxml) =====
 package Controllers;
 
+import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
+import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
-import javafx.scene.control.Label;
-import javafx.stage.Stage;
-import javafx.scene.Node;
-import javafx.event.ActionEvent;
-
-import java.time.LocalDate;
-
-// ====== ADDED IMPORTS (PDF + SNAPSHOT) ======
-import javafx.embed.swing.SwingFXUtils;
 import javafx.scene.SnapshotParameters;
+import javafx.scene.control.Alert;
+import javafx.scene.control.ButtonType;
+import javafx.scene.control.Label;
 import javafx.scene.image.WritableImage;
 import javafx.scene.layout.VBox;
 import javafx.stage.FileChooser;
+import javafx.stage.Stage;
+import javafx.embed.swing.SwingFXUtils;
 
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
+import java.time.LocalDate;
 
 import org.apache.pdfbox.pdmodel.PDDocument;
 import org.apache.pdfbox.pdmodel.PDPage;
@@ -39,8 +39,13 @@ public class RecuActiviteController {
     @FXML private Label lblStatut;
     @FXML private Label lblDate;
 
-    // ====== ADDED (root container of receipt) ======
     @FXML private VBox receiptCard;
+
+    private int activiteId = 0;
+
+    public void setActiviteId(int activiteId) {
+        this.activiteId = activiteId;
+    }
 
     public void setData(String Type, String nom, String categorie,
                         String niveau, String prix, LocalDate statut, String date) {
@@ -51,37 +56,47 @@ public class RecuActiviteController {
         lblNiveau.setText("Niveau : " + niveau);
         lblPrix.setText("Prix : " + prix + " DT");
         lblStatut.setText("Statut : " + statut);
-
         lblDate.setText("Date : " + date);
     }
 
     @FXML
     private void fermer(ActionEvent event) {
-        ((Stage)((Node)event.getSource()).getScene().getWindow()).close();
+        ((Stage) ((Node) event.getSource()).getScene().getWindow()).close();
     }
 
     @FXML
     private void reserver(ActionEvent event) {
         try {
-            Parent root = FXMLLoader.load(getClass().getResource("/GUI/addres.fxml"));
+            if (activiteId <= 0) {
+                new Alert(Alert.AlertType.ERROR,
+                        "ID activité manquant (setActiviteId non appelé).\n" +
+                                "Tu dois passer l'ID quand tu ouvres RecuActivite.fxml.",
+                        ButtonType.OK).showAndWait();
+                return;
+            }
+
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/GUI/addres.fxml"));
+            Parent root = loader.load();
+
+            AjouterReservationController controller = loader.getController();
+            controller.setActiviteId(activiteId);
+
             Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
             stage.setScene(new Scene(root));
             stage.show();
+
         } catch (Exception e) {
             e.printStackTrace();
         }
     }
 
-    // ====== ADDED FUNCTION: Download receipt as PDF ======
     @FXML
     private void downloadPdf(ActionEvent event) {
         try {
-            // snapshot du recu
             SnapshotParameters params = new SnapshotParameters();
             WritableImage fxImage = receiptCard.snapshot(params, null);
             BufferedImage bufferedImage = SwingFXUtils.fromFXImage(fxImage, null);
 
-            // choisir l endroit de sauvegarde
             FileChooser fc = new FileChooser();
             fc.setTitle("Enregistrer le reçu en PDF");
             fc.getExtensionFilters().add(new FileChooser.ExtensionFilter("PDF Files", "*.pdf"));
@@ -94,7 +109,6 @@ public class RecuActiviteController {
                 file = new File(file.getAbsolutePath() + ".pdf");
             }
 
-            // 3) créer pdf avec la taille exacte de l image
             try (PDDocument doc = new PDDocument()) {
                 float width = bufferedImage.getWidth();
                 float height = bufferedImage.getHeight();

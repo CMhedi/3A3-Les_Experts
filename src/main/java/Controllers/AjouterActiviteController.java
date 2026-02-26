@@ -1,3 +1,4 @@
+// ===== AjouterActiviteController.java (COMPLET CORRIGÉ) =====
 package Controllers;
 
 import Services.WeatherService;
@@ -26,7 +27,6 @@ public class AjouterActiviteController {
     private final String USER = "root";
     private final String PASSWORD = "";
 
-    // ===== anti-bot lock =====
     private int wrongAttempts = 0;
     private static final int MAX_ATTEMPTS = 3;
     private static final int LOCK_SECONDS = 30;
@@ -43,7 +43,6 @@ public class AjouterActiviteController {
     @FXML
     private void ajouterActivite() {
 
-        // ===== si bloqué =====
         long now = System.currentTimeMillis();
         if (now < lockUntilMillis) {
             long remain = (lockUntilMillis - now) / 1000;
@@ -51,23 +50,19 @@ public class AjouterActiviteController {
             return;
         }
 
-        // ===== open captcha then run insert =====
         openCaptcha(ok -> {
             if (ok) {
 
                 wrongAttempts = 0;
 
-                // ===== WEATHER CHECK =====
                 WeatherService weatherService = new WeatherService();
                 String weatherMsg;
 
                 try {
                     WeatherService.WeatherData data = weatherService.getCurrentWeather("Tunis");
-
                     weatherMsg = "Météo à " + data.city + " : " +
                             data.description + ", " +
                             String.format("%.1f", data.temp) + "°C";
-
                 } catch (Exception e) {
                     weatherMsg = "⚠️ Erreur météo : " + e.getMessage();
                 }
@@ -78,21 +73,25 @@ public class AjouterActiviteController {
                 weatherAlert.setContentText(weatherMsg);
                 weatherAlert.showAndWait();
 
-                // ===== Ensuite ajout normal =====
                 doAjouterActivite();
             }
         });
     }
 
-    // ===== ton code original (copié inchangé) =====
+    // ✅ CORRIGÉ: on passe generatedId au reçu + setActiviteId(generatedId) + setData avec 7 params corrects
     private void doAjouterActivite() {
 
+        Connection conn = null;
+        PreparedStatement pst = null;
+        ResultSet rs = null;
+
         try {
-            Connection conn = DriverManager.getConnection(URL, USER, PASSWORD);
+            conn = DriverManager.getConnection(URL, USER, PASSWORD);
 
-            String sql = "INSERT INTO activite (nom, type_activite, categorie_act, niveau_act, prix, statut, image_url, id_pack, date_reservation) VALUES (?, ?, ?, ?, ?, ?, ?, NULL, ?)";
+            String sql = "INSERT INTO activite (nom, type_activite, categorie_act, niveau_act, prix, statut, image_url, id_pack, date_reservation) " +
+                    "VALUES (?, ?, ?, ?, ?, ?, ?, NULL, ?)";
 
-            PreparedStatement pst = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);
+            pst = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);
 
             pst.setString(1, nomField.getText());
             pst.setString(2, typeBox.getValue());
@@ -105,25 +104,29 @@ public class AjouterActiviteController {
 
             pst.executeUpdate();
 
-            ResultSet rs = pst.getGeneratedKeys();
+            rs = pst.getGeneratedKeys();
             int generatedId = 0;
-
             if (rs.next()) {
-                generatedId = rs.getInt(1);
+                generatedId = rs.getInt(1); // ✅ ID activité insérée
             }
 
             FXMLLoader loader = new FXMLLoader(getClass().getResource("/GUI/recuActivite.fxml"));
             Parent root = loader.load();
 
             RecuActiviteController controller = loader.getController();
+
+            // ✅ IMPORTANT: injecter l'id activité
+            controller.setActiviteId(generatedId);
+
+            // ✅ IMPORTANT: signature setData correcte (7 paramètres)
             controller.setData(
                     typeBox.getValue(),
                     nomField.getText(),
                     categorieBox.getValue(),
                     niveauBox.getValue(),
                     prixField.getText(),
-                    dateReservation.getValue(),
-                    statutBox.getValue()
+                    dateReservation.getValue(),  // LocalDate
+                    statutBox.getValue()         // String date
             );
 
             Stage stage = new Stage();
@@ -131,15 +134,16 @@ public class AjouterActiviteController {
             stage.setTitle("Reçu Activité");
             stage.show();
 
-            conn.close();
-
         } catch (Exception e) {
             e.printStackTrace();
-            new Alert(Alert.AlertType.ERROR, "Erreur d'ajout").show();
+            new Alert(Alert.AlertType.ERROR, "Erreur d'ajout : " + e.getMessage()).show();
+        } finally {
+            try { if (rs != null) rs.close(); } catch (Exception ignored) {}
+            try { if (pst != null) pst.close(); } catch (Exception ignored) {}
+            try { if (conn != null) conn.close(); } catch (Exception ignored) {}
         }
     }
 
-    // ===== open CAPTCHA popup =====
     private void openCaptcha(Consumer<Boolean> onDone) {
         try {
             FXMLLoader loader = new FXMLLoader(getClass().getResource("/GUI/CaptchaVerification.fxml"));
@@ -174,7 +178,7 @@ public class AjouterActiviteController {
 
         } catch (Exception e) {
             e.printStackTrace();
-            new Alert(Alert.AlertType.ERROR, "Erreur ouverture CAPTCHA").show();
+            new Alert(Alert.AlertType.ERROR, "Erreur ouverture CAPTCHA : " + e.getMessage()).show();
             if (onDone != null) onDone.accept(false);
         }
     }

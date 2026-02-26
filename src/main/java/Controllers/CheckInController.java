@@ -69,7 +69,7 @@ public class CheckInController {
 
             String out =
                     header +
-                            "ID Réservation : " + d.reservationId + "\n" +
+                          /*  "ID Réservation : " + d.reservationId + "\n" +*/
                             "Statut : " + safe(d.statut) + "\n" +
                             "User : " + d.userId + "\n" +
                             "Activité : " + safe(d.activiteNom) + " (ID " + d.activiteId + ")\n" +

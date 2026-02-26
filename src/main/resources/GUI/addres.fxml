@@ -12,21 +12,18 @@
 
     <children>
 
-        <!-- Center wrapper -->
         <StackPane AnchorPane.topAnchor="0"
                    AnchorPane.bottomAnchor="0"
                    AnchorPane.leftAnchor="0"
                    AnchorPane.rightAnchor="0"
                    styleClass="page-wrap">
 
-            <!-- Card -->
             <VBox spacing="16" styleClass="form-card">
 
                 <padding>
                     <Insets top="26" right="26" bottom="22" left="26"/>
                 </padding>
 
-                <!-- Header -->
                 <VBox spacing="6" styleClass="header-wrap">
                     <HBox spacing="10" styleClass="title-row">
                         <Label text="⦿" styleClass="title-icon"/>
@@ -39,12 +36,11 @@
                     <Line styleClass="divider-line"/>
                 </VBox>
 
-                <!-- Form content -->
                 <VBox spacing="12" styleClass="form-wrap">
 
                     <VBox spacing="6" styleClass="field">
                         <Label text="Statut" styleClass="form-label"/>
-                        <ComboBox fx:id="statutRes" prefWidth="420" styleClass="combo"/>
+                        <ComboBox fx:id="statutRes" prefWidth="420" maxWidth="1.7976931348623157E308" styleClass="combo"/>
                     </VBox>
 
                     <VBox spacing="6" styleClass="field">
@@ -52,21 +48,13 @@
                         <TextField fx:id="nbPersonnes" promptText="Ex: 3" styleClass="input"/>
                     </VBox>
 
-                    <HBox spacing="12">
-                        <VBox spacing="6" HBox.hgrow="ALWAYS" styleClass="field">
-                            <Label text="Votre Compte" styleClass="form-label"/>
-                            <TextField fx:id="idUser" promptText="ID user" styleClass="input"/>
-                        </VBox>
-
-                        <VBox spacing="6" HBox.hgrow="ALWAYS" styleClass="field">
-                            <Label text="Numéro de l'Activité" styleClass="form-label"/>
-                            <TextField fx:id="idActivite" promptText="ID activité" styleClass="input"/>
-                        </VBox>
-                    </HBox>
+                    <VBox spacing="6" styleClass="field">
+                        <Label text="Votre Compte" styleClass="form-label"/>
+                        <TextField fx:id="idUser" promptText="ID user" styleClass="input"/>
+                    </VBox>
 
                 </VBox>
 
-                <!-- Buttons -->
                 <HBox spacing="12" styleClass="btn-row">
                     <Region HBox.hgrow="ALWAYS"/>
                     <Button text="↩ Retourner"

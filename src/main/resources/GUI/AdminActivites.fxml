@@ -44,7 +44,7 @@
                 <Insets top="18" right="18" bottom="18" left="18"/>
             </padding>
 
-            <!-- KPI CARDS (optionnel visuel) -->
+            <!-- KPI CARDS -->
             <HBox spacing="18" alignment="CENTER" styleClass="kpi-row">
                 <VBox alignment="CENTER" spacing="6" styleClass="kpi-card">
                     <Label text="Total Activités" styleClass="kpi-label"/>
@@ -67,15 +67,19 @@
                 <Label text="Mes Activités" styleClass="section-title"/>
 
                 <TableView fx:id="tableActivites" VBox.vgrow="ALWAYS" styleClass="modern-table">
+                    <columnResizePolicy>
+                        <TableView fx:constant="CONSTRAINED_RESIZE_POLICY"/>
+                    </columnResizePolicy>
+
                     <columns>
-                        <TableColumn fx:id="colDate" text="Date" prefWidth="130"/>
+                        <TableColumn fx:id="colDate" text="Date" prefWidth="120"/>
                         <TableColumn fx:id="colNom" text="Nom" prefWidth="150"/>
                         <TableColumn fx:id="colType" text="Type" prefWidth="130"/>
                         <TableColumn fx:id="colCategorie" text="Catégorie" prefWidth="140"/>
-                        <TableColumn fx:id="colNiveau" text="Niveau" prefWidth="120"/>
-                        <TableColumn fx:id="colStatut" text="Statut" prefWidth="120"/>
+                        <TableColumn fx:id="colNiveau" text="Niveau" prefWidth="110"/>
+                        <TableColumn fx:id="colStatut" text="Statut" prefWidth="110"/>
                         <TableColumn fx:id="colPrix" text="Prix" prefWidth="90"/>
-                        <TableColumn fx:id="colImage" text="Image URL" prefWidth="220"/>
+                        <TableColumn fx:id="colImage" text="Image URL" prefWidth="230"/>
                     </columns>
                 </TableView>
 
@@ -84,7 +88,6 @@
                     <Button text="Supprimer" styleClass="btn-danger" onAction="#supprimerActivite"/>
                     <Button text="Statistique" styleClass="btn-secondary" onAction="#openstat"/>
                 </HBox>
-
             </VBox>
 
         </VBox>

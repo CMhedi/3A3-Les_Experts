@@ -1,3 +1,4 @@
+// ===== 2) AjouterReservationController.java (COMPLET) =====
 package Controllers;
 
 import javafx.animation.PauseTransition;
@@ -19,57 +20,91 @@ public class AjouterReservationController {
     @FXML private ComboBox<String> statutRes;
     @FXML private TextField nbPersonnes;
     @FXML private TextField idUser;
-    @FXML private TextField idActivite;
     @FXML private Button btnAjouter;
     @FXML private Button btnAnnuler;
 
-    // cnx de bd
     private final String URL = "jdbc:mysql://localhost:3306/ecoadventure?useSSL=false&serverTimezone=UTC";
     private final String USER = "root";
     private final String PASSWORD = "";
 
-    // ===== Anti-bot settings =====
     private int wrongAttempts = 0;
     private static final int MAX_ATTEMPTS = 3;
     private static final int LOCK_SECONDS = 30;
 
+    // ✅ ID activité caché (obligatoire)
+    private int activiteId = 0;
+
+    public void setActiviteId(int activiteId) {
+        this.activiteId = activiteId;
+    }
+
     @FXML
     public void initialize() {
+        statutRes.getItems().clear();
         statutRes.getItems().addAll("Confirmée", "EN_ATTENTE", "Annulée");
     }
 
-    // ✅ Branche ce handler sur ton bouton Ajouter (onAction="#ajouterReservation")
     @FXML
-    private void ajouterReservation() {
-        // 1) Vérifier champs minimum (tu avais commenté, je garde soft)
-        String statut = statutRes.getValue();
-        String nb = nbPersonnes.getText();
-        String userId = idUser.getText();
-        String activiteId = idActivite.getText();
+    private void ajouterReservation(ActionEvent event) {
 
-        if (statut == null || nb == null || nb.isBlank() || userId == null || userId.isBlank() || activiteId == null || activiteId.isBlank()) {
+        // ✅ BLOQUER si ID activité n’a pas été injecté
+        if (activiteId <= 0) {
+            new Alert(Alert.AlertType.ERROR, "ID activité manquant (setActiviteId non appelé).", ButtonType.OK).showAndWait();
+            return;
+        }
+
+        String statut = statutRes.getValue();
+        String nbTxt = nbPersonnes.getText();
+        String userTxt = idUser.getText();
+
+        if (statut == null || nbTxt == null || nbTxt.isBlank() || userTxt == null || userTxt.isBlank()) {
             new Alert(Alert.AlertType.WARNING, "Veuillez remplir tous les champs !", ButtonType.OK).showAndWait();
             return;
         }
 
-        // 2) Vérif nombres
-        int nbPers, idUserInt, idActiviteInt;
+        int nbPers, idUserInt;
         try {
-            nbPers = Integer.parseInt(nb.trim());
-            idUserInt = Integer.parseInt(userId.trim());
-            idActiviteInt = Integer.parseInt(activiteId.trim());
+            nbPers = Integer.parseInt(nbTxt.trim());
+            idUserInt = Integer.parseInt(userTxt.trim());
         } catch (NumberFormatException e) {
+            new Alert(Alert.AlertType.ERROR, "Veuillez entrer des nombres valides !", ButtonType.OK).showAndWait();
+            return;
+        }
+
+        if (nbPers <= 0) {
+            new Alert(Alert.AlertType.WARNING, "Le nombre de personnes doit être > 0.", ButtonType.OK).showAndWait();
+            return;
+        }
+
+        if (btnAjouter.isDisabled()) return;
+
+        // ✅ éviter l'erreur FK
+        if (!userExists(idUserInt)) {
             new Alert(Alert.AlertType.ERROR,
-                    "Veuillez entrer des nombres valides pour le nombre de personnes, l'ID utilisateur et l'ID activité !",
+                    "ID user inexistant dans user_app.\n" +
+                            "Ajoute cet user dans la table user_app ou mets un ID valide.",
                     ButtonType.OK).showAndWait();
             return;
         }
 
-        // 3) Si déjà bloqué -> ignore
-        if (btnAjouter.isDisabled()) return;
+        openVerificationThenInsert(statut, nbPers, idUserInt, activiteId);
+    }
 
-        // 4) Ouvrir vérification anti-bot avant insert
-        openVerificationThenInsert(statut, nbPers, idUserInt, idActiviteInt);
+    private boolean userExists(int idUserInt) {
+        String sql = "SELECT 1 FROM user_app WHERE id_user = ? LIMIT 1";
+        try (Connection conn = DriverManager.getConnection(URL, USER, PASSWORD);
+             PreparedStatement ps = conn.prepareStatement(sql)) {
+
+            ps.setInt(1, idUserInt);
+
+            try (ResultSet rs = ps.executeQuery()) {
+                return rs.next();
+            }
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return false;
+        }
     }
 
     private void openVerificationThenInsert(String statut, int nbPers, int idUserInt, int idActiviteInt) {
@@ -79,10 +114,8 @@ public class AjouterReservationController {
 
             VerificationController vc = loader.getController();
 
-            // ✅ à chaque erreur captcha
             vc.setOnWrongAttempt(() -> {
                 wrongAttempts++;
-
                 if (wrongAttempts >= MAX_ATTEMPTS) {
                     lockAdding();
                 } else {
@@ -93,13 +126,9 @@ public class AjouterReservationController {
                 }
             });
 
-            // ✅ si validé
             vc.setOnResult(ok -> {
                 if (ok) {
-                    // reset compteur après succès
                     wrongAttempts = 0;
-
-                    // insert + reçu
                     insertReservationAndShowReceipt(statut, nbPers, idUserInt, idActiviteInt);
                 }
             });
@@ -156,13 +185,7 @@ public class AjouterReservationController {
                     Parent root = loader.load();
 
                     RecuReservationController controller = loader.getController();
-                    controller.setData(
-                            generatedId,
-                            statut,
-                            nbPers,
-                            idUserInt,
-                            idActiviteInt
-                    );
+                    controller.setData(generatedId, statut, nbPers, idUserInt, idActiviteInt);
 
                     Stage stage = new Stage();
                     stage.setScene(new Scene(root));
@@ -184,10 +207,9 @@ public class AjouterReservationController {
 
     @FXML
     private void annuler() {
-        statutRes.setValue(null);
-        nbPersonnes.clear();
-        idUser.clear();
-        idActivite.clear();
+        if (statutRes != null) statutRes.setValue(null);
+        if (nbPersonnes != null) nbPersonnes.clear();
+        if (idUser != null) idUser.clear();
     }
 
     @FXML
