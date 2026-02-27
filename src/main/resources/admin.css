@@ -1497,3 +1497,18 @@
 .presence-root {
     -fx-background-color: #f4f6f9;
 }
+/* Supprime uniquement le coin vide à droite */
+.table-view .filler {
+    -fx-background-color: transparent;
+    -fx-border-color: transparent;
+}
+
+/* Supprime les coins arrondis du header */
+.table-view .column-header-background {
+    -fx-background-radius: 0;
+}
+.card {
+    -fx-background-color: white;
+    -fx-background-radius: 20;
+    -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.08), 15, 0, 0, 5);
+}

@@ -1,30 +1,38 @@
 package GUI;
 
 import Entities.Planning;
-import GUI.utils.DialogUtils;
+import Entities.Session;
+import Entities.UserApp;
 import Services.interfaces.PlanningService;
+import enums.RoleUser;
+import enums.StatutPlanning;
 import exceptions.ValidationException;
+import GUI.utils.DialogUtils;
 
+import javafx.collections.FXCollections;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
 import javafx.stage.Stage;
-import Entities.Session;
-import Entities.UserApp;
-import enums.RoleUser;
+
+import java.time.LocalDate;
+
 public class PlanningFormController {
 
     // ================= UI =================
     @FXML private Label titleLabel;
-    @FXML private TextField periodeField;
+    @FXML private TextField titreField;
+    @FXML private DatePicker dateDebutPicker;
+    @FXML private DatePicker dateFinPicker;
+    @FXML private ComboBox<StatutPlanning> statutCombo;
     @FXML private TextArea descriptionField;
     @FXML private Label errorLabel;
 
     // ================= SERVICE =================
-    private final PlanningService planningService =
-            new PlanningService();
+    private final PlanningService planningService = new PlanningService();
 
     private Planning planning;
     private UserApp connectedUser;
+
     // =================================================
     // INITIALIZATION
     // =================================================
@@ -33,22 +41,14 @@ public class PlanningFormController {
 
         errorLabel.setVisible(false);
 
+        statutCombo.setItems(
+                FXCollections.observableArrayList(StatutPlanning.values())
+        );
+
         connectedUser = Session.getConnectedUser();
 
-        if (connectedUser == null) {
-            DialogUtils.showError(
-                    "Erreur",
-                    "Utilisateur non connecté."
-            );
-            closeWindow();
-            return;
-        }
-
-        if (connectedUser.getRole() != RoleUser.ADMIN) {
-            DialogUtils.showError(
-                    "Accès refusé",
-                    "Cette page est réservée aux administrateurs."
-            );
+        if (connectedUser == null || connectedUser.getRole() != RoleUser.ADMIN) {
+            DialogUtils.showError("Erreur", "Accès refusé.");
             closeWindow();
         }
     }
@@ -64,7 +64,11 @@ public class PlanningFormController {
             titleLabel.setText("Ajouter un Planning");
         } else {
             titleLabel.setText("Modifier le Planning");
-            periodeField.setText(p.getPeriode());
+
+            titreField.setText(p.getTitre());
+            dateDebutPicker.setValue(p.getDateDebut());
+            dateFinPicker.setValue(p.getDateFin());
+            statutCombo.setValue(p.getStatut());
             descriptionField.setText(p.getDescription());
         }
     }
@@ -79,38 +83,49 @@ public class PlanningFormController {
 
         try {
 
+            validateFields();
+
             populatePlanningFromFields();
 
             if (planning.getIdPlanning() == 0) {
                 planningService.add(planning);
-
-                DialogUtils.showInfo(
-                        "Succès",
-                        "Planning ajouté avec succès."
-                );
-            }
-            else {
+                DialogUtils.showInfo("Succès", "Planning ajouté avec succès.");
+            } else {
                 planningService.update(planning);
-
-                DialogUtils.showInfo(
-                        "Succès",
-                        "Planning modifié avec succès."
-                );
+                DialogUtils.showInfo("Succès", "Planning modifié avec succès.");
             }
 
             closeWindow();
-        }
-        catch (ValidationException e) {
 
+        } catch (ValidationException e) {
             showValidationError(e.getMessage());
+        } catch (Exception e) {
+            DialogUtils.showError("Erreur", e.getMessage());
         }
-        catch (Exception e) {
+    }
 
-            DialogUtils.showError(
-                    "Erreur",
-                    "Une erreur interne est survenue."
-            );
-        }
+    // =================================================
+    // VALIDATION MÉTIER RÉELLE
+    // =================================================
+    private void validateFields() {
+
+        if (titreField.getText().isBlank())
+            throw new ValidationException("Le titre est obligatoire.");
+
+        if (dateDebutPicker.getValue() == null)
+            throw new ValidationException("La date de début est obligatoire.");
+
+        if (dateFinPicker.getValue() == null)
+            throw new ValidationException("La date de fin est obligatoire.");
+
+        if (dateFinPicker.getValue().isBefore(dateDebutPicker.getValue()))
+            throw new ValidationException("La date de fin doit être après la date de début.");
+
+        if (statutCombo.getValue() == null)
+            throw new ValidationException("Veuillez sélectionner un statut.");
+
+        if (descriptionField.getText().isBlank())
+            throw new ValidationException("La description est obligatoire.");
     }
 
     // =================================================
@@ -118,44 +133,23 @@ public class PlanningFormController {
     // =================================================
     private void populatePlanningFromFields() {
 
-        planning.setPeriode(
-                periodeField.getText().trim());
-
-        planning.setDescription(
-                descriptionField.getText().trim());
+        planning.setTitre(titreField.getText().trim());
+        planning.setDateDebut(dateDebutPicker.getValue());
+        planning.setDateFin(dateFinPicker.getValue());
+        planning.setStatut(statutCombo.getValue());
+        planning.setDescription(descriptionField.getText().trim());
     }
 
     // =================================================
-    // VALIDATION UI
+    // UI ERROR HANDLING
     // =================================================
     private void showValidationError(String message) {
-
         errorLabel.setText(message);
         errorLabel.setVisible(true);
-
-        if (periodeField.getText().isBlank()) {
-            addErrorStyle(periodeField);
-        }
-
-        if (descriptionField.getText().isBlank()) {
-            addErrorStyle(descriptionField);
-        }
     }
 
     private void clearValidationUI() {
-
         errorLabel.setVisible(false);
-
-        removeErrorStyle(periodeField);
-        removeErrorStyle(descriptionField);
-    }
-
-    private void addErrorStyle(Control field) {
-        field.getStyleClass().add("field-error");
-    }
-
-    private void removeErrorStyle(Control field) {
-        field.getStyleClass().remove("field-error");
     }
 
     // =================================================
@@ -166,7 +160,7 @@ public class PlanningFormController {
 
         if (DialogUtils.showConfirmation(
                 "Annuler",
-                "Voulez-vous fermer sans enregistrer ?"
+                "Fermer sans enregistrer ?"
         )) {
             closeWindow();
         }
@@ -176,10 +170,7 @@ public class PlanningFormController {
     // CLOSE WINDOW
     // =================================================
     private void closeWindow() {
-
-        Stage stage =
-                (Stage) periodeField.getScene().getWindow();
-
+        Stage stage = (Stage) titreField.getScene().getWindow();
         stage.close();
     }
 }

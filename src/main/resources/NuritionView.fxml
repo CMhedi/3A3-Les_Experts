@@ -2,12 +2,14 @@
 
 <?import javafx.scene.layout.*?>
 <?import javafx.scene.control.*?>
+<?import javafx.geometry.Insets?>
 
 <ScrollPane fitToWidth="true"
             xmlns="http://javafx.com/javafx/17"
             xmlns:fx="http://javafx.com/fxml/1"
             fx:controller="GUI.NutritionController"
-            stylesheets="@nutrition.css">
+            stylesheets="@nutrition.css"
+            styleClass="scroll-pane">
 
     <VBox spacing="30"
           alignment="TOP_CENTER"
@@ -15,7 +17,7 @@
 
         <!-- ===== HEADER ===== -->
         <HBox alignment="CENTER_LEFT"
-              maxWidth="600"
+              maxWidth="700"
               spacing="10">
 
             <Button text="← Retour"
@@ -32,13 +34,14 @@
         <!-- ========================================== -->
 
         <VBox spacing="20"
-              maxWidth="600"
-              styleClass="card">
+              maxWidth="700"
+              styleClass="card"
+              VBox.vgrow="NEVER">
 
             <Label text="Analyse Alimentaire"
                    styleClass="section-title"/>
 
-            <Separator opacity="0.3"/>
+            <Separator styleClass="separator" opacity="0.5"/>
 
             <TextField fx:id="txtIngredient"
                        promptText="Ex: 200g chicken breast ou 1 apple"
@@ -47,15 +50,15 @@
             <HBox spacing="12"
                   alignment="CENTER_LEFT">
 
-                <Button text="Analyser"
+                <Button text="📊 Analyser"
                         onAction="#handleAnalyzeFood"
                         styleClass="primary-btn"/>
 
-                <Button text="Ajouter au journal"
+                <Button text="✅ Ajouter au journal"
                         onAction="#handleSaveToJournal"
                         styleClass="success-btn"/>
 
-                <Button text="Total aujourd'hui"
+                <Button text="📅 Total aujourd'hui"
                         onAction="#handleTodayTotal"
                         styleClass="secondary-btn"/>
             </HBox>
@@ -67,13 +70,14 @@
         <!-- ========================================== -->
 
         <VBox spacing="20"
-              maxWidth="600"
-              styleClass="card">
+              maxWidth="700"
+              styleClass="card"
+              VBox.vgrow="NEVER">
 
             <Label text="Calcul IMC"
                    styleClass="section-title"/>
 
-            <Separator opacity="0.3"/>
+            <Separator styleClass="separator" opacity="0.5"/>
 
             <HBox spacing="12"
                   alignment="CENTER_LEFT">
@@ -88,17 +92,19 @@
                            HBox.hgrow="ALWAYS"
                            styleClass="text-field"/>
 
-                <Button text="Calculer"
+                <Button text="🧮 Calculer"
                         onAction="#handleIMC"
                         styleClass="primary-btn"/>
             </HBox>
 
-            <Label fx:id="lblIMC"
-                   styleClass="imc-result"/>
+            <VBox spacing="8">
+                <Label fx:id="lblIMC"
+                       styleClass="imc-result"/>
 
-            <Label fx:id="lblIMCRemark"
-                   wrapText="true"
-                   styleClass="imc-remark"/>
+                <Label fx:id="lblIMCRemark"
+                       wrapText="true"
+                       styleClass="imc-remark"/>
+            </VBox>
 
         </VBox>
 
@@ -107,45 +113,65 @@
         <!-- ========================================== -->
 
         <VBox spacing="25"
-              maxWidth="600"
-              styleClass="card">
+              maxWidth="700"
+              styleClass="card"
+              VBox.vgrow="ALWAYS">
 
-            <Label text="Résultat"
+            <Label text="Résultat Analysé"
                    styleClass="section-title"/>
 
-            <Separator opacity="0.3"/>
+            <Separator styleClass="separator" opacity="0.5"/>
 
-            <VBox spacing="20" alignment="CENTER">
+            <VBox spacing="25"
+                  alignment="TOP_CENTER"
+                  styleClass="result-container">
 
-                <!-- Calories -->
-                <Label fx:id="lblCalories"
-                       text="0 kcal"
-                       styleClass="result-calories"/>
+                <!-- Calories Display -->
+                <VBox alignment="CENTER" spacing="8">
+                    <Label fx:id="lblCalories"
+                           text="0 kcal"
+                           styleClass="result-calories"/>
+                    <Label text="Calories"
+                           styleClass="subtitle"/>
+                </VBox>
 
-                <!-- Macros -->
-                <HBox spacing="30" alignment="CENTER">
+                <!-- Macros Grid -->
+                <HBox spacing="20"
+                      alignment="CENTER"
+                      styleClass="macro-container">
 
                     <!-- Protéines -->
-                    <VBox alignment="CENTER" spacing="5" styleClass="macro-card protein-card">
-                        <Label fx:id="lblProteins" text="0 g" styleClass="macro-value"/>
-                        <Label text="Protéines" styleClass="macro-title"/>
+                    <VBox alignment="CENTER" spacing="8" styleClass="macro-card protein-card">
+                        <Label fx:id="lblProteins"
+                               text="0 g"
+                               styleClass="macro-value"/>
+                        <Label text="PROTÉINES"
+                               styleClass="macro-title"/>
                     </VBox>
 
                     <!-- Lipides -->
-                    <VBox alignment="CENTER" spacing="5" styleClass="macro-card fat-card">
-                        <Label fx:id="lblFats" text="0 g" styleClass="macro-value"/>
-                        <Label text="Lipides" styleClass="macro-title"/>
+                    <VBox alignment="CENTER" spacing="8" styleClass="macro-card fat-card">
+                        <Label fx:id="lblFats"
+                               text="0 g"
+                               styleClass="macro-value"/>
+                        <Label text="LIPIDES"
+                               styleClass="macro-title"/>
                     </VBox>
 
                     <!-- Glucides -->
-                    <VBox alignment="CENTER" spacing="5" styleClass="macro-card carb-card">
-                        <Label fx:id="lblCarbs" text="0 g" styleClass="macro-value"/>
-                        <Label text="Glucides" styleClass="macro-title"/>
+                    <VBox alignment="CENTER" spacing="8" styleClass="macro-card carb-card">
+                        <Label fx:id="lblCarbs"
+                               text="0 g"
+                               styleClass="macro-value"/>
+                        <Label text="GLUCIDES"
+                               styleClass="macro-title"/>
                     </VBox>
 
                 </HBox>
 
+                <!-- Message -->
                 <Label fx:id="lblMessage"
+                       wrapText="true"
                        styleClass="result-message"/>
 
             </VBox>
@@ -153,7 +179,7 @@
         </VBox>
 
         <!-- Spacer bottom -->
-        <Region prefHeight="20"/>
+        <Region prefHeight="30"/>
 
     </VBox>
 

@@ -235,3 +235,81 @@
 .presence-container {
     -fx-padding: 30;
 }
+/* =====================================================
+   BLACKBOARD ULTRA STYLE UPGRADE
+===================================================== */
+
+/* Table comme une vraie card */
+.presence-table {
+    -fx-background-color: white;
+    -fx-background-radius: 18;
+    -fx-border-radius: 18;
+    -fx-border-color: #e2e8f0;
+    -fx-border-width: 1;
+}
+
+/* Header plus premium */
+.presence-header {
+    -fx-background-color: linear-gradient(to right, #1F4D36, #163d2a);
+}
+
+/* Nom plus fort */
+.user-name {
+    -fx-font-weight: bold;
+    -fx-text-fill: #111827;
+    -fx-font-size: 13px;
+}
+
+/* Email discret */
+.user-email {
+    -fx-text-fill: #6b7280;
+    -fx-font-size: 11px;
+}
+
+/* Avatar circulaire pro */
+.avatar-image {
+    -fx-background-radius: 50%;
+    -fx-border-radius: 50%;
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.15), 8, 0.3, 0, 2);
+}
+
+/* Effet hover plus moderne */
+.table-row-cell:hover {
+    -fx-background-color: #f3f4f6;
+    -fx-cursor: hand;
+}
+
+/* Sélection plus Blackboard */
+.table-row-cell:selected {
+    -fx-background-color: #e6f4ea;
+}
+.status-badge {
+    -fx-padding: 5 16;
+    -fx-background-radius: 30;
+    -fx-font-size: 11px;
+    -fx-font-weight: bold;
+    -fx-letter-spacing: 0.5px;
+}
+
+/* PRESENT */
+.badge-present {
+    -fx-background-color: #dcfce7;
+    -fx-text-fill: #16a34a;
+}
+
+/* ABSENT */
+.badge-absent {
+    -fx-background-color: #fee2e2;
+    -fx-text-fill: #dc2626;
+}
+
+/* NEUTRAL */
+.badge-neutral {
+    -fx-background-color: #e2e8f0;
+    -fx-text-fill: #475569;
+}
+.progress-bar {
+    -fx-accent: #1F4D36;
+    -fx-background-color: #e5e7eb;
+    -fx-background-radius: 20;
+}

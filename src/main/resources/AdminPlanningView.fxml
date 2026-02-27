@@ -22,7 +22,6 @@
               spacing="18"
               alignment="TOP_LEFT">
 
-            <!-- LOGO -->
             <HBox spacing="4" alignment="CENTER_LEFT">
                 <Label text="Eco" styleClass="logo"/>
                 <Label text="Adventure" styleClass="logo-accent"/>
@@ -30,9 +29,7 @@
 
             <Separator styleClass="sidebar-separator"/>
 
-            <!-- MENU -->
             <Button styleClass="menu-btn"
-                    defaultButton="false"
                     onAction="#handleRetour"
                     maxWidth="Infinity">
                 <graphic>
@@ -42,8 +39,6 @@
                 </graphic>
                 <text>Retour Menu</text>
             </Button>
-
-
 
         </VBox>
     </left>
@@ -76,115 +71,222 @@
 
     <!-- ================= CENTER CONTENT ================= -->
     <center>
-        <VBox spacing="25"
-              alignment="TOP_CENTER"
-              style="-fx-padding:30;">
 
-            <!-- ===== STATS ===== -->
-            <HBox spacing="20" alignment="CENTER">
+        <ScrollPane fitToWidth="true"
+                    VBox.vgrow="ALWAYS"
+                    style="-fx-background-color:transparent;">
 
-                <VBox styleClass="stat-card"
-                      alignment="CENTER"
-                      spacing="6">
+            <VBox spacing="30"
+                  alignment="TOP_CENTER"
+                  maxWidth="Infinity"
+                  style="-fx-padding:30;">
 
-                    <FontAwesomeIconView glyphName="CALENDAR"
-                                         size="18"
-                                         fill="#f28c00"/>
+                <!-- ================= DASHBOARD STATS ================= -->
+                <!-- ===== DASHBOARD STATS ===== -->
+                <StackPane maxWidth="Infinity">
 
-                    <Label text="Total Plannings"
-                           styleClass="stat-title"/>
+                    <HBox spacing="30"
+                          alignment="CENTER">
 
-                    <Label fx:id="lblTotalPlanning"
-                           text="0"
-                           styleClass="stat-value"/>
+                        <VBox styleClass="stat-card" alignment="CENTER" spacing="6">
+                            <Label text="Total"/>
+                            <Label fx:id="lblTotalPlanning"
+                                   text="0"
+                                   styleClass="stat-value"/>
+                        </VBox>
+
+                        <VBox styleClass="stat-card" alignment="CENTER" spacing="6">
+                            <Label text="Actifs"/>
+                            <Label fx:id="lblActifs"
+                                   text="0"
+                                   styleClass="stat-value"/>
+                        </VBox>
+
+                        <VBox styleClass="stat-card" alignment="CENTER" spacing="6">
+                            <Label text="Brouillons"/>
+                            <Label fx:id="lblBrouillons"
+                                   text="0"
+                                   styleClass="stat-value"/>
+                        </VBox>
+
+                        <VBox styleClass="stat-card" alignment="CENTER" spacing="6">
+                            <Label text="Archives"/>
+                            <Label fx:id="lblArchives"
+                                   text="0"
+                                   styleClass="stat-value"/>
+                        </VBox>
+
+                    </HBox>
+
+                </StackPane>
+
+                <!-- ================= RECOMMENDATION CARD ================= -->
+                <VBox styleClass="card"
+                      spacing="25"
+                      alignment="TOP_LEFT"
+                      maxWidth="Infinity"
+                      style="-fx-padding:30;">
+
+                    <Label text="📊 Recommandations automatiques"
+                           style="-fx-font-weight:bold; -fx-font-size:20;" />
+
+                    <Separator/>
+
+                    <HBox spacing="60"
+                          alignment="TOP_LEFT"
+                          maxWidth="Infinity"
+                          HBox.hgrow="ALWAYS">
+
+                        <!-- LEFT COLUMN -->
+                        <VBox spacing="20"
+                              HBox.hgrow="ALWAYS"
+                              maxWidth="Infinity">
+
+                            <VBox spacing="6">
+                                <Label text="🔥 Créneau le plus performant"
+                                       style="-fx-font-weight:bold; -fx-text-fill:#1f4d36;" />
+                                <Label fx:id="lblRecommendationDay"
+                                       wrapText="true"
+                                       maxWidth="Infinity"/>
+                            </VBox>
+
+                            <VBox spacing="6">
+                                <Label text="👨‍🏫 Coach le plus performant"
+                                       style="-fx-font-weight:bold; -fx-text-fill:#1f4d36;" />
+                                <Label fx:id="lblRecommendationCoach"
+                                       wrapText="true"
+                                       maxWidth="Infinity"/>
+                            </VBox>
+
+                            <VBox spacing="6">
+                                <Label text="📈 Mois le plus performant"
+                                       style="-fx-font-weight:bold; -fx-text-fill:#1f4d36;" />
+                                <Label fx:id="lblRecommendationMonth"
+                                       wrapText="true"
+                                       maxWidth="Infinity"/>
+                            </VBox>
+
+                        </VBox>
+
+                        <!-- RIGHT COLUMN -->
+                        <VBox spacing="15"
+                              prefWidth="280"
+                              minWidth="280"
+                              maxWidth="280"
+                              style="-fx-background-color:#f8f9fa;
+                     -fx-padding:20;
+                     -fx-background-radius:18;">
+
+                            <Label text="🏆 Top 3 Coachs"
+                                   style="-fx-font-weight:bold; -fx-font-size:16;" />
+
+                            <Separator/>
+
+                            <Label fx:id="lblTopCoach1" wrapText="true"/>
+                            <Label fx:id="lblTopCoach2" wrapText="true"/>
+                            <Label fx:id="lblTopCoach3" wrapText="true"/>
+
+                        </VBox>
+
+                    </HBox>
+
                 </VBox>
 
-            </HBox>
+                <!-- ================= TABLE CARD ================= -->
+                <VBox styleClass="card"
+                      spacing="20"
+                      maxWidth="Infinity"
+                      VBox.vgrow="ALWAYS">
 
+                    <!-- SEARCH + FILTERS -->
+                    <HBox spacing="15" alignment="CENTER_LEFT">
 
-            <!-- ===== TABLE CARD ===== -->
-            <VBox styleClass="card"
-                  spacing="20"
-                  prefWidth="900"
-                  VBox.vgrow="ALWAYS">
+                        <FontAwesomeIconView glyphName="SEARCH"
+                                             size="14"
+                                             fill="#1f4d36"/>
 
-                <!-- ===== SEARCH BAR ===== -->
-                <HBox spacing="10" alignment="CENTER_LEFT">
+                        <TextField fx:id="searchField"
+                                   promptText="Rechercher..."
+                                   HBox.hgrow="ALWAYS"
+                                   styleClass="search-field"/>
 
-                    <FontAwesomeIconView glyphName="SEARCH"
-                                         size="14"
-                                         fill="#1f4d36"/>
+                        <ComboBox fx:id="yearFilter"
+                                  promptText="Filtrer par année"/>
 
-                    <TextField fx:id="searchField"
-                               promptText="Rechercher par période ou description..."
-                               HBox.hgrow="ALWAYS"
-                               styleClass="search-field"/>
-                </HBox>
+                        <ComboBox fx:id="statutFilter"
+                                  promptText="Filtrer par statut"/>
 
+                    </HBox>
 
-                <TableView fx:id="planningTable"
-                           VBox.vgrow="ALWAYS">
+                    <!-- TABLE -->
+                    <TableView fx:id="planningTable"
+                               VBox.vgrow="ALWAYS">
 
-                    <columns>
-                        <TableColumn fx:id="colPeriode"
-                                     text="Période"/>
-                        <TableColumn fx:id="colDescription"
-                                     text="Description"/>
-                    </columns>
-                </TableView>
+                        <columns>
 
-                <!-- ===== ACTION BUTTONS ===== -->
-                <HBox spacing="18"
-                      alignment="CENTER">
+                            <TableColumn fx:id="colPeriode"
+                                         text="Nom du Planning"
+                                         prefWidth="150"/>
 
-                    <Button fx:id="btnAjouter"
-                            styleClass="btn-primary"
-                            onAction="#handleAdd">
-                        <graphic>
-                            <FontAwesomeIconView glyphName="PLUS"
-                                                 size="11"
-                                                 fill="WHITE"/>
-                        </graphic>
-                        <text>Ajouter</text>
-                    </Button>
+                            <TableColumn fx:id="colDateDebut"
+                                         text="Date Début"
+                                         prefWidth="140"/>
 
-                    <Button fx:id="btnModifier"
-                            styleClass="btn-secondary"
-                            onAction="#handleUpdate">
-                        <graphic>
-                            <FontAwesomeIconView glyphName="PENCIL"
-                                                 size="11"
-                                                 fill="WHITE"/>
-                        </graphic>
-                        <text>Modifier</text>
-                    </Button>
+                            <TableColumn fx:id="colDateFin"
+                                         text="Date Fin"
+                                         prefWidth="140"/>
 
-                    <Button fx:id="btnSupprimer"
-                            styleClass="btn-danger"
-                            onAction="#handleDelete">
-                        <graphic>
-                            <FontAwesomeIconView glyphName="TRASH"
-                                                 size="11"
-                                                 fill="WHITE"/>
-                        </graphic>
-                        <text>Supprimer</text>
-                    </Button>
+                            <TableColumn fx:id="colDuree"
+                                         text="Durée (jours)"
+                                         prefWidth="120"/>
 
-                    <Button styleClass="btn-primary"
-                            onAction="#handleSeances">
-                        <graphic>
-                            <FontAwesomeIconView glyphName="CLOCK_ALT"
-                                                 size="11"
-                                                 fill="WHITE"/>
-                        </graphic>
-                        <text>Gérer Séances</text>
-                    </Button>
+                            <TableColumn fx:id="colDescription"
+                                         text="Description"
+                                         prefWidth="300"/>
 
-                </HBox>
+                            <TableColumn fx:id="colStatut"
+                                         text="Statut"
+                                         prefWidth="120"/>
+
+                        </columns>
+
+                    </TableView>
+
+                    <!-- ACTION BUTTONS -->
+                    <HBox spacing="18"
+                          alignment="CENTER">
+
+                        <Button fx:id="btnAjouter"
+                                styleClass="btn-primary"
+                                onAction="#handleAdd">
+                            <text>Ajouter</text>
+                        </Button>
+
+                        <Button fx:id="btnModifier"
+                                styleClass="btn-secondary"
+                                onAction="#handleUpdate">
+                            <text>Modifier</text>
+                        </Button>
+
+                        <Button fx:id="btnSupprimer"
+                                styleClass="btn-danger"
+                                onAction="#handleDelete">
+                            <text>Supprimer</text>
+                        </Button>
+
+                        <Button styleClass="btn-primary"
+                                onAction="#handleSeances">
+                            <text>Gérer Séances</text>
+                        </Button>
+
+                    </HBox>
+
+                </VBox>
 
             </VBox>
 
-        </VBox>
+        </ScrollPane>
+
     </center>
 
 </BorderPane>
