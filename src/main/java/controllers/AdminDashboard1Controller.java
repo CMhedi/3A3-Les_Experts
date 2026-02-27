@@ -26,7 +26,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
-public class AdminDashboardController {
+public class AdminDashboard1Controller {
 
     @FXML private Label lblTotalEvents;
     @FXML private Label lblTotalTickets;

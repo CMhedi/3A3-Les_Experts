@@ -2,12 +2,10 @@ package controllers;
 
 import Entities.Evenement;
 import Services.EvenementService;
-import Utiles.SceneNavigator; // Thabbet f-ism el package mte3ek
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
-import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
@@ -34,35 +32,13 @@ public class EvenementController {
     @FXML
     public void initialize() {
         loadEvents();
-        // Listener bech el recherche tkoun interactive
+        // Listener interactive pour la recherche
         if (searchField != null) {
             searchField.textProperty().addListener((obs, oldVal, newVal) -> onSearch());
         }
     }
 
-    // ===== Navigation Implemented =====
-
-    @FXML
-    private void goHome() {
-        try {
-            Stage stage = (Stage) cardsContainer.getScene().getWindow();
-            SceneNavigator.go(stage, "/views/Home.fxml", "EcoAdventure - Accueil");
-        } catch (Exception e) {
-            System.err.println("Erreur navigation Home: " + e.getMessage());
-        }
-    }
-
-    @FXML
-    private void goToReservations() {
-        try {
-            Stage stage = (Stage) cardsContainer.getScene().getWindow();
-            SceneNavigator.go(stage, "/views/admin_reservations.fxml", "Gestion des Réservations");
-        } catch (Exception e) {
-            System.err.println("Erreur navigation Réservations: " + e.getMessage());
-        }
-    }
-
-    // ===== Core Logic =====
+    // ===== CORE LOGIC (Gestion des Evénements) =====
 
     @FXML
     public void loadEvents() {
@@ -106,7 +82,7 @@ public class EvenementController {
         updateTotal(filtered.size());
     }
 
-    // ===== Card Rendering (Fixed Design) =====
+    // ===== CARD RENDERING =====
 
     private void renderCards(List<Evenement> list) {
         cardsContainer.getChildren().clear();
@@ -122,17 +98,17 @@ public class EvenementController {
     private HBox buildCard(Evenement e) {
         HBox card = new HBox(20);
         card.setAlignment(Pos.CENTER_LEFT);
-        card.setPadding(new Insets(20)); // Padding kbir bech yetna7a el "mlabez"
+        card.setPadding(new Insets(15, 25, 15, 25));
 
         card.setStyle(
                 "-fx-background-color: white; " +
-                        "-fx-background-radius: 15; " +
+                        "-fx-background-radius: 12; " +
                         "-fx-border-color: #f1f5f9; " +
                         "-fx-border-width: 1; " +
-                        "-fx-effect: dropshadow(gaussian, rgba(0,0,0,0.05), 10, 0, 0, 4);"
+                        "-fx-effect: dropshadow(gaussian, rgba(0,0,0,0.05), 8, 0, 0, 2);"
         );
 
-        // Hover Effect
+        // UI Hover
         card.setOnMouseEntered(ev -> card.setStyle(card.getStyle() + "-fx-border-color: #143D30; -fx-translate-y: -2;"));
         card.setOnMouseExited(ev -> card.setStyle(card.getStyle() + "-fx-border-color: #f1f5f9; -fx-translate-y: 0;"));
 
@@ -164,37 +140,17 @@ public class EvenementController {
 
         return card;
     }
-// ===== NEW MAPPING FOR DASHBOARD =====
 
-    @FXML
-    private void goToDashboard() {
-        try {
-            // Njibou el Stage mel cardsContainer walla mel searchField
-            Stage stage = (Stage) cardsContainer.getScene().getWindow();
-
-            // 1. Mapping lèl page jdida elli khdemneha
-            // 2. SceneNavigator.go (Stage, Path, Titre)
-            SceneNavigator.go(stage, "/views/AdminDashboard.fxml", "EcoAdventure - Dashboard Statistiques");
-
-            System.out.println("Navigation vers le Dashboard réussie !");
-        } catch (Exception e) {
-            System.err.println("Erreur navigation Dashboard: " + e.getMessage());
-            // Alert sghira ken el path ghalet
-            new Alert(Alert.AlertType.ERROR, "Impossible d'ouvrir le Dashboard. Vérifiez le chemin /views/AdminDashboard.fxml").show();
-        }
-    }
-    // ===== Exception Handling Fixed =====
+    // ===== CRUD ACTIONS =====
 
     private void deleteEvent(Evenement e) {
         Alert confirm = new Alert(Alert.AlertType.CONFIRMATION, "Supprimer l'événement : " + e.getTitre() + " ?", ButtonType.YES, ButtonType.NO);
         confirm.showAndWait().ifPresent(response -> {
             if (response == ButtonType.YES) {
                 try {
-                    // Try-Catch bech n-traitiw el Exception mta3 el Service
                     evenementService.delete(e.getIdEvenement());
                     loadEvents();
                 } catch (Exception ex) {
-                    System.err.println("Erreur suppression : " + ex.getMessage());
                     new Alert(Alert.AlertType.ERROR, "Erreur lors de la suppression.").show();
                 }
             }
@@ -212,6 +168,7 @@ public class EvenementController {
             Stage stage = new Stage();
             stage.initModality(Modality.APPLICATION_MODAL);
             stage.setScene(new Scene(root));
+            stage.setTitle(e == null ? "Nouveau Événement" : "Modifier Événement");
             stage.showAndWait();
         } catch (Exception ex) {
             System.err.println("Erreur ouverture formulaire : " + ex.getMessage());
