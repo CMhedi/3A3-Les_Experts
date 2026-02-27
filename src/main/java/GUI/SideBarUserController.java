@@ -35,10 +35,13 @@ public class SideBarUserController {
         changeCenter("/GUI/NewsView.fxml");
     }
 
-    // ✅ El methode el jdida mte'ek
     @FXML
     void goToEvenements(ActionEvent event) {
-        changeCenter("/GUI/reservation_list.fxml");
+        changeCenter("/views/ClientEvents.fxml");
+    }
+    @FXML
+    void goToRsrv(ActionEvent event) {
+        changeCenter("/views/reservation_list.fxml");
     }
 
     @FXML

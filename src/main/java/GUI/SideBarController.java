@@ -47,15 +47,12 @@ public class SideBarController {
 
     @FXML
     void goToEvenements(ActionEvent event) {
-        // Path mta' el list mta' el events
         changeCenter("/views/AdminDashboard.fxml");
     }
 
-    // EL METHODE EL JDIDA HNA
     @FXML
     void goToReservations(ActionEvent event) {
-        // Path mta' el reservations kima tlobt
-        changeCenter("/views/admin_reservation.fxml");
+        changeCenter("/views/admin_reservations.fxml");
     }
 
     @FXML
@@ -129,7 +126,6 @@ public class SideBarController {
     private BorderPane getHostBorderPane() {
         if (sidebarRoot == null || sidebarRoot.getScene() == null) return null;
         if (sidebarRoot.getScene().getRoot() instanceof BorderPane bp) return bp;
-        // Ken el BorderPane esmou mouch ROOT (kima fil khedma mta' Salma), nlawjou 3lih bel lookup
         Node rootNode = sidebarRoot.getScene().getRoot();
         if (rootNode.lookup("#mainPaneUser") instanceof BorderPane bp) return bp;
 
