@@ -62,22 +62,16 @@ public class ReservationAdminController implements Initializable {
         card.setStyle("-fx-background-color: white; -fx-background-radius: 12; -fx-padding: 20; " +
                 "-fx-border-color: #f1f5f9; -fx-border-width: 1; -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.05), 8, 0, 0, 4);");
 
+        // Section Référence et Date
         VBox idBox = new VBox(4);
-        Label ref = new Label("REF-" + res.getIdResEvt());
+        Label ref = new Label("RÉSERVATION #" + res.getIdResEvt());
         ref.setStyle("-fx-font-weight: 800; -fx-font-size: 15px; -fx-text-fill: #1e293b;");
         Label date = new Label("📅 " + res.getDateReservation().toString().split("T")[0]);
         date.setStyle("-fx-text-fill: #94a3b8; -fx-font-size: 12px;");
         idBox.getChildren().addAll(ref, date);
-        idBox.setPrefWidth(220);
+        idBox.setPrefWidth(300); // Zidna f-el width khater na7ina el-ID mta3 el-evenement
 
-        VBox evBox = new VBox(4);
-        Label evHead = new Label("ÉVÉNEMENT");
-        evHead.setStyle("-fx-text-fill: #64748b; -fx-font-size: 10px; -fx-font-weight: bold;");
-        Label evVal = new Label("#" + res.getIdEvenement());
-        evVal.setStyle("-fx-font-weight: bold; -fx-text-fill: #334155;");
-        evBox.getChildren().addAll(evHead, evVal);
-        evBox.setPrefWidth(150);
-
+        // Section Billets
         HBox ticketB = new HBox(5);
         ticketB.setAlignment(Pos.CENTER);
         ticketB.setStyle("-fx-background-color: #f8fafc; -fx-padding: 7 12; -fx-background-radius: 8; -fx-border-color: #e2e8f0;");
@@ -85,36 +79,24 @@ public class ReservationAdminController implements Initializable {
         tNum.setStyle("-fx-font-weight: bold; -fx-font-size: 11px; -fx-text-fill: #475569;");
         ticketB.getChildren().add(tNum);
 
-        Label status = new Label(res.getStatutRes().toString());
-        String color = res.getStatutRes().equals(StatutReservation.CONFIRMEE) ? "#10b981" : "#f59e0b";
-        status.setStyle("-fx-background-color: " + color + "15; -fx-text-fill: " + color + "; " +
-                "-fx-padding: 5 12; -fx-background-radius: 6; -fx-font-weight: bold; -fx-font-size: 11px; " +
-                "-fx-border-color: " + color + "33; -fx-border-radius: 6;");
-
         Region spacer = new Region();
         HBox.setHgrow(spacer, Priority.ALWAYS);
 
-        Button btnDel = new Button("🗑");
-        btnDel.setStyle("-fx-background-color: #fff1f2; -fx-text-fill: #e11d48; -fx-cursor: hand; -fx-background-radius: 8; -fx-min-width: 35; -fx-min-height: 35;");
-        btnDel.setOnAction(e -> handleDelete(res));
+        // Section Statut
+        Label status = new Label(res.getStatutRes().toString());
+        String color = res.getStatutRes().equals(StatutReservation.CONFIRMEE) ? "#10b981" : "#f59e0b";
+        status.setStyle("-fx-background-color: " + color + "15; -fx-text-fill: " + color + "; " +
+                "-fx-padding: 6 15; -fx-background-radius: 20; -fx-font-weight: bold; -fx-font-size: 11px; " +
+                "-fx-border-color: " + color + "33; -fx-border-radius: 20;");
 
-        card.getChildren().addAll(idBox, evBox, ticketB, spacer, status, new Label("  "), btnDel);
+        // Card Construction (Bouton Supprimer N7inaH)
+        card.getChildren().addAll(idBox, ticketB, spacer, status);
 
-        card.setOnMouseEntered(e -> card.setStyle(card.getStyle() + "-fx-border-color: #3b82f6; -fx-translate-y: -2;"));
-        card.setOnMouseExited(e -> card.setStyle(card.getStyle().replace("-fx-border-color: #3b82f6; -fx-translate-y: -2;", "-fx-border-color: #f1f5f9;")));
+        // Effects
+        card.setOnMouseEntered(e -> card.setStyle(card.getStyle() + "-fx-border-color: #143D30; -fx-translate-y: -2;"));
+        card.setOnMouseExited(e -> card.setStyle(card.getStyle().replace("-fx-border-color: #143D30; -fx-translate-y: -2;", "-fx-border-color: #f1f5f9;")));
 
         return card;
-    }
-
-    private void handleDelete(ReservationEvenement res) {
-        Alert alert = new Alert(Alert.AlertType.CONFIRMATION, "Supprimer la réservation #" + res.getIdResEvt() + " ?", ButtonType.YES, ButtonType.NO);
-        alert.setHeaderText(null);
-        if (alert.showAndWait().orElse(ButtonType.NO) == ButtonType.YES) {
-            try {
-                service.delete(res.getIdResEvt());
-                loadData();
-            } catch (Exception e) { e.printStackTrace(); }
-        }
     }
 
     @FXML
@@ -122,8 +104,8 @@ public class ReservationAdminController implements Initializable {
         if (masterData == null) return;
         String q = searchReservationField.getText().toLowerCase();
         List<ReservationEvenement> filtered = masterData.stream()
-                .filter(r -> String.valueOf(r.getIdEvenement()).contains(q) ||
-                        r.getStatutRes().toString().toLowerCase().contains(q))
+                .filter(r -> r.getStatutRes().toString().toLowerCase().contains(q) ||
+                        String.valueOf(r.getIdResEvt()).contains(q))
                 .collect(Collectors.toList());
         displayCards(filtered);
     }
