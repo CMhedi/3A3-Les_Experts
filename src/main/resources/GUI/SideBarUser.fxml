@@ -10,7 +10,14 @@
         <Button onAction="#goToMyReclamations" maxWidth="Infinity" text=" Réclamations" styleClass="nav-btn-user" style="-fx-background-color: transparent; -fx-text-fill: white; -fx-alignment: CENTER_LEFT; -fx-cursor: hand;"/>
         <Button onAction="#goToMessengerie" maxWidth="Infinity" text="Messengerie" styleClass="nav-btn-user" style="-fx-background-color: transparent; -fx-text-fill: white; -fx-alignment: CENTER_LEFT; -fx-cursor: hand;"/>
         <Button onAction="#goToNews" maxWidth="Infinity" text=" News" styleClass="nav-btn-user" style="-fx-background-color: transparent; -fx-text-fill: white; -fx-alignment: CENTER_LEFT; -fx-cursor: hand;"/>
-        <Button onAction="#goToSeancesDisponibles"
+        <Button onAction="#goToEvenements"
+                maxWidth="Infinity"
+                text=" Évènements"
+                styleClass="nav-btn-user"
+                style="-fx-background-color: transparent;
+               -fx-text-fill: white;
+               -fx-alignment: CENTER_LEFT;
+               -fx-cursor: hand;"/>    <Button onAction="#goToSeancesDisponibles"
                 maxWidth="Infinity"
                 text=" Séances disponibles"
                 styleClass="nav-btn-user"

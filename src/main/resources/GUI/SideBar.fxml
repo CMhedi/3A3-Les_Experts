@@ -11,28 +11,30 @@
     <children>
         <Label text="EcoAdventure" style="-fx-text-fill: white; -fx-font-size: 20; -fx-font-weight: bold;"/>
 
-        <Button onAction="#goToDashboard" maxWidth="Infinity" text="Dashboard" style="-fx-background-color: transparent; -fx-text-fill: white;"/>
-        <Button onAction="#goToReclamations" maxWidth="Infinity" text="Réclamations" style="-fx-background-color: transparent; -fx-text-fill: white;"/>
-        <Button onAction="#goTogestionuser" maxWidth="Infinity" text="Gestion des utilisateurs" style="-fx-background-color: transparent; -fx-text-fill: white;"/>
-        <Button onAction="#goToMessengerie" maxWidth="Infinity" text="Messengerie" styleClass="nav-btn-user" style="-fx-background-color: transparent; -fx-text-fill: white; -fx-alignment: CENTER_LEFT; -fx-cursor: hand;"/>
-        <Button onAction="#goToProfil" maxWidth="Infinity" text="Mon Profil" style="-fx-background-color: transparent; -fx-text-fill: white;"/>
-        <Button onAction="#goToPlanning"
-                maxWidth="Infinity"
-                text="Gestion Planning"
-                style="-fx-background-color: transparent;
-               -fx-text-fill: white;
-               -fx-alignment: CENTER_LEFT;
-               -fx-cursor: hand;"/>
-        <Button onAction="#openMainLayout"
-                maxWidth="Infinity"
-                text="➡️ Ouvrir MainLayout"
-                style="-fx-background-color: rgba(255,255,255,0.12);
-               -fx-text-fill: white;
-               -fx-alignment: CENTER_LEFT;
-               -fx-cursor: hand;"/>
+        <Button onAction="#goToDashboard" maxWidth="Infinity" text="Dashboard"
+                style="-fx-background-color: transparent; -fx-text-fill: white; -fx-alignment: CENTER_LEFT; -fx-cursor: hand;"/>
 
+        <Button onAction="#goToReclamations" maxWidth="Infinity" text="Réclamations"
+                style="-fx-background-color: transparent; -fx-text-fill: white; -fx-alignment: CENTER_LEFT; -fx-cursor: hand;"/>
+
+        <Button onAction="#goTogestionuser" maxWidth="Infinity" text="Gestion des utilisateurs"
+                style="-fx-background-color: transparent; -fx-text-fill: white; -fx-alignment: CENTER_LEFT; -fx-cursor: hand;"/>
+
+        <Button onAction="#goToMessengerie" maxWidth="Infinity" text="Messengerie"
+                style="-fx-background-color: transparent; -fx-text-fill: white; -fx-alignment: CENTER_LEFT; -fx-cursor: hand;"/>
+
+        <Button onAction="#goToProfil" maxWidth="Infinity" text="Mon Profil"
+                style="-fx-background-color: transparent; -fx-text-fill: white; -fx-alignment: CENTER_LEFT; -fx-cursor: hand;"/>
+
+        <Button onAction="#goToEvenements" maxWidth="Infinity" text="📅 Évènements"
+                style="-fx-background-color: transparent; -fx-text-fill: white; -fx-alignment: CENTER_LEFT; -fx-cursor: hand;"/>
+
+        <Button onAction="#openMainLayout" maxWidth="Infinity" text="➡️ Ouvrir MainLayout"
+                style="-fx-background-color: rgba(255,255,255,0.12); -fx-text-fill: white; -fx-alignment: CENTER_LEFT; -fx-cursor: hand;"/>
 
         <Region VBox.vgrow="ALWAYS" />
-        <Button onAction="#handleLogout" maxWidth="Infinity" text="🚪 Déconnexion" style="-fx-background-color: #ef4444; -fx-text-fill: white;"/>
+
+        <Button onAction="#handleLogout" maxWidth="Infinity" text="🚪 Déconnexion"
+                style="-fx-background-color: #ef4444; -fx-text-fill: white;"/>
     </children>
 </VBox>

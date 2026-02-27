@@ -13,6 +13,13 @@ import javafx.stage.Stage;
 import java.io.IOException;
 
 public class SideBarUserController {
+
+    private BorderPane mainPane;
+
+    public void setMainPane(BorderPane mainPane) {
+        this.mainPane = mainPane;
+    }
+
     @FXML
     void goToProfil(ActionEvent event) {
         changeCenter("/GUI/Profile.fxml");
@@ -24,15 +31,24 @@ public class SideBarUserController {
     }
 
     @FXML
+    void goToNews(ActionEvent event) {
+        changeCenter("/GUI/NewsView.fxml");
+    }
+
+    // ✅ El methode el jdida mte'ek
+    @FXML
+    void goToEvenements(ActionEvent event) {
+        changeCenter("/GUI/reservation_list.fxml");
+    }
+
+    @FXML
     private void goToMessengerie(ActionEvent event) {
         try {
-            // Chercher le BorderPane principal (ID "mainPaneUser" ou "mainPaneCoach" selon votre layout)
-            BorderPane mainPane = (BorderPane) ((Node) event.getSource()).getScene().lookup("#mainPaneUser");
-            if (mainPane != null) {
+            BorderPane pane = (BorderPane) ((Node) event.getSource()).getScene().lookup("#mainPaneUser");
+            if (pane != null) {
                 Parent root = FXMLLoader.load(getClass().getResource("/GUI/MessengerApp.fxml"));
-                mainPane.setCenter(root);
+                pane.setCenter(root);
             } else {
-                // Fallback : charger la vue dans une nouvelle scène si le BorderPane n'est pas trouvé
                 Parent root = FXMLLoader.load(getClass().getResource("/GUI/MessengerApp.fxml"));
                 Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
                 stage.setScene(new Scene(root));
@@ -40,42 +56,23 @@ public class SideBarUserController {
             }
         } catch (IOException e) {
             e.printStackTrace();
-            // Optionnel : afficher une alerte
             DialogUtils.showError("Erreur", "Impossible d'ouvrir la messagerie.");
         }
     }
 
     @FXML
-    void goToNews(ActionEvent event) {
-        changeCenter("/GUI/NewsView.fxml");
-    }
-    @FXML
     void goToActivities(ActionEvent event) {
-       // SceneUtils.loadScene(
-              //  "/gui/UserActivities.fxml",
-               // "/admin.css",
-              //  (Node) event.getSource()
-        //);
+        // logic pour les activités ken thib t-activiha
     }
 
-    private void changeCenter(String fxmlPath) {
-        try {
-
-            BorderPane pane =
-                    (BorderPane) mainPane.getScene().lookup("#mainPaneUser");
-
-            if (pane == null) {
-                System.out.println("⚠ Impossible de trouver mainPaneUser");
-                return;
-            }
-
-            Parent page = FXMLLoader.load(getClass().getResource(fxmlPath));
-            pane.setCenter(page);
-
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+    public void goToSeancesDisponibles(ActionEvent event) {
+        SceneUtils.loadScene("/UserSeanceView.fxml", "/admin.css", (Node) event.getSource());
     }
+
+    public void goToNutrition(ActionEvent event) {
+        SceneUtils.loadScene("/NuritionView.fxml", "/nutrition.css", (Node) event.getSource());
+    }
+
     @FXML
     void handleLogout(ActionEvent event) throws IOException {
         Entities.Session.logout();
@@ -84,24 +81,23 @@ public class SideBarUserController {
         stage.setScene(new Scene(root));
     }
 
-    public void goToSeancesDisponibles(ActionEvent event) {
-        SceneUtils.loadScene(
-                "/UserSeanceView.fxml",   // adapte le chemin si besoin
-                "/admin.css",                 // ou user.css si tu en as un
-                (Node) event.getSource()
-        );
-    }
-    private BorderPane mainPane;
+    private void changeCenter(String fxmlPath) {
+        try {
+            // Thabet hna: nesta'mlou el mainPane eli t-setta wala n-lawjou 'lih mel scene
+            BorderPane pane = (mainPane != null) ? mainPane : (BorderPane) sidebarRoot.getScene().lookup("#mainPaneUser");
 
-    public void setMainPane(BorderPane mainPane) {
-        this.mainPane = mainPane;
+            if (pane == null) {
+                // Fallback ken malqinech el pane bel-id
+                System.out.println("⚠ Impossible de trouver mainPaneUser");
+                return;
+            }
+
+            Parent page = FXMLLoader.load(getClass().getResource(fxmlPath));
+            pane.setCenter(page);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
-    public void goToNutrition(ActionEvent event) {
-       SceneUtils.loadScene(
-                "/NuritionView.fxml",
-                "/nutrition.css",
-                (Node) event.getSource()
-       );
-    }
+    @FXML private Node sidebarRoot; // matensech tzid fx:id="sidebarRoot" fi el FXML mta' el user sidebar
 }

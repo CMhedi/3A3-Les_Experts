@@ -1,0 +1,116 @@
+/* Palette: Forest: #143D30, Action: #E67E22, BG: #F8FAFC */
+
+.root {
+    -fx-font-family: "Inter", "Segoe UI", sans-serif;
+    -fx-background-color: #F8FAFC;
+}
+
+/* ===== Sidebar ===== */
+.sidebar {
+    -fx-background-color: #143D30;
+}
+
+.brand {
+    -fx-text-fill: white;
+    -fx-font-size: 22px;
+    -fx-font-weight: 900;
+    -fx-letter-spacing: -0.5px;
+}
+
+.mutedSidebar {
+    -fx-text-fill: rgba(255,255,255,0.5);
+    -fx-font-size: 11px;
+    -fx-font-weight: 600;
+    -fx-text-transform: uppercase;
+}
+
+.navItem {
+    -fx-background-color: transparent;
+    -fx-text-fill: #CBD5E1;
+    -fx-font-weight: 600;
+    -fx-padding: 12 15;
+    -fx-background-radius: 12;
+    -fx-cursor: hand;
+}
+
+.navItemActive {
+    -fx-background-color: #E67E22;
+    -fx-text-fill: white;
+    -fx-effect: dropshadow(gaussian, rgba(230,126,34,0.3), 10, 0, 0, 4);
+}
+
+/* ===== Topbar & Search ===== */
+.topbar {
+    -fx-background-color: white;
+    -fx-border-color: #E2E8F0;
+    -fx-border-width: 0 0 1 0;
+}
+
+.pageTitle {
+    -fx-font-size: 22px;
+    -fx-font-weight: 800;
+    -fx-text-fill: #1E293B;
+}
+
+.searchBox {
+    -fx-background-color: #F1F5F9;
+    -fx-background-radius: 12;
+    -fx-padding: 8 15;
+    -fx-border-color: transparent;
+    -fx-transition: 0.3s;
+}
+
+.searchInput {
+    -fx-background-color: transparent;
+    -fx-prompt-text-fill: #94A3B8;
+}
+
+/* ===== Cards Design (Modern) ===== */
+.card {
+    -fx-background-color: white;
+    -fx-background-radius: 20;
+    -fx-padding: 25;
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.05), 15, 0, 0, 5);
+    -fx-border-color: #f1f5f9;
+    -fx-border-width: 1;
+}
+
+.card:hover {
+    -fx-border-color: #143D30;
+    -fx-translate-y: -5;
+}
+
+.searchBox {
+    -fx-background-color: #f1f5f9;
+    -fx-background-radius: 12;
+    -fx-padding: 5 15;
+}
+
+/* ===== Buttons ===== */
+.primaryBtn {
+    -fx-background-color: #143D30;
+    -fx-text-fill: white;
+    -fx-background-radius: 12;
+    -fx-padding: 10 20;
+    -fx-font-weight: 700;
+}
+
+.secondaryBtn {
+    -fx-background-color: white;
+    -fx-text-fill: #1E293B;
+    -fx-border-color: #E2E8F0;
+    -fx-background-radius: 12;
+    -fx-padding: 10 20;
+}
+
+.danger {
+    -fx-background-color: #FEE2E2;
+    -fx-text-fill: #EF4444;
+}
+
+/* ScrollPane Fix */
+.transparentScroll {
+    -fx-background-color: transparent;
+    -fx-background: transparent;
+}
+.transparentScroll .viewport { -fx-background-color: transparent; }

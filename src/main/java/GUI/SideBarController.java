@@ -16,60 +16,59 @@ import javafx.stage.Stage;
 import java.io.IOException;
 import java.net.URL;
 
-/**
- * SideBarController
- * - بعد ما الـ Sidebar يتشحن داخل BorderPane (بعد الـ login)، يفتح تلقائياً صفحة Users في الـ center.
- * - زرّ "Ouvrir MainLayout" يبدّل Scene بالكامل لـ MainLayout.fxml
- */
 public class SideBarController {
 
-    @FXML private VBox sidebarRoot; // ✅ مربوط بـ fx:id في SideBar.fxml
+    @FXML private VBox sidebarRoot;
 
     @FXML
     private void initialize() {
-        // ✅ بعد ما الـ Scene تولّي موجودة (Node attached)، نفتح Users في center
         Platform.runLater(() -> changeCenter("/gui/AdminUsers.fxml"));
     }
 
     @FXML
-    void goToReclamations(ActionEvent event) {
-        changeCenter("/gui/AdminReclamation.fxml");
+    void goToDashboard(ActionEvent event) {
+        changeCenter("/GUI/AdminDashboard.fxml");
     }
 
     @FXML
-    void goToDashboard(ActionEvent event) {
-        changeCenter("/gui/AdminDashboard.fxml");
+    void goToReclamations(ActionEvent event) {
+        changeCenter("/GUI/AdminReclamation.fxml");
     }
 
     @FXML
     void goTogestionuser(ActionEvent event) {
-        changeCenter("/gui/AdminUsers.fxml");
+        changeCenter("/GUI/AdminUsers.fxml");
     }
 
     @FXML
     void goToProfil(ActionEvent event) {
-        changeCenter("/gui/Profile.fxml");
+        changeCenter("/GUI/Profile.fxml");
+    }
+
+    // --- El fonction el jdida hna ---
+    @FXML
+    void goToEvenements(ActionEvent event) {
+        // Hna hatit el path mta' el reservation_list kima enti t-heb
+        changeCenter("/views/reservation_list.fxml");
     }
 
     @FXML
     private void goToPlanning(ActionEvent event) {
-        // كما كان عندك
         SceneUtils.loadScene(
-                "/AdminPlanningView.fxml",   // adapte si besoin
+                "/AdminPlanningView.fxml",
                 "/admin.css",
                 (Node) event.getSource()
         );
     }
+
     @FXML
     private void goToMessengerie(ActionEvent event) {
         try {
-            // Chercher le BorderPane principal (ID "mainPaneUser" ou "mainPaneCoach" selon votre layout)
             BorderPane mainPane = (BorderPane) ((Node) event.getSource()).getScene().lookup("#mainPaneUser");
             if (mainPane != null) {
                 Parent root = FXMLLoader.load(getClass().getResource("/GUI/MessengerApp.fxml"));
                 mainPane.setCenter(root);
             } else {
-                // Fallback : charger la vue dans une nouvelle scène si le BorderPane n'est pas trouvé
                 Parent root = FXMLLoader.load(getClass().getResource("/GUI/MessengerApp.fxml"));
                 Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
                 stage.setScene(new Scene(root));
@@ -77,22 +76,19 @@ public class SideBarController {
             }
         } catch (IOException e) {
             e.printStackTrace();
-            // Optionnel : afficher une alerte
             DialogUtils.showError("Erreur", "Impossible d'ouvrir la messagerie.");
         }
     }
 
     @FXML
     void openMainLayout(ActionEvent event) {
-        loadScene("/gui/MainLayout.fxml", event); // ✅ عدّل المسار إذا مختلف
+        loadScene("/gui/MainLayout.fxml", event);
     }
 
     @FXML
     void handleLogout(ActionEvent event) {
         try {
-            // Session.logout();
             Entities.Session.logout();
-
             Parent root = FXMLLoader.load(getClass().getResource("/gui/Login.fxml"));
             Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
             stage.setScene(new Scene(root));
@@ -102,15 +98,11 @@ public class SideBarController {
         }
     }
 
-    /**
-     * Change the center of the host BorderPane (إذا الـ root متاع الـ Scene هو BorderPane).
-     * ✅ ماعادش يلزمنا event باش نبدّل center
-     */
     private void changeCenter(String fxmlPath) {
         try {
             BorderPane mainPane = getHostBorderPane();
             if (mainPane == null) {
-                System.out.println("❌ Sidebar n'est pas attachée à un BorderPane (root).");
+                System.out.println("❌ Sidebar n'est pas attachée à un BorderPane.");
                 return;
             }
 
@@ -137,21 +129,11 @@ public class SideBarController {
     private void loadScene(String fxmlPath, ActionEvent event) {
         try {
             URL url = getClass().getResource(fxmlPath);
-            if (url == null) {
-                System.out.println("❌ FXML introuvable -> " + fxmlPath);
-                return;
-            }
-
+            if (url == null) return;
             Parent root = FXMLLoader.load(url);
-
             Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
-            double w = stage.getWidth();
-            double h = stage.getHeight();
-
-            Scene newScene = new Scene(root, w, h);
-            stage.setScene(newScene);
+            stage.setScene(new Scene(root, stage.getWidth(), stage.getHeight()));
             stage.show();
-
         } catch (IOException e) {
             e.printStackTrace();
         }

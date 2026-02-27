@@ -26,20 +26,19 @@ public class MainLayoutController {
     @FXML private Button btnDashboard;
     @FXML private Button btnPacks;
     @FXML private Button btnInscriptions;
-
-    @FXML private Button btnPackBuilder; // ✅ nouveau
+    @FXML private Button btnPackBuilder;
     @FXML private Button btnInsights;
 
-    @FXML private StackPane contentPane;
+    // ✅ El bouton jdid
+    @FXML private Button btnEvenements;
 
+    @FXML private StackPane contentPane;
     @FXML private VBox sidebarContent;
     @FXML private HBox topbar;
 
     @FXML
     private void initialize() {
         animateIntro();
-        // ✅ ماعادش نفتح حتى page par défaut (كان قبل يفتح Packs)
-        // openPacks();
     }
 
     @FXML
@@ -61,7 +60,7 @@ public class MainLayoutController {
     }
 
     @FXML
-    private void openPackBuilder() { // ✅ métier avancé
+    private void openPackBuilder() {
         setActive(btnPackBuilder);
         loadIntoCenter("/fxml/PackInscriptionBuilder.fxml", "Pack Builder");
     }
@@ -72,11 +71,12 @@ public class MainLayoutController {
         loadIntoCenter("/fxml/AdminInsights.fxml", "Insights");
     }
 
-    /**
-     * ✅ يرجّعك لواجهة الـ Sidebar (shell) — من غير ما تعتمد على FXML إضافي
-     * - نركّبو BorderPane (Left = SideBar.fxml)
-     * - Center = AdminUsers.fxml (كيما طلبت بعد auth)
-     */
+    @FXML
+    private void openEvenements() {
+        setActive(btnEvenements);
+        loadIntoCenter("/views/evenement_list.fxml", "Évènements");
+    }
+
     @FXML
     private void openSideBar(ActionEvent event) {
         try {
@@ -92,7 +92,6 @@ public class MainLayoutController {
             BorderPane shell = new BorderPane();
             shell.setLeft(sideBar);
 
-            // default center: Users
             URL usersUrl = getClass().getResource("/gui/AdminUsers.fxml");
             if (usersUrl != null) {
                 Parent usersView = FXMLLoader.load(usersUrl);
@@ -109,7 +108,6 @@ public class MainLayoutController {
 
             Scene newScene = new Scene(shell, w, h);
 
-            // ✅ إذا عندك admin.css (نفس اللي تستعمله في Planning) نزيدوه تلقائياً
             URL adminCss = getClass().getResource("/admin.css");
             if (adminCss != null) newScene.getStylesheets().add(adminCss.toExternalForm());
 
@@ -130,8 +128,7 @@ public class MainLayoutController {
         try {
             URL url = getClass().getResource(fxmlPath);
             if (url == null) {
-                throw new IllegalArgumentException("FXML introuvable: " + fxmlPath +
-                        "\n➡ Vérifie qu’il est dans: src/main/resources/fxml/");
+                throw new IllegalArgumentException("FXML introuvable: " + fxmlPath);
             }
 
             FXMLLoader loader = new FXMLLoader(url);
@@ -140,41 +137,24 @@ public class MainLayoutController {
 
         } catch (Exception e) {
             e.printStackTrace();
-
-            String msg = e.getMessage();
-            if (e.getCause() != null && e.getCause().getMessage() != null) {
-                msg += "\nCause: " + e.getCause().getMessage();
-            }
-
-            Label err = new Label("Erreur chargement : " + fxmlPath + "\n(" + fallbackTitle + ")\n\n" + msg);
+            Label err = new Label("Erreur chargement : " + fxmlPath + "\n\n" + e.getMessage());
             err.getStyleClass().add("page-subtitle");
             animateCenterSwap(err);
-
-            Alert a = new Alert(Alert.AlertType.ERROR);
-            a.setTitle("FXML Load Error");
-            a.setHeaderText("Impossible de charger: " + fxmlPath);
-            a.setContentText(msg);
-            a.showAndWait();
         }
     }
 
-    private void animateCenterSwap(Parent newView) {
+    private void animateCenterSwap(Node newView) {
         if (contentPane == null) return;
 
         newView.setOpacity(0);
         newView.setScaleX(0.985);
         newView.setScaleY(0.985);
-        newView.setTranslateY(6);
 
         contentPane.getChildren().setAll(newView);
 
         FadeTransition fade = new FadeTransition(Duration.millis(260), newView);
         fade.setFromValue(0);
         fade.setToValue(1);
-
-        TranslateTransition slide = new TranslateTransition(Duration.millis(260), newView);
-        slide.setFromY(6);
-        slide.setToY(0);
 
         ScaleTransition scale = new ScaleTransition(Duration.millis(260), newView);
         scale.setFromX(0.985);
@@ -183,54 +163,49 @@ public class MainLayoutController {
         scale.setToY(1.0);
 
         fade.play();
-        slide.play();
         scale.play();
     }
 
     private void setActive(Button active) {
-        if (btnDashboard != null) btnDashboard.getStyleClass().remove("nav-active");
-        if (btnPacks != null) btnPacks.getStyleClass().remove("nav-active");
-        if (btnInscriptions != null) btnInscriptions.getStyleClass().remove("nav-active");
-        if (btnPackBuilder != null) btnPackBuilder.getStyleClass().remove("nav-active");
-        if (btnInsights != null) btnInsights.getStyleClass().remove("nav-active");
+        // Nadhfou el active class mel boutons el kol
+        Button[] navButtons = {btnDashboard, btnPacks, btnInscriptions, btnPackBuilder, btnInsights, btnEvenements};
 
-        if (active != null && !active.getStyleClass().contains("nav-active")) {
+        for (Button btn : navButtons) {
+            if (btn != null) btn.getStyleClass().remove("nav-active");
+        }
+
+        if (active != null) {
             active.getStyleClass().add("nav-active");
         }
     }
 
     private void animateIntro() {
-
         if (sidebarContent != null) {
             sidebarContent.setOpacity(0);
-            sidebarContent.setTranslateX(-14);
+            TranslateTransition tt = new TranslateTransition(Duration.millis(420), sidebarContent);
+            tt.setFromX(-14);
+            tt.setToX(0);
 
             FadeTransition ft = new FadeTransition(Duration.millis(420), sidebarContent);
             ft.setFromValue(0);
             ft.setToValue(1);
 
-            TranslateTransition tt = new TranslateTransition(Duration.millis(420), sidebarContent);
-            tt.setFromX(-14);
-            tt.setToX(0);
-
-            ft.play();
             tt.play();
+            ft.play();
         }
 
         if (topbar != null) {
             topbar.setOpacity(0);
-            topbar.setTranslateY(-8);
+            TranslateTransition tt = new TranslateTransition(Duration.millis(380), topbar);
+            tt.setFromY(-8);
+            tt.setToY(0);
 
             FadeTransition ft = new FadeTransition(Duration.millis(380), topbar);
             ft.setFromValue(0);
             ft.setToValue(1);
 
-            TranslateTransition tt = new TranslateTransition(Duration.millis(380), topbar);
-            tt.setFromY(-8);
-            tt.setToY(0);
-
-            ft.play();
             tt.play();
+            ft.play();
         }
     }
 }

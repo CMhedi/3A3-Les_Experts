@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<VBox xmlns="http://javafx.com/javafx/17"
+      xmlns:fx="http://javafx.com/fxml/1"
+      fx:controller="controllers.ReservationEvenementFormController"
+      spacing="14"
+      style="-fx-background-color: white; -fx-padding: 22; -fx-background-radius: 12;">
+
+    <Label fx:id="titleLabel"
+           text="Détails de la réservation"
+           style="-fx-font-size: 20; -fx-font-weight: bold; -fx-text-fill: #2D4A3E;" />
+
+    <Separator/>
+
+    <GridPane hgap="12" vgap="15">
+        <columnConstraints>
+            <ColumnConstraints minWidth="100" prefWidth="110"/>
+            <ColumnConstraints hgrow="ALWAYS"/>
+        </columnConstraints>
+
+        <Label text="Date &amp; Heure :" GridPane.rowIndex="0" GridPane.columnIndex="0" style="-fx-font-weight: bold;"/>
+        <HBox spacing="8" GridPane.rowIndex="0" GridPane.columnIndex="1">
+            <DatePicker fx:id="datePicker" prefWidth="150" promptText="Choisir date"/>
+            <TextField fx:id="heureField" promptText="HH" prefWidth="50"/>
+            <Label text=":" alignment="CENTER" style="-fx-font-weight: bold;"/>
+            <TextField fx:id="minuteField" promptText="MM" prefWidth="50"/>
+        </HBox>
+
+        <Label text="Statut :" GridPane.rowIndex="1" GridPane.columnIndex="0" style="-fx-font-weight: bold;"/>
+        <ComboBox fx:id="statutCombo" GridPane.rowIndex="1" GridPane.columnIndex="1" prefWidth="280" promptText="Sélectionner le statut"/>
+
+        <Label text="Nb Billets :" GridPane.rowIndex="2" GridPane.columnIndex="0" style="-fx-font-weight: bold;"/>
+        <TextField fx:id="billetsField" GridPane.rowIndex="2" GridPane.columnIndex="1" promptText="Nombre de places"/>
+
+        <Label text="ID Événement :" GridPane.rowIndex="3" GridPane.columnIndex="0" style="-fx-font-weight: bold;"/>
+        <TextField fx:id="eventIdField" GridPane.rowIndex="3" GridPane.columnIndex="1" promptText="Référence de l'événement"/>
+    </GridPane>
+
+    <Label fx:id="errorLabel" text="" style="-fx-text-fill: #c0392b; -fx-font-size: 12;" wrapText="true"/>
+
+    <HBox spacing="12" alignment="CENTER_RIGHT">
+        <Button text="Annuler" onAction="#onCancel"
+                style="-fx-background-color: #f5f5f5; -fx-border-color: #ddd; -fx-background-radius: 5; -fx-border-radius: 5; -fx-cursor: hand;"/>
+        <Button text="Enregistrer la réservation" onAction="#onSave"
+                style="-fx-background-color: #2D4A3E; -fx-text-fill: white; -fx-font-weight: bold; -fx-background-radius: 5; -fx-cursor: hand; -fx-padding: 8 15;"/>
+    </HBox>
+
+</VBox>

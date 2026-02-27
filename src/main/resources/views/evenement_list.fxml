@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<BorderPane xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1"
+            fx:controller="controllers.EvenementController" stylesheets="@/styles/app.css" styleClass="root">
+    <left>
+        <VBox styleClass="sidebar" spacing="15" prefWidth="250">
+            <VBox spacing="5" styleClass="sidebarHeader">
+                <Label text="EcoAdventure" styleClass="brand"/>
+                <Label text="Admin Dashboard" styleClass="mutedSidebar"/>
+            </VBox>
+            <VBox spacing="10" styleClass="sidebarNav">
+                <Button text="🏠 Accueil" onAction="#goHome" styleClass="navItem"/>
+                <Button text="🎫 Événements" styleClass="navItem, navItemActive"/>
+                <Button text="📅 Réservations" onAction="#goToReservations" styleClass="navItem"/>
+                <Button fx:id="btnDashboard"
+                        text="📊 Dashboard"
+                        onAction="#goToDashboard"
+                        maxWidth="Infinity"
+                        styleClass="sidebar-button" />
+            </VBox></VBox>
+    </left>
+    <center>
+        <VBox spacing="0">
+            <HBox styleClass="topbar" spacing="15" alignment="CENTER_LEFT">
+                <Label text="Gestion des Événements" styleClass="pageTitle"/>
+                <Region HBox.hgrow="ALWAYS"/>
+                <HBox styleClass="searchBox">
+                    <TextField fx:id="searchField" promptText="Rechercher par nom..." onKeyReleased="#onSearch" styleClass="searchInput"/>
+                </HBox>
+                <Button text="＋ Nouveau" onAction="#onAdd" styleClass="primaryBtn"/>
+            </HBox>
+            <ScrollPane fitToWidth="true" styleClass="transparentScroll" VBox.vgrow="ALWAYS">
+                <VBox fx:id="cardsContainer" spacing="20" styleClass="pageContent">
+                    <padding><Insets top="25" right="35" bottom="25" left="35"/></padding>
+                </VBox>
+            </ScrollPane>
+        </VBox>
+    </center>
+</BorderPane>

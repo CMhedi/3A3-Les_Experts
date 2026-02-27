@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<BorderPane xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1"
+            fx:controller="controllers.EvenementClientController"
+            stylesheets="@/styles/app.css" styleClass="root">
+
+    <left>
+        <VBox styleClass="sidebar" spacing="16" prefWidth="240">
+            <VBox spacing="6" styleClass="sidebarHeader">
+                <Label text="EcoAdventure" styleClass="brand" style="-fx-font-size: 24px; -fx-font-weight: bold; -fx-text-fill: white;"/>
+                <Label text="Espace Client" styleClass="mutedSidebar" style="-fx-text-fill: #bdc3c7;"/>
+            </VBox>
+
+            <VBox spacing="8" styleClass="sidebarNav">
+                <Button text="🏠  Accueil" onAction="#goHome" styleClass="navItem" style="-fx-background-color: transparent; -fx-text-fill: white; -fx-alignment: CENTER_LEFT; -fx-pref-width: 220;"/>
+                <Button text="🎫  Événements" onAction="#goToEvenements" styleClass="navItem, navItemActive" style="-fx-background-color: #34495e; -fx-text-fill: white; -fx-alignment: CENTER_LEFT; -fx-pref-width: 220;"/>
+                <Button text="📅  Mes Réservations" onAction="#goToReservations" styleClass="navItem" style="-fx-background-color: transparent; -fx-text-fill: white; -fx-alignment: CENTER_LEFT; -fx-pref-width: 220;"/>
+            </VBox>
+
+            <Region VBox.vgrow="ALWAYS"/>
+            <Separator styleClass="sidebarSep"/>
+            <Button text="⎋  Déconnexion" onAction="#logout" styleClass="navItem, danger" style="-fx-text-fill: #e74c3c;"/>
+        </VBox>
+    </left>
+
+    <center>
+        <VBox spacing="0">
+            <HBox styleClass="topbar" spacing="12" alignment="CENTER_LEFT" style="-fx-padding: 15; -fx-background-color: white; -fx-border-color: #ecf0f1; -fx-border-width: 0 0 1 0;">
+                <Label text="Événements" styleClass="pageTitle" style="-fx-font-size: 20px; -fx-font-weight: bold;"/>
+                <Region HBox.hgrow="ALWAYS"/>
+                <HBox styleClass="searchBox" spacing="8" alignment="CENTER_LEFT" style="-fx-background-color: #f4f7f6; -fx-padding: 5 15; -fx-background-radius: 20;">
+                    <Label text="🔎" styleClass="muted"/>
+                    <TextField fx:id="searchField" onKeyReleased="#onSearch" promptText="Rechercher un événement..." styleClass="searchInput" style="-fx-background-color: transparent; -fx-border-width: 0;"/>
+                </HBox>
+                <Button text="Actualiser" onAction="#onRefresh" styleClass="secondaryBtn"/>
+            </HBox>
+
+            <VBox styleClass="page" spacing="14" VBox.vgrow="ALWAYS">
+                <padding><Insets top="18" right="18" bottom="18" left="18"/></padding>
+
+                <HBox alignment="CENTER_LEFT" spacing="10">
+                    <Label text="Découvrir nos aventures" styleClass="cardTitle" style="-fx-font-size: 16px; -fx-font-weight: bold;"/>
+                    <Label fx:id="lblInfo" text="(0)" styleClass="mutedText"/>
+                </HBox>
+
+                <ScrollPane fitToWidth="true" hbarPolicy="NEVER" vbarPolicy="AS_NEEDED"
+                            styleClass="transparentScroll" VBox.vgrow="ALWAYS" style="-fx-background-color: transparent; -fx-background: transparent;">
+                    <content>
+                        <VBox fx:id="cardsContainer" spacing="15" styleClass="cardsContainer">
+                            <padding><Insets top="10" right="15" bottom="10" left="5"/></padding>
+                        </VBox>
+                    </content>
+                </ScrollPane>
+            </VBox>
+        </VBox>
+    </center>
+</BorderPane>
