@@ -11,7 +11,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public class RecommendationService {
+public class RecommendationServiceAdmin {
 
     private final SeanceService seanceService = new SeanceService();
     private final UserService userService = new UserService();

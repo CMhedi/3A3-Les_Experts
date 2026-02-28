@@ -2,9 +2,7 @@ package GUI;
 
 import Entities.*;
 import GUI.utils.DialogUtils;
-import Services.interfaces.PlanningService;
-import Services.interfaces.SeanceService;
-import Services.interfaces.UserService;
+import Services.interfaces.*;
 import enums.StatutSeance;
 import exceptions.ValidationException;
 import Entities.UserApp;
@@ -14,6 +12,7 @@ import javafx.scene.control.*;
 import javafx.stage.Stage;
 
 import javax.swing.*;
+import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.List;
 
@@ -162,6 +161,7 @@ public class SeanceFormController {
                 DialogUtils.showInfo("Succès", "Séance ajoutée avec succès.");
             } else {
                 seanceService.update(seance);
+                synchroniserGoogleAfterUpdate(seance);
                 DialogUtils.showInfo("Succès", "Séance modifiée avec succès.");
             }
 
@@ -360,6 +360,56 @@ public class SeanceFormController {
                             + " → "
                             + planning.getDateFin()
             );
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+    private void synchroniserGoogleAfterUpdate(Seance s) {
+
+        try {
+
+            ReservationSeanceService reservationService =
+                    new ReservationSeanceService();
+
+            List<ReservationSeance> reservations =
+                    reservationService.getReservationsBySeance(
+                            s.getIdSeance()
+                    );
+
+            for (ReservationSeance r : reservations) {
+
+                if (r.getGoogleEventId() == null ||
+                        r.getGoogleEventId().isBlank())
+                    continue;
+
+                LocalDateTime start =
+                        LocalDateTime.of(
+                                s.getDateSeance(),
+                                s.getHeureDebut()
+                        );
+
+                LocalDateTime end =
+                        LocalDateTime.of(
+                                s.getDateSeance(),
+                                s.getHeureFin()
+                        );
+
+                try {
+                    GoogleCalendarService.updateEvent(
+                            r.getIdUser(),
+                            r.getGoogleEventId(),
+                            "Séance : " + s.getNom(),
+                            "Séance EcoAdventure (modifiée)",
+                            start,
+                            end
+                    );
+                } catch (Exception ex) {
+                    System.out.println(
+                            "Erreur sync Google user "
+                                    + r.getIdUser());
+                }
+            }
 
         } catch (Exception e) {
             e.printStackTrace();

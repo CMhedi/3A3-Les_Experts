@@ -3,7 +3,7 @@ package GUI;
 import Entities.Planning;
 import Entities.Session;
 import Entities.UserApp;
-import Services.interfaces.RecommendationService;
+import Services.interfaces.RecommendationServiceAdmin;
 import enums.RoleUser;
 import enums.StatutPlanning;
 import GUI.utils.DialogUtils;
@@ -22,7 +22,6 @@ import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.stage.Stage;
 import java.time.format.DateTimeFormatter;
-import java.time.LocalDate;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -58,7 +57,7 @@ public class AdminPlanningController {
     // ================= SERVICES =================
     private final PlanningService planningService = new PlanningService();
     private final SeanceService seanceService = new SeanceService();
-    private final RecommendationService recommendationService = new RecommendationService();
+    private final RecommendationServiceAdmin recommendationServiceAdmin = new RecommendationServiceAdmin();
     private UserApp connectedUser;
     @FXML private TableColumn<Planning, String> colDateDebut;
     @FXML private TableColumn<Planning, String> colDateFin;
@@ -255,15 +254,15 @@ public class AdminPlanningController {
             loadTop3Coaches();
             // Dashboard
             lblRecommendationDay.setText(
-                    recommendationService.getBestDayRecommendation()
+                    recommendationServiceAdmin.getBestDayRecommendation()
             );
 
             lblRecommendationCoach.setText(
-                    recommendationService.getBestCoachRecommendation()
+                    recommendationServiceAdmin.getBestCoachRecommendation()
             );
 
             lblRecommendationMonth.setText(
-                    recommendationService.getBestMonthRecommendation()
+                    recommendationServiceAdmin.getBestMonthRecommendation()
             );
             long actifs = masterData.stream()
                     .filter(p -> p.getStatut() == StatutPlanning.ACTIF).count();

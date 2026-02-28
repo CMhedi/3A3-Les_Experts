@@ -1512,3 +1512,33 @@
     -fx-background-radius: 20;
     -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.08), 15, 0, 0, 5);
 }
+.reco-title {
+    -fx-font-size: 18px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #f28c00;
+}
+
+.recommended-card {
+    -fx-border-color: #f28c00;
+    -fx-border-width: 2;
+    -fx-background-color: linear-gradient(to bottom, #fff8e1, white);
+}
+
+.reco-badge {
+    -fx-background-color: #f28c00;
+    -fx-text-fill: white;
+    -fx-padding: 5 10 5 10;
+    -fx-background-radius: 20;
+    -fx-font-size: 11px;
+}
+.reco-empty {
+    -fx-text-fill: #777;
+    -fx-font-style: italic;
+    -fx-padding: 10 0 10 0;
+}
+
+.reco-title {
+    -fx-font-size: 16px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #ff9800;
+}

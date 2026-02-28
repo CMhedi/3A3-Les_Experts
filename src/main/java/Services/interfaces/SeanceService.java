@@ -9,12 +9,11 @@ import Services.interfaces.validation.SeanceValidator;
 import Utiles.MyDB;
 import exceptions.ValidationException;
 
+import java.sql.Date;
 import java.time.LocalDate;
 import java.sql.*;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.time.LocalDateTime;
+import java.util.*;
 
 public class SeanceService implements IGenericService<Seance> {
 
@@ -415,4 +414,105 @@ public class SeanceService implements IGenericService<Seance> {
 
         return result;
     }
+    public void updateSeanceToTermineeIfNeeded(Seance s) throws SQLException {
+
+        LocalDateTime now = LocalDateTime.now();
+
+        LocalDateTime endDateTime =
+                LocalDateTime.of(
+                        s.getDateSeance(),
+                        s.getHeureFin()
+                );
+
+        if (s.getStatutSeance() == StatutSeance.PLANIFIEE
+                && !now.isBefore(endDateTime)) {
+
+            String sql = """
+            UPDATE seance
+            SET statut_seance = ?
+            WHERE id_seance = ?
+        """;
+
+            PreparedStatement ps = conx.prepareStatement(sql);
+            ps.setString(1, StatutSeance.TERMINEE.name());
+            ps.setInt(2, s.getIdSeance());
+            ps.executeUpdate();
+        }
+    }
+    public List<Seance> getByIds(Set<Integer> ids) throws SQLException {
+
+        if (ids == null || ids.isEmpty())
+            return List.of();
+
+        List<Seance> list = new ArrayList<>();
+
+        String inSql = ids.stream()
+                .map(id -> "?")
+                .collect(java.util.stream.Collectors.joining(","));
+
+        String sql = "SELECT * FROM seance WHERE id_seance IN (" + inSql + ")";
+
+        PreparedStatement ps = conx.prepareStatement(sql);
+
+        int index = 1;
+        for (Integer id : ids) {
+            ps.setInt(index++, id);
+        }
+
+        ResultSet rs = ps.executeQuery();
+
+        while (rs.next()) {
+
+            Seance s = new Seance();
+            s.setIdSeance(rs.getInt("id_seance"));
+            s.setNom(rs.getString("nom"));
+            s.setDateSeance(rs.getDate("date_seance").toLocalDate());
+            s.setHeureDebut(rs.getTime("heure_debut").toLocalTime());
+            s.setHeureFin(rs.getTime("heure_fin").toLocalTime());
+            s.setCapacite(rs.getInt("capacite"));
+            s.setIdCoach(rs.getInt("id_coach"));
+            s.setIdPlanning(rs.getInt("id_planning"));
+            s.setStatutSeance(
+                    StatutSeance.valueOf(rs.getString("statut_seance"))
+            );
+
+            list.add(s);
+        }
+
+        return list;
+    }
+    public List<Seance> getMostReservedSeances() throws SQLException {
+
+        String sql = """
+        SELECT s.*, COUNT(r.id_seance) as total
+        FROM seance s
+        JOIN reservation_seance r ON s.id_seance = r.id_seance
+        WHERE r.statut = 'CONFIRMEE'
+        GROUP BY s.id_seance
+        ORDER BY total DESC
+        LIMIT 5
+    """;
+
+        List<Seance> list = new ArrayList<>();
+
+        Statement st = conx.createStatement();
+        ResultSet rs = st.executeQuery(sql);
+
+        while (rs.next()) {
+
+            Seance s = new Seance();
+            s.setIdSeance(rs.getInt("id_seance"));
+            s.setNom(rs.getString("nom"));
+            s.setDateSeance(rs.getDate("date_seance").toLocalDate());
+            s.setHeureDebut(rs.getTime("heure_debut").toLocalTime());
+            s.setHeureFin(rs.getTime("heure_fin").toLocalTime());
+            s.setCapacite(rs.getInt("capacite"));
+            s.setIdCoach(rs.getInt("id_coach"));
+
+            list.add(s);
+        }
+
+        return list;
+    }
+
 }

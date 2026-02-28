@@ -1,6 +1,7 @@
 package Services.interfaces;
 
 import Entities.ReservationSeance;
+import Entities.Seance;
 import Entities.UserApp;
 import enums.StatutPresence;
 import enums.StatutReservationSeance;
@@ -9,8 +10,7 @@ import Utiles.MyDB;
 import Services.interfaces.validation.ReservationSeanceValidator;
 
 import java.sql.*;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 
 public class ReservationSeanceService {
 
@@ -348,6 +348,7 @@ public class ReservationSeanceService {
         String sql = """
         SELECT r.id_reservation,
                r.id_user,
+               r.google_event_id,
                r.statut_presence,
                u.nom,
                u.prenom,
@@ -367,24 +368,23 @@ public class ReservationSeanceService {
 
             while (rs.next()) {
 
-                // 🔹 Créer User
                 UserApp user = new UserApp();
                 user.setIdUser(rs.getInt("id_user"));
                 user.setNom(rs.getString("nom"));
                 user.setPrenom(rs.getString("prenom"));
                 user.setEmail(rs.getString("email"));
 
-                // 🔹 Créer Reservation
                 ReservationSeance r = new ReservationSeance();
                 r.setIdReservation(rs.getInt("id_reservation"));
                 r.setIdUser(rs.getInt("id_user"));
+                r.setGoogleEventId(rs.getString("google_event_id")); // 🔥 IMPORTANT
                 r.setStatutPresence(
                         StatutPresence.valueOf(
                                 rs.getString("statut_presence")
                         )
                 );
 
-                r.setUser(user); // 🔥 LIGNE IMPORTANTE
+                r.setUser(user);
 
                 list.add(r);
             }
@@ -418,4 +418,65 @@ public class ReservationSeanceService {
             throw new RuntimeException(e);
         }
     }
+    public Map<Integer, Set<Integer>> getAllUserReservations() throws SQLException {
+
+        Map<Integer, Set<Integer>> userMap = new HashMap<>();
+
+        String sql = """
+        SELECT id_user, id_seance
+        FROM reservation_seance
+        WHERE statut = 'CONFIRMEE'
+    """;
+
+        Statement st = conx.createStatement();
+        ResultSet rs = st.executeQuery(sql);
+
+        while (rs.next()) {
+
+            int userId = rs.getInt("id_user");
+            int seanceId = rs.getInt("id_seance");
+
+            userMap
+                    .computeIfAbsent(userId, k -> new HashSet<>())
+                    .add(seanceId);
+        }
+
+        return userMap;
+    }
+    public List<Seance> getConfirmedSeancesByUser(int userId) throws SQLException {
+
+        List<Seance> list = new ArrayList<>();
+
+        String sql = """
+        SELECT s.*
+        FROM seance s
+        JOIN reservation_seance r
+        ON s.id_seance = r.id_seance
+        WHERE r.id_user = ?
+        AND r.statut = 'CONFIRMEE'
+    """;
+
+        PreparedStatement ps = conx.prepareStatement(sql);
+        ps.setInt(1, userId);
+
+        ResultSet rs = ps.executeQuery();
+
+        while (rs.next()) {
+
+            Seance s = new Seance();
+
+            s.setIdSeance(rs.getInt("id_seance"));
+            s.setNom(rs.getString("nom"));
+            s.setDateSeance(rs.getDate("date_seance").toLocalDate());
+            s.setHeureDebut(rs.getTime("heure_debut").toLocalTime());
+            s.setHeureFin(rs.getTime("heure_fin").toLocalTime());
+            s.setCapacite(rs.getInt("capacite"));
+            s.setIdCoach(rs.getInt("id_coach"));
+
+            list.add(s);
+        }
+
+        return list;
+    }
+
 }

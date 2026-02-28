@@ -269,11 +269,11 @@ public class CoachDashboardController {
             case ANNULEE -> badge.getStyleClass().add("badge-red-modern");
         }
 
-        // ================= ACTIONS =================
+// ================= ACTIONS =================
         HBox actions = new HBox(10);
         actions.setAlignment(Pos.CENTER_LEFT);
 
-        boolean isFuture = s.getDateSeance().isAfter(LocalDate.now());
+        LocalDate today = LocalDate.now();
 
         if (s.getStatutSeance() == StatutSeance.ANNULEE) {
 
@@ -282,9 +282,20 @@ public class CoachDashboardController {
             actions.getChildren().add(info);
 
         }
-        else if (isFuture) {
+        else if (s.getDateSeance().isAfter(today)) {
 
-            Button btnPresence = new Button("Appel (indisponible)");
+            // 🔒 Séance future
+            Button btnPresence = new Button("Appel disponible le jour J");
+            btnPresence.setDisable(true);
+            btnPresence.getStyleClass().add("btn-disabled");
+
+            actions.getChildren().add(btnPresence);
+
+        }
+        else if (s.getDateSeance().isBefore(today)) {
+
+            // 🔒 Séance passée
+            Button btnPresence = new Button("Appel clôturé");
             btnPresence.setDisable(true);
             btnPresence.getStyleClass().add("btn-disabled");
 
@@ -293,6 +304,7 @@ public class CoachDashboardController {
         }
         else {
 
+            // ✅ Aujourd’hui seulement
             Button btnPresence = new Button("Faire l'appel");
             btnPresence.getStyleClass().add("btn-presence-modern");
 
@@ -300,7 +312,6 @@ public class CoachDashboardController {
 
             actions.getChildren().add(btnPresence);
         }
-
         // ================= FOOTER =================
         VBox footer = new VBox(8);
         footer.getChildren().addAll(progressBar, participantsLabel, badge, actions);
@@ -723,7 +734,9 @@ public class CoachDashboardController {
     }
     private void ouvrirFenetrePresence(Seance s) {
 
-        // 🔒 1️⃣ Bloquer si annulée
+        LocalDate today = LocalDate.now();
+
+        // 🔒 Bloquer si annulée
         if (s.getStatutSeance() == StatutSeance.ANNULEE) {
 
             DialogUtils.showWarning(
@@ -733,12 +746,12 @@ public class CoachDashboardController {
             return;
         }
 
-        // 🔒 2️⃣ Bloquer si séance future
-        if (s.getDateSeance().isAfter(LocalDate.now())) {
+        // 🔒 Autoriser uniquement le jour J
+        if (!s.getDateSeance().equals(today)) {
 
             DialogUtils.showWarning(
                     "Présence",
-                    "L'appel de présence est disponible uniquement le jour J."
+                    "L'appel de présence est disponible uniquement le jour de la séance."
             );
             return;
         }
@@ -757,15 +770,14 @@ public class CoachDashboardController {
             Stage stage = new Stage();
             stage.setTitle("Appel de présence - " + s.getNom());
             stage.setScene(new Scene(root));
-            stage.initModality(Modality.APPLICATION_MODAL); // 🔥 bloque arrière-plan
+            stage.initModality(Modality.APPLICATION_MODAL);
             stage.setResizable(false);
             stage.showAndWait();
 
-            // 🔄 Refresh après fermeture
             refreshCards();
 
         } catch (Exception e) {
-            e.printStackTrace();
+
             DialogUtils.showError(
                     "Erreur",
                     "Impossible d'ouvrir la fenêtre de présence."

@@ -121,11 +121,20 @@ public class UserDashboardController {
         HBox actions = new HBox(12);
         actions.setAlignment(Pos.CENTER_LEFT);
 
-        // 🔥 Bouton Google
-        Button btnVoir = new Button(" Voir dans Google Calendar");
-        btnVoir.setPrefHeight(36);
-        btnVoir.setMinWidth(230);
-        btnVoir.getStyleClass().add("btn-google");
+        // ================= GOOGLE BUTTON (DYNAMIQUE) =================
+        String googleLink = null;
+
+        try {
+            googleLink = reservationService.getGoogleEventLink(
+                    userId,
+                    s.getIdSeance()
+            );
+        } catch (Exception ignored) {}
+
+        Button btnGoogle = new Button();
+        btnGoogle.setPrefHeight(36);
+        btnGoogle.setMinWidth(230);
+        btnGoogle.getStyleClass().add("btn-google");
 
         ImageView googleIcon = new ImageView(
                 new Image(getClass()
@@ -134,13 +143,24 @@ public class UserDashboardController {
         googleIcon.setFitWidth(16);
         googleIcon.setFitHeight(16);
 
-        btnVoir.setGraphic(googleIcon);
-        btnVoir.setContentDisplay(ContentDisplay.LEFT);
-        btnVoir.setGraphicTextGap(8);
+        btnGoogle.setGraphic(googleIcon);
+        btnGoogle.setContentDisplay(ContentDisplay.LEFT);
+        btnGoogle.setGraphicTextGap(8);
 
-        btnVoir.setOnAction(e -> handleVoirGoogle(s));
+        if (googleLink == null || googleLink.isBlank()) {
 
-        // 🔥 Bouton Annuler
+            // 🔵 Pas encore ajouté au calendrier
+            btnGoogle.setText(" Ajouter au Google Calendar");
+            btnGoogle.setOnAction(e -> ajouterAuCalendrier(s));
+
+        } else {
+
+            // 🟢 Déjà ajouté
+            btnGoogle.setText(" Voir dans Google Calendar");
+            btnGoogle.setOnAction(e -> handleVoirGoogle(s));
+        }
+
+        // ================= BOUTON ANNULER =================
         Button btnAnnuler = new Button("Annuler");
         btnAnnuler.setPrefHeight(36);
         btnAnnuler.setMinWidth(120);
@@ -148,7 +168,8 @@ public class UserDashboardController {
 
         btnAnnuler.setOnAction(e -> handleAnnuler(s));
 
-        actions.getChildren().addAll(btnVoir, btnAnnuler);
+        // ================= ADD TO CARD =================
+        actions.getChildren().addAll(btnGoogle, btnAnnuler);
 
         card.getChildren().add(actions);
 
@@ -324,5 +345,55 @@ public class UserDashboardController {
                 "/admin.css",
                 (Node) event.getSource()
         );
+    }
+    private void ajouterAuCalendrier(Seance s) {
+
+        try {
+
+            var start = java.time.LocalDateTime.of(
+                    s.getDateSeance(),
+                    s.getHeureDebut()
+            );
+
+            var end = java.time.LocalDateTime.of(
+                    s.getDateSeance(),
+                    s.getHeureFin()
+            );
+
+            GoogleCalendarService.GoogleEventData data =
+                    GoogleCalendarService.addEvent(
+                            userId,
+                            "Séance : " + s.getNom(),
+                            "Séance EcoAdventure",
+                            start,
+                            end
+                    );
+
+            reservationService.saveGoogleEventId(
+                    userId,
+                    s.getIdSeance(),
+                    data.id
+            );
+
+            reservationService.saveGoogleEventLink(
+                    userId,
+                    s.getIdSeance(),
+                    data.htmlLink
+            );
+
+            DialogUtils.showInfo(
+                    "Google Calendar",
+                    "Événement ajouté au calendrier."
+            );
+
+            refreshCards();
+
+        } catch (Exception e) {
+
+            DialogUtils.showError(
+                    "Google Calendar",
+                    "Impossible d'ajouter au calendrier."
+            );
+        }
     }
 }

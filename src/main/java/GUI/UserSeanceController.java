@@ -8,8 +8,9 @@ import Services.interfaces.GoogleCalendarService;
 import Services.interfaces.ReservationSeanceService;
 import Services.interfaces.SeanceService;
 import Services.interfaces.UserService;
+import enums.StatutSeance;
 import exceptions.ValidationException;
-
+import Services.interfaces.RecommendationServiceUser;
 import javafx.fxml.FXML;
 import javafx.geometry.Pos;
 import javafx.scene.control.*;
@@ -23,6 +24,8 @@ import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
+
 import Entities.Session;
 import enums.RoleUser;
 import javafx.stage.Stage;
@@ -34,6 +37,8 @@ public class UserSeanceController {
     @FXML private TextField searchField;
 
     // ================= SERVICES =================
+    private final RecommendationServiceUser recommendationService =
+            new RecommendationServiceUser();
     private final SeanceService seanceService = new SeanceService();
     private final ReservationSeanceService reservationService =
             new ReservationSeanceService();
@@ -94,9 +99,19 @@ public class UserSeanceController {
     private void loadData() {
 
         try {
+
             masterData = seanceService.getAll();
+
+            for (Seance s : masterData) {
+                seanceService.updateSeanceToTermineeIfNeeded(s);
+            }
+
+            masterData = seanceService.getAll();
+
             refreshCards();
+
         } catch (Exception e) {
+            e.printStackTrace();   // 🔥 AJOUTE ÇA
             DialogUtils.showError(
                     "Erreur",
                     "Impossible de charger les séances."
@@ -131,47 +146,126 @@ public class UserSeanceController {
 
         cardContainer.getChildren().clear();
 
-        if (masterData == null) return;
+        if (masterData == null || masterData.isEmpty()) {
+
+            Label empty =
+                    new Label("📭 Aucune séance disponible pour le moment.");
+            empty.getStyleClass().add("reco-empty");
+
+            cardContainer.getChildren().add(empty);
+            return;
+        }
 
         String search = searchField.getText() == null
                 ? ""
                 : searchField.getText().toLowerCase();
 
-        for (Seance s : masterData) {
+        try {
 
-            boolean matches =
-                    s.getNom().toLowerCase().contains(search)
-                            || s.getDateSeance().toString().contains(search)
-                            || coachMap.getOrDefault(
-                            s.getIdCoach(), ""
-                    ).toLowerCase().contains(search);
+            // 🔥 1️⃣ Récupérer recommandations IA
+            List<Seance> recommended =
+                    recommendationService.recommendForUser(userId);
 
-            if (matches) {
-                cardContainer.getChildren().add(createCard(s));
+            if (recommended == null)
+                recommended = List.of();
+
+            // 🔥 2️⃣ Garder uniquement les séances valides
+            List<Seance> validRecommended = recommended.stream()
+                    .filter(s -> s.getStatutSeance() == StatutSeance.PLANIFIEE)
+                    .filter(s -> matchesSearch(s, search))
+                    .collect(java.util.stream.Collectors.toList());
+
+            Set<Integer> recommendedIds = validRecommended.stream()
+                    .map(Seance::getIdSeance)
+                    .collect(java.util.stream.Collectors.toSet());
+
+            // ⭐ SECTION RECOMMANDÉES
+            if (!validRecommended.isEmpty()) {
+
+                Label recoTitle =
+                        new Label("⭐ Recommandées pour vous");
+                recoTitle.getStyleClass().add("reco-title");
+
+                cardContainer.getChildren().add(recoTitle);
+
+                for (Seance s : validRecommended) {
+                    cardContainer.getChildren()
+                            .add(createCard(s, true));
+                }
+
+                cardContainer.getChildren().add(new Separator());
+
+            } else {
+
+                // 🔵 OPTION UX : afficher message intelligent
+                Label noReco =
+                        new Label("🤖 Aucune recommandation personnalisée pour le moment.\n"
+                                + "Réservez des séances pour obtenir des suggestions adaptées !");
+                noReco.getStyleClass().add("reco-empty");
+
+                cardContainer.getChildren().add(noReco);
+                cardContainer.getChildren().add(new Separator());
             }
+
+            // 📋 AUTRES SÉANCES DISPONIBLES
+            for (Seance s : masterData) {
+
+                if (recommendedIds.contains(s.getIdSeance()))
+                    continue;
+
+                if (s.getStatutSeance() != StatutSeance.PLANIFIEE)
+                    continue;
+
+                if (matchesSearch(s, search)) {
+                    cardContainer.getChildren()
+                            .add(createCard(s, false));
+                }
+            }
+
+        } catch (Exception e) {
+            e.printStackTrace();
         }
     }
+    private boolean matchesSearch(Seance s, String search) {
 
+        return s.getNom().toLowerCase().contains(search)
+                || s.getDateSeance().toString().contains(search)
+                || coachMap.getOrDefault(
+                s.getIdCoach(), ""
+        ).toLowerCase().contains(search);
+    }
     // =================================================
     // CREATE CARD
     // =================================================
-    private VBox createCard(Seance s) {
+    private VBox createCard(Seance s, boolean recommended) {
 
         VBox card = new VBox(15);
         card.getStyleClass().add("seance-card-pro");
 
-        // ================= TITLE =================
+        if (recommended) {
+            card.getStyleClass().add("recommended-card");
+        }
+
+        // ================= HEADER (Title + Reco badge) =================
+        VBox headerBox = new VBox(5);
+
         Label title = new Label(s.getNom());
         title.getStyleClass().add("seance-title-pro");
+
+        headerBox.getChildren().add(title);
+
+        if (recommended) {
+            Label recoBadge = new Label("⭐ Recommandé pour vous");
+            recoBadge.getStyleClass().add("reco-badge");
+            headerBox.getChildren().add(recoBadge);
+        }
 
         // ================= INFOS =================
         VBox infoBox = new VBox(6);
 
         Label date = new Label("📅  " + s.getDateSeance());
-        Label time = new Label("⏰  "
-                + s.getHeureDebut() + " - " + s.getHeureFin());
-        Label coach = new Label("👤  "
-                + coachMap.getOrDefault(
+        Label time = new Label("⏰  " + s.getHeureDebut() + " - " + s.getHeureFin());
+        Label coach = new Label("👤  " + coachMap.getOrDefault(
                 s.getIdCoach(), "Inconnu"));
 
         date.getStyleClass().add("seance-info-pro");
@@ -193,8 +287,7 @@ public class UserSeanceController {
         progress.setPrefHeight(8);
         progress.getStyleClass().add("places-progress");
 
-        Label places =
-                new Label(restantes + " places restantes");
+        Label places = new Label(restantes + " places restantes");
         places.getStyleClass().add("places-label");
 
         // ================= FOOTER =================
@@ -207,8 +300,22 @@ public class UserSeanceController {
         actionBtn.setMaxWidth(Double.MAX_VALUE);
         actionBtn.setPrefHeight(38);
 
-        // ================= LOGIQUE =================
-        if (s.getDateSeance().isBefore(LocalDate.now())) {
+        // ================= LOGIQUE METIER =================
+        LocalDateTime now = LocalDateTime.now();
+        LocalDateTime startDateTime =
+                LocalDateTime.of(
+                        s.getDateSeance(),
+                        s.getHeureDebut()
+                );
+
+        boolean dejaReserve =
+                reservationService.exists(
+                        userId,
+                        s.getIdSeance()
+                );
+
+        // 🔴 TERMINÉE
+        if (s.getStatutSeance() == StatutSeance.TERMINEE) {
 
             badge.setText("Terminée");
             badge.getStyleClass().add("badge-grey");
@@ -216,6 +323,28 @@ public class UserSeanceController {
             actionBtn.setText("Terminée");
             actionBtn.setDisable(true);
         }
+
+        // 🔴 ANNULÉE
+        else if (s.getStatutSeance() == StatutSeance.ANNULEE) {
+
+            badge.setText("Annulée");
+            badge.getStyleClass().add("badge-red");
+
+            actionBtn.setText("Annulée");
+            actionBtn.setDisable(true);
+        }
+
+        // 🔴 Déjà commencée
+        else if (!now.isBefore(startDateTime)) {
+
+            badge.setText("Déjà commencée");
+            badge.getStyleClass().add("badge-grey");
+
+            actionBtn.setText("Indisponible");
+            actionBtn.setDisable(true);
+        }
+
+        // 🔴 Complet
         else if (restantes <= 0) {
 
             badge.setText("Complet");
@@ -224,52 +353,64 @@ public class UserSeanceController {
             actionBtn.setText("Complet");
             actionBtn.setDisable(true);
         }
-        else {
 
-            boolean dejaReserve =
-                    reservationService.exists(
-                            userId,
-                            s.getIdSeance()
-                    );
+        // 🔵 Déjà réservé
+        else if (dejaReserve) {
 
-            if (dejaReserve) {
+            badge.setText("Réservée");
+            badge.getStyleClass().add("badge-blue");
 
-                badge.setText("Réservée");
-                badge.getStyleClass().add("badge-blue");
+            String googleLink = null;
 
-                actionBtn.setText(" Voir dans Google Calendar");
-                actionBtn.getStyleClass().add("btn-google");
-
-                ImageView googleIcon = new ImageView(
-                        new Image(getClass()
-                                .getResource("/images/google.png")
-                                .toExternalForm())
+            try {
+                googleLink = reservationService.getGoogleEventLink(
+                        userId,
+                        s.getIdSeance()
                 );
-                googleIcon.setFitWidth(16);
-                googleIcon.setFitHeight(16);
+            } catch (Exception ignored) {}
 
-                actionBtn.setGraphic(googleIcon);
-                actionBtn.setContentDisplay(ContentDisplay.LEFT);
-                actionBtn.setGraphicTextGap(8);
+            ImageView googleIcon = new ImageView(
+                    new Image(getClass()
+                            .getResource("/images/google.png")
+                            .toExternalForm())
+            );
+            googleIcon.setFitWidth(16);
+            googleIcon.setFitHeight(16);
 
-                actionBtn.setOnAction(e -> ouvrirGoogleCalendar(s));
+            actionBtn.setGraphic(googleIcon);
+            actionBtn.setContentDisplay(ContentDisplay.LEFT);
+            actionBtn.setGraphicTextGap(8);
+            actionBtn.getStyleClass().add("btn-google");
+
+            if (googleLink == null || googleLink.isBlank()) {
+
+                actionBtn.setText(" Ajouter au Google Calendar");
+                actionBtn.setOnAction(e -> ajouterAuCalendrier(s));
 
             } else {
 
-                badge.setText("Disponible");
-                badge.getStyleClass().add("badge-green");
-
-                actionBtn.setText("Réserver");
-                actionBtn.getStyleClass().add("btn-primary");
-
-                actionBtn.setOnAction(e -> reserver(s));
+                actionBtn.setText(" Voir dans Google Calendar");
+                actionBtn.setOnAction(e -> ouvrirGoogleCalendar(s));
             }
+        }
+
+        // 🟢 Disponible
+        else {
+
+            badge.setText("Disponible");
+            badge.getStyleClass().add("badge-green");
+
+            actionBtn.setText("Réserver");
+            actionBtn.getStyleClass().add("btn-primary");
+
+            actionBtn.setOnAction(e -> reserver(s));
         }
 
         footer.getChildren().addAll(badge, actionBtn);
 
+        // ================= BUILD CARD =================
         card.getChildren().addAll(
-                title,
+                headerBox,
                 infoBox,
                 progress,
                 places,
@@ -319,6 +460,34 @@ public class UserSeanceController {
 
         try {
 
+            LocalDateTime now = LocalDateTime.now();
+
+            LocalDateTime startDateTime =
+                    LocalDateTime.of(
+                            s.getDateSeance(),
+                            s.getHeureDebut()
+                    );
+
+            // 🔒 1️⃣ Bloquer si statut non PLANIFIEE
+            if (s.getStatutSeance() != StatutSeance.PLANIFIEE) {
+
+                DialogUtils.showWarning(
+                        "Réservation impossible",
+                        "Cette séance n'est plus disponible."
+                );
+                return;
+            }
+
+            // 🔒 2️⃣ Bloquer si déjà commencée
+            if (!now.isBefore(startDateTime)) {
+
+                DialogUtils.showWarning(
+                        "Réservation impossible",
+                        "La séance a déjà commencé."
+                );
+                return;
+            }
+
             boolean confirmed =
                     DialogUtils.showConfirmation(
                             "Réserver la séance",
@@ -330,38 +499,6 @@ public class UserSeanceController {
             reservationService.reserver(
                     userId,
                     s.getIdSeance()
-            );
-            LocalDateTime start =
-                    LocalDateTime.of(
-                            s.getDateSeance(),
-                            s.getHeureDebut()
-                    );
-
-            LocalDateTime end =
-                    LocalDateTime.of(
-                            s.getDateSeance(),
-                            s.getHeureFin()
-                    );
-
-            GoogleCalendarService.GoogleEventData data =
-                    GoogleCalendarService.addEvent(
-                            Session.getConnectedUser().getIdUser(),   // 🔥 IMPORTANT
-                            "Séance : " + s.getNom(),
-                            "Séance EcoAdventure",
-                            start,
-                            end
-                    );
-
-            reservationService.saveGoogleEventId(
-                    userId,
-                    s.getIdSeance(),
-                    data.id
-            );
-
-            reservationService.saveGoogleEventLink(
-                    userId,
-                    s.getIdSeance(),
-                    data.htmlLink
             );
 
             DialogUtils.showInfo(
@@ -386,7 +523,58 @@ public class UserSeanceController {
             );
         }
     }
+    private void ajouterAuCalendrier(Seance s) {
 
+        try {
+
+            LocalDateTime start =
+                    LocalDateTime.of(
+                            s.getDateSeance(),
+                            s.getHeureDebut()
+                    );
+
+            LocalDateTime end =
+                    LocalDateTime.of(
+                            s.getDateSeance(),
+                            s.getHeureFin()
+                    );
+
+            GoogleCalendarService.GoogleEventData data =
+                    GoogleCalendarService.addEvent(
+                            userId,
+                            "Séance : " + s.getNom(),
+                            "Séance EcoAdventure",
+                            start,
+                            end
+                    );
+
+            reservationService.saveGoogleEventId(
+                    userId,
+                    s.getIdSeance(),
+                    data.id
+            );
+
+            reservationService.saveGoogleEventLink(
+                    userId,
+                    s.getIdSeance(),
+                    data.htmlLink
+            );
+
+            DialogUtils.showInfo(
+                    "Google Calendar",
+                    "Événement ajouté au calendrier."
+            );
+
+            loadData();
+
+        } catch (Exception e) {
+
+            DialogUtils.showError(
+                    "Google Calendar",
+                    "Impossible d'ajouter au calendrier."
+            );
+        }
+    }
     // =================================================
     // NAVIGATION
     // =================================================
@@ -408,4 +596,5 @@ public class UserSeanceController {
                 (javafx.scene.Node) event.getSource()
         );
     }
+
 }
