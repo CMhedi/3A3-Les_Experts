@@ -2,60 +2,46 @@
 <?import javafx.scene.chart.*?>
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
-<?import javafx.scene.text.*?>
-<?import javafx.scene.paint.*?>
+<?import javafx.geometry.Insets?>
 
-<HBox prefHeight="750.0" prefWidth="1200.0" style="-fx-background-color: #f1f5f9;" xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1" fx:controller="controllers.AdminDashboardController">
-    <VBox prefWidth="280.0" style="-fx-background-color: #064e3b; -fx-padding: 30; -fx-background-radius: 0 30 30 0;">
-        <Label text="EcoAdventure" textFill="WHITE" style="-fx-font-size: 28; -fx-font-weight: 900;" />
-        <Label text="Admin Dashboard" textFill="#a5f3bc" style="-fx-font-size: 13;" />
+<VBox spacing="30.0" style="-fx-padding: 40; -fx-background-color: #f1f5f9;"
+      xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1"
+      fx:controller="controllers.AdminDashboard1Controller"
+      VBox.vgrow="ALWAYS">
 
-        <Separator opacity="0.1" prefHeight="50.0" />
+    <HBox alignment="CENTER_LEFT" spacing="20">
+        <VBox>
+            <Label text="Vue d'ensemble" style="-fx-font-size: 32; -fx-font-weight: 900; -fx-text-fill: #1e293b;" />
+            <Label text="Analysez la performance de vos aventures" textFill="#64748b" />
+        </VBox>
+        <Region HBox.hgrow="ALWAYS" />
+        <Button onAction="#exportToExcel" style="-fx-background-color: #10b981; -fx-text-fill: white; -fx-font-weight: bold; -fx-background-radius: 12; -fx-padding: 12 25; -fx-cursor: hand;" text="📥 Rapport Excel" />
+    </HBox>
 
-        <VBox spacing="15.0">
-            <Button maxWidth="Infinity" style="-fx-background-color: rgba(255,255,255,0.15); -fx-text-fill: white; -fx-background-radius: 12; -fx-alignment: CENTER_LEFT; -fx-padding: 12;" text="📊 Dashboard" />
-            <Button onAction="#goToEvenements" maxWidth="Infinity" style="-fx-background-color: transparent; -fx-text-fill: #ecfdf5; -fx-background-radius: 12; -fx-alignment: CENTER_LEFT; -fx-padding: 12; -fx-cursor: hand;" text="📅 Événements" />
-            <Button onAction="#goToReservations" maxWidth="Infinity" style="-fx-background-color: transparent; -fx-text-fill: #ecfdf5; -fx-background-radius: 12; -fx-alignment: CENTER_LEFT; -fx-padding: 12; -fx-cursor: hand;" text="🎟️ Réservations" />
+    <HBox spacing="25.0">
+        <VBox prefWidth="300.0" style="-fx-background-color: linear-gradient(to right, #064e3b, #065f46); -fx-background-radius: 25; -fx-padding: 25; -fx-effect: dropshadow(three-pass-box, rgba(6,78,59,0.3), 20, 0, 0, 10);">
+            <Label text="Événements" textFill="#a5f3bc" style="-fx-font-weight: bold;" />
+            <Label fx:id="lblTotalEvents" text="0" textFill="WHITE" style="-fx-font-size: 48; -fx-font-weight: 900;" />
         </VBox>
 
-        <Region VBox.vgrow="ALWAYS" />
+        <VBox prefWidth="300.0" style="-fx-background-color: white; -fx-background-radius: 25; -fx-padding: 25; -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.05), 15, 0, 0, 5);">
+            <Label text="Billets Vendus" textFill="#64748b" style="-fx-font-weight: bold;" />
+            <Label fx:id="lblTotalTickets" text="0" textFill="#10b981" style="-fx-font-size: 48; -fx-font-weight: 900;" />
+        </VBox>
+    </HBox>
 
-        <Button onAction="#exportToExcel" maxWidth="Infinity" style="-fx-background-color: #10b981; -fx-text-fill: white; -fx-font-weight: bold; -fx-background-radius: 12; -fx-padding: 15; -fx-cursor: hand;" text="📥 Rapport Excel" />
-    </VBox>
+    <HBox spacing="30.0" VBox.vgrow="ALWAYS">
+        <VBox style="-fx-background-color: white; -fx-background-radius: 25; -fx-padding: 25; -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.04), 20, 0, 0, 10);" HBox.hgrow="ALWAYS">
+            <Label text="Catégories d'Aventures" style="-fx-font-weight: 900; -fx-font-size: 18; -fx-text-fill: #1e293b;" />
+            <PieChart fx:id="categoryPieChart" />
+        </VBox>
 
-    <VBox spacing="30.0" style="-fx-padding: 40;" HBox.hgrow="ALWAYS">
-        <HBox alignment="CENTER_LEFT" spacing="20">
-            <VBox>
-                <Label text="Vue d'ensemble" style="-fx-font-size: 32; -fx-font-weight: 900; -fx-text-fill: #1e293b;" />
-                <Label text="Analysez la performance de vos aventures" textFill="#64748b" />
-            </VBox>
-        </HBox>
-
-        <HBox spacing="25.0">
-            <VBox prefWidth="300.0" style="-fx-background-color: linear-gradient(to right, #064e3b, #065f46); -fx-background-radius: 25; -fx-padding: 25; -fx-effect: dropshadow(three-pass-box, rgba(6,78,59,0.3), 20, 0, 0, 10);">
-                <Label text="Événements" textFill="#a5f3bc" style="-fx-font-weight: bold;" />
-                <Label fx:id="lblTotalEvents" text="0" textFill="WHITE" style="-fx-font-size: 48; -fx-font-weight: 900;" />
-            </VBox>
-
-            <VBox prefWidth="300.0" style="-fx-background-color: white; -fx-background-radius: 25; -fx-padding: 25; -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.05), 15, 0, 0, 5);">
-                <Label text="Billets Vendus" textFill="#64748b" style="-fx-font-weight: bold;" />
-                <Label fx:id="lblTotalTickets" text="0" textFill="#10b981" style="-fx-font-size: 48; -fx-font-weight: 900;" />
-            </VBox>
-        </HBox>
-
-        <HBox spacing="30.0" VBox.vgrow="ALWAYS">
-            <VBox style="-fx-background-color: white; -fx-background-radius: 25; -fx-padding: 25; -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.04), 20, 0, 0, 10);" HBox.hgrow="ALWAYS">
-                <Label text="Catégories d'Aventures" style="-fx-font-weight: 900; -fx-font-size: 18; -fx-text-fill: #1e293b;" />
-                <PieChart fx:id="categoryPieChart" />
-            </VBox>
-
-            <VBox style="-fx-background-color: white; -fx-background-radius: 25; -fx-padding: 25; -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.04), 20, 0, 0, 10);" HBox.hgrow="ALWAYS">
-                <Label text="Ventes par Événement" style="-fx-font-weight: 900; -fx-font-size: 18; -fx-text-fill: #1e293b;" />
-                <BarChart fx:id="ticketsBarChart">
-                    <xAxis><CategoryAxis side="BOTTOM" /></xAxis>
-                    <yAxis><NumberAxis side="LEFT" /></yAxis>
-                </BarChart>
-            </VBox>
-        </HBox>
-    </VBox>
-</HBox>
+        <VBox style="-fx-background-color: white; -fx-background-radius: 25; -fx-padding: 25; -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.04), 20, 0, 0, 10);" HBox.hgrow="ALWAYS">
+            <Label text="Ventes par Événement" style="-fx-font-weight: 900; -fx-font-size: 18; -fx-text-fill: #1e293b;" />
+            <BarChart fx:id="ticketsBarChart">
+                <xAxis><CategoryAxis side="BOTTOM" /></xAxis>
+                <yAxis><NumberAxis side="LEFT" /></yAxis>
+            </BarChart>
+        </VBox>
+    </HBox>
+</VBox>

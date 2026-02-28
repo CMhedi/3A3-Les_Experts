@@ -26,7 +26,9 @@
         <Button onAction="#goToProfil" maxWidth="Infinity" text="Mon Profil"
                 style="-fx-background-color: transparent; -fx-text-fill: white; -fx-alignment: CENTER_LEFT; -fx-cursor: hand;"/>
 
-        <Button onAction="#goToEvenements" maxWidth="Infinity" text="📅 Évènements"
+        <Button onAction="#goToEvenements" maxWidth="Infinity" text="Évènements"
+                style="-fx-background-color: transparent; -fx-text-fill: white; -fx-alignment: CENTER_LEFT; -fx-cursor: hand;"/>
+        <Button onAction="#goToReservations" maxWidth="Infinity" text="Réservations Evenements"
                 style="-fx-background-color: transparent; -fx-text-fill: white; -fx-alignment: CENTER_LEFT; -fx-cursor: hand;"/>
 
         <Button onAction="#openMainLayout" maxWidth="Infinity" text="➡️ Ouvrir MainLayout"

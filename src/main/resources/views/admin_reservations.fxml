@@ -3,50 +3,32 @@
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
 
-<BorderPane xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1"
-            fx:controller="controllers.ReservationAdminController"
-            stylesheets="@/styles/app.css" styleClass="root">
+<VBox xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1"
+      fx:controller="controllers.ReservationAdminController"
+      stylesheets="@/styles/app.css" styleClass="root"
+      spacing="0" VBox.vgrow="ALWAYS">
 
-    <left>
-        <VBox styleClass="sidebar" spacing="16" prefWidth="250">
-            <VBox spacing="6" styleClass="sidebarHeader">
-                <Label text="EcoAdventure" styleClass="brand"/>
-                <Label text="Admin Dashboard" styleClass="mutedSidebar"/>
-            </VBox>
-            <VBox spacing="10" styleClass="sidebarNav">
-                <Button text="🏠  Accueil" onAction="#goHome" styleClass="navItem"/>
-                <Button text="🎫  Événements" onAction="#goToEvents" styleClass="navItem"/>
-                <Button text="📅  Réservations" styleClass="navItem, navItemActive"/>
-            </VBox>
-            <Region VBox.vgrow="ALWAYS"/>
-            <Separator styleClass="sidebarSep"/>
-            <Button text="⎋  Déconnexion" onAction="#onLogout" styleClass="navItem, danger"/>
+    <HBox styleClass="topbar" spacing="15" alignment="CENTER_LEFT">
+        <VBox spacing="2">
+            <Label text="Gestion des Réservations" styleClass="pageTitle"/>
+            <Label fx:id="lblStats" text="Analyse des données..." styleClass="mutedText" style="-fx-font-size: 12px;"/>
         </VBox>
-    </left>
+        <Region HBox.hgrow="ALWAYS"/>
+        <HBox styleClass="searchBox" spacing="8" alignment="CENTER_LEFT">
+            <Label text="🔎" styleClass="muted"/>
+            <TextField fx:id="searchReservationField" promptText="Filtrer par ID Event ou Statut..."
+                       onKeyReleased="#onSearchReservation" styleClass="searchInput"/>
+        </HBox>
+        <Button text="🔄" onAction="#onRefresh" styleClass="secondaryBtn" style="-fx-font-size: 16px;"/>
+    </HBox>
 
-    <center>
-        <VBox spacing="0">
-            <HBox styleClass="topbar" spacing="15" alignment="CENTER_LEFT">
-                <VBox spacing="2">
-                    <Label text="Gestion des Réservations" styleClass="pageTitle"/>
-                    <Label fx:id="lblStats" text="Analyse des données..." styleClass="mutedText" style="-fx-font-size: 12px;"/>
-                </VBox>
-                <Region HBox.hgrow="ALWAYS"/>
-                <HBox styleClass="searchBox" spacing="8" alignment="CENTER_LEFT">
-                    <Label text="🔎" styleClass="muted"/>
-                    <TextField fx:id="searchReservationField" promptText="Filtrer par ID Event ou Statut..."
-                               onKeyReleased="#onSearchReservation" styleClass="searchInput"/>
-                </HBox>
-                <Button text="🔄" onAction="#onRefresh" styleClass="secondaryBtn" style="-fx-font-size: 16px;"/>
-            </HBox>
-
-            <ScrollPane fitToWidth="true" hbarPolicy="NEVER" styleClass="transparentScroll" VBox.vgrow="ALWAYS">
-                <content>
-                    <VBox fx:id="cardsContainer" spacing="15" styleClass="pageContent">
-                        <padding><Insets top="25" right="35" bottom="25" left="35"/></padding>
-                    </VBox>
-                </content>
-            </ScrollPane>
-        </VBox>
-    </center>
-</BorderPane>
+    <ScrollPane fitToWidth="true" hbarPolicy="NEVER" styleClass="transparentScroll" VBox.vgrow="ALWAYS">
+        <content>
+            <VBox fx:id="cardsContainer" spacing="15" styleClass="pageContent">
+                <padding>
+                    <Insets top="25" right="35" bottom="25" left="35"/>
+                </padding>
+            </VBox>
+        </content>
+    </ScrollPane>
+</VBox>

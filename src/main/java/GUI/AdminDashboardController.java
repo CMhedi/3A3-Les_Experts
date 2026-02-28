@@ -1,34 +1,34 @@
-package GUI;
+package controllers;
 
-import Entities.Inscription;
-import Utiles.MyDB;
-import javafx.beans.property.SimpleStringProperty;
+import Entities.Evenement;
+import Entities.ReservationEvenement;
+import Services.EvenementService;
+import Services.ReservationEvenementService;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.scene.chart.*;
+import javafx.scene.control.Alert;
 import javafx.scene.control.Label;
-import javafx.scene.control.TableColumn;
-import javafx.scene.control.TableView;
-import javafx.scene.control.cell.PropertyValueFactory;
+import org.apache.poi.ss.usermodel.*;
+import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 
-import java.sql.*;
-import java.util.HashMap;
+import java.awt.Desktop;
+import java.io.File;
+import java.io.FileOutputStream;
+import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 public class AdminDashboardController {
 
-    @FXML private Label lblRevenue, lblPacks, lblReservations, lblClaims;
-    @FXML private AreaChart<String, Number> revenueChart;
-    @FXML private PieChart rolePieChart;
+    @FXML private Label lblTotalEvents;
+    @FXML private Label lblTotalTickets;
+    @FXML private PieChart categoryPieChart;
+    @FXML private BarChart<String, Number> ticketsBarChart;
 
-    @FXML private TableView<Inscription> tableRecentInscriptions;
-    @FXML private TableColumn<Inscription, String> colUser, colPack, colMontant;
-
-    @FXML private TableView<Map<String, String>> miniTableActivite, miniTableEvenement;
-    @FXML private TableColumn<Map<String, String>, String> colMiniActNom, colMiniActStatut, colMiniEvtTitre, colMiniEvtStatut;
-
-    private Connection conn = MyDB.getInstance().getConnection();
+    private final EvenementService evService = new EvenementService();
+    private final ReservationEvenementService resService = new ReservationEvenementService();
 
     @FXML
     public void initialize() {
@@ -37,93 +37,83 @@ public class AdminDashboardController {
 
     public void refreshDashboard() {
         try {
-            updateKpis();
-            loadAreaChart();
-            loadPieChart();
-            loadRecentInscriptionsTable();
-            loadMiniTables();
-        } catch (SQLException e) {
-            e.printStackTrace();
+            List<Evenement> events = evService.getAll();
+            List<ReservationEvenement> reservations = resService.getAll();
+
+            // 1. Stats Rapides
+            lblTotalEvents.setText(String.valueOf(events.size()));
+            int totalTickets = reservations.stream().mapToInt(ReservationEvenement::getNbBillets).sum();
+            lblTotalTickets.setText(String.valueOf(totalTickets));
+
+            // 2. PieChart: Categories
+            Map<String, Long> catStats = events.stream()
+                    .collect(Collectors.groupingBy(e -> e.getCategorieEvt().toString(), Collectors.counting()));
+            ObservableList<PieChart.Data> pieData = FXCollections.observableArrayList();
+            catStats.forEach((cat, count) -> pieData.add(new PieChart.Data(cat, count)));
+            categoryPieChart.setData(pieData);
+
+            // 3. BarChart: Top Ventes
+            XYChart.Series<String, Number> series = new XYChart.Series<>();
+            series.setName("Billets Vendus");
+            events.stream().limit(6).forEach(ev -> {
+                int sold = reservations.stream()
+                        .filter(r -> r.getIdEvenement() == ev.getIdEvenement())
+                        .mapToInt(ReservationEvenement::getNbBillets).sum();
+                series.getData().add(new XYChart.Data<>(ev.getTitre(), sold));
+            });
+            ticketsBarChart.getData().clear();
+            ticketsBarChart.getData().add(series);
+
+        } catch (Exception e) { e.printStackTrace(); }
+    }
+
+    @FXML
+    private void exportToExcel() {
+        String fileName = "Rapport_Reservations.xlsx";
+        try (Workbook workbook = new XSSFWorkbook()) {
+            Sheet sheet = workbook.createSheet("Rapport EcoAdventure");
+
+            CellStyle headerStyle = workbook.createCellStyle();
+            headerStyle.setFillForegroundColor(IndexedColors.DARK_GREEN.getIndex());
+            headerStyle.setFillPattern(FillPatternType.SOLID_FOREGROUND);
+            Font font = workbook.createFont();
+            font.setColor(IndexedColors.WHITE.getIndex());
+            font.setBold(true);
+            headerStyle.setFont(font);
+
+            String[] headers = {"ID", "Event ID", "Billets", "Statut", "Date"};
+            Row headerRow = sheet.createRow(0);
+            for (int i = 0; i < headers.length; i++) {
+                Cell cell = headerRow.createCell(i);
+                cell.setCellValue(headers[i]);
+                cell.setCellStyle(headerStyle);
+            }
+
+            List<ReservationEvenement> resList = resService.getAll();
+            int rowNum = 1;
+            for (ReservationEvenement r : resList) {
+                Row row = sheet.createRow(rowNum++);
+                row.createCell(0).setCellValue(r.getIdResEvt());
+                row.createCell(1).setCellValue(r.getIdEvenement());
+                row.createCell(2).setCellValue(r.getNbBillets());
+                row.createCell(3).setCellValue(r.getStatutRes().toString());
+                row.createCell(4).setCellValue(r.getDateReservation().toString());
+            }
+
+            for (int i = 0; i < headers.length; i++) {
+                sheet.autoSizeColumn(i);
+            }
+
+            try (FileOutputStream fileOut = new FileOutputStream(fileName)) {
+                workbook.write(fileOut);
+                if (Desktop.isDesktopSupported()) {
+                    File excelFile = new File(fileName);
+                    if (excelFile.exists()) Desktop.getDesktop().open(excelFile);
+                }
+                new Alert(Alert.AlertType.INFORMATION, "Excel généré : " + fileName).show();
+            }
+        } catch (Exception e) {
+            new Alert(Alert.AlertType.ERROR, "Erreur : " + e.getMessage()).show();
         }
-    }
-
-    private void updateKpis() throws SQLException {
-        Statement st = conn.createStatement();
-        ResultSet rs = st.executeQuery("SELECT SUM(montant_total) FROM inscription WHERE statut_inscr = 'VALIDEE'");
-        if (rs.next()) lblRevenue.setText(String.format("%.2f DT", rs.getDouble(1)));
-
-        rs = st.executeQuery("SELECT COUNT(*) FROM pack WHERE statut_pack = 'ACTIF'");
-        if (rs.next()) lblPacks.setText(String.valueOf(rs.getInt(1)));
-
-        rs = st.executeQuery("SELECT (SELECT COUNT(*) FROM reservation_activite) + (SELECT COUNT(*) FROM reservation_evenement)");
-        if (rs.next()) lblReservations.setText(String.valueOf(rs.getInt(1)));
-
-        rs = st.executeQuery("SELECT COUNT(*) FROM reclamation WHERE statut = 'EN_ATTENTE'");
-        if (rs.next()) lblClaims.setText(String.valueOf(rs.getInt(1)));
-    }
-
-    private void loadAreaChart() throws SQLException {
-        revenueChart.getData().clear();
-        XYChart.Series<String, Number> series = new XYChart.Series<>();
-        series.setName("Revenu");
-        String sql = "SELECT DATE_FORMAT(date_inscription, '%b') as mois, SUM(montant_total) as total FROM inscription GROUP BY mois";
-        ResultSet rs = conn.createStatement().executeQuery(sql);
-        while (rs.next()) {
-            series.getData().add(new XYChart.Data<>(rs.getString("mois"), rs.getDouble("total")));
-        }
-        revenueChart.getData().add(series);
-    }
-
-    private void loadPieChart() throws SQLException {
-        ObservableList<PieChart.Data> pieData = FXCollections.observableArrayList();
-        String sql = "SELECT role, COUNT(*) FROM user_app GROUP BY role";
-        ResultSet rs = conn.createStatement().executeQuery(sql);
-        while (rs.next()) {
-            pieData.add(new PieChart.Data(rs.getString(1), rs.getInt(2)));
-        }
-        rolePieChart.setData(pieData);
-    }
-
-    private void loadRecentInscriptionsTable() throws SQLException {
-        colUser.setCellValueFactory(new PropertyValueFactory<>("nomUser"));
-        colPack.setCellValueFactory(new PropertyValueFactory<>("nomPack"));
-        colMontant.setCellValueFactory(new PropertyValueFactory<>("montantTotal"));
-
-        ObservableList<Inscription> data = FXCollections.observableArrayList();
-        String sql = "SELECT i.*, u.nom as user_name, p.nom as pack_name FROM inscription i " +
-                "JOIN user_app u ON i.id_user = u.id_user JOIN pack p ON i.id_pack = p.id_pack LIMIT 5";
-        ResultSet rs = conn.createStatement().executeQuery(sql);
-        while (rs.next()) {
-            Inscription ins = new Inscription();
-            ins.setNomUser(rs.getString("user_name"));
-            ins.setNomPack(rs.getString("pack_name"));
-            ins.setMontantTotal(rs.getBigDecimal("montant_total"));
-            data.add(ins);
-        }
-        tableRecentInscriptions.setItems(data);
-    }
-
-    private void loadMiniTables() throws SQLException {
-        colMiniActNom.setCellValueFactory(d -> new SimpleStringProperty(d.getValue().get("item")));
-        colMiniActStatut.setCellValueFactory(d -> new SimpleStringProperty(d.getValue().get("statut")));
-
-        colMiniEvtTitre.setCellValueFactory(d -> new SimpleStringProperty(d.getValue().get("item")));
-        colMiniEvtStatut.setCellValueFactory(d -> new SimpleStringProperty(d.getValue().get("statut")));
-
-        // ✅ Query Correcte : esmha 'statut'
-        fillGenericTable("SELECT nom, statut FROM activite LIMIT 3", miniTableActivite);
-        fillGenericTable("SELECT titre, statut FROM evenement LIMIT 3", miniTableEvenement);
-    }
-
-    private void fillGenericTable(String sql, TableView<Map<String, String>> table) throws SQLException {
-        ObservableList<Map<String, String>> data = FXCollections.observableArrayList();
-        ResultSet rs = conn.createStatement().executeQuery(sql);
-        while (rs.next()) {
-            Map<String, String> row = new HashMap<>();
-            row.put("item", rs.getString(1));
-            row.put("statut", rs.getString(2));
-            data.add(row);
-        }
-        table.setItems(data);
     }
 }

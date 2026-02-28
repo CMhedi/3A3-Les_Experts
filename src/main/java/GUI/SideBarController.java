@@ -45,11 +45,14 @@ public class SideBarController {
         changeCenter("/GUI/Profile.fxml");
     }
 
-    // --- El fonction el jdida hna ---
     @FXML
     void goToEvenements(ActionEvent event) {
-        // Hna hatit el path mta' el reservation_list kima enti t-heb
-        changeCenter("/views/reservation_list.fxml");
+        changeCenter("/views/AdminDashboard.fxml");
+    }
+
+    @FXML
+    void goToReservations(ActionEvent event) {
+        changeCenter("/views/admin_reservations.fxml");
     }
 
     @FXML
@@ -123,6 +126,9 @@ public class SideBarController {
     private BorderPane getHostBorderPane() {
         if (sidebarRoot == null || sidebarRoot.getScene() == null) return null;
         if (sidebarRoot.getScene().getRoot() instanceof BorderPane bp) return bp;
+        Node rootNode = sidebarRoot.getScene().getRoot();
+        if (rootNode.lookup("#mainPaneUser") instanceof BorderPane bp) return bp;
+
         return null;
     }
 
