@@ -25,7 +25,7 @@ public class WhatsAppService {
             .connectTimeout(Duration.ofSeconds(10))
             .build();
 
-    private final String token="EAAPTu5bspesBQ6RQVIyETJTGkkgioN49DAzrcy8ZA23KseuCTKxaPbhp4MYinfnVLeJ5LXOzYyCbZAZB78n9PZBRBcKbZBYRjSBHabjtf7cubNsIajKAOPqmDSDk23UBZAcA4sHdnMxAHYm3dzcddR0DXCVbZArUhMNHMZCkGkVjJmar4wmR6X98kcA2Ij8FdzBNrv634nbBRJIFJAxphMgrCdRsWEPsLRLt4HCZAwuDNMN51QMOtTc5HGOjFFW8dI5IUwsFaOvSvBnfX3iRhpJcr";
+    private final String token="EAAPTu5bspesBQ4QM08pKZB6MnTTuX8YvwP8zGvlTdQqas6C5rhNa9tRBRzoKGpdBb89aoZC9WUyPCUBm5I2GuRtdtKfbnsNetiKw23lz7dO1aa4FhUt2oH1pS2J0B817V7av1mlli34wJy4TdWZC6Ja1RcEWiwAot5RQ4aAhhPRt8osXRQaLO1nKY7FggsZAZAUoXRs3GAQGW7snz4OG4dphIENPD7POCHWIVOAXKqgWRZCmi8wQwFHoeoVZAV8ZCgZB3cyO3AGxZAntmNZCQeeTKR2";
     private final String phoneNumberId="920875224452367";
     private final String apiVersion="v25.0";
 

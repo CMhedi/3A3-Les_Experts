@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.geometry.Insets?>
+
+<BorderPane xmlns="http://javafx.com/javafx/17"
+            xmlns:fx="http://javafx.com/fxml/1"
+            fx:controller="GUI.UserPackListController"
+            stylesheets="@user_pack.css"
+            styleClass="page">
+
+    <top>
+        <VBox spacing="6" styleClass="topbar">
+            <Label text="Choisir un Pack" styleClass="title"/>
+            <Label text="Sélectionne un pack actif, puis clique sur Continuer."
+                   styleClass="subtitle"/>
+        </VBox>
+    </top>
+
+    <center>
+        <VBox spacing="14" styleClass="card">
+            <padding>
+                <Insets top="20" right="20" bottom="20" left="20"/>
+            </padding>
+
+            <TextField fx:id="txtSearch" promptText="Rechercher un pack..."
+                       styleClass="search"/>
+
+            <ListView fx:id="lvPacks" prefHeight="520" styleClass="packs-list"/>
+
+            <HBox spacing="10" alignment="CENTER_RIGHT">
+                <Button text="Rafraîchir" onAction="#refresh"
+                        styleClass="btn-secondary"/>
+                <Button text="Continuer" onAction="#continueToConfirm"
+                        styleClass="btn-primary"/>
+            </HBox>
+        </VBox>
+    </center>
+</BorderPane>

@@ -6,7 +6,7 @@ import java.sql.SQLException;
 
 public class MyDB2 {
 
-    private static final String URL = "jdbc:mysql://localhost:3306/ecoadventure?useSSL=false&serverTimezone=UTC";
+    private static final String URL = "jdbc:mysql://localhost:3308/ecoadventure?useSSL=false&serverTimezone=UTC";
     private static final String USER = "root";
     private static final String PASSWORD = "";
 
@@ -43,7 +43,7 @@ public class MyDB2 {
     }
 
     public static Connection getConnection() {
-        MyDB.getInstance();
+        MyDB2.getInstance();
         return connection;
     }
 }

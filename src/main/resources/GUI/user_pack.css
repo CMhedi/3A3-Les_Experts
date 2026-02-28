@@ -1,0 +1,212 @@
+/* =========================================================
+   user_pack.css — EcoAdventure (PRO) Dark Glass
+   Pour:
+   - UserPackList.fxml
+   - UserPackInscription.fxml
+   ========================================================= */
+
+/* ---------- Base ---------- */
+.page {
+    -fx-font-family: "Inter", "Segoe UI", Arial;
+    -fx-background-color: linear-gradient(to bottom right,
+    #06150f, #0a241b, #071d14);
+}
+
+/* ---------- Top Bar ---------- */
+.topbar {
+    -fx-padding: 18 22 14 22;
+    -fx-background-color: rgba(255,255,255,0.06);
+    -fx-border-color: rgba(255,255,255,0.10);
+    -fx-border-width: 0 0 1 0;
+}
+
+.title {
+    -fx-text-fill: rgba(255,255,255,0.96);
+    -fx-font-size: 24px;
+    -fx-font-weight: 900;
+    -fx-letter-spacing: 0.5px;
+}
+
+.subtitle {
+    -fx-text-fill: rgba(255,255,255,0.70);
+    -fx-font-size: 12.8px;
+}
+
+/* ---------- Search ---------- */
+.search {
+    -fx-background-color: rgba(255,255,255,0.08);
+    -fx-text-fill: rgba(255,255,255,0.93);
+    -fx-prompt-text-fill: rgba(255,255,255,0.45);
+    -fx-background-radius: 14;
+    -fx-border-radius: 14;
+    -fx-border-color: rgba(255,255,255,0.12);
+    -fx-padding: 10 12;
+    -fx-highlight-fill: rgba(95,233,140,0.40);
+    -fx-highlight-text-fill: #072015;
+}
+
+.search:focused {
+    -fx-border-color: rgba(95,233,140,0.75);
+    -fx-background-color: rgba(255,255,255,0.10);
+}
+
+/* ---------- ListView (packs) ---------- */
+.packs-list {
+    -fx-background-color: rgba(255,255,255,0.06);
+    -fx-background-radius: 16;
+    -fx-border-radius: 16;
+    -fx-border-color: rgba(255,255,255,0.12);
+    -fx-padding: 8;
+}
+
+/* scroll pane inside listview */
+.packs-list .virtual-flow {
+    -fx-background-color: transparent;
+}
+.packs-list .virtual-flow .clipped-container {
+    -fx-background-color: transparent;
+}
+.packs-list .virtual-flow .corner {
+    -fx-background-color: transparent;
+}
+
+/* cells */
+.packs-list .list-cell {
+    -fx-background-color: transparent;
+    -fx-text-fill: rgba(255,255,255,0.92);
+    -fx-padding: 14 14;
+    -fx-background-radius: 14;
+    -fx-border-radius: 14;
+    -fx-border-color: rgba(255,255,255,0.10);
+    -fx-border-width: 1;
+    -fx-background-insets: 6;
+    -fx-border-insets: 6;
+}
+
+/* hover */
+.packs-list .list-cell:filled:hover {
+    -fx-background-color: rgba(255,255,255,0.08);
+    -fx-border-color: rgba(255,255,255,0.16);
+    -fx-cursor: hand;
+}
+
+/* selected */
+.packs-list .list-cell:filled:selected,
+.packs-list .list-cell:filled:selected:hover {
+    -fx-background-color: rgba(95,233,140,0.20);
+    -fx-border-color: rgba(95,233,140,0.60);
+}
+
+/* make multiline nice */
+.packs-list .list-cell .text {
+    -fx-line-spacing: 2px;
+}
+
+/* ---------- Card (confirmation page) ---------- */
+.card {
+    -fx-background-color: rgba(255,255,255,0.06);
+    -fx-background-radius: 18;
+    -fx-border-radius: 18;
+    -fx-border-color: rgba(255,255,255,0.12);
+    -fx-padding: 18;
+}
+
+/* grid labels key/value */
+.k {
+    -fx-text-fill: rgba(255,255,255,0.65);
+    -fx-font-size: 13px;
+}
+
+.v {
+    -fx-text-fill: rgba(255,255,255,0.93);
+    -fx-font-size: 13.5px;
+    -fx-font-weight: 800;
+}
+
+/* total price */
+.total {
+    -fx-text-fill: rgba(95,233,140,0.95);
+    -fx-font-size: 19px;
+    -fx-font-weight: 900;
+}
+
+/* ---------- Spinner ---------- */
+.spinner {
+    -fx-background-color: rgba(255,255,255,0.08);
+    -fx-background-radius: 12;
+    -fx-border-radius: 12;
+    -fx-border-color: rgba(255,255,255,0.12);
+}
+
+.spinner:focused {
+    -fx-border-color: rgba(95,233,140,0.75);
+}
+
+.spinner .text-field {
+    -fx-background-color: transparent;
+    -fx-text-fill: rgba(255,255,255,0.92);
+    -fx-font-weight: 800;
+}
+
+.spinner .increment-arrow-button,
+.spinner .decrement-arrow-button {
+    -fx-background-color: rgba(255,255,255,0.10);
+    -fx-background-radius: 10;
+    -fx-cursor: hand;
+}
+.spinner .increment-arrow-button:hover,
+.spinner .decrement-arrow-button:hover {
+    -fx-background-color: rgba(95,233,140,0.18);
+}
+
+/* ---------- Separator ---------- */
+.separator .line {
+    -fx-border-color: rgba(255,255,255,0.12);
+    -fx-border-width: 1;
+}
+
+/* ---------- Buttons ---------- */
+.btn-primary {
+    -fx-background-color: rgba(95,233,140,0.95);
+    -fx-text-fill: #062015;
+    -fx-font-weight: 900;
+    -fx-background-radius: 14;
+    -fx-padding: 10 16;
+    -fx-cursor: hand;
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.25), 14, 0.2, 0, 6);
+}
+
+.btn-primary:hover {
+    -fx-background-color: rgba(95,233,140,1);
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.35), 18, 0.2, 0, 8);
+}
+
+.btn-primary:pressed {
+    -fx-translate-y: 1;
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.20), 10, 0.2, 0, 4);
+}
+
+.btn-secondary {
+    -fx-background-color: rgba(255,255,255,0.10);
+    -fx-text-fill: rgba(255,255,255,0.92);
+    -fx-font-weight: 800;
+    -fx-background-radius: 14;
+    -fx-padding: 10 16;
+    -fx-cursor: hand;
+    -fx-border-color: rgba(255,255,255,0.14);
+    -fx-border-radius: 14;
+}
+
+.btn-secondary:hover {
+    -fx-background-color: rgba(255,255,255,0.13);
+    -fx-border-color: rgba(255,255,255,0.18);
+}
+
+.btn-secondary:pressed {
+    -fx-translate-y: 1;
+}
+
+/* ---------- Alerts (optional better font) ---------- */
+.dialog-pane {
+    -fx-font-family: "Inter", "Segoe UI", Arial;
+}
