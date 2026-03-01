@@ -166,57 +166,79 @@ public class CoachDashboardController {
 
     // =================================================
     // CARD SYSTEM (PRO VERSION CLEAN)
-    // =================================================
     private void refreshCards() {
 
         cardContainer.getChildren().clear();
 
-        if (masterData == null) return;
+        if (masterData == null || masterData.isEmpty()) {
+            Label empty = new Label("📭 Aucune séance trouvée.");
+            empty.getStyleClass().add("empty-state");
+            cardContainer.getChildren().add(empty);
+            return;
+        }
 
         String search = searchField.getText() == null ?
                 "" : searchField.getText().toLowerCase();
 
         String statutSelected = statutFilter.getValue();
 
-        for (Seance s : masterData) {
+        List<Seance> filtered = masterData.stream()
+                .filter(s ->
+                        s.getNom().toLowerCase().contains(search)
+                                || s.getDateSeance().toString().contains(search))
+                .filter(s ->
+                        statutSelected.equals("Tous")
+                                || s.getStatutSeance().name().equals(statutSelected))
+                .toList();
 
-            boolean matchesSearch =
-                    s.getNom().toLowerCase().contains(search)
-                            || s.getDateSeance().toString().contains(search);
+        if (filtered.isEmpty()) {
+            Label empty = new Label("🔎 Aucun résultat trouvé.");
+            empty.getStyleClass().add("empty-state");
+            cardContainer.getChildren().add(empty);
+            return;
+        }
 
-            boolean matchesStatut =
-                    statutSelected.equals("Tous")
-                            || s.getStatutSeance().name().equals(statutSelected);
+        // 🔥 SECTION PROCHAINE SEANCE
+        Seance prochaine = filtered.stream()
+                .filter(s -> s.getDateSeance().isAfter(LocalDate.now())
+                        && s.getStatutSeance() == StatutSeance.PLANIFIEE)
+                .sorted((a, b) -> a.getDateSeance().compareTo(b.getDateSeance()))
+                .findFirst()
+                .orElse(null);
 
-            if (matchesSearch && matchesStatut) {
-                cardContainer.getChildren().add(createCard(s));
-            }
+        if (prochaine != null) {
+            VBox nextCard = createNextSeanceCard(prochaine);
+            cardContainer.getChildren().add(nextCard);
+        }
+
+        // 🔥 AUTRES CARTES
+        for (Seance s : filtered) {
+            cardContainer.getChildren().add(createCardModern(s));
         }
     }
+    private VBox createCardModern(Seance s) {
 
-    private VBox createCard(Seance s) {
-
-        VBox card = new VBox(16);
-        card.getStyleClass().add("coach-card-modern");
-        card.setPrefWidth(300);
-        card.setPadding(new Insets(18));
+        VBox card = new VBox(18);
+        card.getStyleClass().add("coach-card-v2");
+        card.setPrefWidth(330);
+        card.setPadding(new Insets(22));
 
         // ================= HEADER =================
         HBox header = new HBox();
         header.setAlignment(Pos.CENTER_LEFT);
 
         Label title = new Label(s.getNom());
-        title.getStyleClass().add("card-title-modern");
+        title.getStyleClass().add("card-title-v2");
 
         Region spacer = new Region();
         HBox.setHgrow(spacer, Priority.ALWAYS);
 
-        Circle statusDot = new Circle(6);
+        Circle statusDot = new Circle(5);
 
         switch (s.getStatutSeance()) {
-            case PLANIFIEE -> statusDot.setStyle("-fx-fill: #1565c0;");
-            case TERMINEE -> statusDot.setStyle("-fx-fill: #43a047;");
-            case ANNULEE -> statusDot.setStyle("-fx-fill: #e53935;");
+            case PLANIFIEE -> statusDot.getStyleClass().add("dot-planifiee");
+            case TERMINEE -> statusDot.getStyleClass().add("dot-terminee");
+            case ANNULEE -> statusDot.getStyleClass().add("dot-annulee");
         }
 
         header.getChildren().addAll(title, spacer, statusDot);
@@ -224,26 +246,34 @@ public class CoachDashboardController {
         // ================= INFO =================
         VBox infoBox = new VBox(6);
 
-        Label dateLabel = new Label("📅  " + s.getDateSeance());
-        dateLabel.getStyleClass().add("card-info-modern");
+        Label dateLabel = new Label("📅 " + s.getDateSeance());
+        dateLabel.getStyleClass().add("card-info-v2");
 
-        Label timeLabel = new Label("⏰  "
+        Label timeLabel = new Label("⏰ "
                 + s.getHeureDebut() + " - " + s.getHeureFin());
-        timeLabel.getStyleClass().add("card-info-modern");
+        timeLabel.getStyleClass().add("card-info-v2");
 
-        Label planningLabel = new Label("📁  "
-                + planningMap.getOrDefault(
-                s.getIdPlanning(), "Inconnu"));
-        planningLabel.getStyleClass().add("card-info-modern");
+        long days = java.time.temporal.ChronoUnit.DAYS
+                .between(LocalDate.now(), s.getDateSeance());
 
-        infoBox.getChildren().addAll(dateLabel, timeLabel, planningLabel);
+        if (days >= 0) {
+            Label countdown = new Label(
+                    days == 0 ? "🚀 Aujourd'hui"
+                            : days == 1 ? "⏳ Demain"
+                            : "⏳ Dans " + days + " jours"
+            );
+            countdown.getStyleClass().add("countdown-v2");
+            infoBox.getChildren().add(countdown);
+        }
+
+        infoBox.getChildren().addAll(dateLabel, timeLabel);
 
         // ================= PARTICIPANTS =================
         int reserved = 0;
         try {
-            ReservationSeanceService reservationService = new ReservationSeanceService();
-            reserved = reservationService
-                    .countReservations(s.getIdSeance());
+            ReservationSeanceService reservationService =
+                    new ReservationSeanceService();
+            reserved = reservationService.countReservations(s.getIdSeance());
         } catch (Exception ignored) {}
 
         int capacite = s.getCapacite();
@@ -251,72 +281,82 @@ public class CoachDashboardController {
                 (double) reserved / capacite;
 
         ProgressBar progressBar = new ProgressBar(taux);
-        progressBar.setPrefHeight(8);
+        progressBar.setPrefHeight(6);
         progressBar.setMaxWidth(Double.MAX_VALUE);
-        progressBar.getStyleClass().add("progress-modern");
+        progressBar.getStyleClass().add("progress-v2");
 
-        Label participantsLabel =
-                new Label(reserved + " / " + capacite + " participants");
-        participantsLabel.getStyleClass().add("participants-label");
+        Label participantsLabel = new Label(
+                reserved + " / " + capacite +
+                        " participants (" +
+                        String.format("%.0f%%", taux * 100) + ")"
+        );
 
-        // ================= BADGE =================
-        Label badge = new Label(s.getStatutSeance().name());
-        badge.getStyleClass().add("badge-modern");
+        participantsLabel.getStyleClass().add("participants-v2");
 
-        switch (s.getStatutSeance()) {
-            case PLANIFIEE -> badge.getStyleClass().add("badge-blue-modern");
-            case TERMINEE -> badge.getStyleClass().add("badge-grey-modern");
-            case ANNULEE -> badge.getStyleClass().add("badge-red-modern");
-        }
+        if (taux >= 0.7)
+            participantsLabel.getStyleClass().add("participants-high");
+        else if (taux >= 0.3)
+            participantsLabel.getStyleClass().add("participants-medium");
+        else
+            participantsLabel.getStyleClass().add("participants-low");
 
+        // ================= ACTIONS PRESENCE =================
 // ================= ACTIONS =================
         HBox actions = new HBox(10);
-        actions.setAlignment(Pos.CENTER_LEFT);
+
+        Button btnPresence = new Button();
+        btnPresence.setPrefWidth(200);
 
         LocalDate today = LocalDate.now();
 
         if (s.getStatutSeance() == StatutSeance.ANNULEE) {
 
-            Label info = new Label("Séance annulée");
-            info.setStyle("-fx-text-fill: #999;");
-            actions.getChildren().add(info);
+            btnPresence.setText("Séance annulée");
+            btnPresence.setDisable(true);
+            btnPresence.getStyleClass().add("presence-cancelled");
 
         }
         else if (s.getDateSeance().isAfter(today)) {
 
-            // 🔒 Séance future
-            Button btnPresence = new Button("Appel disponible le jour J");
+            // 🟡 Avant le jour J
+            btnPresence.setText("Disponible le jour J");
             btnPresence.setDisable(true);
-            btnPresence.getStyleClass().add("btn-disabled");
-
-            actions.getChildren().add(btnPresence);
+            btnPresence.getStyleClass().add("presence-before");
 
         }
         else if (s.getDateSeance().isBefore(today)) {
 
-            // 🔒 Séance passée
-            Button btnPresence = new Button("Appel clôturé");
+            // 🔵 Après
+            btnPresence.setText("Appel clôturé");
             btnPresence.setDisable(true);
-            btnPresence.getStyleClass().add("btn-disabled");
-
-            actions.getChildren().add(btnPresence);
+            btnPresence.getStyleClass().add("presence-after");
 
         }
         else {
 
-            // ✅ Aujourd’hui seulement
-            Button btnPresence = new Button("Faire l'appel");
-            btnPresence.getStyleClass().add("btn-presence-modern");
+            // 🟢 Aujourd’hui
+            btnPresence.setText("Faire l'appel");
+            btnPresence.setDisable(false);
+            btnPresence.getStyleClass().add("presence-active");
 
             btnPresence.setOnAction(e -> ouvrirFenetrePresence(s));
-
-            actions.getChildren().add(btnPresence);
         }
-        // ================= FOOTER =================
-        VBox footer = new VBox(8);
-        footer.getChildren().addAll(progressBar, participantsLabel, badge, actions);
 
-        card.getChildren().addAll(header, infoBox, footer);
+        actions.getChildren().add(btnPresence);
+
+        card.getChildren().addAll(
+                header,
+                infoBox,
+                progressBar,
+                participantsLabel,
+                actions
+        );
+
+        card.setOnMouseEntered(e ->
+                card.getStyleClass().add("card-hover-v2"));
+
+        card.setOnMouseExited(e ->
+                card.getStyleClass().remove("card-hover-v2"));
 
         return card;
     }
@@ -783,5 +823,103 @@ public class CoachDashboardController {
                     "Impossible d'ouvrir la fenêtre de présence."
             );
         }
+    }
+    private VBox createNextSeanceCard(Seance s) {
+
+        VBox card = new VBox(18);
+        card.getStyleClass().add("next-seance-card-v2");
+        card.setPadding(new Insets(24));
+        card.setPrefWidth(430);
+
+        // ================= HEADER =================
+        HBox header = new HBox();
+        header.setAlignment(Pos.CENTER_LEFT);
+
+        Label badge = new Label("🔥 Prochaine séance");
+        badge.getStyleClass().add("next-badge-v2");
+
+        Region spacer = new Region();
+        HBox.setHgrow(spacer, Priority.ALWAYS);
+
+        header.getChildren().addAll(badge, spacer);
+
+        // ================= NOM =================
+        Label name = new Label(s.getNom());
+        name.getStyleClass().add("next-name-v2");
+
+        // ================= DATE + HEURE =================
+        Label date = new Label("📅  " + s.getDateSeance());
+        date.getStyleClass().add("next-info-v2");
+
+        Label time = new Label("⏰  "
+                + s.getHeureDebut() + " - " + s.getHeureFin());
+        time.getStyleClass().add("next-info-v2");
+
+        // ================= COUNTDOWN =================
+        long days = java.time.temporal.ChronoUnit.DAYS
+                .between(LocalDate.now(), s.getDateSeance());
+
+        Label countdown = new Label(
+                days == 0 ? "🚀 Aujourd'hui"
+                        : days == 1 ? "⏳ Demain"
+                        : "⏳ Dans " + days + " jours"
+        );
+
+        countdown.getStyleClass().add("next-countdown-v2");
+
+        // ================= PRESENCE BUTTON =================
+        Button btnPresence = new Button();
+        btnPresence.setPrefHeight(40);
+        btnPresence.setMinWidth(220);
+        btnPresence.getStyleClass().add("next-presence-base");
+
+        LocalDate today = LocalDate.now();
+        LocalDate dateSeance = s.getDateSeance();
+
+        if (s.getStatutSeance() == StatutSeance.ANNULEE) {
+
+            btnPresence.setText("Séance annulée");
+            btnPresence.getStyleClass().add("next-presence-cancel");
+            btnPresence.setDisable(true);
+        }
+        else if (dateSeance.isAfter(today)) {
+
+            // 🟡 Avant
+            btnPresence.setText("Disponible le jour J");
+            btnPresence.getStyleClass().add("next-presence-before");
+            btnPresence.setDisable(true);
+        }
+        else if (dateSeance.equals(today)) {
+
+            // 🟢 Jour J
+            btnPresence.setText("Faire l'appel");
+            btnPresence.getStyleClass().add("next-presence-active");
+            btnPresence.setOnAction(e -> ouvrirFenetrePresence(s));
+        }
+        else {
+
+            // 🔵 Après
+            btnPresence.setText("Appel clôturé");
+            btnPresence.getStyleClass().add("next-presence-after");
+            btnPresence.setDisable(true);
+        }
+
+        card.getChildren().addAll(
+                header,
+                name,
+                date,
+                time,
+                countdown,
+                btnPresence
+        );
+
+        // Hover
+        card.setOnMouseEntered(e ->
+                card.getStyleClass().add("next-hover-v2"));
+
+        card.setOnMouseExited(e ->
+                card.getStyleClass().remove("next-hover-v2"));
+
+        return card;
     }
 }
