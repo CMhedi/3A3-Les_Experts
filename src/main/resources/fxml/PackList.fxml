@@ -7,42 +7,45 @@
 <?import javafx.scene.control.Separator?>
 <?import javafx.scene.control.TextField?>
 <?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.ColumnConstraints?>
+<?import javafx.scene.layout.GridPane?>
 <?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.Priority?>
 <?import javafx.scene.layout.VBox?>
 
 <BorderPane xmlns="http://javafx.com/javafx/21"
             xmlns:fx="http://javafx.com/fxml/1"
             fx:controller="controllers.PackListController"
+            stylesheets="/css/PackList.css"
             styleClass="pack-page">
 
-    <!-- =========================
-         TOP BAR
-         ========================= -->
+    <!-- TOP -->
     <top>
-        <VBox spacing="10" BorderPane.alignment="CENTER">
+        <VBox spacing="10" BorderPane.alignment="CENTER" styleClass="top-wrap">
             <padding>
                 <Insets top="16" right="16" bottom="10" left="16"/>
             </padding>
 
-            <HBox spacing="12" alignment="CENTER_LEFT">
+            <HBox spacing="12" alignment="CENTER_LEFT" styleClass="toolbar">
                 <Label text="Packs" styleClass="page-title"/>
 
                 <HBox spacing="10" alignment="CENTER_LEFT">
-                    <TextField fx:id="txtSearch" promptText="Rechercher (nom, type, statut)..." prefWidth="320"/>
+                    <TextField fx:id="txtSearch"
+                               styleClass="search"
+                               promptText="Rechercher (nom, type, statut)..."
+                               prefWidth="340"/>
                     <Label fx:id="lblTotal" text="0 / 0" styleClass="muted"/>
                 </HBox>
+
                 <HBox HBox.hgrow="ALWAYS"/>
 
                 <HBox spacing="8" alignment="CENTER_RIGHT">
-                    <!-- CRUD (inchangé) -->
-                    <Button text="Ajouter" onAction="#onAdd"/>
-                    <Button text="Modifier" onAction="#onEdit"/>
-                    <Button text="Supprimer" onAction="#onDelete"/>
-                    <Button text="Rafraîchir" onAction="#onRefresh"/>
-
-                    <!-- ✅ NEW: فقط زوز boutons يفتحو dialog -->
-                    <Button text="Export PDF" onAction="#onOpenQrPdfDialog"/>
-                    <Button text="QR Code" onAction="#onOpenQrPdfDialog"/>
+                    <Button text="Ajouter" onAction="#onAdd" styleClass="tool-btn"/>
+                    <Button text="Modifier" onAction="#onEdit" styleClass="tool-btn"/>
+                    <Button text="Supprimer" onAction="#onDelete" styleClass="tool-btn danger"/>
+                    <Button text="Rafraîchir" onAction="#onRefresh" styleClass="tool-btn"/>
+                    <Button text="Export PDF" onAction="#onOpenQrPdfDialog" styleClass="tool-btn"/>
+                    <Button text="QR Code" onAction="#onOpenQrPdfDialog" styleClass="tool-btn"/>
                 </HBox>
             </HBox>
 
@@ -50,36 +53,51 @@
         </VBox>
     </top>
 
-    <!-- =========================
-         CENTER: LIST ONLY (حذفنا RIGHT PANEL)
-         ========================= -->
+    <!-- CENTER -->
     <center>
-        <HBox spacing="14" BorderPane.alignment="CENTER">
+        <HBox BorderPane.alignment="CENTER">
             <padding>
                 <Insets top="10" right="16" bottom="16" left="16"/>
             </padding>
 
-            <!-- ===== TableWidget (rowsBox) ===== -->
-            <VBox spacing="10" HBox.hgrow="ALWAYS" styleClass="card">
+            <VBox spacing="10" HBox.hgrow="ALWAYS" styleClass="card table-wrap">
                 <Label text="Liste des packs" styleClass="card-title"/>
 
-                <!-- Header row (optional) -->
-                <HBox spacing="0" styleClass="table-head">
-                    <Label text="Nom" prefWidth="240" styleClass="th"/>
-                    <Label text="Type" prefWidth="170" styleClass="th"/>
-                    <Label text="Prix" prefWidth="120" styleClass="th"/>
-                    <Label text="Max" prefWidth="140" styleClass="th"/>
-                    <Label text="Statut" prefWidth="140" styleClass="th"/>
-                </HBox>
+                <!-- ✅ Header grid (TH) -->
+                <GridPane styleClass="table-head" hgap="0" vgap="0">
+                    <columnConstraints>
+                        <ColumnConstraints prefWidth="240"/>
+                        <ColumnConstraints prefWidth="170"/>
+                        <ColumnConstraints prefWidth="120"/>
+                        <ColumnConstraints prefWidth="140"/>
+                        <ColumnConstraints prefWidth="140"/>
+                        <ColumnConstraints prefWidth="120"/>
+                    </columnConstraints>
 
-                <ScrollPane fitToWidth="true" hbarPolicy="NEVER" vbarPolicy="AS_NEEDED"
-                            VBox.vgrow="ALWAYS" styleClass="table-scroll">
+                    <Label text="Nom" GridPane.columnIndex="0" styleClass="th"/>
+                    <Label text="Type" GridPane.columnIndex="1" styleClass="th sep"/>
+                    <Label text="Prix" GridPane.columnIndex="2" styleClass="th sep"/>
+                    <Label text="Max" GridPane.columnIndex="3" styleClass="th sep"/>
+                    <Label text="Statut" GridPane.columnIndex="4" styleClass="th sep"/>
+                    <Label text="Actions" GridPane.columnIndex="5" styleClass="th sep"/>
+                </GridPane>
+
+                <!-- ✅ Body scroll -->
+                <ScrollPane fitToWidth="true"
+                            hbarPolicy="NEVER"
+                            vbarPolicy="AS_NEEDED"
+                            VBox.vgrow="ALWAYS"
+                            styleClass="table-scroll">
                     <content>
-                        <VBox fx:id="rowsBox" spacing="8" fillWidth="true"/>
+                        <VBox fx:id="rowsBox" spacing="10" fillWidth="true">
+                            <padding>
+                                <Insets top="6" right="6" bottom="6" left="6"/>
+                            </padding>
+                        </VBox>
                     </content>
                 </ScrollPane>
-            </VBox>
 
+            </VBox>
         </HBox>
     </center>
 

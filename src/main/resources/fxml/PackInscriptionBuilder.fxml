@@ -4,99 +4,226 @@
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
 
-<VBox xmlns="http://javafx.com/javafx/21"
-      xmlns:fx="http://javafx.com/fxml/1"
-      fx:controller="controllers.PackInscriptionBuilderController"
-      spacing="14"
-      styleClass="page-root"
-      stylesheets="@../css/pack-builder.css">
+<TabPane xmlns="http://javafx.com/javafx/21"
+         xmlns:fx="http://javafx.com/fxml/1"
+         fx:controller="controllers.PackInscriptionBuilderController"
+         tabClosingPolicy="UNAVAILABLE"
+         styleClass="page-root"
+         stylesheets="@../css/pack-builder.css">
 
-    <padding>
-        <Insets top="18" right="18" bottom="18" left="18"/>
-    </padding>
+    <tabs>
 
-    <Label text="Pack Builder" styleClass="page-title"/>
+        <!-- =======================
+             TAB 1 — CLIENT
+             ======================= -->
+        <Tab text="1) Client">
+            <content>
+                <VBox spacing="14" styleClass="pad">
+                    <padding>
+                        <Insets top="18" right="18" bottom="18" left="18"/>
+                    </padding>
 
-    <VBox styleClass="card" spacing="12">
-        <padding><Insets top="14" right="14" bottom="14" left="14"/></padding>
+                    <HBox alignment="CENTER_LEFT" spacing="10">
+                        <Button text="← Retour" onAction="#handleBack" styleClass="btn-ghost"/>
+                        <Label text="Pack Builder — Admin Flow" styleClass="page-title"/>
+                        <Region HBox.hgrow="ALWAYS"/>
+                        <Label fx:id="lblStatus" text="Prêt" styleClass="status-pill status-ok"/>
+                    </HBox>
 
-        <GridPane hgap="12" vgap="10">
-            <columnConstraints>
-                <ColumnConstraints percentWidth="20"/>
-                <ColumnConstraints percentWidth="80"/>
-            </columnConstraints>
+                    <VBox styleClass="card" spacing="12">
+                        <padding>
+                            <Insets top="14" right="14" bottom="14" left="14"/>
+                        </padding>
 
-            <Label text="Pack :" styleClass="label-muted" GridPane.rowIndex="0" GridPane.columnIndex="0"/>
-            <ComboBox fx:id="cbPack" promptText="Choisir un pack..."
-                      GridPane.rowIndex="0" GridPane.columnIndex="1"/>
+                        <GridPane hgap="12" vgap="10">
+                            <columnConstraints>
+                                <ColumnConstraints percentWidth="22"/>
+                                <ColumnConstraints percentWidth="78"/>
+                            </columnConstraints>
 
-            <Label text="Nb personnes :" styleClass="label-muted" GridPane.rowIndex="1" GridPane.columnIndex="0"/>
-            <Spinner fx:id="spNbPersonnes" GridPane.rowIndex="1" GridPane.columnIndex="1"/>
+                            <Label text="Client (User ID) :" styleClass="label-muted" GridPane.rowIndex="0" GridPane.columnIndex="0"/>
+                            <Spinner fx:id="spUserId" GridPane.rowIndex="0" GridPane.columnIndex="1"/>
 
-            <Label text="Coupon :" styleClass="label-muted" GridPane.rowIndex="2" GridPane.columnIndex="0"/>
-            <TextField fx:id="txtCoupon" promptText="Optionnel (ex: PROMO10)"
-                       GridPane.rowIndex="2" GridPane.columnIndex="1"/>
+                            <Label text="Résumé :" styleClass="label-muted" GridPane.rowIndex="1" GridPane.columnIndex="0"/>
+                            <Label fx:id="lblClientSummary" text="—" wrapText="true" styleClass="details"
+                                   GridPane.rowIndex="1" GridPane.columnIndex="1"/>
 
-            <Label fx:id="lblMaxAct" text="Max activités : --"
-                   styleClass="hint"
-                   GridPane.rowIndex="3" GridPane.columnIndex="1"/>
-        </GridPane>
-    </VBox>
+                            <Label text="Risk :" styleClass="label-muted" GridPane.rowIndex="2" GridPane.columnIndex="0"/>
+                            <Label fx:id="lblRisk" text="—" styleClass="hint"
+                                   GridPane.rowIndex="2" GridPane.columnIndex="1"/>
+                        </GridPane>
 
-    <Label text="Activités du pack (coche celles que tu veux inclure)"
-           styleClass="section-title"/>
+                        <HBox spacing="10">
+                            <Button fx:id="btnLoadClient" text="Charger client" styleClass="btn-secondary"/>
+                            <Region HBox.hgrow="ALWAYS"/>
+                            <Button fx:id="btnGoBuild" text="Continuer →" styleClass="btn-primary"/>
+                        </HBox>
+                    </VBox>
 
-    <!-- ✅ FIX: no columnResizePolicy attribute here -->
-    <TableView fx:id="tvActivites" prefHeight="260" styleClass="table">
-        <columns>
-            <TableColumn fx:id="colSelect" text="✓" prefWidth="60"/>
-            <TableColumn fx:id="colNom" text="Nom"/>
-            <TableColumn fx:id="colCategorie" text="Catégorie"/>
-            <TableColumn fx:id="colNiveau" text="Niveau"/>
-            <TableColumn fx:id="colPrix" text="Prix"/>
-        </columns>
-    </TableView>
+                </VBox>
+            </content>
+        </Tab>
 
-    <HBox spacing="10">
-        <Button fx:id="btnCalculer" text="Calculer le prix" styleClass="btn-secondary"/>
-        <Button fx:id="btnInscrire" text="Créer inscription (brouillon) + réservations" styleClass="btn-primary"/>
-    </HBox>
+        <!-- =======================
+             TAB 2 — BUILD OFFER
+             ======================= -->
+        <Tab text="2) Build Offer">
+            <content>
+                <VBox spacing="12" styleClass="pad">
+                    <padding>
+                        <Insets top="18" right="18" bottom="18" left="18"/>
+                    </padding>
 
-    <Separator styleClass="sep"/>
+                    <VBox styleClass="card" spacing="12">
+                        <padding>
+                            <Insets top="14" right="14" bottom="14" left="14"/>
+                        </padding>
 
-    <VBox styleClass="card" spacing="10">
-        <padding><Insets top="14" right="14" bottom="14" left="14"/></padding>
+                        <GridPane hgap="12" vgap="10">
+                            <columnConstraints>
+                                <ColumnConstraints percentWidth="22"/>
+                                <ColumnConstraints percentWidth="78"/>
+                            </columnConstraints>
 
-        <Label text="Devis / Pricing" styleClass="section-title"/>
+                            <Label text="Pack :" styleClass="label-muted" GridPane.rowIndex="0" GridPane.columnIndex="0"/>
+                            <ComboBox fx:id="cbPack" promptText="Choisir un pack..." GridPane.rowIndex="0" GridPane.columnIndex="1"/>
 
-        <GridPane hgap="10" vgap="8">
-            <columnConstraints>
-                <ColumnConstraints percentWidth="30"/>
-                <ColumnConstraints percentWidth="70"/>
-            </columnConstraints>
+                            <Label text="Nb personnes :" styleClass="label-muted" GridPane.rowIndex="1" GridPane.columnIndex="0"/>
+                            <Spinner fx:id="spNbPersonnes" GridPane.rowIndex="1" GridPane.columnIndex="1"/>
 
-            <Label text="Pack base :" styleClass="label-muted" GridPane.rowIndex="0" GridPane.columnIndex="0"/>
-            <Label fx:id="lblPackBase" text="--" styleClass="price-value" GridPane.rowIndex="0" GridPane.columnIndex="1"/>
+                            <Label text="Coupon :" styleClass="label-muted" GridPane.rowIndex="2" GridPane.columnIndex="0"/>
+                            <TextField fx:id="txtCoupon" promptText="Optionnel (ex: PROMO10)" GridPane.rowIndex="2" GridPane.columnIndex="1"/>
 
-            <Label text="Activités total :" styleClass="label-muted" GridPane.rowIndex="1" GridPane.columnIndex="0"/>
-            <Label fx:id="lblActTotal" text="--" styleClass="price-value" GridPane.rowIndex="1" GridPane.columnIndex="1"/>
+                            <Label fx:id="lblMaxAct" text="Max activités : --" styleClass="hint"
+                                   GridPane.rowIndex="3" GridPane.columnIndex="1"/>
+                        </GridPane>
+                    </VBox>
 
-            <Label text="Réduction pack :" styleClass="label-muted" GridPane.rowIndex="2" GridPane.columnIndex="0"/>
-            <Label fx:id="lblDiscountPack" text="--" styleClass="price-discount" GridPane.rowIndex="2" GridPane.columnIndex="1"/>
+                    <HBox spacing="10" alignment="CENTER_LEFT" styleClass="toolbar">
+                        <TextField fx:id="txtSearch" promptText="Rechercher activité (nom/catégorie/niveau)..." HBox.hgrow="ALWAYS"/>
+                        <Button fx:id="btnSelectMax" text="Sélectionner max" styleClass="btn-secondary"/>
+                        <Label fx:id="lblSelected" text="0 sélectionnée(s)" styleClass="hint"/>
+                    </HBox>
 
-            <Label text="Réduction groupe :" styleClass="label-muted" GridPane.rowIndex="3" GridPane.columnIndex="0"/>
-            <Label fx:id="lblDiscountGroupe" text="--" styleClass="price-discount" GridPane.rowIndex="3" GridPane.columnIndex="1"/>
+                    <VBox styleClass="tw-wrap">
+                        <HBox spacing="12" styleClass="tw-header" alignment="CENTER_LEFT">
+                            <Label text="✓" styleClass="tw-hcell" prefWidth="34"/>
+                            <Label text="Nom" styleClass="tw-hcell" HBox.hgrow="ALWAYS"/>
+                            <Label text="Catégorie" styleClass="tw-hcell" prefWidth="140"/>
+                            <Label text="Niveau" styleClass="tw-hcell" prefWidth="120"/>
+                            <Label text="Prix" styleClass="tw-hcell" prefWidth="120"/>
+                        </HBox>
 
-            <Label text="Coupon :" styleClass="label-muted" GridPane.rowIndex="4" GridPane.columnIndex="0"/>
-            <Label fx:id="lblDiscountCoupon" text="--" styleClass="price-discount" GridPane.rowIndex="4" GridPane.columnIndex="1"/>
+                        <ScrollPane fitToWidth="true" prefViewportHeight="260" styleClass="tw-scroll">
+                            <content>
+                                <VBox fx:id="vbRows" spacing="8" styleClass="tw-body"/>
+                            </content>
+                        </ScrollPane>
+                    </VBox>
 
-            <Label text="TOTAL :" styleClass="total-label" GridPane.rowIndex="5" GridPane.columnIndex="0"/>
-            <Label fx:id="lblTotal" text="--" styleClass="total-value" GridPane.rowIndex="5" GridPane.columnIndex="1"/>
+                    <HBox spacing="10">
+                        <Button fx:id="btnCalculer" text="Calculer" styleClass="btn-secondary"/>
+                        <Button fx:id="btnRiskGate" text="Vérifier risque" styleClass="btn-secondary"/>
+                        <Region HBox.hgrow="ALWAYS"/>
+                        <Button fx:id="btnGoDevis" text="Continuer →" styleClass="btn-primary"/>
+                    </HBox>
 
-            <Label text="Détails :" styleClass="label-muted" GridPane.rowIndex="6" GridPane.columnIndex="0"/>
-            <Label fx:id="lblDetails" text="" wrapText="true" styleClass="details"
-                   GridPane.rowIndex="6" GridPane.columnIndex="1"/>
-        </GridPane>
-    </VBox>
+                </VBox>
+            </content>
+        </Tab>
 
-</VBox>
+        <!-- =======================
+             TAB 3 — DEVIS
+             ======================= -->
+        <Tab text="3) Devis">
+            <content>
+                <VBox spacing="12" styleClass="pad">
+                    <padding>
+                        <Insets top="18" right="18" bottom="18" left="18"/>
+                    </padding>
+
+                    <VBox styleClass="card" spacing="10">
+                        <padding>
+                            <Insets top="14" right="14" bottom="14" left="14"/>
+                        </padding>
+
+                        <Label text="Devis / Pricing" styleClass="section-title"/>
+
+                        <GridPane hgap="10" vgap="8">
+                            <columnConstraints>
+                                <ColumnConstraints percentWidth="28"/>
+                                <ColumnConstraints percentWidth="72"/>
+                            </columnConstraints>
+
+                            <Label text="Pack base :" styleClass="label-muted" GridPane.rowIndex="0" GridPane.columnIndex="0"/>
+                            <Label fx:id="lblPackBase" text="--" styleClass="price-value" GridPane.rowIndex="0" GridPane.columnIndex="1"/>
+
+                            <Label text="Activités total :" styleClass="label-muted" GridPane.rowIndex="1" GridPane.columnIndex="0"/>
+                            <Label fx:id="lblActTotal" text="--" styleClass="price-value" GridPane.rowIndex="1" GridPane.columnIndex="1"/>
+
+                            <Label text="Réduction pack :" styleClass="label-muted" GridPane.rowIndex="2" GridPane.columnIndex="0"/>
+                            <Label fx:id="lblDiscountPack" text="--" styleClass="price-discount" GridPane.rowIndex="2" GridPane.columnIndex="1"/>
+
+                            <Label text="Réduction groupe :" styleClass="label-muted" GridPane.rowIndex="3" GridPane.columnIndex="0"/>
+                            <Label fx:id="lblDiscountGroupe" text="--" styleClass="price-discount" GridPane.rowIndex="3" GridPane.columnIndex="1"/>
+
+                            <Label text="Coupon :" styleClass="label-muted" GridPane.rowIndex="4" GridPane.columnIndex="0"/>
+                            <Label fx:id="lblDiscountCoupon" text="--" styleClass="price-discount" GridPane.rowIndex="4" GridPane.columnIndex="1"/>
+
+                            <Label text="TOTAL :" styleClass="total-label" GridPane.rowIndex="5" GridPane.columnIndex="0"/>
+                            <Label fx:id="lblTotal" text="--" styleClass="total-value" GridPane.rowIndex="5" GridPane.columnIndex="1"/>
+
+                            <Label text="Détails :" styleClass="label-muted" GridPane.rowIndex="6" GridPane.columnIndex="0"/>
+                            <Label fx:id="lblDetails" text="" wrapText="true" styleClass="details"
+                                   GridPane.rowIndex="6" GridPane.columnIndex="1"/>
+
+                            <Label text="Expiry :" styleClass="label-muted" GridPane.rowIndex="7" GridPane.columnIndex="0"/>
+                            <Label fx:id="lblExpiry" text="—" styleClass="hint" GridPane.rowIndex="7" GridPane.columnIndex="1"/>
+                        </GridPane>
+                    </VBox>
+
+                    <HBox spacing="10">
+                        <Button fx:id="btnCreateDraft" text="Créer Draft + HOLD" styleClass="btn-primary"/>
+                        <Button fx:id="btnDevisPdf" text="Devis PDF + QR" styleClass="btn-secondary"/>
+                        <Region HBox.hgrow="ALWAYS"/>
+                        <Button fx:id="btnGoPayment" text="Continuer →" styleClass="btn-primary"/>
+                    </HBox>
+
+                </VBox>
+            </content>
+        </Tab>
+
+        <!-- =======================
+             TAB 4 — PAYMENT & CONFIRM
+             ======================= -->
+        <Tab text="4) Payment &amp; Confirm">
+            <content>
+                <VBox spacing="12" styleClass="pad">
+                    <padding>
+                        <Insets top="18" right="18" bottom="18" left="18"/>
+                    </padding>
+
+                    <VBox styleClass="card" spacing="10">
+                        <padding>
+                            <Insets top="14" right="14" bottom="14" left="14"/>
+                        </padding>
+
+                        <Label text="Paiement" styleClass="section-title"/>
+
+                        <Label text="Lien :" styleClass="label-muted"/>
+                        <TextField fx:id="txtPaymentLink" promptText="Payment link..." editable="false"/>
+
+                        <HBox spacing="10">
+                            <Button fx:id="btnOpenPayment" text="Ouvrir paiement" styleClass="btn-secondary"/>
+                            <Button fx:id="btnSendEmail" text="Envoyer email" styleClass="btn-secondary"/>
+                            <Region HBox.hgrow="ALWAYS"/>
+                            <Button fx:id="btnConfirm" text="Confirmer" styleClass="btn-danger"/>
+                        </HBox>
+                    </VBox>
+
+                </VBox>
+            </content>
+        </Tab>
+
+    </tabs>
+</TabPane>
