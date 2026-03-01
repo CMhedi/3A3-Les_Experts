@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-
+<?import javafx.stage.FileChooser?>
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
@@ -203,24 +203,85 @@
                         <Insets top="18" right="18" bottom="18" left="18"/>
                     </padding>
 
-                    <VBox styleClass="card" spacing="10">
+                    <VBox styleClass="card" spacing="12">
                         <padding>
                             <Insets top="14" right="14" bottom="14" left="14"/>
                         </padding>
 
-                        <Label text="Paiement" styleClass="section-title"/>
-
-                        <Label text="Lien :" styleClass="label-muted"/>
-                        <TextField fx:id="txtPaymentLink" promptText="Payment link..." editable="false"/>
-
-                        <HBox spacing="10">
-                            <Button fx:id="btnOpenPayment" text="Ouvrir paiement" styleClass="btn-secondary"/>
-                            <Button fx:id="btnSendEmail" text="Envoyer email" styleClass="btn-secondary"/>
+                        <HBox alignment="CENTER_LEFT" spacing="10">
+                            <Label text="Paiement sécurisé" styleClass="section-title"/>
                             <Region HBox.hgrow="ALWAYS"/>
-                            <Button fx:id="btnConfirm" text="Confirmer" styleClass="btn-danger"/>
+                            <Label fx:id="lblPayBadge" text="SANDBOX" styleClass="badge-warn"/>
                         </HBox>
-                    </VBox>
 
+                        <VBox spacing="8" styleClass="subcard">
+                            <Label text="Méthode" styleClass="label-muted"/>
+                            <HBox spacing="10" alignment="CENTER_LEFT">
+                                <RadioButton fx:id="rbCard" text="Carte bancaire"/>
+                                <RadioButton fx:id="rbPaypal" text="PayPal"/>
+                                <RadioButton fx:id="rbLink" text="Lien Checkout"/>
+                            </HBox>
+                        </VBox>
+
+                        <VBox fx:id="boxCardForm" spacing="10" styleClass="subcard">
+                            <Label text="Carte bancaire" styleClass="label-muted"/>
+
+                            <GridPane hgap="10" vgap="10">
+                                <columnConstraints>
+                                    <ColumnConstraints percentWidth="55"/>
+                                    <ColumnConstraints percentWidth="25"/>
+                                    <ColumnConstraints percentWidth="20"/>
+                                </columnConstraints>
+
+                                <TextField fx:id="txtCardName" promptText="Nom sur la carte" GridPane.columnIndex="0" GridPane.rowIndex="0"/>
+                                <TextField fx:id="txtCardExpiry" promptText="MM/YY" GridPane.columnIndex="1" GridPane.rowIndex="0"/>
+                                <PasswordField fx:id="txtCardCvv" promptText="CVV" GridPane.columnIndex="2" GridPane.rowIndex="0"/>
+
+                                <TextField fx:id="txtCardNumber" promptText="Numéro carte" GridPane.columnIndex="0" GridPane.rowIndex="1" GridPane.columnSpan="3"/>
+                            </GridPane>
+
+                            <!-- OCR + Test presets -->
+                            <HBox spacing="10" alignment="CENTER_LEFT">
+                                <Button fx:id="btnScanOcr" text="Scan Card (OCR)" styleClass="btn-secondary"/>
+                                <Label text="Exemples (TEST):" styleClass="label-muted"/>
+                                <Button fx:id="btnFillVisaGold" text="Visa Gold" styleClass="btn-secondary"/>
+                                <Button fx:id="btnFillMaster" text="Mastercard" styleClass="btn-secondary"/>
+                                <Button fx:id="btnFillAmex" text="Amex" styleClass="btn-secondary"/>
+                                <Button fx:id="btnClearCard" text="Vider" styleClass="btn-secondary"/>
+                            </HBox>
+
+                            <Label fx:id="lblCardHint" text="—" styleClass="label-muted"/>
+
+                            <HBox spacing="10" alignment="CENTER_LEFT">
+                                <Button fx:id="btnPayNow" text="Payer" styleClass="btn-primary"/>
+                                <ProgressIndicator fx:id="piPay" prefWidth="22" prefHeight="22" visible="false" managed="false"/>
+                                <Label fx:id="lblPayStatus" text="—" styleClass="label-muted"/>
+                                <Region HBox.hgrow="ALWAYS"/>
+                                <Button fx:id="btnFake3ds" text="Simuler 3DS" styleClass="btn-secondary"/>
+                            </HBox>
+                        </VBox>
+
+                        <VBox fx:id="boxLink" spacing="8" styleClass="subcard">
+                            <Label text="Lien Checkout" styleClass="label-muted"/>
+                            <TextField fx:id="txtPaymentLink" promptText="Payment link..." editable="false"/>
+                            <HBox spacing="10">
+                                <Button fx:id="btnOpenPayment" text="Ouvrir paiement" styleClass="btn-secondary"/>
+                                <Button fx:id="btnSendEmail" text="Envoyer email" styleClass="btn-secondary"/>
+                                <Region HBox.hgrow="ALWAYS"/>
+                            </HBox>
+                        </VBox>
+
+                        <VBox spacing="8" styleClass="subcard">
+                            <Label text="Reçu / Référence" styleClass="label-muted"/>
+                            <TextArea fx:id="txtReceipt" prefRowCount="5" wrapText="true" editable="false"/>
+                            <HBox spacing="10">
+                                <Button fx:id="btnCopyReceipt" text="Copier reçu" styleClass="btn-secondary"/>
+                                <Region HBox.hgrow="ALWAYS"/>
+                                <Button fx:id="btnConfirm" text="Confirmer réservation" styleClass="btn-danger"/>
+                            </HBox>
+                        </VBox>
+
+                    </VBox>
                 </VBox>
             </content>
         </Tab>
