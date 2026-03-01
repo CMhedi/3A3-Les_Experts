@@ -6,10 +6,8 @@
 <?import javafx.scene.control.ScrollPane?>
 <?import javafx.scene.control.Separator?>
 <?import javafx.scene.control.TextField?>
-<?import javafx.scene.image.ImageView?>
 <?import javafx.scene.layout.BorderPane?>
 <?import javafx.scene.layout.HBox?>
-<?import javafx.scene.layout.Priority?>
 <?import javafx.scene.layout.VBox?>
 
 <BorderPane xmlns="http://javafx.com/javafx/21"
@@ -36,10 +34,15 @@
                 <HBox HBox.hgrow="ALWAYS"/>
 
                 <HBox spacing="8" alignment="CENTER_RIGHT">
+                    <!-- CRUD (inchangé) -->
                     <Button text="Ajouter" onAction="#onAdd"/>
                     <Button text="Modifier" onAction="#onEdit"/>
                     <Button text="Supprimer" onAction="#onDelete"/>
                     <Button text="Rafraîchir" onAction="#onRefresh"/>
+
+                    <!-- ✅ NEW: فقط زوز boutons يفتحو dialog -->
+                    <Button text="Export PDF" onAction="#onOpenQrPdfDialog"/>
+                    <Button text="QR Code" onAction="#onOpenQrPdfDialog"/>
                 </HBox>
             </HBox>
 
@@ -48,7 +51,7 @@
     </top>
 
     <!-- =========================
-         CENTER: LIST + QR PANEL
+         CENTER: LIST ONLY (حذفنا RIGHT PANEL)
          ========================= -->
     <center>
         <HBox spacing="14" BorderPane.alignment="CENTER">
@@ -56,7 +59,7 @@
                 <Insets top="10" right="16" bottom="16" left="16"/>
             </padding>
 
-            <!-- ===== LEFT: TableWidget (rowsBox) ===== -->
+            <!-- ===== TableWidget (rowsBox) ===== -->
             <VBox spacing="10" HBox.hgrow="ALWAYS" styleClass="card">
                 <Label text="Liste des packs" styleClass="card-title"/>
 
@@ -69,39 +72,12 @@
                     <Label text="Statut" prefWidth="140" styleClass="th"/>
                 </HBox>
 
-                <ScrollPane fitToWidth="true" hbarPolicy="NEVER" vbarPolicy="AS_NEEDED" VBox.vgrow="ALWAYS" styleClass="table-scroll">
+                <ScrollPane fitToWidth="true" hbarPolicy="NEVER" vbarPolicy="AS_NEEDED"
+                            VBox.vgrow="ALWAYS" styleClass="table-scroll">
                     <content>
                         <VBox fx:id="rowsBox" spacing="8" fillWidth="true"/>
                     </content>
                 </ScrollPane>
-            </VBox>
-
-            <!-- ===== RIGHT: QR / PDF Export ===== -->
-            <VBox spacing="10" prefWidth="330" styleClass="card">
-                <Label text="Export PDF via QR Code" styleClass="card-title"/>
-
-                <Label text="Choisis le contenu, génère un QR puis scanne avec ton téléphone : le PDF se télécharge."
-                       wrapText="true" styleClass="muted"/>
-
-                <HBox spacing="8">
-                    <Button text="QR Packs" onAction="#onQrPacks" HBox.hgrow="ALWAYS" maxWidth="Infinity"/>
-                    <Button text="QR Inscriptions" onAction="#onQrInscriptions" HBox.hgrow="ALWAYS" maxWidth="Infinity"/>
-                </HBox>
-
-                <Button text="QR Packs + Inscriptions" onAction="#onQrBoth" maxWidth="Infinity"/>
-
-                <ImageView fx:id="imgQr"
-                           fitWidth="260" fitHeight="260"
-                           preserveRatio="true" smooth="true"/>
-
-                <Label fx:id="lblQrHint"
-                       text="Scanne le QR avec ton téléphone."
-                       wrapText="true" styleClass="muted"/>
-
-                <HBox spacing="8">
-                    <Button text="Ouvrir PDF (PC)" onAction="#onOpenPdfLink" HBox.hgrow="ALWAYS" maxWidth="Infinity"/>
-                    <Button text="Copier lien" onAction="#onCopyPdfLink" HBox.hgrow="ALWAYS" maxWidth="Infinity"/>
-                </HBox>
             </VBox>
 
         </HBox>

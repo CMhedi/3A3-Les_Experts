@@ -1,0 +1,111 @@
+/* =========================================================
+   QrPdfDialog.css — EcoAdventure PRO (IDE clean)
+   No custom vars, no gradients, no :pressed
+   ========================================================= */
+
+.card{
+    -fx-background-radius: 22;
+    -fx-border-radius: 22;
+    -fx-padding: 18;
+
+    /* simple dark glass background */
+    -fx-background-color: rgba(14,18,16,0.92);
+    -fx-border-color: rgba(255,255,255,0.12);
+    -fx-border-width: 1;
+
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.58), 30, 0.18, 0, 14);
+}
+
+/* top glow layers (we'll add as nodes in FXML) */
+.bg-glow-green{
+    -fx-background-radius: 22;
+    -fx-background-color: rgba(95,233,140,0.10);
+}
+.bg-glow-orange{
+    -fx-background-radius: 22;
+    -fx-background-color: rgba(249,115,22,0.08);
+}
+.bg-glow-cyan{
+    -fx-background-radius: 22;
+    -fx-background-color: rgba(56,189,248,0.06);
+}
+
+/* Text */
+.card-title{
+    -fx-font-size: 18px;
+    -fx-font-weight: 900;
+    -fx-text-fill: rgba(255,255,255,0.93);
+}
+.muted{
+    -fx-text-fill: rgba(255,255,255,0.66);
+    -fx-font-size: 12.6px;
+}
+
+/* Buttons */
+.button{
+    -fx-background-radius: 14;
+    -fx-border-radius: 14;
+    -fx-padding: 10 12;
+    -fx-font-size: 12.8px;
+    -fx-font-weight: 900;
+    -fx-cursor: hand;
+
+    -fx-text-fill: rgba(255,255,255,0.93);
+    -fx-background-color: rgba(255,255,255,0.06);
+    -fx-border-color: rgba(255,255,255,0.14);
+    -fx-border-width: 1;
+
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.22), 12, 0.18, 0, 5);
+}
+.button:hover{
+    -fx-background-color: rgba(255,255,255,0.10);
+    -fx-border-color: rgba(255,255,255,0.22);
+    -fx-translate-y: -1;
+}
+
+/* Primary button look */
+.btn-primary{
+    -fx-background-color: rgba(95,233,140,0.18);
+    -fx-border-color: rgba(95,233,140,0.35);
+}
+.btn-primary:hover{
+    -fx-background-color: rgba(95,233,140,0.24);
+}
+
+/* Ghost buttons */
+.btn-ghost{
+    -fx-background-color: rgba(255,255,255,0.05);
+    -fx-border-color: rgba(255,255,255,0.13);
+}
+.btn-ghost:hover{
+    -fx-background-color: rgba(255,255,255,0.09);
+}
+
+/* Shine overlay label */
+.shine{
+    -fx-background-radius: 14;
+    -fx-opacity: 0;
+    -fx-background-color: rgba(255,255,255,0.10);
+}
+
+/* QR frame */
+.qr-frame{
+    -fx-background-radius: 18;
+    -fx-border-radius: 18;
+    -fx-padding: 10;
+    -fx-background-color: rgba(255,255,255,0.05);
+    -fx-border-color: rgba(255,255,255,0.10);
+    -fx-border-width: 1;
+
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.42), 18, 0.16, 0, 8);
+}
+
+/* Hint pill */
+#lblHint{
+    -fx-padding: 8 10;
+    -fx-background-radius: 12;
+    -fx-border-radius: 12;
+    -fx-background-color: rgba(56,189,248,0.14);
+    -fx-border-color: rgba(56,189,248,0.26);
+    -fx-text-fill: rgba(255,255,255,0.86);
+}

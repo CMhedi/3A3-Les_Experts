@@ -112,17 +112,24 @@ public class PdfExportService {
     // =========================
 
     private Table buildPackTable(List<Pack> packs) {
-        // ⚠️ si tu ne veux pas afficher ID, on l’enlève du tableau.
         Table t = new Table();
-        t.columns = new String[] {"Nom", "Type", "Prix", "Réduction", "Max", "Statut"};
+
+        // ✅ pas d'ID. On ajoute "Actif" si موجود.
+        t.columns = new String[] {"Nom", "Type", "Prix", "Réduction", "Max", "Actif", "Statut"};
 
         for (Pack p : packs) {
+            String actif = nz(pick(p,
+                    "getNbActivitesActif", "getNbActivitesActifs", "getNbActivitesActives",
+                    "getNbActif", "getNbActifActivites", "getNbActivitesDisponibles"
+            ));
+
             t.rows.add(new String[]{
                     safe(p.getNom()),
                     p.getTypePack() == null ? "-" : p.getTypePack().name(),
                     (p.getPrixBase() == null ? "0" : p.getPrixBase().toPlainString()) + " DT",
                     (p.getReduction() == null ? "0" : p.getReduction().toPlainString()) + " DT",
                     String.valueOf(p.getNbActivitesMax()),
+                    actif,
                     p.getStatutPack() == null ? "-" : p.getStatutPack().name()
             });
         }
@@ -130,19 +137,60 @@ public class PdfExportService {
     }
 
     private Table buildInscriptionTable(List<Inscription> ins) {
-        // هنا نستعمل reflection باش ما يصيرش "Cannot resolve method" حسب Entities متاعك
+        // ✅ aucun ID : ni inscription id, ni user id, ni pack id
         Table t = new Table();
-        t.columns = new String[] {"Inscription", "Utilisateur", "Pack", "Statut", "Date"};
+
+        // Colonnes utiles (montant/date/nom/réduction/nb...)
+        t.columns = new String[] {"Utilisateur", "Pack", "Nb", "Montant", "Réduction", "Statut", "Date"};
 
         for (Inscription i : ins) {
-            String id = pick(i, "getIdInscription", "getId", "getIdIns");
-            String user = pick(i, "getUser", "getUtilisateur", "getIdUtilisateur", "getUserId");
-            String pack = pick(i, "getPack", "getIdPack", "getPackId");
-            String statut = pick(i, "getStatut", "getEtat", "getStatus", "getStatutInscription");
-            String date = pick(i, "getDateInscription", "getDate", "getCreatedAt", "getDateCreation");
+
+            // Utilisateur: nom/email (pas ID)
+            String userLabel = "";
+            Object uObj = invokeNoArg(i, "getUser");
+            if (uObj == null) uObj = invokeNoArg(i, "getUtilisateur");
+
+            if (uObj != null) {
+                userLabel = pick(uObj, "getNom", "getName", "getFullName", "getEmail", "getUsername");
+            } else {
+                // fallback (sans ID)
+                userLabel = pick(i, "getUserEmail", "getEmailUtilisateur", "getNomUtilisateur");
+            }
+
+            // Pack: nom (pas ID)
+            String packLabel = "";
+            Object pObj = invokeNoArg(i, "getPack");
+            if (pObj != null) {
+                packLabel = pick(pObj, "getNom", "getName", "getTitre");
+            } else {
+                packLabel = pick(i, "getNomPack", "getPackNom", "getPackName");
+            }
+
+            // Nb personnes / quantité
+            String nb = nz(pick(i, "getNbPersonnes", "getQuantite", "getNb", "getPlaces", "getNombre"));
+
+            // Montant total
+            String montant = nz(pick(i, "getMontant", "getTotal", "getPrixTotal", "getAmount", "getSomme"));
+            if (!montant.equals("-") && !montant.toLowerCase().contains("dt")) montant = montant + " DT";
+
+            // Réduction
+            String reduc = nz(pick(i, "getReduction", "getRemise", "getDiscount"));
+            if (!reduc.equals("-") && !reduc.toLowerCase().contains("dt")) reduc = reduc + " DT";
+
+            // Statut
+            String statut = nz(pick(i, "getStatut", "getEtat", "getStatus", "getStatutInscription"));
+
+            // Date
+            String date = nz(pick(i, "getDateInscription", "getDate", "getCreatedAt", "getDateCreation"));
 
             t.rows.add(new String[]{
-                    nz(id), nz(user), nz(pack), nz(statut), nz(date)
+                    nz(userLabel),
+                    nz(packLabel),
+                    nb,
+                    montant,
+                    reduc,
+                    statut,
+                    date
             });
         }
         return t;

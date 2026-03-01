@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.Region?>
+<?import javafx.scene.layout.StackPane?>
+<?import javafx.scene.layout.VBox?>
+
+<StackPane xmlns="http://javafx.com/javafx/21"
+           xmlns:fx="http://javafx.com/fxml/1"
+           fx:controller="controllers.QrPdfDialogController"
+           prefWidth="460">
+
+    <!-- Faux gradient/glow layers (IDE safe) -->
+    <Region styleClass="bg-glow-green" prefWidth="460" prefHeight="520"/>
+    <Region styleClass="bg-glow-orange" prefWidth="460" prefHeight="520"/>
+    <Region styleClass="bg-glow-cyan" prefWidth="460" prefHeight="520"/>
+
+    <!-- Card -->
+    <VBox spacing="12" styleClass="card" prefWidth="440">
+
+        <padding>
+            <Insets top="16" right="16" bottom="16" left="16"/>
+        </padding>
+
+        <Label text="Export PDF &amp; QR Code" styleClass="card-title"/>
+        <Label text="Choisis le contenu ➜ génère QR ➜ scan téléphone ➜ PDF se télécharge."
+               wrapText="true" styleClass="muted"/>
+
+        <!-- Row 1 -->
+        <HBox spacing="8">
+            <StackPane HBox.hgrow="ALWAYS">
+                <Button fx:id="btnExport"
+                        text="Export PDF"
+                        onAction="#onExportPdf"
+                        styleClass="btn-primary"
+                        maxWidth="Infinity"/>
+                <Label fx:id="shineExport" mouseTransparent="true" styleClass="shine" maxWidth="Infinity" maxHeight="Infinity"/>
+            </StackPane>
+
+            <StackPane HBox.hgrow="ALWAYS">
+                <Button fx:id="btnQrIns"
+                        text="QR Inscriptions"
+                        onAction="#onQrInscriptions"
+                        styleClass="btn-ghost"
+                        maxWidth="Infinity"/>
+                <Label fx:id="shineIns" mouseTransparent="true" styleClass="shine" maxWidth="Infinity" maxHeight="Infinity"/>
+            </StackPane>
+        </HBox>
+
+        <!-- Row 2 -->
+        <HBox spacing="8">
+            <StackPane HBox.hgrow="ALWAYS">
+                <Button fx:id="btnQrPacks"
+                        text="QR Packs"
+                        onAction="#onQrPacks"
+                        styleClass="btn-ghost"
+                        maxWidth="Infinity"/>
+                <Label fx:id="shinePacks" mouseTransparent="true" styleClass="shine" maxWidth="Infinity" maxHeight="Infinity"/>
+            </StackPane>
+
+            <StackPane HBox.hgrow="ALWAYS">
+                <Button fx:id="btnQrBoth"
+                        text="QR Packs + Inscriptions"
+                        onAction="#onQrBoth"
+                        styleClass="btn-ghost"
+                        maxWidth="Infinity"/>
+                <Label fx:id="shineBoth" mouseTransparent="true" styleClass="shine" maxWidth="Infinity" maxHeight="Infinity"/>
+            </StackPane>
+        </HBox>
+
+        <VBox spacing="10" alignment="CENTER" styleClass="qr-frame">
+            <ImageView fx:id="imgQr" fitWidth="290" fitHeight="290" preserveRatio="true" smooth="true"/>
+        </VBox>
+
+        <Label fx:id="lblHint" text="QR prêt." wrapText="true" styleClass="muted"/>
+    </VBox>
+
+</StackPane>
