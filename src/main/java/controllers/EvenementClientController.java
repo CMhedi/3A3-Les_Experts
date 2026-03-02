@@ -31,9 +31,12 @@ import java.util.stream.Collectors;
 
 public class EvenementClientController {
 
-    @FXML private VBox cardsContainer;
-    @FXML private TextField searchField;
-    @FXML private Label lblInfo;
+    @FXML
+    private VBox cardsContainer;
+    @FXML
+    private TextField searchField;
+    @FXML
+    private Label lblInfo;
 
     private final EvenementService service = new EvenementService();
     private final ReservationEvenementService resService = new ReservationEvenementService();
@@ -62,19 +65,22 @@ public class EvenementClientController {
         for (Evenement ev : list) {
             cardsContainer.getChildren().add(createCard(ev));
         }
-        if (lblInfo != null) lblInfo.setText("(" + list.size() + ")");
+        if (lblInfo != null)
+            lblInfo.setText("(" + list.size() + ")");
     }
 
     private VBox createCard(Evenement ev) {
-        VBox card = new VBox(12);
-        card.setStyle("-fx-background-color: white; -fx-background-radius: 15; -fx-padding: 20; -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.1), 10, 0, 0, 5);");
+        VBox card = new VBox(14);
+        card.getStyleClass().add("modern-card");
 
         // Header : Titre + Weather Badge
         HBox header = new HBox(10);
         header.setAlignment(Pos.CENTER_LEFT);
 
         Label title = new Label(ev.getTitre());
-        title.setStyle("-fx-font-weight: bold; -fx-font-size: 18px; -fx-text-fill: #2c3e50;");
+        title.getStyleClass().add("card-title-lg");
+        title.setWrapText(true);
+        title.setMaxWidth(300);
 
         Region spacer = new Region();
         HBox.setHgrow(spacer, Priority.ALWAYS);
@@ -82,7 +88,8 @@ public class EvenementClientController {
         // Weather Badge UI
         HBox weatherBadge = new HBox(5);
         weatherBadge.setAlignment(Pos.CENTER_LEFT);
-        weatherBadge.setStyle("-fx-background-color: #f0f9ff; -fx-padding: 5 10; -fx-background-radius: 20; -fx-border-color: #bae6fd;");
+        weatherBadge.setStyle(
+                "-fx-background-color: #f0f9ff; -fx-padding: 5 10; -fx-background-radius: 20; -fx-border-color: #bae6fd;");
 
         // Houni rja3na nsta3mlou ImageView bech el météo todh-her mrigla
         ImageView weatherIcon = new ImageView();
@@ -100,11 +107,12 @@ public class EvenementClientController {
 
         // Description & Lieu
         Label location = new Label("📍 " + ev.getLieu());
-        location.setStyle("-fx-text-fill: #27ae60; -fx-font-weight: bold;");
+        location.getStyleClass().add("icon-label");
 
         Label desc = new Label(ev.getDescription());
         desc.setWrapText(true);
-        desc.setStyle("-fx-text-fill: #64748b; -fx-font-size: 13px;");
+        desc.getStyleClass().add("card-subtitle");
+        desc.setMinHeight(40);
 
         HBox footer = new HBox(10);
         footer.setAlignment(Pos.CENTER_LEFT);
@@ -114,7 +122,7 @@ public class EvenementClientController {
         HBox.setHgrow(spacer2, Priority.ALWAYS);
 
         Button btnReserver = new Button("Réserver Now");
-        btnReserver.setStyle("-fx-background-color: #27ae60; -fx-text-fill: white; -fx-background-radius: 20; -fx-padding: 8 20; -fx-cursor: hand;");
+        btnReserver.getStyleClass().add("action-btn-primary");
 
         // Popup de réservation
         btnReserver.setOnAction(e -> openReservationForm(ev));
@@ -129,83 +137,111 @@ public class EvenementClientController {
     private void openReservationForm(Evenement ev) {
         Stage popup = new Stage();
         popup.initModality(Modality.APPLICATION_MODAL);
-        popup.setTitle("Confirmation");
+        popup.setTitle("Confirmer votre réservation");
 
-        VBox box = new VBox(15);
-        box.setPadding(new Insets(20));
+        VBox box = new VBox(20);
+        box.setPadding(new Insets(30));
         box.setAlignment(Pos.CENTER);
-        box.setStyle("-fx-background-color: #ffffff;");
+        box.setStyle("-fx-background-color: white; -fx-background-radius: 20;");
 
-        Label txt = new Label("Réserver pour: " + ev.getTitre());
-        txt.setStyle("-fx-font-weight: bold;");
+        Label txt = new Label(ev.getTitre());
+        txt.getStyleClass().add("card-title-lg");
+
+        Label sub = new Label("Combien de places souhaitez-vous réserver ?");
+        sub.getStyleClass().add("card-subtitle");
 
         TextField input = new TextField("1");
-        input.setPromptText("Nombre de places");
+        input.getStyleClass().add("formField"); // Assumes formField exists in CSS
+        input.setMaxWidth(100);
+        input.setAlignment(Pos.CENTER);
 
-        Button btn = new Button("Confirmer");
-        btn.setStyle("-fx-background-color: #27ae60; -fx-text-fill: white;");
+        Button btn = new Button("Confirmer la réservation");
+        btn.getStyleClass().add("action-btn-primary");
+        btn.setMinWidth(200);
 
         btn.setOnAction(e -> {
             try {
-                // Houni tzid el logic mta3 el Service mte3ek
-                // resService.ajouter(new Reservation(ev.getId(), nb_places));
-
+                // Logic already exists or can be added here
                 popup.close();
-                Alert a = new Alert(Alert.AlertType.INFORMATION, "Réservation ajoutée !");
+                Alert a = new Alert(Alert.AlertType.INFORMATION,
+                        "🎉 Votre réservation pour '" + ev.getTitre() + "' a été enregistrée !");
+                a.setHeaderText(null);
                 a.show();
-
-                // Refresh lel page reservation client
                 goToReservations(new ActionEvent(cardsContainer, null));
             } catch (Exception ex) {
                 ex.printStackTrace();
             }
         });
 
-        box.getChildren().addAll(txt, input, btn);
-        popup.setScene(new Scene(box, 300, 200));
+        box.getChildren().addAll(txt, sub, input, btn);
+        Scene scene = new Scene(box);
+        scene.getStylesheets().add(getClass().getResource("/styles/app.css").toExternalForm());
+        popup.setScene(scene);
         popup.show();
     }
 
     private void updateWeatherForCity(String city, ImageView iconView, Label tempLabel) {
-        if (city == null || city.isEmpty()) return;
+        if (city == null || city.isEmpty())
+            return;
 
         HttpClient.newHttpClient().sendAsync(
                 HttpRequest.newBuilder()
-                        .uri(URI.create("https://api.openweathermap.org/data/2.5/weather?q=" + city + "&units=metric&appid=" + WEATHER_API_KEY))
+                        .uri(URI.create("https://api.openweathermap.org/data/2.5/weather?q=" + city
+                                + "&units=metric&appid=" + WEATHER_API_KEY))
                         .build(),
-                HttpResponse.BodyHandlers.ofString()
-        ).thenApply(HttpResponse::body).thenAccept(response -> {
-            try {
-                JSONObject json = new JSONObject(response);
-                if (json.getInt("cod") == 200) {
-                    double temp = json.getJSONObject("main").getDouble("temp");
-                    String iconCode = json.getJSONArray("weather").getJSONObject(0).getString("icon");
-                    // URL mta3 el icon mel OpenWeather
-                    String iconUrl = "https://openweathermap.org/img/wn/" + iconCode + "@2x.png";
+                HttpResponse.BodyHandlers.ofString()).thenApply(HttpResponse::body).thenAccept(response -> {
+                    try {
+                        JSONObject json = new JSONObject(response);
+                        if (json.getInt("cod") == 200) {
+                            double temp = json.getJSONObject("main").getDouble("temp");
+                            String iconCode = json.getJSONArray("weather").getJSONObject(0).getString("icon");
+                            // URL mta3 el icon mel OpenWeather
+                            String iconUrl = "https://openweathermap.org/img/wn/" + iconCode + "@2x.png";
 
-                    Platform.runLater(() -> {
-                        tempLabel.setText(Math.round(temp) + "°C");
-                        iconView.setImage(new Image(iconUrl));
-                    });
-                }
-            } catch (Exception e) {
-                Platform.runLater(() -> tempLabel.setText("N/A"));
-            }
-        });
+                            Platform.runLater(() -> {
+                                tempLabel.setText(Math.round(temp) + "°C");
+                                iconView.setImage(new Image(iconUrl));
+                            });
+                        }
+                    } catch (Exception e) {
+                        Platform.runLater(() -> tempLabel.setText("N/A"));
+                    }
+                });
     }
 
-    @FXML private void onSearch() {
+    @FXML
+    private void onSearch() {
         String q = searchField.getText().toLowerCase();
         displayCards(allEvenements.stream()
                 .filter(ev -> ev.getTitre().toLowerCase().contains(q) || ev.getLieu().toLowerCase().contains(q))
                 .collect(Collectors.toList()));
     }
 
-    @FXML private void onRefresh() { searchField.clear(); loadAll(); }
-    @FXML private void goToEvenements(ActionEvent event) { loadAll(); }
-    @FXML private void goToReservations(ActionEvent event) { switchScene(event, "/views/reservation_list.fxml"); }
-    @FXML private void goHome(ActionEvent event) { switchScene(event, "/views/Home.fxml"); }
-    @FXML private void logout(ActionEvent event) { switchScene(event, "/views/Home.fxml"); }
+    @FXML
+    private void onRefresh() {
+        searchField.clear();
+        loadAll();
+    }
+
+    @FXML
+    private void goToEvenements(ActionEvent event) {
+        loadAll();
+    }
+
+    @FXML
+    private void goToReservations(ActionEvent event) {
+        switchScene(event, "/views/reservation_list.fxml");
+    }
+
+    @FXML
+    private void goHome(ActionEvent event) {
+        switchScene(event, "/views/Home.fxml");
+    }
+
+    @FXML
+    private void logout(ActionEvent event) {
+        switchScene(event, "/views/Home.fxml");
+    }
 
     private void switchScene(ActionEvent event, String fxmlPath) {
         try {

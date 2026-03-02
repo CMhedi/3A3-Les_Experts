@@ -8,42 +8,50 @@
             stylesheets="@/styles/app.css" styleClass="root">
 
     <left>
-        <VBox styleClass="sidebar" spacing="16" prefWidth="250">
-            <VBox spacing="6" styleClass="sidebarHeader">
-                <Label text="EcoAdventure" styleClass="brand"/>
-                <Label text="Admin Dashboard" styleClass="mutedSidebar"/>
+        <VBox styleClass="sidebar-admin" spacing="12" prefWidth="260">
+            <VBox spacing="8" styleClass="sidebarHeader" style="-fx-padding: 0 0 40 0;">
+                <Label text="EcoAdventure" styleClass="brand" style="-fx-font-size: 22px;"/>
+                <Label text="Administration" styleClass="mutedSidebar"/>
             </VBox>
-            <VBox spacing="10" styleClass="sidebarNav">
-                <Button text="🏠  Accueil" onAction="#goHome" styleClass="navItem"/>
-                <Button text="🎫  Événements" onAction="#goToEvents" styleClass="navItem"/>
-                <Button text="📅  Réservations" styleClass="navItem, navItemActive"/>
+            
+            <VBox spacing="10" VBox.vgrow="ALWAYS">
+                <Button text="📈  Vue d'ensemble" onAction="#goHome" maxWidth="Infinity" styleClass="nav-item-admin" />
+                <Button text="📅  Événements" onAction="#goToEvents" maxWidth="Infinity" styleClass="nav-item-admin" />
+                <Button text="🎟️  Réservations" maxWidth="Infinity" styleClass="nav-item-admin, nav-item-admin-active" />
+                <Button text="👤  Utilisateurs" maxWidth="Infinity" styleClass="nav-item-admin" />
             </VBox>
-            <Region VBox.vgrow="ALWAYS"/>
-            <Separator styleClass="sidebarSep"/>
-            <Button text="⎋  Déconnexion" onAction="#onLogout" styleClass="navItem, danger"/>
+
+            <Separator styleClass="sidebarSep" style="-fx-padding: 20 0;"/>
+            <Button text="⎋  Déconnexion" onAction="#onLogout" maxWidth="Infinity" styleClass="nav-item-admin" style="-fx-text-fill: #fca5a5;"/>
         </VBox>
     </left>
 
     <center>
         <VBox spacing="0">
-            <HBox styleClass="topbar" spacing="15" alignment="CENTER_LEFT">
-                <VBox spacing="2">
-                    <Label text="Gestion des Réservations" styleClass="pageTitle"/>
-                    <Label fx:id="lblStats" text="Analyse des données..." styleClass="mutedText" style="-fx-font-size: 12px;"/>
+            <!-- Header -->
+            <HBox styleClass="page-header" spacing="20" alignment="CENTER_LEFT">
+                <VBox spacing="4">
+                    <Label text="Gestion des Réservations" styleClass="pageTitle" style="-fx-font-size: 24px;"/>
                 </VBox>
                 <Region HBox.hgrow="ALWAYS"/>
-                <HBox styleClass="searchBox" spacing="8" alignment="CENTER_LEFT">
-                    <Label text="🔎" styleClass="muted"/>
-                    <TextField fx:id="searchReservationField" promptText="Filtrer par ID Event ou Statut..."
-                               onKeyReleased="#onSearchReservation" styleClass="searchInput"/>
+                <HBox styleClass="searchBox" spacing="10" alignment="CENTER_LEFT">
+                    <Label text="🔎" style="-fx-opacity: 0.5;"/>
+                    <TextField fx:id="searchReservationField" onKeyReleased="#onSearchReservation" 
+                               promptText="Rechercher une réservation..." styleClass="searchInput"/>
                 </HBox>
-                <Button text="🔄" onAction="#onRefresh" styleClass="secondaryBtn" style="-fx-font-size: 16px;"/>
+                <Button text="Actualiser" onAction="#onRefresh" styleClass="secondaryBtn">
+                    <graphic><Label text="🔄"/></graphic>
+                </Button>
             </HBox>
 
-            <ScrollPane fitToWidth="true" hbarPolicy="NEVER" styleClass="transparentScroll" VBox.vgrow="ALWAYS">
+            <ScrollPane fitToWidth="true" styleClass="transparentScroll" VBox.vgrow="ALWAYS">
                 <content>
-                    <VBox fx:id="cardsContainer" spacing="15" styleClass="pageContent">
-                        <padding><Insets top="25" right="35" bottom="25" left="35"/></padding>
+                    <VBox spacing="30" style="-fx-padding: 30 40;">
+                        <!-- Cards Container -->
+                        <VBox spacing="20">
+                            <Label text="Liste des réservations" styleClass="cardTitle" style="-fx-font-size: 18px;"/>
+                            <VBox fx:id="cardsContainer" spacing="12" styleClass="pageContent"/>
+                        </VBox>
                     </VBox>
                 </content>
             </ScrollPane>

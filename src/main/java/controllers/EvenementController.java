@@ -23,9 +23,12 @@ import java.util.stream.Collectors;
 
 public class EvenementController {
 
-    @FXML private TextField searchField;
-    @FXML private VBox cardsContainer;
-    @FXML private Label lblInfo;
+    @FXML
+    private TextField searchField;
+    @FXML
+    private VBox cardsContainer;
+    @FXML
+    private Label lblInfo;
 
     private final EvenementService evenementService = new EvenementService();
     private List<Evenement> allEvents;
@@ -79,13 +82,15 @@ public class EvenementController {
 
     @FXML
     private void onRefresh() {
-        if (searchField != null) searchField.clear();
+        if (searchField != null)
+            searchField.clear();
         loadEvents();
     }
 
     @FXML
     private void onSearch() {
-        if (allEvents == null) return;
+        if (allEvents == null)
+            return;
 
         String q = (searchField == null) ? "" : searchField.getText().trim().toLowerCase(Locale.ROOT);
         if (q.isEmpty()) {
@@ -95,11 +100,9 @@ public class EvenementController {
         }
 
         List<Evenement> filtered = allEvents.stream()
-                .filter(ev ->
-                        contains(ev.getTitre(), q) ||
-                                contains(ev.getLieu(), q) ||
-                                (ev.getCategorieEvt() != null && ev.getCategorieEvt().name().toLowerCase().contains(q))
-                )
+                .filter(ev -> contains(ev.getTitre(), q) ||
+                        contains(ev.getLieu(), q) ||
+                        (ev.getCategorieEvt() != null && ev.getCategorieEvt().name().toLowerCase().contains(q)))
                 .collect(Collectors.toList());
 
         renderCards(filtered);
@@ -129,18 +132,19 @@ public class EvenementController {
                         "-fx-background-radius: 15; " +
                         "-fx-border-color: #f1f5f9; " +
                         "-fx-border-width: 1; " +
-                        "-fx-effect: dropshadow(gaussian, rgba(0,0,0,0.05), 10, 0, 0, 4);"
-        );
+                        "-fx-effect: dropshadow(gaussian, rgba(0,0,0,0.05), 10, 0, 0, 4);");
 
         // Hover Effect
-        card.setOnMouseEntered(ev -> card.setStyle(card.getStyle() + "-fx-border-color: #143D30; -fx-translate-y: -2;"));
+        card.setOnMouseEntered(
+                ev -> card.setStyle(card.getStyle() + "-fx-border-color: #143D30; -fx-translate-y: -2;"));
         card.setOnMouseExited(ev -> card.setStyle(card.getStyle() + "-fx-border-color: #f1f5f9; -fx-translate-y: 0;"));
 
         VBox infoBox = new VBox(5);
         Label title = new Label(nvl(e.getTitre()));
         title.setStyle("-fx-font-size: 16; -fx-font-weight: 800; -fx-text-fill: #1E293B;");
 
-        Label meta = new Label(formatDate(e.getDateEvent()) + " • " + nvl(e.getLieu()) + " • Places: " + e.getNbPlaces());
+        Label meta = new Label(
+                formatDate(e.getDateEvent()) + " • " + nvl(e.getLieu()) + " • Places: " + e.getNbPlaces());
         meta.setStyle("-fx-text-fill: #64748B; -fx-font-size: 12;");
 
         infoBox.getChildren().addAll(title, meta);
@@ -152,11 +156,13 @@ public class EvenementController {
         actions.setAlignment(Pos.CENTER_RIGHT);
 
         Button btnEdit = new Button("Modifier");
-        btnEdit.setStyle("-fx-background-color: #f0f7ff; -fx-text-fill: #0984e3; -fx-font-weight: bold; -fx-background-radius: 8;");
+        btnEdit.setStyle(
+                "-fx-background-color: #f0f7ff; -fx-text-fill: #0984e3; -fx-font-weight: bold; -fx-background-radius: 8;");
         btnEdit.setOnAction(ev -> openForm(e));
 
         Button btnDelete = new Button("Supprimer");
-        btnDelete.setStyle("-fx-background-color: #fee2e2; -fx-text-fill: #991b1b; -fx-font-weight: bold; -fx-background-radius: 8;");
+        btnDelete.setStyle(
+                "-fx-background-color: #fee2e2; -fx-text-fill: #991b1b; -fx-font-weight: bold; -fx-background-radius: 8;");
         btnDelete.setOnAction(ev -> deleteEvent(e));
 
         actions.getChildren().addAll(btnEdit, btnDelete);
@@ -164,7 +170,7 @@ public class EvenementController {
 
         return card;
     }
-// ===== NEW MAPPING FOR DASHBOARD =====
+    // ===== NEW MAPPING FOR DASHBOARD =====
 
     @FXML
     private void goToDashboard() {
@@ -180,13 +186,15 @@ public class EvenementController {
         } catch (Exception e) {
             System.err.println("Erreur navigation Dashboard: " + e.getMessage());
             // Alert sghira ken el path ghalet
-            new Alert(Alert.AlertType.ERROR, "Impossible d'ouvrir le Dashboard. Vérifiez le chemin /views/AdminDashboard.fxml").show();
+            new Alert(Alert.AlertType.ERROR,
+                    "Impossible d'ouvrir le Dashboard. Vérifiez le chemin /views/AdminDashboard.fxml").show();
         }
     }
     // ===== Exception Handling Fixed =====
 
     private void deleteEvent(Evenement e) {
-        Alert confirm = new Alert(Alert.AlertType.CONFIRMATION, "Supprimer l'événement : " + e.getTitre() + " ?", ButtonType.YES, ButtonType.NO);
+        Alert confirm = new Alert(Alert.AlertType.CONFIRMATION, "Supprimer l'événement : " + e.getTitre() + " ?",
+                ButtonType.YES, ButtonType.NO);
         confirm.showAndWait().ifPresent(response -> {
             if (response == ButtonType.YES) {
                 try {
@@ -218,9 +226,25 @@ public class EvenementController {
         }
     }
 
-    @FXML private void onAdd() { openForm(null); }
-    private void updateTotal(int total) { if (lblInfo != null) lblInfo.setText("Total: " + total); }
-    private boolean contains(String v, String q) { return v != null && v.toLowerCase().contains(q); }
-    private String nvl(String s) { return s == null ? "" : s; }
-    private String formatDate(LocalDateTime dt) { return dt == null ? "" : dt.format(DT_FMT); }
+    @FXML
+    private void onAdd() {
+        openForm(null);
+    }
+
+    private void updateTotal(int total) {
+        if (lblInfo != null)
+            lblInfo.setText("Total: " + total);
+    }
+
+    private boolean contains(String v, String q) {
+        return v != null && v.toLowerCase().contains(q);
+    }
+
+    private String nvl(String s) {
+        return s == null ? "" : s;
+    }
+
+    private String formatDate(LocalDateTime dt) {
+        return dt == null ? "" : dt.format(DT_FMT);
+    }
 }

@@ -10,8 +10,18 @@ public class ReservationEvenement {
     private StatutReservation statutRes;
     private int nbBillets;
     private int idEvenement;
+    private String nomEvenement;
 
-    public ReservationEvenement() {}
+    public ReservationEvenement() {
+    }
+
+    public String getNomEvenement() {
+        return nomEvenement;
+    }
+
+    public void setNomEvenement(String nomEvenement) {
+        this.nomEvenement = nomEvenement;
+    }
 
     public int getIdResEvt() {
         return idResEvt;

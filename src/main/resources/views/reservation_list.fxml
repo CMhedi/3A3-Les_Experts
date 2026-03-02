@@ -27,30 +27,30 @@
     </left>
 
     <center>
-        <VBox spacing="0">
-            <HBox styleClass="topbar" spacing="12" alignment="CENTER_LEFT">
-                <Label text="Mes Réservations" styleClass="pageTitle"/>
+        <VBox spacing="0" style="-fx-background-color: #f8fafc;">
+            <HBox styleClass="page-header" spacing="20" alignment="CENTER_LEFT">
+                <VBox spacing="4">
+                    <Label text="Mes Réservations" styleClass="pageTitle" style="-fx-font-size: 24px;"/>
+                    <Label fx:id="lblInfo" text="Gérez vos billets pour vos prochaines aventures" styleClass="mutedText"/>
+                </VBox>
                 <Region HBox.hgrow="ALWAYS"/>
-                <HBox styleClass="searchBox" spacing="8" alignment="CENTER_LEFT">
-                    <Label text="🔎" styleClass="muted"/>
-                    <TextField fx:id="searchField" onKeyReleased="#onSearch" promptText="Filtrer mes billets..." styleClass="searchInput"/>
+                <HBox styleClass="searchBox" spacing="10" alignment="CENTER_LEFT">
+                    <Label text="🔎" style="-fx-opacity: 0.5;"/>
+                    <TextField fx:id="searchField" onKeyReleased="#onSearch" promptText="Rechercher un événement..." styleClass="searchInput"/>
                 </HBox>
-                <Button text="Actualiser" onAction="#onRefresh" styleClass="secondaryBtn"/>
+                <Button text="Actualiser" onAction="#onRefresh" styleClass="secondaryBtn">
+                    <graphic><Label text="🔄"/></graphic>
+                </Button>
             </HBox>
 
-            <VBox styleClass="page" spacing="14" VBox.vgrow="ALWAYS">
-                <padding><Insets top="18" right="18" bottom="18" left="18"/></padding>
-
-                <HBox alignment="CENTER_LEFT" spacing="10">
-                    <Label text="Vos billets réservés" styleClass="cardTitle" style="-fx-font-size: 16px;"/>
-                    <Label fx:id="lblInfo" text="(0)" styleClass="mutedText"/>
-                </HBox>
+            <VBox styleClass="page" spacing="20" VBox.vgrow="ALWAYS">
+                <padding><Insets top="30" right="40" bottom="30" left="40"/></padding>
 
                 <ScrollPane fitToWidth="true" hbarPolicy="NEVER" vbarPolicy="AS_NEEDED"
                             styleClass="transparentScroll" VBox.vgrow="ALWAYS">
                     <content>
-                        <VBox fx:id="cardsContainer" spacing="15" styleClass="cardsContainer">
-                            <padding><Insets top="10" right="15" bottom="10" left="5"/></padding>
+                        <VBox fx:id="cardsContainer" spacing="20" styleClass="cardsContainer">
+                            <padding><Insets top="10" right="20" bottom="20" left="0"/></padding>
                         </VBox>
                     </content>
                 </ScrollPane>

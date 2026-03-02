@@ -16,7 +16,8 @@ public class EvenementService implements IGenericService<Evenement> {
 
     @Override
     public void add(Evenement e) throws Exception {
-        String sql = "INSERT INTO evenement (titre, description, categorie_evt, date_event, lieu, nb_places, statut, image_url) " +
+        String sql = "INSERT INTO evenement (titre, description, categorie_evt, date_event, lieu, nb_places, statut, image_url) "
+                +
                 "VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
         try (PreparedStatement ps = cnx.prepareStatement(sql)) {
             ps.setString(1, e.getTitre());
@@ -33,7 +34,8 @@ public class EvenementService implements IGenericService<Evenement> {
 
     @Override
     public void update(Evenement e) throws Exception {
-        String sql = "UPDATE evenement SET titre=?, description=?, categorie_evt=?, date_event=?, lieu=?, nb_places=?, statut=?, image_url=? " +
+        String sql = "UPDATE evenement SET titre=?, description=?, categorie_evt=?, date_event=?, lieu=?, nb_places=?, statut=?, image_url=? "
+                +
                 "WHERE id_evenement=?";
         try (PreparedStatement ps = cnx.prepareStatement(sql)) {
             ps.setString(1, e.getTitre());
@@ -63,7 +65,7 @@ public class EvenementService implements IGenericService<Evenement> {
         String sql = "SELECT * FROM evenement ORDER BY id_evenement DESC";
         List<Evenement> list = new ArrayList<>();
         try (Statement st = cnx.createStatement();
-             ResultSet rs = st.executeQuery(sql)) {
+                ResultSet rs = st.executeQuery(sql)) {
 
             while (rs.next()) {
                 list.add(map(rs));
@@ -78,7 +80,8 @@ public class EvenementService implements IGenericService<Evenement> {
         try (PreparedStatement ps = cnx.prepareStatement(sql)) {
             ps.setInt(1, id);
             try (ResultSet rs = ps.executeQuery()) {
-                if (rs.next()) return map(rs);
+                if (rs.next())
+                    return map(rs);
             }
         }
         return null;
@@ -92,8 +95,11 @@ public class EvenementService implements IGenericService<Evenement> {
 
         String cat = rs.getString("categorie_evt");
         if (cat != null) {
-            try { e.setCategorieEvt(CategorieEvenement.valueOf(cat)); }
-            catch (Exception ignored) { e.setCategorieEvt(null); }
+            try {
+                e.setCategorieEvt(CategorieEvenement.valueOf(cat));
+            } catch (Exception ignored) {
+                e.setCategorieEvt(null);
+            }
         }
 
         Timestamp ts = rs.getTimestamp("date_event");

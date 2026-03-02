@@ -15,7 +15,8 @@ public class Evenement {
     private String statut;
     private String imageUrl;
 
-    public Evenement() {}
+    public Evenement() {
+    }
 
     // ===== Getters & Setters =====
 

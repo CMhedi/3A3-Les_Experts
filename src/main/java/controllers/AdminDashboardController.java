@@ -11,9 +11,9 @@ import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.Node;
 import javafx.scene.chart.*;
-import javafx.scene.control.Alert;
-import javafx.scene.control.Label;
+import javafx.scene.control.*;
 import javafx.stage.Stage;
+import org.apache.poi.ss.usermodel.Cell;
 
 // Importations Apache POI pour le style et l'export
 import org.apache.poi.ss.usermodel.*;
@@ -28,17 +28,48 @@ import java.util.stream.Collectors;
 
 public class AdminDashboardController {
 
-    @FXML private Label lblTotalEvents;
-    @FXML private Label lblTotalTickets;
-    @FXML private PieChart categoryPieChart;
-    @FXML private BarChart<String, Number> ticketsBarChart;
+    @FXML
+    private Label lblTotalEvents;
+    @FXML
+    private Label lblTotalTickets;
+    @FXML
+    private Label lblAvgFilling;
+    @FXML
+    private Label lblTopCategory;
+    @FXML
+    private PieChart categoryPieChart;
+    @FXML
+    private BarChart<String, Number> ticketsBarChart;
+
+    @FXML
+    private TableView<ReservationEvenement> recentReservationsTable;
+    @FXML
+    private TableColumn<ReservationEvenement, String> colEvent;
+    @FXML
+    private TableColumn<ReservationEvenement, Integer> colTickets;
+    @FXML
+    private TableColumn<ReservationEvenement, String> colDate;
+    @FXML
+    private TableColumn<ReservationEvenement, String> colStatus;
 
     private final EvenementService evService = new EvenementService();
     private final ReservationEvenementService resService = new ReservationEvenementService();
 
     @FXML
     public void initialize() {
+        setupTable();
         refreshDashboard();
+    }
+
+    private void setupTable() {
+        colEvent.setCellValueFactory(
+                cellData -> new javafx.beans.property.SimpleStringProperty(cellData.getValue().getNomEvenement()));
+        colTickets.setCellValueFactory(
+                cellData -> new javafx.beans.property.SimpleObjectProperty<>(cellData.getValue().getNbBillets()));
+        colDate.setCellValueFactory(cellData -> new javafx.beans.property.SimpleStringProperty(
+                cellData.getValue().getDateReservation().toString()));
+        colStatus.setCellValueFactory(cellData -> new javafx.beans.property.SimpleStringProperty(
+                cellData.getValue().getStatutRes().toString()));
     }
 
     public void refreshDashboard() {
@@ -51,26 +82,63 @@ public class AdminDashboardController {
             int totalTickets = reservations.stream().mapToInt(ReservationEvenement::getNbBillets).sum();
             lblTotalTickets.setText(String.valueOf(totalTickets));
 
-            // 2. PieChart: Categories
+            // 2. Taux de remplissage moyen
+            double avgFilling = events.isEmpty() ? 0
+                    : events.stream()
+                            .mapToDouble(ev -> {
+                                int sold = reservations.stream()
+                                        .filter(r -> r.getIdEvenement() == ev.getIdEvenement())
+                                        .mapToInt(ReservationEvenement::getNbBillets).sum();
+                                return ev.getNbPlaces() == 0 ? 0 : (double) sold / ev.getNbPlaces() * 100;
+                            }).average().orElse(0);
+            lblAvgFilling.setText(String.format("%.1f%%", avgFilling));
+
+            // 3. Top Catégorie
             Map<String, Long> catStats = events.stream()
                     .collect(Collectors.groupingBy(e -> e.getCategorieEvt().toString(), Collectors.counting()));
+
+            String topCat = catStats.entrySet().stream()
+                    .max(Map.Entry.comparingByValue())
+                    .map(Map.Entry::getKey).orElse("---");
+            lblTopCategory.setText(topCat);
+
+            // 4. PieChart: Categories
             ObservableList<PieChart.Data> pieData = FXCollections.observableArrayList();
             catStats.forEach((cat, count) -> pieData.add(new PieChart.Data(cat, count)));
             categoryPieChart.setData(pieData);
 
-            // 3. BarChart: Top Ventes
+            // 5. BarChart: Top Ventes
             XYChart.Series<String, Number> series = new XYChart.Series<>();
-            series.setName("Billets Vendus");
-            events.stream().limit(6).forEach(ev -> {
-                int sold = reservations.stream()
-                        .filter(r -> r.getIdEvenement() == ev.getIdEvenement())
-                        .mapToInt(ReservationEvenement::getNbBillets).sum();
-                series.getData().add(new XYChart.Data<>(ev.getTitre(), sold));
-            });
+            series.setName("Billets");
+            events.stream()
+                    .sorted((e1, e2) -> {
+                        int s1 = reservations.stream().filter(r -> r.getIdEvenement() == e1.getIdEvenement())
+                                .mapToInt(ReservationEvenement::getNbBillets).sum();
+                        int s2 = reservations.stream().filter(r -> r.getIdEvenement() == e2.getIdEvenement())
+                                .mapToInt(ReservationEvenement::getNbBillets).sum();
+                        return Integer.compare(s2, s1);
+                    })
+                    .limit(5)
+                    .forEach(ev -> {
+                        int sold = reservations.stream()
+                                .filter(r -> r.getIdEvenement() == ev.getIdEvenement())
+                                .mapToInt(ReservationEvenement::getNbBillets).sum();
+                        series.getData().add(new XYChart.Data<>(ev.getTitre(), sold));
+                    });
             ticketsBarChart.getData().clear();
             ticketsBarChart.getData().add(series);
 
-        } catch (Exception e) { e.printStackTrace(); }
+            // 6. Tableau des dernières réservations
+            ObservableList<ReservationEvenement> recentRes = FXCollections.observableArrayList(
+                    reservations.stream()
+                            .sorted((r1, r2) -> r2.getDateReservation().compareTo(r1.getDateReservation()))
+                            .limit(8)
+                            .collect(Collectors.toList()));
+            recentReservationsTable.setItems(recentRes);
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
     @FXML
@@ -89,7 +157,7 @@ public class AdminDashboardController {
             font.setBold(true);
             headerStyle.setFont(font);
 
-            String[] headers = {"ID", "Event ID", "Billets", "Statut", "Date"};
+            String[] headers = { "ID", "Event ID", "Billets", "Statut", "Date" };
             Row headerRow = sheet.createRow(0);
             for (int i = 0; i < headers.length; i++) {
                 Cell cell = headerRow.createCell(i);
@@ -134,11 +202,15 @@ public class AdminDashboardController {
         }
     }
 
-    @FXML private void goToEvenements(ActionEvent event) {
-        SceneNavigator.go((Stage)((Node)event.getSource()).getScene().getWindow(), "/views/EvenementAdmin.fxml", "Gestion Events");
+    @FXML
+    private void goToEvenements(ActionEvent event) {
+        SceneNavigator.go((Stage) ((Node) event.getSource()).getScene().getWindow(), "/views/evenement_list.fxml",
+                "Gestion Events");
     }
 
-    @FXML private void goToReservations(ActionEvent event) {
-        SceneNavigator.go((Stage)((Node)event.getSource()).getScene().getWindow(), "/views/ReservationAdmin.fxml", "Réservations");
+    @FXML
+    private void goToReservations(ActionEvent event) {
+        SceneNavigator.go((Stage) ((Node) event.getSource()).getScene().getWindow(), "/views/admin_reservations.fxml",
+                "Réservations");
     }
 }

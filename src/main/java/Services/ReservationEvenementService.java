@@ -54,10 +54,11 @@ public class ReservationEvenementService {
 
     public List<ReservationEvenement> getAll() throws Exception {
         List<ReservationEvenement> list = new ArrayList<>();
-        String sql = "SELECT id_res_evt, date_reservation, statut_res, nb_billets, id_evenement " +
-                "FROM reservation_evenement ORDER BY date_reservation DESC";
+        String sql = "SELECT r.*, e.titre FROM reservation_evenement r " +
+                "JOIN evenement e ON r.id_evenement = e.id_evenement " +
+                "ORDER BY r.date_reservation DESC";
         try (Statement st = cnx.createStatement();
-             ResultSet rs = st.executeQuery(sql)) {
+                ResultSet rs = st.executeQuery(sql)) {
 
             while (rs.next()) {
                 ReservationEvenement r = new ReservationEvenement();
@@ -71,6 +72,7 @@ public class ReservationEvenementService {
 
                 r.setNbBillets(rs.getInt("nb_billets"));
                 r.setIdEvenement(rs.getInt("id_evenement"));
+                r.setNomEvenement(rs.getString("titre"));
                 list.add(r);
             }
         }
@@ -83,7 +85,8 @@ public class ReservationEvenementService {
         try (PreparedStatement ps = cnx.prepareStatement(sql)) {
             ps.setInt(1, id);
             try (ResultSet rs = ps.executeQuery()) {
-                if (!rs.next()) return null;
+                if (!rs.next())
+                    return null;
 
                 ReservationEvenement r = new ReservationEvenement();
                 r.setIdResEvt(rs.getInt("id_res_evt"));

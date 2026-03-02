@@ -10,47 +10,47 @@
     <left>
         <VBox styleClass="sidebar" spacing="16" prefWidth="240">
             <VBox spacing="6" styleClass="sidebarHeader">
-                <Label text="EcoAdventure" styleClass="brand" style="-fx-font-size: 24px; -fx-font-weight: bold; -fx-text-fill: white;"/>
-                <Label text="Espace Client" styleClass="mutedSidebar" style="-fx-text-fill: #bdc3c7;"/>
+                <Label text="EcoAdventure" styleClass="brand"/>
+                <Label text="Espace Client" styleClass="mutedSidebar"/>
             </VBox>
 
             <VBox spacing="8" styleClass="sidebarNav">
-                <Button text="🏠  Accueil" onAction="#goHome" styleClass="navItem" style="-fx-background-color: transparent; -fx-text-fill: white; -fx-alignment: CENTER_LEFT; -fx-pref-width: 220;"/>
-                <Button text="🎫  Événements" onAction="#goToEvenements" styleClass="navItem, navItemActive" style="-fx-background-color: #34495e; -fx-text-fill: white; -fx-alignment: CENTER_LEFT; -fx-pref-width: 220;"/>
-                <Button text="📅  Mes Réservations" onAction="#goToReservations" styleClass="navItem" style="-fx-background-color: transparent; -fx-text-fill: white; -fx-alignment: CENTER_LEFT; -fx-pref-width: 220;"/>
+                <Button text="🏠  Accueil" onAction="#goHome" styleClass="navItem"/>
+                <Button text="🎫  Événements" onAction="#goToEvenements" styleClass="navItem, navItemActive"/>
+                <Button text="📅  Mes Réservations" onAction="#goToReservations" styleClass="navItem"/>
             </VBox>
 
             <Region VBox.vgrow="ALWAYS"/>
             <Separator styleClass="sidebarSep"/>
-            <Button text="⎋  Déconnexion" onAction="#logout" styleClass="navItem, danger" style="-fx-text-fill: #e74c3c;"/>
+            <Button text="⎋  Déconnexion" onAction="#logout" styleClass="navItem, danger"/>
         </VBox>
     </left>
 
     <center>
-        <VBox spacing="0">
-            <HBox styleClass="topbar" spacing="12" alignment="CENTER_LEFT" style="-fx-padding: 15; -fx-background-color: white; -fx-border-color: #ecf0f1; -fx-border-width: 0 0 1 0;">
-                <Label text="Événements" styleClass="pageTitle" style="-fx-font-size: 20px; -fx-font-weight: bold;"/>
+        <VBox spacing="0" style="-fx-background-color: #f8fafc;">
+            <HBox styleClass="page-header" spacing="20" alignment="CENTER_LEFT">
+                <VBox spacing="4">
+                    <Label text="Événements" styleClass="pageTitle" style="-fx-font-size: 24px;"/>
+                    <Label fx:id="lblInfo" text="Découvrez et réservez nos prochaines aventures" styleClass="mutedText"/>
+                </VBox>
                 <Region HBox.hgrow="ALWAYS"/>
-                <HBox styleClass="searchBox" spacing="8" alignment="CENTER_LEFT" style="-fx-background-color: #f4f7f6; -fx-padding: 5 15; -fx-background-radius: 20;">
-                    <Label text="🔎" styleClass="muted"/>
-                    <TextField fx:id="searchField" onKeyReleased="#onSearch" promptText="Rechercher un événement..." styleClass="searchInput" style="-fx-background-color: transparent; -fx-border-width: 0;"/>
+                <HBox styleClass="searchBox" spacing="10" alignment="CENTER_LEFT">
+                    <Label text="🔎" style="-fx-opacity: 0.5;"/>
+                    <TextField fx:id="searchField" onKeyReleased="#onSearch" promptText="Rechercher un événement..." styleClass="searchInput"/>
                 </HBox>
-                <Button text="Actualiser" onAction="#onRefresh" styleClass="secondaryBtn"/>
+                <Button text="Actualiser" onAction="#onRefresh" styleClass="secondaryBtn">
+                    <graphic><Label text="🔄"/></graphic>
+                </Button>
             </HBox>
 
-            <VBox styleClass="page" spacing="14" VBox.vgrow="ALWAYS">
-                <padding><Insets top="18" right="18" bottom="18" left="18"/></padding>
-
-                <HBox alignment="CENTER_LEFT" spacing="10">
-                    <Label text="Découvrir nos aventures" styleClass="cardTitle" style="-fx-font-size: 16px; -fx-font-weight: bold;"/>
-                    <Label fx:id="lblInfo" text="(0)" styleClass="mutedText"/>
-                </HBox>
+            <VBox styleClass="page" spacing="20" VBox.vgrow="ALWAYS">
+                <padding><Insets top="30" right="40" bottom="30" left="40"/></padding>
 
                 <ScrollPane fitToWidth="true" hbarPolicy="NEVER" vbarPolicy="AS_NEEDED"
-                            styleClass="transparentScroll" VBox.vgrow="ALWAYS" style="-fx-background-color: transparent; -fx-background: transparent;">
+                            styleClass="transparentScroll" VBox.vgrow="ALWAYS">
                     <content>
-                        <VBox fx:id="cardsContainer" spacing="15" styleClass="cardsContainer">
-                            <padding><Insets top="10" right="15" bottom="10" left="5"/></padding>
+                        <VBox fx:id="cardsContainer" spacing="20" styleClass="cardsContainer">
+                            <padding><Insets top="10" right="20" bottom="20" left="0"/></padding>
                         </VBox>
                     </content>
                 </ScrollPane>

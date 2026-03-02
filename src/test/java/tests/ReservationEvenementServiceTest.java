@@ -121,11 +121,17 @@ public class ReservationEvenementServiceTest {
     @AfterAll
     static void teardown() throws Exception {
         if (idReservation > 0) {
-            try { service.delete(idReservation); } catch (Exception ignored) {}
+            try {
+                service.delete(idReservation);
+            } catch (Exception ignored) {
+            }
         }
 
         if (idEvenementSupport > 0) {
-            try { evenementService.delete(idEvenementSupport); } catch (Exception ignored) {}
+            try {
+                evenementService.delete(idEvenementSupport);
+            } catch (Exception ignored) {
+            }
         }
     }
 }
