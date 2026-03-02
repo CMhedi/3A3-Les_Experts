@@ -3,18 +3,24 @@
 <?import javafx.scene.layout.*?>
 <?import javafx.scene.image.ImageView?>
 
-<VBox spacing="15" alignment="TOP_CENTER" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1"
-      fx:controller="GUI.NewsController" style="-fx-padding: 20; -fx-background-color: white;">
+<VBox spacing="25" alignment="TOP_CENTER" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1"
+      fx:controller="GUI.NewsController"
+      style="-fx-padding: 30; -fx-background-color: #FFFFFF;"> <Label text="Explore EcoAdventure News"
+                                                                      style="-fx-font-size: 28; -fx-font-weight: bold; -fx-text-fill: #2D3436; -fx-font-family: 'Segoe UI';"/>
 
-    <Label text="Actualités Sport &amp; Santé" style="-fx-font-size: 22; -fx-font-weight: bold; -fx-text-fill: #2C3E50;"/>
-
-    <HBox spacing="10" alignment="CENTER">
-        <ComboBox fx:id="comboCategory" promptText="Catégorie" style="-fx-background-radius: 15;"/>
-        <Button fx:id="btnRefresh" text="Actualiser" onAction="#loadNews"
-                style="-fx-background-color: #27AE60; -fx-text-fill: white; -fx-background-radius: 15;"/>
+    <HBox spacing="15" alignment="CENTER">
+        <ComboBox fx:id="comboCategory"
+                  style="-fx-background-radius: 20; -fx-pref-width: 160; -fx-background-color: #F8F9FA; -fx-border-color: #DFE6E9; -fx-border-radius: 20;"/>
+        <Button fx:id="btnRefresh" text="Refresh" onAction="#loadNews"
+                style="-fx-background-color: #2ECC71; -fx-text-fill: white; -fx-background-radius: 20; -fx-font-weight: bold; -fx-padding: 8 25; -fx-cursor: hand;"/>
     </HBox>
 
-    <ListView fx:id="newsListView" VBox.vgrow="ALWAYS" style="-fx-background-radius: 10; -fx-border-color: #DCDDE1;"/>
+    <ScrollPane fitToWidth="true"
+                style="-fx-background-color: transparent; -fx-background: transparent; -fx-border-color: transparent; -fx-viewport-background: transparent;">
+        <FlowPane fx:id="newsContainer" hgap="25" vgap="25" alignment="CENTER"
+                  style="-fx-padding: 15; -fx-background-color: transparent;">
+        </FlowPane>
+    </ScrollPane>
 
-    <ProgressIndicator fx:id="loader" visible="false"/>
+    <ProgressIndicator fx:id="loader" visible="false" maxHeight="50" maxWidth="50"/>
 </VBox>

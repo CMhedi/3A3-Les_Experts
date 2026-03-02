@@ -1,6 +1,7 @@
 package GUI;
 
 import Entities.UserApp;
+import GUI.utils.DialogUtils;
 import Services.UserService;
 import Entities.Session;
 import javafx.event.ActionEvent;
@@ -215,14 +216,19 @@ public class ProfileController implements Initializable {
     }
 
     @FXML
-    void handleDeleteAccount(ActionEvent event) { // <--- Thabbet f'esmha s7i7!
-        Alert alert = new Alert(Alert.AlertType.CONFIRMATION, "Supprimer définitivement votre compte ?");
-        if (alert.showAndWait().get() == ButtonType.OK) {
+    void handleDeleteAccount(ActionEvent event) {
+        boolean confirmed = DialogUtils.showConfirmation(
+                "Suppression de compte",
+                "Voulez-vous vraiment supprimer définitivement votre compte ?"
+        );
+
+        if (confirmed) {
             try {
                 us.delete(currentUser.getIdUser());
                 handleLogout(null);
             } catch (SQLException e) {
-                new Alert(Alert.AlertType.ERROR, "Erreur SQL: " + e.getMessage()).show();
+                // Nesta3mlou showError fil case mta3 el exception
+                DialogUtils.showError("Erreur SQL", e.getMessage());
             }
         }
     }
@@ -239,53 +245,49 @@ public class ProfileController implements Initializable {
     @FXML
     void handleVerifyPassword(ActionEvent event) {
         String inputPass = txtOldPass.getText();
-        String hashedPass = currentUser.getMotDePasse(); // الـ Password اللي جاي من الـ DB
+        String hashedPass = currentUser.getMotDePasse();
 
-        // المقارنة الصحيحة للـ BCrypt
         if (BCrypt.checkpw(inputPass, hashedPass)) {
-            System.out.println("✅ Success: Passwords match with BCrypt!");
+            // Success Alert mrigla mel DialogUtils
+            DialogUtils.showInfo("Vérification Réussie", "Votre mot de passe actuel est correct.");
+
             newPassSection.setVisible(true);
             newPassSection.setManaged(true);
             lblError.setVisible(false);
             txtOldPass.setEditable(false);
         } else {
-            System.out.println("❌ Failed: Password mismatch (BCrypt check)");
+            // ❌ Hna fil blassa mta3 el Terminal, bech todh-hor el Alert el mzeyna
+            DialogUtils.showError("Échec de vérification", "Le mot de passe actuel que vous avez saisi est incorrect.");
+
             lblError.setText("Mot de passe actuel incorrect !");
             lblError.setVisible(true);
         }
     }
-
     @FXML
     void handleChangePassword(ActionEvent event) {
         String newP = txtNewPass.getText();
         String confP = txtConfirmPass.getText();
 
-        // 1. التثبت من المدخلات (Validation)
-        if (newP.isEmpty() || newP.length() < 4) {
-            new Alert(Alert.AlertType.ERROR, "Mot de passe trop court (min 4 caractères) !").show();
+        if (newP.isEmpty() || newP.length() < 6) {
+            DialogUtils.showError("Validation", "Mot de passe trop court (min 6 caractères) !");
             return;
         }
 
         if (!newP.equals(confP)) {
-            new Alert(Alert.AlertType.ERROR, "Les mots de passe ne sont pas identiques !").show();
+            DialogUtils.showError("Validation", "Les mots de passe ne sont pas identiques !");
             return;
         }
 
+
         try {
-            // 2. التشفير (Hashing) - أهم خطوة باش الـ Login يقعد يخدم
-            // نردّو الـ String العادي "123456" عبارة على Hash كيما "$2a$10$..."
             String hashedNewPassword = BCrypt.hashpw(newP, BCrypt.gensalt());
 
-            // 3. تحديث الكائن (Update Object)
             currentUser.setMotDePasse(hashedNewPassword);
 
-            // 4. التحديث في قاعدة البيانات (Database Update)
             us.update(currentUser);
 
-            // 5. نجاح العملية وتنظيف الواجهة
             showToast("✅ Mot de passe changé avec succès !");
 
-            // إخفاء قسم تغيير المود باس وترجيع الحالة الأصلية
             newPassSection.setVisible(false);
             newPassSection.setManaged(false);
 

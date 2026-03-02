@@ -6,7 +6,7 @@ import jakarta.mail.internet.MimeMessage;
 import jakarta.mail.internet.InternetAddress;
 
 import java.util.Properties;
-// etc.
+
 
 public class MailService {
     public static void sendOTP(String recipientEmail, String otpCode) {
@@ -31,17 +31,29 @@ public class MailService {
         });
 
         try {
-            // ✅ Tasli7 el Message (javax.mail.Message)
             Message message = new MimeMessage(session);
-            message.setFrom(new InternetAddress(myEmail));
+            message.setFrom(new InternetAddress(myEmail, "EcoAdventure Support")); // Zidna Ism el App
             message.setRecipients(Message.RecipientType.TO, InternetAddress.parse(recipientEmail));
-            message.setSubject("Récupération de mot de passe - EcoAdventure");
-            message.setText("Votre code de vérification est : " + otpCode);
+            message.setSubject("🔒 Code de Vérification - EcoAdventure");
+
+            // El Design mta3 l'email b HTML/CSS
+            String htmlContent = "<div style='font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; border: 1px solid #e0e0e0; border-radius: 10px; padding: 20px;'>"
+                    + "<h2 style='color: #2ecc71; text-align: center;'>EcoAdventure</h2>"
+                    + "<p>Bonjour,</p>"
+                    + "<p>Vous avez demandé la récupération de votre mot de passe. Voici votre code de vérification :</p>"
+                    + "<div style='background-color: #f4f4f4; padding: 15px; text-align: center; border-radius: 5px;'>"
+                    + "  <span style='font-size: 24px; font-weight: bold; letter-spacing: 5px; color: #333;'>" + otpCode + "</span>"
+                    + "</div>"
+                    + "<p style='margin-top: 20px;'> Si vous n'êtes pas à l'origine de cette demande, ignorez cet email.</p>"
+                    + "<hr style='border: 0; border-top: 1px dotted #ccc; margin: 20px 0;'>"
+                    + "<p style='font-size: 12px; color: #888; text-align: center;'>L'équipe EcoAdventure - Explorez la nature avec nous.</p>"
+                    + "</div>";
+
+            message.setContent(htmlContent, "text/html; charset=utf-8");
 
             Transport.send(message);
-            System.out.println("✅ Email envoyé avec succès !");
-        } catch (MessagingException e) {
-            System.out.println("❌ Erreur d'envoi: " + e.getMessage());
+            System.out.println("✅ Email professionnel envoyé !");
+        } catch (Exception e) {
             e.printStackTrace();
         }
     }

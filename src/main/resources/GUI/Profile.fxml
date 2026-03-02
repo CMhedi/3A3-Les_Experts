@@ -102,25 +102,34 @@
 
                                 <Tab text="Sécurité">
                                     <content>
-                                        <VBox spacing="15.0" style="-fx-padding: 25;">
+                                        <VBox spacing="25.0" style="-fx-padding: 40;">
                                             <children>
-                                                <Label style="-fx-font-weight: bold;" text="Vérification d'identité" />
-                                                <HBox spacing="10.0">
+                                                <Label style="-fx-font-size: 18; -fx-font-weight: bold; -fx-text-fill: #1B4D3E;" text="Vérification d'identité" />
+
+                                                <HBox alignment="CENTER_LEFT" spacing="15.0">
                                                     <children>
-                                                        <PasswordField fx:id="txtOldPass" promptText="Mot de passe actuel" styleClass="modern-input" HBox.hgrow="ALWAYS" />
-                                                        <Button onAction="#handleVerifyPassword" prefHeight="35.0" text="Vérifier" />
+                                                        <PasswordField fx:id="txtOldPass" prefHeight="45.0" promptText="Mot de passe actuel" styleClass="modern-input" HBox.hgrow="ALWAYS" />
+                                                        <Button onAction="#handleVerifyPassword" prefHeight="45.0" prefWidth="100.0" style="-fx-background-color: #3b82f6; -fx-text-fill: white; -fx-font-weight: bold; -fx-background-radius: 8;" text="Vérifier" />
                                                     </children>
                                                 </HBox>
+
                                                 <Label fx:id="lblError" textFill="RED" visible="false" />
 
-                                            <VBox fx:id="newPassSection" spacing="12.0" visible="false" managed="false">
-
+                                                <VBox fx:id="newPassSection" spacing="20.0" visible="false" managed="false">
                                                     <children>
                                                         <Separator />
-                                                        <PasswordField fx:id="txtNewPass" promptText="Nouveau mot de passe" styleClass="modern-input" />
-                                                        <ProgressBar fx:id="passwordProgressBar" maxWidth="Infinity" progress="0.0" />
-                                                        <PasswordField fx:id="txtConfirmPass" promptText="Confirmer nouveau mot de passe" styleClass="modern-input" />
-                                                        <Button onAction="#handleChangePassword" maxWidth="Infinity" prefHeight="40.0" style="-fx-background-color: #1B4D3E; -fx-text-fill: white; -fx-font-weight: bold;" text="Mettre à jour" />
+                                                        <Label style="-fx-font-size: 16; -fx-font-weight: bold; -fx-text-fill: #1B4D3E;" text="Nouveau mot de passe" />
+
+                                                        <PasswordField fx:id="txtNewPass" prefHeight="45.0" promptText="Nouveau mot de passe" styleClass="modern-input" />
+
+                                                        <VBox spacing="5">
+                                                            <Label text="Force du mot de passe" style="-fx-font-size: 12; -fx-text-fill: #64748b;" />
+                                                            <ProgressBar fx:id="passwordProgressBar" maxWidth="Infinity" prefHeight="10.0" progress="0.0" />
+                                                        </VBox>
+
+                                                        <PasswordField fx:id="txtConfirmPass" prefHeight="45.0" promptText="Confirmer nouveau mot de passe" styleClass="modern-input" />
+
+                                                        <Button onAction="#handleChangePassword" maxWidth="Infinity" prefHeight="50.0" style="-fx-background-color: #1B4D3E; -fx-text-fill: white; -fx-font-weight: bold; -fx-font-size: 14; -fx-background-radius: 10;" text="Mettre à jour le mot de passe" />
                                                     </children>
                                                 </VBox>
                                             </children>

@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<VBox spacing="15.0" style="-fx-background-color: white; -fx-padding: 25; -fx-background-radius: 15; -fx-border-color: #E2E8F0; -fx-border-width: 2; -fx-border-radius: 15;"
+      prefWidth="450.0" xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1"
+      fx:controller="GUI.DetailsController">
+    <children>
+        <Label text="ℹ Détails de la Réclamation" style="-fx-font-size: 18; -fx-font-weight: bold; -fx-text-fill: #2D3748;" />
+        <Separator />
+
+        <GridPane vgap="10" hgap="10">
+            <columnConstraints>
+                <ColumnConstraints minWidth="80" />
+                <ColumnConstraints hgrow="ALWAYS" />
+            </columnConstraints>
+            <children>
+                <Label text="Client:" style="-fx-text-fill: #718096; -fx-font-weight: bold;" GridPane.rowIndex="0" />
+                <Label fx:id="lblUser" style="-fx-font-weight: bold; -fx-text-fill: #2D3748;" GridPane.columnIndex="1" GridPane.rowIndex="0" />
+
+                <Label text="Type:" style="-fx-text-fill: #718096; -fx-font-weight: bold;" GridPane.rowIndex="1" />
+                <Label fx:id="lblType" style="-fx-text-fill: #2D3748;" GridPane.columnIndex="1" GridPane.rowIndex="1" />
+            </children>
+        </GridPane>
+
+        <VBox spacing="5.0">
+            <Label text="Message du client:" style="-fx-font-weight: bold; -fx-text-fill: #2D3748;" />
+            <TextArea fx:id="txtMessage" editable="false" wrapText="true" prefHeight="150.0"
+                      style="-fx-control-inner-background: #F7FAFC; -fx-background-color: transparent;" />
+        </VBox>
+
+        <HBox alignment="CENTER_RIGHT">
+            <Button text="Fermer" onAction="#closePopup"
+                    style="-fx-background-color: #4A5568; -fx-text-fill: white; -fx-background-radius: 8; -fx-padding: 8 20; -fx-cursor: hand;" />
+        </HBox>
+    </children>
+</VBox>

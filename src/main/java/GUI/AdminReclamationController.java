@@ -84,33 +84,31 @@ public class AdminReclamationController {
         if (r.getStatut() == StatutReclamation.EN_ATTENTE) {
             try {
                 rs.modifierStatut(r.getIdReclamation(), StatutReclamation.EN_COURS);
-                refresh(); // Bech l'admin ychouf el changement
+                refresh();
             } catch (SQLException e) { e.printStackTrace(); }
         }
-        Alert alert = new Alert(Alert.AlertType.INFORMATION);
-        alert.setTitle("Détails de la Réclamation");
-        alert.setHeaderText("Message de : " + r.getUserName());
 
-        // El klem el kol y-ji hna
-        TextArea textArea = new TextArea(
-                "👤 CLIENT : " + r.getUserName() + "\n" +
-                        "📂 TYPE : " + r.getType() + "\n\n" +
-                        "📝 MESSAGE :\n" + r.getContenu()
-        );
+        try {
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/GUI/DetailsReclamation.fxml"));
+            Parent root = loader.load();
 
-        textArea.setEditable(false);
-        textArea.setWrapText(true); // Bech el klem may-okhrojsh 3al jnab
-        textArea.setPrefHeight(250);
+            // N-3aytou lel Controller jdid bech n-7ottou el data
+            DetailsController controller = loader.getController();
+            controller.setData(r.getUserName(), r.getType(), r.getContenu());
 
-        alert.getDialogPane().setContent(textArea);
+            Stage stage = new Stage();
+            stage.initModality(Modality.APPLICATION_MODAL);
+            stage.initStyle(StageStyle.TRANSPARENT); // Khater el FXML fih background-radius
 
-        // N-zidou el CSS mta3ek bech el popup mat-jish sghira w "Windows"
-        alert.getDialogPane().getStylesheets().add(getClass().getResource("/GUI/style_admin.css").toExternalForm());
-        alert.getDialogPane().getStyleClass().add("my-custom-dialog");
+            Scene scene = new Scene(root);
+            scene.setFill(null); // Lel hwayes el bidha (transparent)
+            stage.setScene(scene);
+            stage.show();
 
-        alert.showAndWait();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
-
     private void updateStatutLocal(StatutReclamation s) throws SQLException {
         Reclamation sel = tableReclamations.getSelectionModel().getSelectedItem();
         if (sel != null) {

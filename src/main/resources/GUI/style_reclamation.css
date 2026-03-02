@@ -1,109 +1,91 @@
-/* 1. El Background el kbir: N-7ottou loun "Slate" bared bech el cards y-banou */
-.main-container, .root {
-    -fx-background-color: #000000; /* Gris bared a8me9 chwaya mel 9dim */
+/* ==========================================================
+   SECTION 1: STYLE ASLI (Centre d'Assistance & Formulaire)
+   ========================================================== */
+.root {
+    -fx-background-color: #F8FAFC;
+    -fx-font-family: "Segoe UI", Tahoma, sans-serif;
 }
 
-/* 2. Les Cartes (VBox): N-9awiw chwaya fil Shadow bech t-welli dhihra */
-.card {
+.main-card {
     -fx-background-color: white;
-    -fx-background-radius: 12;
-    -fx-padding: 25;
-    /* Shadow akther Pro: y-khalli el card tban tal3a chwaya */
-    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.08), 20, 0, 0, 10);
-}
-.list-view .list-cell:filled:selected {
-    -fx-background-color: transparent; /* Na77i el-bleu */
+    -fx-background-radius: 20;
+    -fx-padding: 40;
+    -fx-effect: dropshadow(three-pass-box, rgba(0, 0, 0, 0.06), 20, 0, 0, 10);
 }
 
-.list-view .list-cell:filled:selected VBox {
-    -fx-border-color: #143D30; /* 7ot cadre sghir fil selection */
-    -fx-border-radius: 10;
-    -fx-border-width: 2;
-}
-
-.list-view {
-    -fx-background-color: transparent;
-}
-
-/* 4. Les Inputs (TextArea w ComboBox) */
-.text-area, .combo-box {
-    -fx-background-color: #ffffff;
-    -fx-border-color: #143d30;
-    -fx-border-radius: 6;
-    -fx-background-radius: 6;
-}
-
-.text-area:focused, .combo-box:focused {
-    -fx-border-color: #143D30;
+.combo-box, .text-area {
+    -fx-background-color: #FFFFFF;
+    -fx-border-color: #E2E8F0;
     -fx-border-width: 1.5;
-    -fx-effect: dropshadow(gaussian, rgba(20, 61, 48, 0.1), 5, 0, 0, 0);
-}
-
-/* 5. Buttons Hover Transitions */
-.btn-primary:hover {
-    -fx-opacity: 0.85;
-    -fx-scale-x: 1.02;
-    -fx-scale-y: 1.02;
-}
-/* 1. Nadhafelna el DialogPane kemla */
-.my-custom-dialog.dialog-pane {
-    -fx-background-color: white;
-    -fx-padding: 0; /* Na7i el padding el zayed bech el header yalsa9 fou9 */
-}
-
-/* 2. El Header (el blaca el khadhra kima fil tsawer) */
-.my-custom-dialog.dialog-pane > .header-panel {
-    -fx-background-color: #143D30;
-    -fx-padding: 20;
-}
-
-.my-custom-dialog.dialog-pane > .header-panel > .label {
-    -fx-text-fill: white;
-    -fx-font-weight: bold;
-    -fx-font-size: 18px;
-}
-
-/* 3. El blaca elli feha el form (VBox) */
-.my-custom-dialog .content.pane {
-    -fx-background-color: white;
-    -fx-padding: 20;
-}
-
-/* 4. Style mta3 el Labels fost el form */
-.my-custom-dialog .label {
-    -fx-text-fill: #143D30;
-    -fx-font-weight: bold;
-}
-
-/* 5. El blaca mta3 el boutonnet (ButtonBar) */
-.my-custom-dialog .button-bar {
-    -fx-background-color: white;
-    -fx-padding: 10 20 20 20;
-}
-
-/* 6. Style mta3 el bouton Enregistrer (Lounou orange kima image_b3fa48) */
-.my-custom-dialog .button {
+    -fx-border-radius: 10;
     -fx-background-radius: 10;
-    -fx-cursor: hand;
-    -fx-font-weight: bold;
+    -fx-font-size: 14px;
 }
 
-.my-custom-dialog .button:default {
-    -fx-background-color: #F37021;
+.combo-box:focused, .text-area:focused {
+    -fx-border-color: #143D30;
+    -fx-background-color: #FFFFFF;
+    -fx-effect: dropshadow(three-pass-box, rgba(20, 61, 48, 0.1), 10, 0, 0, 0);
+}
+
+.btn-submit {
+    -fx-background-color: linear-gradient(to bottom right, #143D30, #1A4D3D);
     -fx-text-fill: white;
-}
-/* Card Animation */
-.list-cell:filled:hover {
-    -fx-scale-x: 1.01;
-    -fx-scale-y: 1.01;
-    -fx-transition-duration: 0.3s;
+    -fx-font-weight: bold;
+    -fx-font-size: 15px;
+    -fx-background-radius: 12;
+    -fx-padding: 15 30;
+    -fx-cursor: hand;
 }
 
-.list-view {
+.btn-submit:hover {
+    -fx-background-color: linear-gradient(to bottom right, #1A4D3D, #24634F);
+    -fx-translate-y: -2;
+}
+
+.mini-progress .bar {
+    -fx-background-color: #10B981;
+    -fx-background-radius: 10;
+}
+
+/* ==========================================================
+   SECTION 2: STYLE POPUP (Kima Formulaire Événement)
+   ========================================================== */
+.dialog-pane {
+    -fx-background-color: white;
+    -fx-background-radius: 20;
+}
+
+/* El Box el de5li mta3 el popup */
+.dialog-content-box {
+    -fx-background-color: white;
+    -fx-padding: 20;
+}
+
+.label-header {
+    -fx-font-size: 20px;
+    -fx-font-weight: 800;
+    -fx-text-fill: #143D30;
+}
+
+.label-field {
+    -fx-font-size: 13px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #475569;
+}
+
+.btn-save-modern {
+    -fx-background-color: #28a745; /* Vert kima el Formulaire Evénement */
+    -fx-text-fill: white;
+    -fx-font-weight: bold;
+    -fx-background-radius: 10;
+    -fx-padding: 10 20;
+    -fx-cursor: hand;
+}
+
+.btn-cancel-modern {
     -fx-background-color: transparent;
-}
-
-/* Style for Timeline circles */
-.timeline-circle {
-    -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.1), 5, 0, 0, 2);
+    -fx-text-fill: #1e293b;
+    -fx-font-weight: bold;
+    -fx-cursor: hand;
 }
