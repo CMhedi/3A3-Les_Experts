@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?import javafx.scene.chart.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.geometry.Insets?>
+
+<ScrollPane fitToWidth="true" style="-fx-background-color: #f8fafc;" xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1" fx:controller="controllers.ViewEventController">
+    <VBox spacing="30.0" style="-fx-padding: 40; -fx-background-color: #f8fafc;" VBox.vgrow="ALWAYS">
+
+        <HBox alignment="CENTER_LEFT" spacing="20">
+            <VBox>
+                <Label text="📊 Statistiques Événements" style="-fx-font-size: 32; -fx-font-weight: 900; -fx-text-fill: #143D30;" />
+                <Label text="Analyse approfondie et pilotage de la performance" style="-fx-text-fill: #64748b; -fx-font-size: 14px;" />
+            </VBox>
+            <Region HBox.hgrow="ALWAYS" />
+            <HBox spacing="10">
+                <Button onAction="#exportToExcel" text="📥 Rapport Excel" style="-fx-background-color: #2563eb; -fx-text-fill: white; -fx-font-weight: bold; -fx-background-radius: 12; -fx-padding: 10 25; -fx-cursor: hand;" />
+                <Button onAction="#refreshStats" text="🔄 Actualiser" style="-fx-background-color: #143D30; -fx-text-fill: white; -fx-font-weight: bold; -fx-background-radius: 12; -fx-padding: 10 25; -fx-cursor: hand;" />
+            </HBox>
+        </HBox>
+
+        <HBox spacing="25.0">
+            <VBox prefWidth="300.0" style="-fx-background-color: linear-gradient(to right, #143D30, #1e5a47); -fx-background-radius: 20; -fx-padding: 25; -fx-effect: dropshadow(three-pass-box, rgba(20,61,48,0.2), 15, 0, 0, 8);">
+                <Label text="TOTAL ÉVÉNEMENTS" textFill="#a5f3bc" style="-fx-font-weight: 800; -fx-font-size: 12px; -fx-letter-spacing: 1px;" />
+                <Label fx:id="lblTotalEvents" text="0" textFill="WHITE" style="-fx-font-size: 42; -fx-font-weight: 900;" />
+            </VBox>
+            <VBox prefWidth="300.0" style="-fx-background-color: white; -fx-background-radius: 20; -fx-padding: 25; -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.05), 15, 0, 0, 5); -fx-border-color: #f1f5f9; -fx-border-width: 1; -fx-border-radius: 20;">
+                <Label text="RÉSERVATIONS TOTALES" textFill="#64748b" style="-fx-font-weight: 800; -fx-font-size: 12px;" />
+                <Label fx:id="lblTotalReservations" text="0" textFill="#10b981" style="-fx-font-size: 42; -fx-font-weight: 900;" />
+            </VBox>
+            <VBox prefWidth="300.0" style="-fx-background-color: white; -fx-background-radius: 20; -fx-padding: 25; -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.05), 15, 0, 0, 5); -fx-border-color: #f1f5f9; -fx-border-width: 1; -fx-border-radius: 20;">
+                <Label text="CHIFFRE D'AFFAIRES" textFill="#64748b" style="-fx-font-weight: 800; -fx-font-size: 12px;" />
+                <Label fx:id="lblTotalRevenue" text="0 DT" textFill="#2563eb" style="-fx-font-size: 42; -fx-font-weight: 900;" />
+            </VBox>
+        </HBox>
+
+        <HBox spacing="30.0" VBox.vgrow="ALWAYS">
+            <VBox style="-fx-background-color: white; -fx-background-radius: 20; -fx-padding: 25; -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.04), 20, 0, 0, 10); -fx-border-color: #f1f5f9; -fx-border-width: 1; -fx-border-radius: 20;" HBox.hgrow="ALWAYS">
+                <Label text="Répartition des Catégories" style="-fx-font-weight: 900; -fx-font-size: 18; -fx-text-fill: #1e293b;" />
+                <PieChart fx:id="categoryPieChart" prefHeight="350" />
+            </VBox>
+            <VBox style="-fx-background-color: white; -fx-background-radius: 20; -fx-padding: 25; -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.04), 20, 0, 0, 10); -fx-border-color: #f1f5f9; -fx-border-width: 1; -fx-border-radius: 20;" HBox.hgrow="ALWAYS">
+                <Label text="Popularité des Événements" style="-fx-font-weight: 900; -fx-font-size: 18; -fx-text-fill: #1e293b;" />
+                <BarChart fx:id="popularityBarChart" prefHeight="350">
+                    <xAxis><CategoryAxis side="BOTTOM" label="Événements" /></xAxis>
+                    <yAxis><NumberAxis side="LEFT" label="Réservations" /></yAxis>
+                </BarChart>
+            </VBox>
+        </HBox>
+
+        <VBox spacing="20" style="-fx-background-color: white; -fx-background-radius: 20; -fx-padding: 30; -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.05), 15, 0, 0, 5); -fx-border-color: #143D30; -fx-border-width: 0 0 0 5; -fx-border-radius: 20;">
+            <HBox spacing="10" alignment="CENTER_LEFT">
+                <Label text="🧠 Intelligence Prédictive &amp; Analyse Métier" style="-fx-font-weight: 900; -fx-font-size: 20; -fx-text-fill: #143D30;" />
+                <Region HBox.hgrow="ALWAYS" />
+                <Label text="Live Analysis" style="-fx-background-color: #ecfdf5; -fx-text-fill: #10b981; -fx-padding: 5 12; -fx-background-radius: 15; -fx-font-weight: bold; -fx-font-size: 10px;" />
+            </HBox>
+            <Separator />
+            <VBox fx:id="containerTrends" spacing="15">
+                <Label text="Génération des insights en cours..." style="-fx-text-fill: #94a3b8; -fx-font-style: italic;" />
+            </VBox>
+        </VBox>
+    </VBox>
+</ScrollPane>

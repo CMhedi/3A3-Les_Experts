@@ -3,6 +3,7 @@ package controllers;
 import Entities.ReservationEvenement;
 import Services.ReservationEvenementService;
 import Utiles.SceneNavigator;
+import GUI.utils.DialogUtils;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
@@ -18,14 +19,22 @@ import java.time.LocalDateTime;
 
 public class ReservationEvenementController {
 
-    @FXML private TableView<ReservationEvenement> table;
-    @FXML private TableColumn<ReservationEvenement, Integer> colIdRes;
-    @FXML private TableColumn<ReservationEvenement, Integer> colIdEvent;
-    @FXML private TableColumn<ReservationEvenement, Integer> colNbBillets;
-    @FXML private TableColumn<ReservationEvenement, String> colStatut;
-    @FXML private TableColumn<ReservationEvenement, LocalDateTime> colDateRes;
-    @FXML private TextField searchField;
-    @FXML private Label lblInfo;
+    @FXML
+    private TableView<ReservationEvenement> table;
+    @FXML
+    private TableColumn<ReservationEvenement, Integer> colIdRes;
+    @FXML
+    private TableColumn<ReservationEvenement, Integer> colIdEvent;
+    @FXML
+    private TableColumn<ReservationEvenement, Integer> colNbBillets;
+    @FXML
+    private TableColumn<ReservationEvenement, String> colStatut;
+    @FXML
+    private TableColumn<ReservationEvenement, LocalDateTime> colDateRes;
+    @FXML
+    private TextField searchField;
+    @FXML
+    private Label lblInfo;
 
     private final ReservationEvenementService service = new ReservationEvenementService();
     private ObservableList<ReservationEvenement> masterData = FXCollections.observableArrayList();
@@ -44,7 +53,8 @@ public class ReservationEvenementController {
         try {
             masterData.setAll(service.getAll());
             table.setItems(masterData);
-            if (lblInfo != null) lblInfo.setText(masterData.size() + " réservation(s)");
+            if (lblInfo != null)
+                lblInfo.setText(masterData.size() + " réservation(s)");
         } catch (Exception e) {
             System.err.println("Erreur chargement: " + e.getMessage());
         }
@@ -57,19 +67,24 @@ public class ReservationEvenementController {
 
     @FXML
     private void onDelete() {
-        try {
-            ReservationEvenement selected = table.getSelectionModel().getSelectedItem();
-            if (selected != null) {
-                Alert alert = new Alert(Alert.AlertType.CONFIRMATION, "Supprimer la réservation ?", ButtonType.YES, ButtonType.NO);
-                if (alert.showAndWait().orElse(ButtonType.NO) == ButtonType.YES) {
-                    service.delete(selected.getIdResEvt()); // Lezemha try-catch
+        ReservationEvenement selected = table.getSelectionModel().getSelectedItem();
+        if (selected != null) {
+            boolean confirmed = DialogUtils.showConfirmation(
+                    "Confirmation de suppression",
+                    "Voulez-vous vraiment supprimer cette réservation ?");
+
+            if (confirmed) {
+                try {
+                    service.delete(selected.getIdResEvt());
+                    DialogUtils.showInfo("Succès", "✅ Réservation supprimée avec succès !");
                     loadAll();
+                } catch (Exception e) {
+                    e.printStackTrace();
+                    DialogUtils.showError("Erreur", "❌ Impossible de supprimer la réservation.");
                 }
-            } else {
-                new Alert(Alert.AlertType.WARNING, "Sélectionnez une ligne !").show();
             }
-        } catch (Exception e) {
-            System.err.println("Erreur suppression: " + e.getMessage());
+        } else {
+            DialogUtils.showWarning("Attention", "⚠️ Veuillez sélectionner une réservation à supprimer.");
         }
     }
 
@@ -83,7 +98,8 @@ public class ReservationEvenementController {
                 ctrl.setData(res);
                 stage.initModality(Modality.APPLICATION_MODAL);
                 stage.showAndWait();
-                if (ctrl.isSaved()) loadAll();
+                if (ctrl.isSaved())
+                    loadAll();
             }
         } catch (Exception e) {
             e.printStackTrace();
@@ -106,5 +122,9 @@ public class ReservationEvenementController {
         table.setItems(masterData.filtered(r -> String.valueOf(r.getIdEvenement()).contains(q)));
     }
 
-    @FXML private void onRefresh() { searchField.clear(); loadAll(); }
+    @FXML
+    private void onRefresh() {
+        searchField.clear();
+        loadAll();
+    }
 }

@@ -1,11 +1,12 @@
 package controllers;
 
 import Entities.Evenement;
+import Entities.ReservationEvenement;
 import Services.EvenementService;
-import Services.ReservationEvenementService; // Thabet elli el service hedha mawjoud 3andek
-import javafx.animation.ScaleTransition;
+import Services.ReservationEvenementService;
 import javafx.application.Platform;
 import javafx.event.ActionEvent;
+import java.util.Optional;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.geometry.Insets;
@@ -19,7 +20,6 @@ import javafx.scene.image.ImageView;
 import javafx.scene.layout.*;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
-import javafx.util.Duration;
 import org.json.JSONObject;
 
 import java.net.URI;
@@ -31,9 +31,12 @@ import java.util.stream.Collectors;
 
 public class EvenementClientController {
 
-    @FXML private VBox cardsContainer;
-    @FXML private TextField searchField;
-    @FXML private Label lblInfo;
+    @FXML
+    private VBox cardsContainer;
+    @FXML
+    private TextField searchField;
+    @FXML
+    private Label lblInfo;
 
     private final EvenementService service = new EvenementService();
     private final ReservationEvenementService resService = new ReservationEvenementService();
@@ -62,12 +65,14 @@ public class EvenementClientController {
         for (Evenement ev : list) {
             cardsContainer.getChildren().add(createCard(ev));
         }
-        if (lblInfo != null) lblInfo.setText("(" + list.size() + ")");
+        if (lblInfo != null)
+            lblInfo.setText("(" + list.size() + ")");
     }
 
     private VBox createCard(Evenement ev) {
         VBox card = new VBox(12);
-        card.setStyle("-fx-background-color: white; -fx-background-radius: 15; -fx-padding: 20; -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.1), 10, 0, 0, 5);");
+        card.setStyle(
+                "-fx-background-color: white; -fx-background-radius: 15; -fx-padding: 20; -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.1), 10, 0, 0, 5);");
 
         // Header : Titre + Weather Badge
         HBox header = new HBox(10);
@@ -82,7 +87,8 @@ public class EvenementClientController {
         // Weather Badge UI
         HBox weatherBadge = new HBox(5);
         weatherBadge.setAlignment(Pos.CENTER_LEFT);
-        weatherBadge.setStyle("-fx-background-color: #f0f9ff; -fx-padding: 5 10; -fx-background-radius: 20; -fx-border-color: #bae6fd;");
+        weatherBadge.setStyle(
+                "-fx-background-color: #f0f9ff; -fx-padding: 5 10; -fx-background-radius: 20; -fx-border-color: #bae6fd;");
 
         // Houni rja3na nsta3mlou ImageView bech el météo todh-her mrigla
         ImageView weatherIcon = new ImageView();
@@ -114,7 +120,8 @@ public class EvenementClientController {
         HBox.setHgrow(spacer2, Priority.ALWAYS);
 
         Button btnReserver = new Button("Réserver Now");
-        btnReserver.setStyle("-fx-background-color: #27ae60; -fx-text-fill: white; -fx-background-radius: 20; -fx-padding: 8 20; -fx-cursor: hand;");
+        btnReserver.setStyle(
+                "-fx-background-color: #27ae60; -fx-text-fill: white; -fx-background-radius: 20; -fx-padding: 8 20; -fx-cursor: hand;");
 
         // Popup de réservation
         btnReserver.setOnAction(e -> openReservationForm(ev));
@@ -129,7 +136,7 @@ public class EvenementClientController {
     private void openReservationForm(Evenement ev) {
         Stage popup = new Stage();
         popup.initModality(Modality.APPLICATION_MODAL);
-        popup.setTitle("Confirmation");
+        popup.setTitle("Confirmation de Réservation");
 
         VBox box = new VBox(15);
         box.setPadding(new Insets(20));
@@ -141,23 +148,64 @@ public class EvenementClientController {
 
         TextField input = new TextField("1");
         input.setPromptText("Nombre de places");
+        input.setTextFormatter(new TextFormatter<>(change -> {
+            if (!change.getControlNewText().matches("\\d*")) {
+                return null;
+            }
+            return change;
+        }));
 
         Button btn = new Button("Confirmer");
         btn.setStyle("-fx-background-color: #27ae60; -fx-text-fill: white;");
 
         btn.setOnAction(e -> {
             try {
-                // Houni tzid el logic mta3 el Service mte3ek
-                // resService.ajouter(new Reservation(ev.getId(), nb_places));
+                if (Entities.Session.getConnectedUser() == null) {
+                    new Alert(Alert.AlertType.ERROR, "Veuillez vous connecter pour réserver !").show();
+                    return;
+                }
+                int currentUserId = Entities.Session.getConnectedUser().getIdUser();
+                int nb_places;
+                try {
+                    nb_places = Integer.parseInt(input.getText().trim());
+                    if (nb_places <= 0)
+                        throw new Exception();
+                } catch (Exception ex) {
+                    new Alert(Alert.AlertType.ERROR, "Nombre de places invalide.").show();
+                    return;
+                }
 
-                popup.close();
-                Alert a = new Alert(Alert.AlertType.INFORMATION, "Réservation ajoutée !");
-                a.show();
+                ReservationEvenement existing = resService.getByUserAndEvent(currentUserId, ev.getIdEvenement());
 
-                // Refresh lel page reservation client
-                goToReservations(new ActionEvent(cardsContainer, null));
+                if (existing != null) {
+                    Alert confirm = new Alert(Alert.AlertType.CONFIRMATION);
+                    confirm.setTitle("Réservation Existante");
+                    confirm.setHeaderText("Vous avez déjà une réservation pour cet événement.");
+                    confirm.setContentText("Voulez-vous ajouter " + nb_places + " billets à votre réservation de "
+                            + existing.getNbBillets() + " billets ?");
+
+                    Optional<ButtonType> result = confirm.showAndWait();
+                    if (result.isPresent() && result.get() == ButtonType.OK) {
+                        existing.setNbBillets(existing.getNbBillets() + nb_places);
+                        resService.update(existing);
+                        popup.close();
+                        new Alert(Alert.AlertType.INFORMATION, "Réservation mise à jour !").show();
+                        goToReservations(new ActionEvent(cardsContainer, null));
+                    }
+                } else {
+                    ReservationEvenement res = new ReservationEvenement();
+                    res.setIdUser(currentUserId);
+                    res.setIdEvenement(ev.getIdEvenement());
+                    res.setNbBillets(nb_places);
+                    resService.add(res);
+
+                    popup.close();
+                    new Alert(Alert.AlertType.INFORMATION, "Réservation confirmée !").show();
+                    goToReservations(new ActionEvent(cardsContainer, null));
+                }
             } catch (Exception ex) {
                 ex.printStackTrace();
+                new Alert(Alert.AlertType.ERROR, "Erreur lors de la réservation.").show();
             }
         });
 
@@ -167,45 +215,69 @@ public class EvenementClientController {
     }
 
     private void updateWeatherForCity(String city, ImageView iconView, Label tempLabel) {
-        if (city == null || city.isEmpty()) return;
+        if (city == null || city.isEmpty())
+            return;
 
         HttpClient.newHttpClient().sendAsync(
                 HttpRequest.newBuilder()
-                        .uri(URI.create("https://api.openweathermap.org/data/2.5/weather?q=" + city + "&units=metric&appid=" + WEATHER_API_KEY))
+                        .uri(URI.create("https://api.openweathermap.org/data/2.5/weather?q=" + city
+                                + "&units=metric&appid=" + WEATHER_API_KEY))
                         .build(),
-                HttpResponse.BodyHandlers.ofString()
-        ).thenApply(HttpResponse::body).thenAccept(response -> {
-            try {
-                JSONObject json = new JSONObject(response);
-                if (json.getInt("cod") == 200) {
-                    double temp = json.getJSONObject("main").getDouble("temp");
-                    String iconCode = json.getJSONArray("weather").getJSONObject(0).getString("icon");
-                    // URL mta3 el icon mel OpenWeather
-                    String iconUrl = "https://openweathermap.org/img/wn/" + iconCode + "@2x.png";
+                HttpResponse.BodyHandlers.ofString()).thenApply(HttpResponse::body).thenAccept(response -> {
+                    try {
+                        JSONObject json = new JSONObject(response);
+                        if (json.getInt("cod") == 200) {
+                            double temp = json.getJSONObject("main").getDouble("temp");
+                            String iconCode = json.getJSONArray("weather").getJSONObject(0).getString("icon");
+                            // URL mta3 el icon mel OpenWeather
+                            String iconUrl = "https://openweathermap.org/img/wn/" + iconCode + "@2x.png";
 
-                    Platform.runLater(() -> {
-                        tempLabel.setText(Math.round(temp) + "°C");
-                        iconView.setImage(new Image(iconUrl));
-                    });
-                }
-            } catch (Exception e) {
-                Platform.runLater(() -> tempLabel.setText("N/A"));
-            }
-        });
+                            Platform.runLater(() -> {
+                                tempLabel.setText(Math.round(temp) + "°C");
+                                iconView.setImage(new Image(iconUrl));
+                            });
+                        } else {
+                            Platform.runLater(() -> tempLabel.setText("N/A"));
+                        }
+                    } catch (Exception e) {
+                        Platform.runLater(() -> tempLabel.setText("N/A"));
+                    }
+                });
     }
 
-    @FXML private void onSearch() {
+    @FXML
+    private void onSearch() {
         String q = searchField.getText().toLowerCase();
         displayCards(allEvenements.stream()
                 .filter(ev -> ev.getTitre().toLowerCase().contains(q) || ev.getLieu().toLowerCase().contains(q))
                 .collect(Collectors.toList()));
     }
 
-    @FXML private void onRefresh() { searchField.clear(); loadAll(); }
-    @FXML private void goToEvenements(ActionEvent event) { loadAll(); }
-    @FXML private void goToReservations(ActionEvent event) { switchScene(event, "/views/reservation_list.fxml"); }
-    @FXML private void goHome(ActionEvent event) { switchScene(event, "/views/Home.fxml"); }
-    @FXML private void logout(ActionEvent event) { switchScene(event, "/views/Home.fxml"); }
+    @FXML
+    private void onRefresh() {
+        searchField.clear();
+        loadAll();
+    }
+
+    @FXML
+    private void goToEvenements(ActionEvent event) {
+        loadAll();
+    }
+
+    @FXML
+    private void goToReservations(ActionEvent event) {
+        switchScene(event, "/views/reservation_list.fxml");
+    }
+
+    @FXML
+    private void goHome(ActionEvent event) {
+        switchScene(event, "/views/Home.fxml");
+    }
+
+    @FXML
+    private void logout(ActionEvent event) {
+        switchScene(event, "/views/Home.fxml");
+    }
 
     private void switchScene(ActionEvent event, String fxmlPath) {
         try {

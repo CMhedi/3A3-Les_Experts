@@ -61,7 +61,6 @@
                     <Button fx:id="btnPacks" onAction="#openPacks" styleClass="nav-item" text="Packs" />
                     <Button fx:id="btnInscriptions" onAction="#openInscriptions" styleClass="nav-item" text="Inscriptions" />
 
-                    <Button fx:id="btnEvenements" onAction="#openEvenements" styleClass="nav-item" text="📅 Évènements" />
 
                     <Button fx:id="btnPackBuilder" onAction="#openPackBuilder" styleClass="nav-item" text="Pack Builder" />
                     <Button onAction="#openSideBar" styleClass="nav-item" text="⬅️ Retour Sidebar" />

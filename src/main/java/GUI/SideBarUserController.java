@@ -37,7 +37,10 @@ public class SideBarUserController {
 
     @FXML
     void goToEvenements(ActionEvent event) {
-        changeCenter("/GUI/reservation_list.fxml");
+        changeCenter("/views/ClientEvents.fxml");
+    }
+    @FXML void goTorsrv(ActionEvent event) {
+        changeCenter("/views/reservation_list.fxml");
     }
 
     @FXML

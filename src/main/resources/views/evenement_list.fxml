@@ -5,23 +5,29 @@
 
 <VBox xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1"
       fx:controller="controllers.EvenementController"
-      stylesheets="@/styles/app.css" styleClass="root"
-      spacing="0" VBox.vgrow="ALWAYS">
+      spacing="0" VBox.vgrow="ALWAYS" style="-fx-background-color: #f1f5f9;">
 
-    <HBox styleClass="topbar" spacing="15" alignment="CENTER_LEFT">
-        <Label text="Gestion des Événements" styleClass="pageTitle"/>
-        <Region HBox.hgrow="ALWAYS"/>
-        <HBox styleClass="searchBox">
-            <TextField fx:id="searchField" promptText="Rechercher par nom..." onKeyReleased="#onSearch" styleClass="searchInput"/>
+    <HBox spacing="20" alignment="CENTER_LEFT" style="-fx-background-color: white; -fx-padding: 20 40; -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.03), 10, 0, 0, 5);">
+        <VBox spacing="2" HBox.hgrow="ALWAYS">
+            <Label text="📅 Planning des Événements" wrapText="true" maxWidth="600"
+                   style="-fx-font-size: 24; -fx-font-weight: 900; -fx-text-fill: #0f172a;"/>
+            <Label fx:id="lblInfo" text="Chargement..." style="-fx-text-fill: #64748b; -fx-font-size: 14;"/>
+        </VBox>
+
+        <HBox spacing="15" alignment="CENTER_RIGHT">
+            <HBox spacing="10" alignment="CENTER_LEFT" style="-fx-background-color: #f8fafc; -fx-border-color: #e2e8f0; -fx-border-radius: 12; -fx-background-radius: 12; -fx-padding: 8 15;">
+                <Label text="🔍" style="-fx-opacity: 0.5;"/>
+                <TextField fx:id="searchField" promptText="Rechercher..."
+                           style="-fx-background-color: transparent; -fx-border-color: transparent; -fx-pref-width: 200;"/>
+            </HBox>
+
+            <Button text="＋ Nouveau" onAction="#onAdd"
+                    style="-fx-background-color: #143D30; -fx-text-fill: white; -fx-font-weight: bold; -fx-background-radius: 10; -fx-padding: 12 20; -fx-cursor: hand;"/>
         </HBox>
-        <Button text="＋ Nouveau" onAction="#onAdd" styleClass="primaryBtn"/>
     </HBox>
 
-    <ScrollPane fitToWidth="true" styleClass="transparentScroll" VBox.vgrow="ALWAYS">
-        <VBox fx:id="cardsContainer" spacing="20" styleClass="pageContent">
-            <padding>
-                <Insets top="25" right="35" bottom="25" left="35"/>
-            </padding>
+    <ScrollPane fitToWidth="true" style="-fx-background-color: transparent; -fx-background: transparent; -fx-border-color: transparent;" VBox.vgrow="ALWAYS">
+        <VBox fx:id="cardsContainer" spacing="20" style="-fx-padding: 30 40;">
         </VBox>
     </ScrollPane>
 </VBox>

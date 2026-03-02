@@ -12,7 +12,6 @@ import java.math.RoundingMode;
 import java.sql.*;
 import java.time.LocalDateTime;
 import java.util.*;
-import java.util.stream.Collectors;
 
 public class PackInscriptionMetierService {
 
@@ -30,8 +29,8 @@ public class PackInscriptionMetierService {
             BigDecimal discountGroupe,
             BigDecimal discountCoupon,
             BigDecimal total,
-            String details
-    ) {}
+            String details) {
+    }
 
     public PackInscriptionMetierService() {
         // assure init connexion
@@ -49,7 +48,7 @@ public class PackInscriptionMetierService {
                 ORDER BY id_pack DESC
                 """;
         try (PreparedStatement ps = MyDB2.getConnection().prepareStatement(sql);
-             ResultSet rs = ps.executeQuery()) {
+                ResultSet rs = ps.executeQuery()) {
 
             List<Pack> list = new ArrayList<>();
             while (rs.next()) {
@@ -109,12 +108,16 @@ public class PackInscriptionMetierService {
     // =============================
     // METIER 1: Pricing Engine
     // =============================
-    public PriceBreakdown computePrice(int packId, List<Integer> activiteIds, int nbPersonnes, String couponCode) throws SQLException {
-        if (nbPersonnes <= 0) throw new IllegalArgumentException("nbPersonnes doit être > 0");
+    public PriceBreakdown computePrice(int packId, List<Integer> activiteIds, int nbPersonnes, String couponCode)
+            throws SQLException {
+        if (nbPersonnes <= 0)
+            throw new IllegalArgumentException("nbPersonnes doit être > 0");
 
         Pack pack = getPackById(packId);
-        if (pack == null) throw new IllegalArgumentException("Pack introuvable: " + packId);
-        if (pack.getStatutPack() != StatutPack.ACTIF) throw new IllegalStateException("Pack INACTIF: inscription impossible");
+        if (pack == null)
+            throw new IllegalArgumentException("Pack introuvable: " + packId);
+        if (pack.getStatutPack() != StatutPack.ACTIF)
+            throw new IllegalStateException("Pack INACTIF: inscription impossible");
 
         List<Integer> safeIds = (activiteIds == null) ? List.of() : activiteIds;
 
@@ -134,9 +137,12 @@ public class PackInscriptionMetierService {
         // réduction groupe selon type
         BigDecimal discountGroupe = BigDecimal.ZERO;
         if (pack.getTypePack() == TypePack.GROUPE || pack.getTypePack() == TypePack.ENTREPRISE) {
-            if (nbPersonnes >= 10) discountGroupe = percentOf(base, new BigDecimal("12"));
-            else if (nbPersonnes >= 5) discountGroupe = percentOf(base, new BigDecimal("7"));
-            else if (nbPersonnes >= 2) discountGroupe = percentOf(base, new BigDecimal("3"));
+            if (nbPersonnes >= 10)
+                discountGroupe = percentOf(base, new BigDecimal("12"));
+            else if (nbPersonnes >= 5)
+                discountGroupe = percentOf(base, new BigDecimal("7"));
+            else if (nbPersonnes >= 2)
+                discountGroupe = percentOf(base, new BigDecimal("3"));
         }
 
         // coupon optionnel (si table coupon existe, sinon 0)
@@ -146,20 +152,23 @@ public class PackInscriptionMetierService {
         }
 
         BigDecimal total = base.subtract(discountPack).subtract(discountGroupe).subtract(discountCoupon);
-        if (total.compareTo(BigDecimal.ZERO) < 0) total = BigDecimal.ZERO;
+        if (total.compareTo(BigDecimal.ZERO) < 0)
+            total = BigDecimal.ZERO;
 
         String details = "base=" + base +
                 " | -pack=" + discountPack +
                 " | -groupe=" + discountGroupe +
                 " | -coupon=" + discountCoupon;
 
-        return new PriceBreakdown(packBase, activitesTotal, discountPack, discountGroupe, discountCoupon, total, details);
+        return new PriceBreakdown(packBase, activitesTotal, discountPack, discountGroupe, discountCoupon, total,
+                details);
     }
 
     // =============================
     // METIER 1: Create draft + reservations auto
     // =============================
-    public int createInscriptionDraft(int userId, int packId, List<Integer> activiteIds, int nbPersonnes, String couponCode) throws SQLException {
+    public int createInscriptionDraft(int userId, int packId, List<Integer> activiteIds, int nbPersonnes,
+            String couponCode) throws SQLException {
 
         if (hasOpenInscription(userId, packId)) {
             throw new IllegalStateException("Tu as déjà une inscription ouverte (DRAFT/PENDING) pour ce pack.");
@@ -168,7 +177,8 @@ public class PackInscriptionMetierService {
         PriceBreakdown pb = computePrice(packId, activiteIds, nbPersonnes, couponCode);
 
         Connection cnx = MyDB2.getConnection();
-        if (cnx == null) throw new SQLException("Connexion DB null (MyDB)");
+        if (cnx == null)
+            throw new SQLException("Connexion DB null (MyDB)");
 
         try {
             cnx.setAutoCommit(false);
@@ -178,7 +188,7 @@ public class PackInscriptionMetierService {
             // reservations auto -> EN_ATTENTE
             List<Integer> safeIds = (activiteIds == null) ? List.of() : activiteIds;
             for (Integer idAct : safeIds) {
-                insertReservationActivite(cnx, userId, idAct, nbPersonnes, StatutReservation.EN_ATTENTE);
+                insertReservationActivite(cnx, userId, idAct, nbPersonnes, StatutReservation.CONFIRMEE);
             }
 
             cnx.commit();
@@ -204,7 +214,8 @@ public class PackInscriptionMetierService {
         try (PreparedStatement ps = MyDB2.getConnection().prepareStatement(sql)) {
             ps.setInt(1, packId);
             try (ResultSet rs = ps.executeQuery()) {
-                if (!rs.next()) return null;
+                if (!rs.next())
+                    return null;
 
                 Pack p = new Pack();
                 p.setIdPack(rs.getInt("id_pack"));
@@ -220,10 +231,12 @@ public class PackInscriptionMetierService {
     }
 
     private void validateActivitiesBelongToPack(int packId, List<Integer> activiteIds) throws SQLException {
-        if (activiteIds == null || activiteIds.isEmpty()) return;
+        if (activiteIds == null || activiteIds.isEmpty())
+            return;
 
         Set<Integer> set = new HashSet<>(activiteIds);
-        if (set.size() != activiteIds.size()) throw new IllegalStateException("Liste d'activités contient des doublons.");
+        if (set.size() != activiteIds.size())
+            throw new IllegalStateException("Liste d'activités contient des doublons.");
 
         String in = String.join(",", Collections.nCopies(activiteIds.size(), "?"));
         String sql = "SELECT COUNT(*) AS c FROM activite WHERE id_pack=? AND id_activite IN (" + in + ")";
@@ -231,7 +244,8 @@ public class PackInscriptionMetierService {
         try (PreparedStatement ps = MyDB2.getConnection().prepareStatement(sql)) {
             int i = 1;
             ps.setInt(i++, packId);
-            for (Integer id : activiteIds) ps.setInt(i++, id);
+            for (Integer id : activiteIds)
+                ps.setInt(i++, id);
 
             try (ResultSet rs = ps.executeQuery()) {
                 rs.next();
@@ -244,14 +258,16 @@ public class PackInscriptionMetierService {
     }
 
     private BigDecimal sumActivitesPrice(List<Integer> activiteIds) throws SQLException {
-        if (activiteIds == null || activiteIds.isEmpty()) return BigDecimal.ZERO;
+        if (activiteIds == null || activiteIds.isEmpty())
+            return BigDecimal.ZERO;
 
         String in = String.join(",", Collections.nCopies(activiteIds.size(), "?"));
         String sql = "SELECT COALESCE(SUM(prix),0) AS s FROM activite WHERE id_activite IN (" + in + ")";
 
         try (PreparedStatement ps = MyDB2.getConnection().prepareStatement(sql)) {
             int i = 1;
-            for (Integer id : activiteIds) ps.setInt(i++, id);
+            for (Integer id : activiteIds)
+                ps.setInt(i++, id);
 
             try (ResultSet rs = ps.executeQuery()) {
                 rs.next();
@@ -262,10 +278,10 @@ public class PackInscriptionMetierService {
 
     private boolean hasOpenInscription(int userId, int packId) throws SQLException {
         String sql = """
-        SELECT COUNT(*) AS c
-        FROM inscription
-        WHERE id_user=? AND id_pack=? AND statut_inscr IN (?,?)
-        """;
+                SELECT COUNT(*) AS c
+                FROM inscription
+                WHERE id_user=? AND id_pack=? AND statut_inscr IN (?,?)
+                """;
         try (PreparedStatement ps = MyDB2.getConnection().prepareStatement(sql)) {
             ps.setInt(1, userId);
             ps.setInt(2, packId);
@@ -278,7 +294,8 @@ public class PackInscriptionMetierService {
         }
     }
 
-    private int insertInscription(Connection cnx, int userId, int packId, BigDecimal montant, String statut) throws SQLException {
+    private int insertInscription(Connection cnx, int userId, int packId, BigDecimal montant, String statut)
+            throws SQLException {
         String sql = """
                 INSERT INTO inscription(date_inscription, statut_inscr, montant_total, id_user, id_pack)
                 VALUES(?,?,?,?,?)
@@ -292,13 +309,15 @@ public class PackInscriptionMetierService {
             ps.executeUpdate();
 
             try (ResultSet keys = ps.getGeneratedKeys()) {
-                if (keys.next()) return keys.getInt(1);
+                if (keys.next())
+                    return keys.getInt(1);
                 throw new SQLException("No generated key for inscription");
             }
         }
     }
 
-    private void insertReservationActivite(Connection cnx, int userId, int idActivite, int nbPersonnes, StatutReservation statut) throws SQLException {
+    private void insertReservationActivite(Connection cnx, int userId, int idActivite, int nbPersonnes,
+            StatutReservation statut) throws SQLException {
         String sql = """
                 INSERT INTO reservation_activite(date_reservation, statut_res, nb_personnes, id_user, id_activite)
                 VALUES(?,?,?,?,?)
@@ -320,13 +339,16 @@ public class PackInscriptionMetierService {
             try (PreparedStatement ps = MyDB2.getConnection().prepareStatement(sql)) {
                 ps.setString(1, code);
                 try (ResultSet rs = ps.executeQuery()) {
-                    if (!rs.next()) return BigDecimal.ZERO;
+                    if (!rs.next())
+                        return BigDecimal.ZERO;
 
                     String type = rs.getString("type"); // "PERCENT" ou "FIXED"
                     BigDecimal valeur = rs.getBigDecimal("valeur");
 
-                    if ("PERCENT".equalsIgnoreCase(type)) return percentOf(base, valeur);
-                    if ("FIXED".equalsIgnoreCase(type)) return nz(valeur);
+                    if ("PERCENT".equalsIgnoreCase(type))
+                        return percentOf(base, valeur);
+                    if ("FIXED".equalsIgnoreCase(type))
+                        return nz(valeur);
                     return BigDecimal.ZERO;
                 }
             }
@@ -335,11 +357,15 @@ public class PackInscriptionMetierService {
         }
     }
 
-    private static BigDecimal nz(BigDecimal v) { return v == null ? BigDecimal.ZERO : v; }
+    private static BigDecimal nz(BigDecimal v) {
+        return v == null ? BigDecimal.ZERO : v;
+    }
 
     private static BigDecimal percentOf(BigDecimal base, BigDecimal percent) {
-        if (percent == null) return BigDecimal.ZERO;
-        if (percent.compareTo(BigDecimal.ZERO) <= 0) return BigDecimal.ZERO;
+        if (percent == null)
+            return BigDecimal.ZERO;
+        if (percent.compareTo(BigDecimal.ZERO) <= 0)
+            return BigDecimal.ZERO;
         return base.multiply(percent).divide(new BigDecimal("100"), 2, RoundingMode.HALF_UP);
     }
 }

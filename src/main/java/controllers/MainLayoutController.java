@@ -9,7 +9,6 @@ import javafx.fxml.FXMLLoader;
 import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
-import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.layout.BorderPane;
@@ -28,9 +27,6 @@ public class MainLayoutController {
     @FXML private Button btnInscriptions;
     @FXML private Button btnPackBuilder;
     @FXML private Button btnInsights;
-
-    // ✅ El bouton jdid
-    @FXML private Button btnEvenements;
 
     @FXML private StackPane contentPane;
     @FXML private VBox sidebarContent;
@@ -69,12 +65,6 @@ public class MainLayoutController {
     private void openInsights() {
         setActive(btnInsights);
         loadIntoCenter("/fxml/AdminInsights.fxml", "Insights");
-    }
-
-    @FXML
-    private void openEvenements() {
-        setActive(btnEvenements);
-        loadIntoCenter("/views/evenement_list.fxml", "Évènements");
     }
 
     @FXML
@@ -167,8 +157,8 @@ public class MainLayoutController {
     }
 
     private void setActive(Button active) {
-        // Nadhfou el active class mel boutons el kol
-        Button[] navButtons = {btnDashboard, btnPacks, btnInscriptions, btnPackBuilder, btnInsights, btnEvenements};
+        // Liste à jour sans btnEvenements
+        Button[] navButtons = {btnDashboard, btnPacks, btnInscriptions, btnPackBuilder, btnInsights};
 
         for (Button btn : navButtons) {
             if (btn != null) btn.getStyleClass().remove("nav-active");

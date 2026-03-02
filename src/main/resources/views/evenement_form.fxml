@@ -66,6 +66,13 @@
                       promptText="Choisir..."
                       styleClass="formField"
                       GridPane.rowIndex="5" GridPane.columnIndex="1"/>
+
+            <Label text="Prix (DT):" styleClass="formLabel"
+                   GridPane.rowIndex="6" GridPane.columnIndex="0"/>
+            <TextField fx:id="txtPrix"
+                       promptText="Ex: 25.50"
+                       styleClass="formField"
+                       GridPane.rowIndex="6" GridPane.columnIndex="1"/>
         </GridPane>
 
         <VBox spacing="6">

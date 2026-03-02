@@ -18,7 +18,8 @@ import java.net.URL;
 
 public class SideBarController {
 
-    @FXML private VBox sidebarRoot;
+    @FXML
+    private VBox sidebarRoot;
 
     @FXML
     private void initialize() {
@@ -46,6 +47,16 @@ public class SideBarController {
     }
 
     @FXML
+    void goToEvenementsAdmin(ActionEvent event) {
+        changeCenter("/views/evenement_list.fxml");
+    }
+
+    @FXML
+    void goToStats(ActionEvent event) {
+        changeCenter("/views/viewevent.fxml");
+    }
+
+    @FXML
     void goToEvenements(ActionEvent event) {
         changeCenter("/views/AdminDashboard.fxml");
     }
@@ -60,8 +71,7 @@ public class SideBarController {
         SceneUtils.loadScene(
                 "/AdminPlanningView.fxml",
                 "/admin.css",
-                (Node) event.getSource()
-        );
+                (Node) event.getSource());
     }
 
     @FXML
@@ -124,10 +134,13 @@ public class SideBarController {
     }
 
     private BorderPane getHostBorderPane() {
-        if (sidebarRoot == null || sidebarRoot.getScene() == null) return null;
-        if (sidebarRoot.getScene().getRoot() instanceof BorderPane bp) return bp;
+        if (sidebarRoot == null || sidebarRoot.getScene() == null)
+            return null;
+        if (sidebarRoot.getScene().getRoot() instanceof BorderPane bp)
+            return bp;
         Node rootNode = sidebarRoot.getScene().getRoot();
-        if (rootNode.lookup("#mainPaneUser") instanceof BorderPane bp) return bp;
+        if (rootNode.lookup("#mainPaneUser") instanceof BorderPane bp)
+            return bp;
 
         return null;
     }
@@ -135,7 +148,8 @@ public class SideBarController {
     private void loadScene(String fxmlPath, ActionEvent event) {
         try {
             URL url = getClass().getResource(fxmlPath);
-            if (url == null) return;
+            if (url == null)
+                return;
             Parent root = FXMLLoader.load(url);
             Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
             stage.setScene(new Scene(root, stage.getWidth(), stage.getHeight()));

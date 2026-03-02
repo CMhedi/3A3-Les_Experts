@@ -10,8 +10,58 @@ public class ReservationEvenement {
     private StatutReservation statutRes;
     private int nbBillets;
     private int idEvenement;
+    private int idUser;
+    private String nomEvenement;
+    private String nomUser;
+    private double prixUnitaire;
+    private int note; // Note de l'évaluation (1-5)
 
-    public ReservationEvenement() {}
+    public ReservationEvenement() {
+    }
+
+    public int getNote() {
+        return note;
+    }
+
+    public void setNote(int note) {
+        this.note = note;
+    }
+
+    public double getPrixUnitaire() {
+        return prixUnitaire;
+    }
+
+    public void setPrixUnitaire(double prixUnitaire) {
+        this.prixUnitaire = prixUnitaire;
+    }
+
+    public double getPrixTotal() {
+        return nbBillets * prixUnitaire;
+    }
+
+    public String getNomUser() {
+        return nomUser;
+    }
+
+    public void setNomUser(String nomUser) {
+        this.nomUser = nomUser;
+    }
+
+    public String getNomEvenement() {
+        return nomEvenement;
+    }
+
+    public void setNomEvenement(String nomEvenement) {
+        this.nomEvenement = nomEvenement;
+    }
+
+    public int getIdUser() {
+        return idUser;
+    }
+
+    public void setIdUser(int idUser) {
+        this.idUser = idUser;
+    }
 
     public int getIdResEvt() {
         return idResEvt;

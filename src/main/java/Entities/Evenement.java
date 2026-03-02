@@ -14,10 +14,29 @@ public class Evenement {
     private int nbPlaces;
     private String statut;
     private String imageUrl;
+    private double prix; // Prix de l'événement (DECIMAL 10,2)
+    private double relevanceScore = 0.0; // Transient field for recommendation scoring
 
-    public Evenement() {}
+    public Evenement() {
+    }
 
     // ===== Getters & Setters =====
+
+    public double getPrix() {
+        return prix;
+    }
+
+    public void setPrix(double prix) {
+        this.prix = prix;
+    }
+
+    public double getRelevanceScore() {
+        return relevanceScore;
+    }
+
+    public void setRelevanceScore(double relevanceScore) {
+        this.relevanceScore = relevanceScore;
+    }
 
     public int getIdEvenement() {
         return idEvenement;

@@ -3,31 +3,29 @@
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
 
-<VBox xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1"
+<VBox spacing="0" xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1"
       fx:controller="controllers.ReservationAdminController"
-      stylesheets="@/styles/app.css" styleClass="root"
-      spacing="0" VBox.vgrow="ALWAYS">
+      stylesheets="@/styles/app.css" VBox.vgrow="ALWAYS">
 
-    <HBox styleClass="topbar" spacing="15" alignment="CENTER_LEFT">
+    <HBox styleClass="topbar" spacing="15" alignment="CENTER_LEFT" style="-fx-padding: 15; -fx-background-color: white; -fx-border-color: #ecf0f1; -fx-border-width: 0 0 1 0;">
         <VBox spacing="2">
-            <Label text="Gestion des Réservations" styleClass="pageTitle"/>
-            <Label fx:id="lblStats" text="Analyse des données..." styleClass="mutedText" style="-fx-font-size: 12px;"/>
+            <Label text="Consultation des Réservations" styleClass="pageTitle" style="-fx-font-size: 20px; -fx-font-weight: bold;"/>
+            <Label fx:id="lblStats" text="Mise à jour automatique activée" styleClass="mutedText" style="-fx-font-size: 12px; -fx-text-fill: #27ae60;"/>
         </VBox>
+
         <Region HBox.hgrow="ALWAYS"/>
-        <HBox styleClass="searchBox" spacing="8" alignment="CENTER_LEFT">
+
+        <HBox styleClass="searchBox" spacing="8" alignment="CENTER_LEFT" style="-fx-background-color: #f4f7f6; -fx-padding: 5 15; -fx-background-radius: 20;">
             <Label text="🔎" styleClass="muted"/>
-            <TextField fx:id="searchReservationField" promptText="Filtrer par ID Event ou Statut..."
-                       onKeyReleased="#onSearchReservation" styleClass="searchInput"/>
+            <TextField fx:id="searchReservationField" promptText="Rechercher une réservation..."
+                       onKeyReleased="#onSearchReservation" styleClass="searchInput" style="-fx-background-color: transparent; -fx-border-width: 0;"/>
         </HBox>
-        <Button text="🔄" onAction="#onRefresh" styleClass="secondaryBtn" style="-fx-font-size: 16px;"/>
     </HBox>
 
-    <ScrollPane fitToWidth="true" hbarPolicy="NEVER" styleClass="transparentScroll" VBox.vgrow="ALWAYS">
+    <ScrollPane fitToWidth="true" hbarPolicy="NEVER" styleClass="transparentScroll" VBox.vgrow="ALWAYS" style="-fx-background-color: transparent; -fx-background: transparent;">
         <content>
             <VBox fx:id="cardsContainer" spacing="15" styleClass="pageContent">
-                <padding>
-                    <Insets top="25" right="35" bottom="25" left="35"/>
-                </padding>
+                <padding><Insets top="25" right="35" bottom="25" left="35"/></padding>
             </VBox>
         </content>
     </ScrollPane>

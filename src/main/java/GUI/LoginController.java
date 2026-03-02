@@ -22,10 +22,14 @@ import java.io.IOException;
 
 public class LoginController {
 
-    @FXML private TextField txtEmail;
-    @FXML private PasswordField txtMdp;
-    @FXML private TextField txtMdpVisible;
-    @FXML private Button btnToggleMdp;
+    @FXML
+    private TextField txtEmail;
+    @FXML
+    private PasswordField txtMdp;
+    @FXML
+    private TextField txtMdpVisible;
+    @FXML
+    private Button btnToggleMdp;
 
     private boolean isMdpVisible = false;
     private final UserService us = new UserService();
@@ -92,7 +96,8 @@ public class LoginController {
             boolean ok;
 
             // ✅ Support: hashed (BCrypt) + fallback plain-text (si anciens comptes)
-            if (stored != null && (stored.startsWith("$2a$") || stored.startsWith("$2b$") || stored.startsWith("$2y$"))) {
+            if (stored != null
+                    && (stored.startsWith("$2a$") || stored.startsWith("$2b$") || stored.startsWith("$2y$"))) {
                 ok = BCrypt.checkpw(mdp, stored);
             } else {
                 ok = mdp.equals(stored);

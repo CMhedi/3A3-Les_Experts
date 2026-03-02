@@ -2,6 +2,7 @@ package controllers;
 
 import Entities.Evenement;
 import Services.EvenementService;
+import GUI.utils.DialogUtils;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.geometry.Insets;
@@ -12,7 +13,6 @@ import javafx.scene.control.*;
 import javafx.scene.layout.*;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
-
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
@@ -27,20 +27,16 @@ public class EvenementController {
 
     private final EvenementService evenementService = new EvenementService();
     private List<Evenement> allEvents;
-    private static final DateTimeFormatter DT_FMT = DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm");
+    private static final DateTimeFormatter DT_FMT = DateTimeFormatter.ofPattern("dd MMMM yyyy", Locale.FRENCH);
 
     @FXML
     public void initialize() {
         loadEvents();
-        // Listener interactive pour la recherche
         if (searchField != null) {
             searchField.textProperty().addListener((obs, oldVal, newVal) -> onSearch());
         }
     }
 
-    // ===== CORE LOGIC (Gestion des Evénements) =====
-
-    @FXML
     public void loadEvents() {
         try {
             allEvents = evenementService.getAll();
@@ -49,45 +45,15 @@ public class EvenementController {
         } catch (Exception e) {
             renderCards(List.of());
             updateTotal(0);
-            System.err.println("Erreur chargement : " + e.getMessage());
         }
     }
-
-    @FXML
-    private void onRefresh() {
-        if (searchField != null) searchField.clear();
-        loadEvents();
-    }
-
-    @FXML
-    private void onSearch() {
-        if (allEvents == null) return;
-
-        String q = (searchField == null) ? "" : searchField.getText().trim().toLowerCase(Locale.ROOT);
-        if (q.isEmpty()) {
-            renderCards(allEvents);
-            updateTotal(allEvents.size());
-            return;
-        }
-
-        List<Evenement> filtered = allEvents.stream()
-                .filter(ev ->
-                        contains(ev.getTitre(), q) ||
-                                contains(ev.getLieu(), q) ||
-                                (ev.getCategorieEvt() != null && ev.getCategorieEvt().name().toLowerCase().contains(q))
-                )
-                .collect(Collectors.toList());
-
-        renderCards(filtered);
-        updateTotal(filtered.size());
-    }
-
-    // ===== CARD RENDERING =====
 
     private void renderCards(List<Evenement> list) {
         cardsContainer.getChildren().clear();
         if (list == null || list.isEmpty()) {
-            cardsContainer.getChildren().add(new Label("Aucun événement trouvé."));
+            Label empty = new Label("Aucun événement trouvé.");
+            empty.setStyle("-fx-text-fill: #94a3b8; -fx-font-size: 16;");
+            cardsContainer.getChildren().add(empty);
             return;
         }
         for (Evenement e : list) {
@@ -98,63 +64,77 @@ public class EvenementController {
     private HBox buildCard(Evenement e) {
         HBox card = new HBox(20);
         card.setAlignment(Pos.CENTER_LEFT);
-        card.setPadding(new Insets(15, 25, 15, 25));
+        card.setPadding(new Insets(25));
+        card.setMaxWidth(Double.MAX_VALUE); // Permet à la carte de s'étirer en largeur
 
-        card.setStyle(
-                "-fx-background-color: white; " +
-                        "-fx-background-radius: 12; " +
-                        "-fx-border-color: #f1f5f9; " +
-                        "-fx-border-width: 1; " +
-                        "-fx-effect: dropshadow(gaussian, rgba(0,0,0,0.05), 8, 0, 0, 2);"
-        );
+        String baseStyle = "-fx-background-color: white; -fx-background-radius: 18; " +
+                "-fx-border-color: #e2e8f0; -fx-border-width: 1; " +
+                "-fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.02), 15, 0, 0, 10);";
+        card.setStyle(baseStyle);
 
-        // UI Hover
-        card.setOnMouseEntered(ev -> card.setStyle(card.getStyle() + "-fx-border-color: #143D30; -fx-translate-y: -2;"));
-        card.setOnMouseExited(ev -> card.setStyle(card.getStyle() + "-fx-border-color: #f1f5f9; -fx-translate-y: 0;"));
+        // --- Bloc Texte (Info) ---
+        VBox infoBox = new VBox(8);
+        HBox.setHgrow(infoBox, Priority.ALWAYS); // Très important : pousse les autres blocs vers la droite
 
-        VBox infoBox = new VBox(5);
-        Label title = new Label(nvl(e.getTitre()));
-        title.setStyle("-fx-font-size: 16; -fx-font-weight: 800; -fx-text-fill: #1E293B;");
+        // Statut
+        boolean isTermine = "TERMINE".equalsIgnoreCase(e.getStatut());
+        Label statusBadge = new Label(isTermine ? "ÉVÉNEMENT PASSÉ" : "ACTIF");
+        statusBadge.setStyle(String.format(
+                "-fx-background-color: %s; -fx-text-fill: %s; -fx-padding: 4 12; -fx-background-radius: 20; -fx-font-size: 10; -fx-font-weight: 900;",
+                isTermine ? "#f1f5f9" : "#dcfce7", isTermine ? "#64748b" : "#10b981"
+        ));
 
-        Label meta = new Label(formatDate(e.getDateEvent()) + " • " + nvl(e.getLieu()) + " • Places: " + e.getNbPlaces());
-        meta.setStyle("-fx-text-fill: #64748B; -fx-font-size: 12;");
+        // Titre avec retour à la ligne
+        Label title = new Label(e.getTitre());
+        title.setWrapText(true); // Empêche le texte d'être coupé par des "..."
+        title.setMaxWidth(500);  // Largeur raisonnable avant de passer à la ligne
+        title.setStyle("-fx-font-size: 20; -fx-font-weight: 900; -fx-text-fill: #0f172a;");
 
-        infoBox.getChildren().addAll(title, meta);
+        Label meta = new Label("📅 " + formatDate(e.getDateEvent()) + "   📍 " + e.getLieu());
+        meta.setStyle("-fx-text-fill: #64748b; -fx-font-size: 13; -fx-font-weight: 600;");
 
-        Region spacer = new Region();
-        HBox.setHgrow(spacer, Priority.ALWAYS);
+        infoBox.getChildren().addAll(statusBadge, title, meta);
 
+        // --- Bloc Places (Chiffre) ---
+        VBox capBox = new VBox(2);
+        capBox.setAlignment(Pos.CENTER);
+        capBox.setMinWidth(100);
+        Label nbPlaces = new Label(String.valueOf(e.getNbPlaces()));
+        nbPlaces.setStyle("-fx-font-size: 26; -fx-font-weight: 900; -fx-text-fill: #143D30;");
+        Label capText = new Label("PLACES");
+        capText.setStyle("-fx-font-size: 10; -fx-text-fill: #94a3b8; -fx-font-weight: 900;");
+        capBox.getChildren().addAll(nbPlaces, capText);
+
+        // --- Bloc Actions ---
         HBox actions = new HBox(10);
         actions.setAlignment(Pos.CENTER_RIGHT);
 
         Button btnEdit = new Button("Modifier");
-        btnEdit.setStyle("-fx-background-color: #f0f7ff; -fx-text-fill: #0984e3; -fx-font-weight: bold; -fx-background-radius: 8;");
+        btnEdit.setStyle("-fx-background-color: #f8fafc; -fx-border-color: #e2e8f0; -fx-background-radius: 8; -fx-border-radius: 8; -fx-font-weight: bold; -fx-padding: 8 15; -fx-cursor: hand;");
+        if (isTermine) btnEdit.setDisable(true);
         btnEdit.setOnAction(ev -> openForm(e));
 
-        Button btnDelete = new Button("Supprimer");
-        btnDelete.setStyle("-fx-background-color: #fee2e2; -fx-text-fill: #991b1b; -fx-font-weight: bold; -fx-background-radius: 8;");
+        Button btnDelete = new Button("🗑");
+        btnDelete.setStyle("-fx-background-color: #fff1f2; -fx-text-fill: #e11d48; -fx-background-radius: 8; -fx-padding: 8 12; -fx-cursor: hand;");
         btnDelete.setOnAction(ev -> deleteEvent(e));
 
         actions.getChildren().addAll(btnEdit, btnDelete);
-        card.getChildren().addAll(infoBox, spacer, actions);
 
+        // Hover Effect
+        card.setOnMouseEntered(ev -> card.setStyle(baseStyle + "-fx-border-color: #143D30;"));
+        card.setOnMouseExited(ev -> card.setStyle(baseStyle));
+
+        card.getChildren().addAll(infoBox, capBox, actions);
         return card;
     }
 
-    // ===== CRUD ACTIONS =====
-
     private void deleteEvent(Evenement e) {
-        Alert confirm = new Alert(Alert.AlertType.CONFIRMATION, "Supprimer l'événement : " + e.getTitre() + " ?", ButtonType.YES, ButtonType.NO);
-        confirm.showAndWait().ifPresent(response -> {
-            if (response == ButtonType.YES) {
-                try {
-                    evenementService.delete(e.getIdEvenement());
-                    loadEvents();
-                } catch (Exception ex) {
-                    new Alert(Alert.AlertType.ERROR, "Erreur lors de la suppression.").show();
-                }
-            }
-        });
+        if (DialogUtils.showConfirmation("Suppression", "Voulez-vous supprimer " + e.getTitre() + " ?")) {
+            try {
+                evenementService.delete(e.getIdEvenement());
+                loadEvents();
+            } catch (Exception ex) { ex.printStackTrace(); }
+        }
     }
 
     private void openForm(Evenement e) {
@@ -162,22 +142,31 @@ public class EvenementController {
             FXMLLoader loader = new FXMLLoader(getClass().getResource("/views/evenement_form.fxml"));
             Parent root = loader.load();
             EvenementFormController ctrl = loader.getController();
-            ctrl.setData(e);
+            if (e != null) ctrl.setData(e);
             ctrl.setOnSaved(this::loadEvents);
-
             Stage stage = new Stage();
             stage.initModality(Modality.APPLICATION_MODAL);
             stage.setScene(new Scene(root));
-            stage.setTitle(e == null ? "Nouveau Événement" : "Modifier Événement");
-            stage.showAndWait();
-        } catch (Exception ex) {
-            System.err.println("Erreur ouverture formulaire : " + ex.getMessage());
-        }
+            stage.show();
+        } catch (Exception ex) { ex.printStackTrace(); }
     }
 
     @FXML private void onAdd() { openForm(null); }
-    private void updateTotal(int total) { if (lblInfo != null) lblInfo.setText("Total: " + total); }
-    private boolean contains(String v, String q) { return v != null && v.toLowerCase().contains(q); }
-    private String nvl(String s) { return s == null ? "" : s; }
-    private String formatDate(LocalDateTime dt) { return dt == null ? "" : dt.format(DT_FMT); }
+
+    private void onSearch() {
+        if (allEvents == null) return;
+        String q = searchField.getText().toLowerCase();
+        List<Evenement> filtered = allEvents.stream()
+                .filter(ev -> ev.getTitre().toLowerCase().contains(q) || ev.getLieu().toLowerCase().contains(q))
+                .collect(Collectors.toList());
+        renderCards(filtered);
+    }
+
+    private void updateTotal(int total) {
+        if (lblInfo != null) lblInfo.setText(total + " événements au catalogue");
+    }
+
+    private String formatDate(LocalDateTime dt) {
+        return dt == null ? "" : dt.format(DT_FMT);
+    }
 }
