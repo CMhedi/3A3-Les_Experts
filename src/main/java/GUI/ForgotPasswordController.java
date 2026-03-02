@@ -1,6 +1,7 @@
 package GUI;
 
 import Entities.UserApp;
+import GUI.utils.DialogUtils;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
@@ -73,7 +74,7 @@ public class ForgotPasswordController implements Initializable {
                 e.printStackTrace();
             }
         } else {
-            new Alert(Alert.AlertType.ERROR, "Code incorrect !").show();
+            DialogUtils.showError("Erreur de vérification", "❌ Code incorrect ! Veuillez réessayer.");
         }
     }
 

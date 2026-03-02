@@ -26,7 +26,7 @@ import javafx.util.Duration;
 import javafx.geometry.Pos;
 import javafx.scene.layout.StackPane;
 import java.sql.SQLException;
-
+import org.mindrot.jbcrypt.BCrypt;
 public class ProfileController implements Initializable {
 
     @FXML private TextField txtNom, txtPrenom, txtEmail, txtTel;
@@ -58,7 +58,9 @@ public class ProfileController implements Initializable {
             txtPrenom.setText(currentUser.getPrenom());
             txtTel.setText(currentUser.getTelephone());
             txtEmail.setText(currentUser.getEmail());
-
+            txtNewPass.textProperty().addListener((obs, oldV, newV) -> {
+                passwordProgressBar.setProgress(calculateStrength(newV));
+            });
             if (lblFullName != null) lblFullName.setText(currentUser.getNom() + " " + currentUser.getPrenom());
             if (lblEmailTop != null) lblEmailTop.setText(currentUser.getEmail());
 
@@ -236,11 +238,18 @@ public class ProfileController implements Initializable {
 
     @FXML
     void handleVerifyPassword(ActionEvent event) {
-        if (txtOldPass.getText().equals(currentUser.getMotDePasse())) {
+        String inputPass = txtOldPass.getText();
+        String hashedPass = currentUser.getMotDePasse(); // الـ Password اللي جاي من الـ DB
+
+        // المقارنة الصحيحة للـ BCrypt
+        if (BCrypt.checkpw(inputPass, hashedPass)) {
+            System.out.println("✅ Success: Passwords match with BCrypt!");
             newPassSection.setVisible(true);
+            newPassSection.setManaged(true);
             lblError.setVisible(false);
             txtOldPass.setEditable(false);
         } else {
+            System.out.println("❌ Failed: Password mismatch (BCrypt check)");
             lblError.setText("Mot de passe actuel incorrect !");
             lblError.setVisible(true);
         }
@@ -250,23 +259,45 @@ public class ProfileController implements Initializable {
     void handleChangePassword(ActionEvent event) {
         String newP = txtNewPass.getText();
         String confP = txtConfirmPass.getText();
+
+        // 1. التثبت من المدخلات (Validation)
         if (newP.isEmpty() || newP.length() < 4) {
-            new Alert(Alert.AlertType.ERROR, "Mot de passe trop court !").show();
+            new Alert(Alert.AlertType.ERROR, "Mot de passe trop court (min 4 caractères) !").show();
             return;
         }
+
         if (!newP.equals(confP)) {
-            new Alert(Alert.AlertType.ERROR, "Mots de passe non identiques !").show();
+            new Alert(Alert.AlertType.ERROR, "Les mots de passe ne sont pas identiques !").show();
             return;
         }
+
         try {
-            currentUser.setMotDePasse(newP);
+            // 2. التشفير (Hashing) - أهم خطوة باش الـ Login يقعد يخدم
+            // نردّو الـ String العادي "123456" عبارة على Hash كيما "$2a$10$..."
+            String hashedNewPassword = BCrypt.hashpw(newP, BCrypt.gensalt());
+
+            // 3. تحديث الكائن (Update Object)
+            currentUser.setMotDePasse(hashedNewPassword);
+
+            // 4. التحديث في قاعدة البيانات (Database Update)
             us.update(currentUser);
-            showToast("✅ Mot de passe changé !");
+
+            // 5. نجاح العملية وتنظيف الواجهة
+            showToast("✅ Mot de passe changé avec succès !");
+
+            // إخفاء قسم تغيير المود باس وترجيع الحالة الأصلية
             newPassSection.setVisible(false);
+            newPassSection.setManaged(false);
+
             txtOldPass.clear();
             txtOldPass.setEditable(true);
+            txtNewPass.clear();
+            txtConfirmPass.clear();
+            passwordProgressBar.setProgress(0);
+
         } catch (SQLException e) {
-            new Alert(Alert.AlertType.ERROR, "Erreur: " + e.getMessage()).show();
+            new Alert(Alert.AlertType.ERROR, "Erreur SQL lors de la mise à jour: " + e.getMessage()).show();
+            e.printStackTrace();
         }
     }
 }

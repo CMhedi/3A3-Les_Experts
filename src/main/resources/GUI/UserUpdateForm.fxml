@@ -2,6 +2,7 @@
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
 
+<?import javafx.geometry.Insets?>
 <VBox spacing="0.0" xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1" fx:controller="GUI.UserUpdateController" style="-fx-background-color: #f1f5f9;">
     <children>
         <HBox spacing="10" style="-fx-background-color: #143d30; -fx-padding: 30;" alignment="CENTER_LEFT">
@@ -70,11 +71,22 @@
                         </VBox>
 
                         <VBox spacing="5">
-                            <Label text="MOT DE PASSE (LAISSER VIDE SI INCHANGÉ)" style="-fx-font-weight: 800; -fx-font-size: 11; -fx-text-fill: #1B4D3E;"/>
-                            <PasswordField fx:id="txtPassword" prefHeight="45" style="-fx-background-color: #f0fdf4; -fx-border-color: #1B4D3E; -fx-border-radius: 8;"/>
+                            <Label text="MOT DE PASSE" style="-fx-font-weight: 800; -fx-font-size: 11; -fx-text-fill: #1B4D3E;"/>
+                            <StackPane alignment="CENTER_RIGHT">
+                                <children>
+                                    <PasswordField fx:id="txtPassword" prefHeight="45" style="-fx-background-color: #f0fdf4; -fx-border-color: #1B4D3E; -fx-border-radius: 8; -fx-padding: 0 40 0 10;"/>
+
+                                    <TextField fx:id="txtPasswordVisible" visible="false" managed="false" prefHeight="45" style="-fx-background-color: #f0fdf4; -fx-border-color: #1B4D3E; -fx-border-radius: 8; -fx-padding: 0 40 0 10;"/>
+
+                                    <Button fx:id="btnShowPass" onAction="#togglePassword" style="-fx-background-color: transparent; -fx-cursor: hand;" text="👁️">
+                                        <StackPane.margin>
+                                            <Insets right="10.0" />
+                                        </StackPane.margin>
+                                    </Button>
+                                </children>
+                            </StackPane>
                             <Label fx:id="errorPassword" visible="false" managed="false" style="-fx-text-fill: #ef4444; -fx-font-size: 10;"/>
                         </VBox>
-
                         <HBox spacing="15" alignment="CENTER_RIGHT">
                             <Button text="ANNULER" onAction="#handleCancel" prefHeight="45" prefWidth="120" style="-fx-background-color: #f1f5f9; -fx-text-fill: #475569; -fx-font-weight: bold; -fx-background-radius: 8;"/>
                             <Button fx:id="btnUpdate" text="ENREGISTRER" onAction="#handleUpdate" prefHeight="45" prefWidth="200" style="-fx-background-color: #1B4D3E; -fx-text-fill: white; -fx-font-weight: bold; -fx-background-radius: 8;"/>

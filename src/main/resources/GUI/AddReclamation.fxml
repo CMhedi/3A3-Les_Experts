@@ -2,35 +2,63 @@
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
 <?import java.net.URL?>
+<?import javafx.scene.shape.Circle?>
 
+<?import javafx.scene.effect.DropShadow?>
 <AnchorPane prefHeight="650.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1" fx:controller="GUI.UserReclamationController">
     <stylesheets>
         <URL value="@style_reclamation.css" />
     </stylesheets>
     <children>
-        <VBox alignment="CENTER" spacing="20.0" AnchorPane.leftAnchor="50.0" AnchorPane.rightAnchor="50.0" AnchorPane.topAnchor="20.0">
+        <VBox alignment="CENTER" spacing="25.0" AnchorPane.leftAnchor="50.0" AnchorPane.rightAnchor="50.0" AnchorPane.topAnchor="20.0">
             <children>
-                <Label text="Nouvelle Réclamation" style="-fx-font-size: 28; -fx-font-weight: 800; -fx-text-fill: #143D30;"/>
+                <VBox alignment="CENTER" spacing="5">
+                    <Label text="Centre d'Assistance" style="-fx-font-size: 32; -fx-font-weight: 900; -fx-text-fill: #143D30;"/>
+                    <Label text="On est là pour vous aider !" style="-fx-text-fill: #64748b; -fx-font-size: 14;"/>
+                </VBox>
 
-                <VBox spacing="15.0" styleClass="card" maxWidth="450.0" style="-fx-background-color: white; -fx-padding: 30; -fx-background-radius: 20;">
+                <VBox spacing="20.0" styleClass="card" maxWidth="480.0" style="-fx-background-color: white; -fx-padding: 35; -fx-background-radius: 25; -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.08), 20, 0, 0, 10);">
                     <children>
-                        <VBox spacing="5">
-                            <Label text="Type de problème" style="-fx-font-weight: bold; -fx-text-fill: #64748b;"/>
-                            <ComboBox fx:id="comboType" maxWidth="Infinity" promptText="Choisir un type..."/>
+                        <VBox spacing="8">
+                            <Label text="Catégorie du problème" style="-fx-font-weight: bold; -fx-text-fill: #1e293b;"/>
+                            <ComboBox fx:id="comboType" promptText = "Catégorie"  maxWidth="Infinity" style="-fx-background-radius: 10; -fx-padding: 5;"/>
                         </VBox>
-                        <VBox spacing="5">
-                            <Label text="Description" style="-fx-font-weight: bold; -fx-text-fill: #64748b;"/>
-                            <TextArea fx:id="txtContenu" prefHeight="200.0" promptText="Détaillez votre demande..." wrapText="true"/>
+
+                        <VBox spacing="8">
+                            <HBox alignment="CENTER_LEFT" spacing="10">
+                                <Label text="Votre Message" style="-fx-font-weight: bold; -fx-text-fill: #1e293b;"/>
+                                <Region HBox.hgrow="ALWAYS" />
+                                <Label fx:id="lblSentiment" text="😐"
+                                       style="-fx-font-size: 45px; -fx-text-fill: #94a3b8;">
+                                    <effect>
+                                        <DropShadow color="#e2e8f0" radius="25" spread="0.1" />
+                                    </effect>
+                                </Label></HBox>
+
+                            <TextArea fx:id="txtContenu" prefHeight="150.0" promptText="Décrivez votre souci avec précision..." wrapText="true" style="-fx-background-radius: 10; -fx-border-radius: 10;"/>
+
+                            <HBox spacing="10" alignment="CENTER_LEFT">
+                                <ProgressBar fx:id="progressChar" progress="0.0" maxWidth="Infinity" HBox.hgrow="ALWAYS" prefHeight="6.0" styleClass="mini-progress"/>
+                                <Label fx:id="lblCharCount" text="0/200" style="-fx-font-size: 10; -fx-text-fill: #94a3b8;"/>
+                            </HBox>
+
+                            <Label fx:id="lblAutoReply" wrapText="true" visible="false" managed="false"
+                                   style="-fx-background-color: #E0F2FE;
+              -fx-text-fill: #0369A1;
+              -fx-padding: 12;
+              -fx-background-radius: 10;
+              -fx-border-color: #7DD3FC;
+              -fx-border-width: 1;
+              -fx-font-size: 12px;
+              -fx-font-style: italic;"/>
                         </VBox>
-                        <HBox spacing="10">
-                            <Button fx:id="btnEnvoyer" onAction="#handleEnvoyer" maxWidth="Infinity" HBox.hgrow="ALWAYS" text="Envoyer" style="-fx-background-color: #143D30; -fx-text-fill: white; -fx-font-weight: bold; -fx-background-radius: 10; -fx-padding: 12;"/>
 
-                        </HBox>
-
+                        <Button fx:id="btnEnvoyer" onAction="#handleEnvoyer" maxWidth="Infinity" text="Envoyer la demande"
+                                style="-fx-background-color: #143D30; -fx-text-fill: white; -fx-font-weight: bold; -fx-background-radius: 12; -fx-padding: 15; -fx-cursor: hand;"/>
                     </children>
                 </VBox>
 
-                <Button onAction="#switchToList" text="📂 Voir l'historique de mes demandes" style="-fx-background-color: transparent; -fx-text-fill: #143D30; -fx-font-weight: bold; -fx-underline: true;"/>
+                <Button onAction="#switchToList" text="📂 Voir mes anciennes demandes" style="-fx-background-color: transparent; -fx-text-fill: #143D30; -fx-font-weight: bold; -fx-underline: true;"/>
             </children>
         </VBox>
     </children>

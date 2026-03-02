@@ -21,30 +21,136 @@ import java.sql.SQLException;
 import java.util.List;
 
 public class UserReclamationController {
-
+    @FXML private Label lblSentiment;
+    @FXML private ProgressBar progressChar;
+    @FXML private Label lblCharCount;
     // --- Components FXML ---
     @FXML private ComboBox<String> comboType;
     @FXML private TextArea txtContenu;
     @FXML private Button btnEnvoyer;
     @FXML private ListView<Reclamation> listMyRecs;
-
+    @FXML private Label lblAutoReply;
     private ReclamationService rs = new ReclamationService();
     private int currentUserId = Session.getConnectedUser().getIdUser();
 
     @FXML
     public void initialize() {
-        // 1. Setup Form
         if (comboType != null) {
             comboType.setItems(FXCollections.observableArrayList("TECHNIQUE", "SERVICE", "PAIEMENT", "AUTRE"));
         }
 
-        // 2. Setup List
+        if (txtContenu != null) {
+            txtContenu.textProperty().addListener((observable, oldValue, newValue) -> {
+                updateSmartFeatures(newValue);
+            });
+        }
+
         if (listMyRecs != null) {
             setupListView();
             loadData();
         }
     }
 
+
+
+
+    private void updateSmartFeatures(String text) {
+        if (text == null) text = "";
+        int length = text.length();
+        String input = text.toLowerCase();
+        // 1. Counter (1000 kima fel label mte3ek)
+        lblCharCount.setText(length + "/1000");
+
+        // 2. Progress Calculation (Forci el double bech yet7arek el khatt)
+        double progressValue = (double) length / 1000.0;
+        progressChar.setProgress(progressValue);
+
+        // 3. Force Color Change (Bel -fx-accent)
+        if (length > 200) {
+            // A7mer ken fat el 900
+            progressChar.setStyle("-fx-accent: #ef4444; -fx-control-inner-background: #fee2e2;");
+        } else {
+            // A5dher EcoAdventure kenou 3adi
+            progressChar.setStyle("-fx-accent: #143D30; -fx-control-inner-background: #f1f5f9;");
+        }
+        // 1. Définir l'emoji et la couleur
+        String emoji = "😐";
+        String colorHex = "#e2e8f0"; // Gris par défaut
+
+        if (input.contains("merci") || input.contains("top") || input.contains("super")) {
+            emoji = "😎";
+            colorHex = "#4ade80"; // Vert
+        } else if (input.contains("nul") || input.contains("faddit") || input.contains("mauvais")) {
+            emoji = "😡";
+            colorHex = "#f87171"; // Rouge
+        } else if (input.contains("urgent") || input.contains("vite")) {
+            emoji = "🆘";
+            colorHex = "#fbbf24"; // Gold
+        }
+
+        // 2. Appliquer l'emoji
+        lblSentiment.setText(emoji);
+
+        // 3. Appliquer le Glow dynamiquement
+        javafx.scene.paint.Color color = javafx.scene.paint.Color.web(colorHex);
+
+        // On crée un nouvel effet à chaque fois pour éviter les erreurs de cast
+        javafx.scene.effect.DropShadow glow = new javafx.scene.effect.DropShadow();
+        glow.setRadius(25);
+        glow.setSpread(0.15);
+        glow.setColor(color);
+
+        lblSentiment.setEffect(glow);
+
+        // 4. Animation de pulsation
+        javafx.animation.ScaleTransition st = new javafx.animation.ScaleTransition(javafx.util.Duration.millis(250), lblSentiment);
+        st.setFromX(0.8); st.setFromY(0.8);
+        st.setToX(1.0);   st.setToY(1.0);
+        st.play();
+    }
+    // 1. Déclarer la liste des connaissances (FAQ)
+    private final java.util.Map<String, String> autoAnswers = new java.util.HashMap<>() {{
+        put("mot de passe", "🔑 Pour changer votre mot de passe, allez dans 'Mon Profil' > 'Sécurité'.");
+        put("paiement", "💳 Les paiements sont sécurisés via Stripe. Nous acceptons Visa et Mastercard.");
+        put("remboursement", "💰 Les remboursements prennent entre 5 et 10 jours ouvrables.");
+        put("coach", "🏋️ Vous pouvez voir la disponibilité des coachs dans la section 'Séances'.");
+        put("planning", "📅 Le planning est mis à jour chaque dimanche à 20h00.");
+        put("urgent", "🚨 Pour les cas urgents, notre équipe vous répondra en moins de 2 heures.");
+    }};
+
+    private void handleAutoReply(String text) {
+        if (text == null || text.length() < 3) {
+            lblAutoReply.setVisible(false);
+            lblAutoReply.setManaged(false);
+            return;
+        }
+
+        String input = text.toLowerCase();
+        boolean found = false;
+
+        // 2. Recherche par mot-clé
+        for (java.util.Map.Entry<String, String> entry : autoAnswers.entrySet()) {
+            if (input.contains(entry.getKey())) {
+                lblAutoReply.setText(entry.getValue());
+                lblAutoReply.setVisible(true);
+                lblAutoReply.setManaged(true);
+
+                // Faza sghira: Animation FadeIn
+                javafx.animation.FadeTransition ft = new javafx.animation.FadeTransition(javafx.util.Duration.millis(500), lblAutoReply);
+                ft.setFromValue(0.0);
+                ft.setToValue(1.0);
+                ft.play();
+
+                found = true;
+                break; // On s'arrête au premier mot-clé trouvé
+            }
+        }
+
+        if (!found) {
+            lblAutoReply.setVisible(false);
+            lblAutoReply.setManaged(false);
+        }
+    }
     private void setupListView() {
         listMyRecs.setCellFactory(param -> new ListCell<Reclamation>() {
             @Override
@@ -65,11 +171,8 @@ public class UserReclamationController {
                     Region spacer = new Region();
                     HBox.setHgrow(spacer, Priority.ALWAYS);
 
-                    Label statut = new Label(item.getStatut().toString());
-                    String color = item.getStatut().toString().equals("TRAITEE") ? "#143D30" : (item.getStatut().toString().equals("REJETEE") ? "#ef4444" : "#F37021");
-                    statut.setStyle("-fx-text-fill: white; -fx-background-color: " + color + "; -fx-padding: 3 10; -fx-background-radius: 15; -fx-font-size: 11px;");
-
-                    header.getChildren().addAll(type, spacer, statut);
+                    Node timeline = createTimeline(item.getStatut());
+                    header.getChildren().addAll(type, spacer, timeline);
 
                     Label contenu = new Label(item.getContenu());
                     contenu.setWrapText(true);
@@ -214,7 +317,74 @@ public class UserReclamationController {
             }
         });
     }
+    private Node createTimeline(StatutReclamation currentStatut) {
+        HBox timeline = new HBox(5);
+        timeline.setAlignment(Pos.CENTER_LEFT);
+        timeline.setStyle("-fx-padding: 5 0;");
 
+        // 1. Definir les étapes visuelles
+        String[] etapes = {"Soumise", "En cours", "Terminée"};
+        int activeStep = 0;
+
+        // 2. Mapping intelligent du statut vers l'index de la timeline
+        if (currentStatut == StatutReclamation.EN_ATTENTE) {
+            activeStep = 0; // Loula tech3el
+        } else if (currentStatut == StatutReclamation.EN_COURS) {
+            activeStep = 1; // Ethanya tech3el (Admin bda ye5dem)
+        } else if (currentStatut == StatutReclamation.TRAITEE || currentStatut == StatutReclamation.REJETEE) {
+            activeStep = 2; // El le5ra tech3el
+        }
+
+        // 3. Boucle pour construire les cercles et les lignes
+        for (int i = 0; i < etapes.length; i++) {
+            // --- Création du Cercle ---
+            Label circle = new Label(String.valueOf(i + 1));
+            circle.setPrefSize(24, 24);
+            circle.setMinSize(24, 24);
+            circle.setAlignment(Pos.CENTER);
+
+            // --- Logique des Couleurs ---
+            if (i < activeStep) {
+                // Étape déjà terminée (Vert "Success")
+                circle.setStyle("-fx-background-color: #143D30; -fx-text-fill: white; -fx-background-radius: 50; -fx-font-size: 10px; -fx-font-weight: bold;");
+            } else if (i == activeStep) {
+                // Étape actuelle (Couleur dynamique selon le statut)
+                String currentColor = "#F37021"; // Orange par défaut (Soumise)
+                if (currentStatut == StatutReclamation.EN_COURS) currentColor = "#0369A1"; // Azreq (En cours)
+                else if (currentStatut == StatutReclamation.TRAITEE) currentColor = "#28a745"; // A5dher (Terminée)
+                else if (currentStatut == StatutReclamation.REJETEE) currentColor = "#dc3545"; // A7mer (Refusée)
+
+                circle.setStyle("-fx-background-color: " + currentColor + "; -fx-text-fill: white; -fx-background-radius: 50; -fx-font-weight: bold; -fx-font-size: 11px;");
+                // Effet de lueur pour l'étape active
+                circle.setEffect(new javafx.scene.effect.DropShadow(5, javafx.scene.paint.Color.web(currentColor, 0.4)));
+            } else {
+                // Étape future (Gris clair)
+                circle.setStyle("-fx-background-color: #e2e8f0; -fx-text-fill: #94a3b8; -fx-background-radius: 50; -fx-font-size: 10px;");
+            }
+
+            // --- Label de l'étape ---
+            Label labelEtape = new Label(etapes[i]);
+            labelEtape.setStyle("-fx-font-size: 10px; -fx-font-weight: " + (i == activeStep ? "bold" : "normal") +
+                    "; -fx-text-fill: " + (i <= activeStep ? "#1e293b" : "#94a3b8") + ";");
+
+            // Ajouter au HBox
+            timeline.getChildren().addAll(circle, labelEtape);
+
+            // --- Création de la Ligne de connexion ---
+            if (i < etapes.length - 1) {
+                Region line = new Region();
+                line.setPrefHeight(2);
+                line.setMinWidth(25);
+                // La ligne devient foncée si l'étape suivante est atteinte ou en cours
+                String lineColor = (i < activeStep) ? "#143D30" : "#e2e8f0";
+                line.setStyle("-fx-background-color: " + lineColor + "; -fx-background-radius: 2;");
+                HBox.setMargin(line, new javafx.geometry.Insets(0, 5, 0, 5));
+                timeline.getChildren().add(line);
+            }
+        }
+
+        return timeline;
+    }
     @FXML void switchToList(ActionEvent event) { navigateTo("/GUI/ListReclamation.fxml", event); }
     @FXML void switchToForm(ActionEvent event) { navigateTo("/GUI/AddReclamation.fxml", event); }
 

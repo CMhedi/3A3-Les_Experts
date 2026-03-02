@@ -1,4 +1,5 @@
 package GUI;
+import GUI.utils.DialogUtils;
 import Services.UserService;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
@@ -24,28 +25,27 @@ public class ResetPasswordController {
         String mdp1 = txtNewPass.getText();
         String mdp2 = txtConfirmPass.getText();
 
-        if (mdp1.isEmpty() || mdp1.length() < 4) {
-            new Alert(Alert.AlertType.WARNING, "Mot de passe trop court !").show();
+        if (mdp1.isEmpty() || mdp1.length() < 6) {
+            DialogUtils.showWarning("Attention", "⚠️ Mot de passe trop court (min 6 caractères) !");
             return;
         }
 
         if (!mdp1.equals(mdp2)) {
-            new Alert(Alert.AlertType.ERROR, "Les mots de passe ne correspondent pas !").show();
+            DialogUtils.showError("Erreur de saisie", "❌ Les mots de passe ne correspondent pas !");
             return;
         }
 
         try {
-            //  UPDATE fil Database
             us.updatePassword(userEmail, mdp1);
-            new Alert(Alert.AlertType.INFORMATION, "Succès ! Votre mot de passe a été réinitialisé.").show();
 
+            DialogUtils.showInfo("Succès", "✅ Votre mot de passe a été réinitialisé avec succès.");
 
             Parent root = FXMLLoader.load(getClass().getResource("/GUI/Login.fxml"));
             Stage stage = (Stage) txtNewPass.getScene().getWindow();
             stage.setScene(new Scene(root));
 
         } catch (Exception e) {
-            new Alert(Alert.AlertType.ERROR, "Erreur lors de la mise à jour : " + e.getMessage()).show();
+            DialogUtils.showError("Erreur système", "❌ Erreur lors de la mise à jour : " + e.getMessage());
         }
     }
 }

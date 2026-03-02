@@ -92,3 +92,18 @@
     -fx-background-color: #F37021;
     -fx-text-fill: white;
 }
+/* Card Animation */
+.list-cell:filled:hover {
+    -fx-scale-x: 1.01;
+    -fx-scale-y: 1.01;
+    -fx-transition-duration: 0.3s;
+}
+
+.list-view {
+    -fx-background-color: transparent;
+}
+
+/* Style for Timeline circles */
+.timeline-circle {
+    -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.1), 5, 0, 0, 2);
+}

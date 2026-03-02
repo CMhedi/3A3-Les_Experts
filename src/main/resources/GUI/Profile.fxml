@@ -113,7 +113,8 @@
                                                 </HBox>
                                                 <Label fx:id="lblError" textFill="RED" visible="false" />
 
-                                                <VBox fx:id="newPassSection" spacing="12.0" visible="false">
+                                            <VBox fx:id="newPassSection" spacing="12.0" visible="false" managed="false">
+
                                                     <children>
                                                         <Separator />
                                                         <PasswordField fx:id="txtNewPass" promptText="Nouveau mot de passe" styleClass="modern-input" />

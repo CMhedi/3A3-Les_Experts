@@ -28,11 +28,17 @@
                     <children>
                         <VBox styleClass="stat-card, stat-pending" HBox.hgrow="ALWAYS">
                             <Label text="En Attente" styleClass="stat-label"/>
-                            <Label fx:id="lblPending" text="12" styleClass="stat-value"/>
+                            <Label fx:id="lblPending" text="0" styleClass="stat-value"/>
                         </VBox>
+
+                        <VBox styleClass="stat-card, stat-processing" HBox.hgrow="ALWAYS">
+                            <Label text="En Traitement" styleClass="stat-label"/>
+                            <Label fx:id="lblProcessing" text="0" styleClass="stat-value"/>
+                        </VBox>
+
                         <VBox styleClass="stat-card, stat-done" HBox.hgrow="ALWAYS">
                             <Label text="Traitées" styleClass="stat-label"/>
-                            <Label fx:id="lblDone" text="45" styleClass="stat-value"/>
+                            <Label fx:id="lblDone" text="0" styleClass="stat-value"/>
                         </VBox>
                     </children>
                 </HBox>
@@ -80,7 +86,10 @@
                                     <children>
                                         <Button onAction="#handleOpenResponse" styleClass="btn, btn-success" text="✉ Répondre" />
                                         <Button onAction="#handleTraitee" style="-fx-background-color: #DCFCE7; -fx-text-fill: #166534; -fx-font-weight: bold; -fx-background-radius: 8;" text="Traitée" />
-                                        <Button onAction="#handleRejeter" styleClass="btn, btn-warning" text="Rejeter" />
+                                        <HBox spacing="5" alignment="CENTER">
+                                            <Circle radius="5" fill="#0369A1"/>
+                                            <Label text="En Cours" style="-fx-font-size: 11; -fx-text-fill: #718096;"/>
+                                        </HBox>                                        <Button onAction="#handleRejeter" styleClass="btn, btn-warning" text="Rejeter" />
                                         <Button onAction="#handleDelete" styleClass="btn, btn-danger" text="Supprimer" />
                                     </children>
                                 </HBox>

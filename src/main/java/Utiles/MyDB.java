@@ -13,17 +13,23 @@ public class MyDB {
     private static Connection connection;
     private static MyDB instance;
 
-    // constructeur privé (Singleton)
+    // Constructor privado
     private MyDB() {
+        connect();
+    }
+
+    // دالة خاصة بالربط باش نجموا نعيطولها وقت الحاجة
+    private void connect() {
         try {
-            connection = DriverManager.getConnection(URL, USER, PASSWORD);
-            System.out.println(" Connected to database successfully");
+            if (connection == null || connection.isClosed()) {
+                connection = DriverManager.getConnection(URL, USER, PASSWORD);
+                System.out.println("✅ Connected to database successfully");
+            }
         } catch (SQLException e) {
-            System.out.println("Database connection error: " + e.getMessage());
+            System.err.println("❌ Database connection error: " + e.getMessage());
         }
     }
 
-    // retourner l'instance unique
     public static MyDB getInstance() {
         if (instance == null) {
             instance = new MyDB();
@@ -31,10 +37,20 @@ public class MyDB {
         return instance;
     }
 
-    // retourner la connexion
+
     public static Connection getConnection() {
-        if (instance == null) {
-            instance = new MyDB();
+        try {
+
+            if (instance == null) {
+                instance = new MyDB();
+            }
+
+            if (connection == null || connection.isClosed()) {
+                System.out.println("🔄 Connection lost! Reconnecting...");
+                instance.connect();
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
         }
         return connection;
     }

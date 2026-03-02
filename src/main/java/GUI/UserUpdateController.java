@@ -6,9 +6,11 @@ import Services.UserService;
 import enums.RoleUser;
 import javafx.beans.binding.Bindings;
 import javafx.collections.FXCollections;
+import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
 import javafx.scene.layout.VBox;
+import org.mindrot.jbcrypt.BCrypt;
 
 public class UserUpdateController {
 
@@ -18,7 +20,9 @@ public class UserUpdateController {
     @FXML private Button btnUpdate;
     @FXML private Label errorNom, errorPrenom, errorEmail, errorPassword, errorAge, errorExperience, errorSpec, errorDispo;
     @FXML private VBox coachFieldsContainer;
-
+    @FXML private TextField txtPasswordVisible; // الحقل الجديد
+    @FXML private Button btnShowPass;
+    private boolean isPasswordVisible = false;
     private UserApp currentUser;
     private final UserService userService = new UserService();
     private AdminUsersController parentController;
@@ -26,20 +30,20 @@ public class UserUpdateController {
 
     @FXML
     public void initialize() {
-        // تعمير القوائم
         comboRole.setItems(FXCollections.observableArrayList("USER_SIMPLE", "ADMIN", "COACH"));
         comboSpecialite.setItems(FXCollections.observableArrayList("FITNESS", "YOGA", "RUNNING", "BASKETBALL"));
         comboDispo.setItems(FXCollections.observableArrayList("MATIN", "SOIR", "JOURNEE_COMPLETE"));
 
-        // ربط الـ Labels باش ما يخليوش فراغ
         Label[] labels = {errorNom, errorPrenom, errorEmail, errorPassword, errorAge, errorExperience, errorSpec, errorDispo};
-        for (Label lb : labels) { if (lb != null) lb.managedProperty().bind(lb.visibleProperty()); }
+        for (Label lb : labels) {
+            if (lb != null) lb.managedProperty().bind(lb.visibleProperty());
+        }
 
-        // إظهار حقول الكوتش ديناميكياً
         coachFieldsContainer.visibleProperty().bind(comboRole.valueProperty().isEqualTo("COACH"));
         coachFieldsContainer.managedProperty().bind(coachFieldsContainer.visibleProperty());
 
-        // ================= Validation Listeners (Strictly like Add) =================
+        txtPasswordVisible.textProperty().bindBidirectional(txtPassword.textProperty());
+
         txtNom.textProperty().addListener((o, old, n) -> updateFieldValidation(txtNom, errorNom, n.trim().isEmpty(), "⚠️ Nom obligatoire"));
         txtPrenom.textProperty().addListener((o, old, n) -> updateFieldValidation(txtPrenom, errorPrenom, n.trim().isEmpty(), "⚠️ Prénom obligatoire"));
 
@@ -51,8 +55,10 @@ public class UserUpdateController {
         });
 
         txtPassword.textProperty().addListener((o, old, n) -> {
-            boolean invalid = (n != null && !n.isEmpty() && n.length() < 6);
-            updateFieldValidation(txtPassword, errorPassword, invalid, "⚠️ Minimum 6 caractères");
+            boolean isInvalid = (n != null && !n.isEmpty() && n.length() < 6);
+
+            updateFieldValidation(txtPassword, errorPassword, isInvalid, "⚠️ Minimum 6 caractères");
+            updateFieldValidation(txtPasswordVisible, errorPassword, isInvalid, "⚠️ Minimum 6 caractères");
         });
 
         txtAge.textProperty().addListener((o, old, n) -> validateAge(n));
@@ -60,15 +66,42 @@ public class UserUpdateController {
 
         setupButtonBinding();
     }
+    @FXML
+    void togglePassword(ActionEvent event) {
+        if (!isPasswordVisible) {
 
+            txtPasswordVisible.setText(txtPassword.getText());
+            txtPasswordVisible.setVisible(true);
+            txtPasswordVisible.setManaged(true);
+            txtPassword.setVisible(false);
+            txtPassword.setManaged(false);
+            btnShowPass.setText("🔒");
+            isPasswordVisible = true;
+        } else {
+
+            txtPassword.setText(txtPasswordVisible.getText());
+            txtPassword.setVisible(true);
+            txtPassword.setManaged(true);
+            txtPasswordVisible.setVisible(false);
+            txtPasswordVisible.setManaged(false);
+            btnShowPass.setText("👁️");
+            isPasswordVisible = false;
+        }
+    }
     public void initData(UserApp user, AdminUsersController parent) {
         this.currentUser = user;
         this.parentController = parent;
+
         if (user != null) {
             txtNom.setText(user.getNom());
             txtPrenom.setText(user.getPrenom());
             txtEmail.setText(user.getEmail());
-            if (user.getRole() != null) comboRole.setValue(user.getRole().name());
+
+            txtPassword.setText(user.getMotDePasse());
+
+            if (user.getRole() != null) {
+                comboRole.setValue(user.getRole().name());
+            }
 
             if (user.getRole() == RoleUser.COACH) {
                 txtAge.setText(String.valueOf(user.getAge()));
@@ -139,7 +172,12 @@ public class UserUpdateController {
             currentUser.setEmail(txtEmail.getText().trim());
             currentUser.setRole(RoleUser.valueOf(comboRole.getValue()));
 
-            if (!txtPassword.getText().isEmpty()) currentUser.setMotDePasse(txtPassword.getText());
+            String newPass = txtPassword.getText();
+
+            if (newPass != null && !newPass.isEmpty() && !newPass.equals(currentUser.getMotDePasse())) {
+                String hashed = org.mindrot.jbcrypt.BCrypt.hashpw(newPass, org.mindrot.jbcrypt.BCrypt.gensalt());
+                currentUser.setMotDePasse(hashed);
+            }
 
             if (currentUser.getRole() == RoleUser.COACH) {
                 currentUser.setAge(Integer.parseInt(txtAge.getText().trim()));
@@ -149,10 +187,11 @@ public class UserUpdateController {
             }
 
             userService.update(currentUser);
-            DialogUtils.showInfo("Succès", "✅ Mise à jour réussie !");
+            GUI.utils.DialogUtils.showInfo("Succès", "✅ Mise à jour réussie !");
             parentController.showUserTable();
+
         } catch (Exception e) {
-            DialogUtils.showError("Erreur", "❌ " + e.getMessage());
+            GUI.utils.DialogUtils.showError("Erreur", "❌ " + e.getMessage());
         }
     }
 

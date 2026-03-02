@@ -30,6 +30,7 @@ public class AdminReclamationController {
     @FXML private Label lblPending;
     @FXML private Label lblDone;
 
+    @FXML private Label lblProcessing;
     private ReclamationService rs = new ReclamationService();
     private ObservableList<Reclamation> masterData = FXCollections.observableArrayList();
     @FXML private TextArea areaContenu;
@@ -54,6 +55,7 @@ public class AdminReclamationController {
                     switch (item) {
                         case EN_ATTENTE -> setStyle("-fx-background-color: #FEF3C7; -fx-text-fill: #92400E; -fx-background-radius: 10; -fx-alignment: center;");
                         case TRAITEE -> setStyle("-fx-background-color: #DCFCE7; -fx-text-fill: #166534; -fx-background-radius: 10; -fx-alignment: center;");
+                        case EN_COURS -> setStyle("-fx-background-color: #E0F2FE; -fx-text-fill: #0369A1; -fx-background-radius: 10; -fx-alignment: center;");
                         case REJETEE -> setStyle("-fx-background-color: #FEE2E2; -fx-text-fill: #991B1B; -fx-background-radius: 10; -fx-alignment: center;");
                     }
                 }
@@ -79,6 +81,12 @@ public class AdminReclamationController {
         refresh();
     }
     private void showDetailsPopup(Reclamation r) {
+        if (r.getStatut() == StatutReclamation.EN_ATTENTE) {
+            try {
+                rs.modifierStatut(r.getIdReclamation(), StatutReclamation.EN_COURS);
+                refresh(); // Bech l'admin ychouf el changement
+            } catch (SQLException e) { e.printStackTrace(); }
+        }
         Alert alert = new Alert(Alert.AlertType.INFORMATION);
         alert.setTitle("Détails de la Réclamation");
         alert.setHeaderText("Message de : " + r.getUserName());
@@ -140,6 +148,8 @@ public class AdminReclamationController {
     private void updateStats() {
         long pending = masterData.stream().filter(r -> r.getStatut() == StatutReclamation.EN_ATTENTE).count();
         long done = masterData.stream().filter(r -> r.getStatut() == StatutReclamation.TRAITEE).count();
+        long processing = masterData.stream().filter(r -> r.getStatut() == StatutReclamation.EN_COURS).count();
+        lblProcessing.setText(String.valueOf(processing)); // Nsit ma zedtech el variable hadi
         lblPending.setText(String.valueOf(pending));
         lblDone.setText(String.valueOf(done));
     }
@@ -187,6 +197,11 @@ public class AdminReclamationController {
     @FXML
     void handleTraitee() throws SQLException {
         updateStatutLocal(StatutReclamation.TRAITEE);
+    }
+    @FXML
+    void handleEnCours() throws SQLException {
+        updateStatutLocal(StatutReclamation.EN_COURS);
+        // Thabbet elli EN_COURS mawjouda fel Enum StatutReclamation mte3ek
     }
     @FXML void handleDelete() throws SQLException {
         Reclamation sel = tableReclamations.getSelectionModel().getSelectedItem();
