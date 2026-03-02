@@ -18,8 +18,10 @@ import javafx.scene.control.*;
 import javafx.scene.layout.*;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import javafx.scene.shape.Circle;
 import javafx.stage.Stage;
 
+import java.sql.SQLException;
 import java.time.LocalDate;
 import java.util.HashMap;
 import java.util.List;
@@ -31,6 +33,7 @@ public class UserDashboardController {
     @FXML private FlowPane termineesContainer;
 
     private final SeanceService seanceService = new SeanceService();
+    private final Map<Integer, UserApp> coachCache = new HashMap<>();
     private final UserService userService = new UserService();
     private final ReservationSeanceService reservationService =
             new ReservationSeanceService();
@@ -121,34 +124,46 @@ public class UserDashboardController {
         HBox actions = new HBox(12);
         actions.setAlignment(Pos.CENTER_LEFT);
 
-        // 🔥 Bouton Google
-        Button btnVoir = new Button(" Voir dans Google Calendar");
-        btnVoir.setPrefHeight(36);
-        btnVoir.setMinWidth(230);
-        btnVoir.getStyleClass().add("btn-google");
+        String googleLink = null;
+
+        try {
+            googleLink = reservationService.getGoogleEventLink(
+                    userId,
+                    s.getIdSeance()
+            );
+        } catch (Exception ignored) {}
+
+        Button btnGoogle = new Button();
+        btnGoogle.setPrefHeight(36);
+        btnGoogle.setMinWidth(230);
+        btnGoogle.getStyleClass().add("btn-google");
 
         ImageView googleIcon = new ImageView(
                 new Image(getClass()
-                        .getResourceAsStream("/images/google.png"))
+                        .getResourceAsStream("/images/icons8-calendrier-google-144.png"))
         );
         googleIcon.setFitWidth(16);
         googleIcon.setFitHeight(16);
 
-        btnVoir.setGraphic(googleIcon);
-        btnVoir.setContentDisplay(ContentDisplay.LEFT);
-        btnVoir.setGraphicTextGap(8);
+        btnGoogle.setGraphic(googleIcon);
+        btnGoogle.setContentDisplay(ContentDisplay.LEFT);
+        btnGoogle.setGraphicTextGap(8);
 
-        btnVoir.setOnAction(e -> handleVoirGoogle(s));
+        if (googleLink == null || googleLink.isBlank()) {
+            btnGoogle.setText(" Ajouter au Google Calendar");
+            btnGoogle.setOnAction(e -> ajouterAuCalendrier(s));
+        } else {
+            btnGoogle.setText(" Voir dans Google Calendar");
+            btnGoogle.setOnAction(e -> handleVoirGoogle(s));
+        }
 
-        // 🔥 Bouton Annuler
         Button btnAnnuler = new Button("Annuler");
         btnAnnuler.setPrefHeight(36);
         btnAnnuler.setMinWidth(120);
         btnAnnuler.getStyleClass().add("btn-danger");
-
         btnAnnuler.setOnAction(e -> handleAnnuler(s));
 
-        actions.getChildren().addAll(btnVoir, btnAnnuler);
+        actions.getChildren().addAll(btnGoogle, btnAnnuler);
 
         card.getChildren().add(actions);
 
@@ -162,25 +177,27 @@ public class UserDashboardController {
 
         VBox card = baseCard(s);
 
-        Label badge = new Label("Terminée");
+        Label badge = new Label("Séance terminée");
         badge.getStyleClass().add("badge-terminee");
 
         card.getChildren().add(badge);
 
         return card;
     }
-
     // =================================================
     // BASE CARD STRUCTURE
     // =================================================
     private VBox baseCard(Seance s) {
 
-        VBox card = new VBox(8);
+        VBox card = new VBox(12);
         card.getStyleClass().add("coach-card");
+        card.setPrefWidth(320);
 
+        // ================= TITLE =================
         Label title = new Label(s.getNom());
         title.getStyleClass().add("coach-card-title");
 
+        // ================= DATE / TIME =================
         Label date = new Label("📅 " + s.getDateSeance());
         date.getStyleClass().add("coach-card-info");
 
@@ -188,14 +205,66 @@ public class UserDashboardController {
                 s.getHeureDebut() + " - " + s.getHeureFin());
         time.getStyleClass().add("coach-card-info");
 
-        Label coach = new Label("👤 " +
-                coachMap.getOrDefault(
-                        s.getIdCoach(),
-                        "Inconnu"
-                ));
-        coach.getStyleClass().add("coach-card-info");
+        // ================= COACH AVEC IMAGE =================
+        HBox coachRow = new HBox(8);
+        coachRow.setAlignment(Pos.CENTER_LEFT);
 
-        card.getChildren().addAll(title, date, time, coach);
+        UserApp coachUser = coachCache.computeIfAbsent(
+                s.getIdCoach(),
+                id -> {
+                    try {
+                        return userService.getById(id);
+                    } catch (SQLException e) {
+                        throw new RuntimeException(e);
+                    }
+                }
+        );
+
+        String imagePath = coachUser != null
+                ? coachUser.getImageUrl()
+                : null;
+
+        Image image;
+
+        try {
+            if (imagePath != null && !imagePath.isBlank()) {
+                image = new Image(imagePath, true);
+            } else {
+                image = new Image(getClass()
+                        .getResource("/gui/default-user.png")
+                        .toExternalForm());
+            }
+        } catch (Exception e) {
+            image = new Image(getClass()
+                    .getResource("/gui/default-user.png")
+                    .toExternalForm());
+        }
+
+        ImageView coachImage = new ImageView(image);
+        coachImage.setFitWidth(30);
+        coachImage.setFitHeight(30);
+
+        Circle clip = new Circle(15, 15, 15);
+        coachImage.setClip(clip);
+
+        coachImage.getStyleClass().add("coach-avatar");
+
+        Label coachName = new Label(
+                coachUser != null
+                        ? coachUser.getNom() + " " + coachUser.getPrenom()
+                        : "Inconnu"
+        );
+        coachName.getStyleClass().add("coach-card-info");
+
+        coachRow.getChildren().addAll(coachImage, coachName);
+
+        // ================= BUILD =================
+        card.getChildren().addAll(
+                title,
+                date,
+                time,
+                coachRow
+        );
 
         return card;
     }
@@ -324,5 +393,55 @@ public class UserDashboardController {
                 "/admin.css",
                 (Node) event.getSource()
         );
+    }
+    private void ajouterAuCalendrier(Seance s) {
+
+        try {
+
+            var start = java.time.LocalDateTime.of(
+                    s.getDateSeance(),
+                    s.getHeureDebut()
+            );
+
+            var end = java.time.LocalDateTime.of(
+                    s.getDateSeance(),
+                    s.getHeureFin()
+            );
+
+            GoogleCalendarService.GoogleEventData data =
+                    GoogleCalendarService.addEvent(
+                            userId,
+                            "Séance : " + s.getNom(),
+                            "Séance EcoAdventure",
+                            start,
+                            end
+                    );
+
+            reservationService.saveGoogleEventId(
+                    userId,
+                    s.getIdSeance(),
+                    data.id
+            );
+
+            reservationService.saveGoogleEventLink(
+                    userId,
+                    s.getIdSeance(),
+                    data.htmlLink
+            );
+
+            DialogUtils.showInfo(
+                    "Google Calendar",
+                    "Événement ajouté au calendrier."
+            );
+
+            refreshCards();
+
+        } catch (Exception e) {
+
+            DialogUtils.showError(
+                    "Google Calendar",
+                    "Impossible d'ajouter au calendrier."
+            );
+        }
     }
 }

@@ -13,15 +13,15 @@
         <URL value="@presence.css"/>
     </stylesheets>
 
-    <!-- HEADER -->
+    <!-- ================= HEADER ================= -->
     <top>
-        <VBox spacing="12" styleClass="presence-header">
+        <VBox spacing="15" styleClass="presence-header">
 
             <Label fx:id="lblSeanceTitle"
                    styleClass="presence-title"
                    text="Appel de présence"/>
 
-            <HBox alignment="CENTER_LEFT">
+            <HBox alignment="CENTER_LEFT" spacing="15">
 
                 <Label fx:id="lblStats"
                        styleClass="presence-stats"
@@ -38,34 +38,39 @@
         </VBox>
     </top>
 
-    <!-- TABLE (PLEINE LARGEUR) -->
+    <!-- ================= TABLE ================= -->
     <center>
-        <TableView fx:id="tablePresence"
-                   styleClass="presence-table"
-                   BorderPane.alignment="CENTER">
+        <StackPane style="-fx-padding: 30;">
 
-            <columns>
-                <TableColumn fx:id="colNom"
-                             text="Nom"
-                             prefWidth="200"/>
+            <TableView fx:id="tablePresence"
+                       styleClass="presence-table"
+                       BorderPane.alignment="CENTER">
 
-                <TableColumn fx:id="colEmail"
-                             text="Email"
-                             prefWidth="260"/>
+                <columns>
 
-                <TableColumn fx:id="colStatut"
-                             text="Statut"
-                             prefWidth="180"/>
+                    <!-- Avatar + Nom + Email -->
+                    <TableColumn fx:id="colNom"
+                                 text="Participant"
+                                 prefWidth="350"/>
 
-                <TableColumn fx:id="colAction"
-                             text="Action"
-                             prefWidth="200"/>
-            </columns>
+                    <!-- Statut badge -->
+                    <TableColumn fx:id="colStatut"
+                                 text="Statut"
+                                 prefWidth="180"/>
 
-        </TableView>
+                    <!-- Actions -->
+                    <TableColumn fx:id="colAction"
+                                 text="Action"
+                                 prefWidth="200"/>
+
+                </columns>
+
+            </TableView>
+
+        </StackPane>
     </center>
 
-    <!-- FOOTER -->
+    <!-- ================= FOOTER ================= -->
     <bottom>
         <HBox spacing="15"
               alignment="CENTER_RIGHT"

@@ -1,24 +1,27 @@
 package GUI;
 
-import Entities.Seance;
-import Entities.UserApp;
+import Entities.*;
 import GUI.utils.DialogUtils;
-import Services.SeanceService;
-import Services.UserService;
+import Services.*;
+import Services.*;
 import enums.StatutSeance;
 import exceptions.ValidationException;
-import Entities.Session;
+import Entities.UserApp;
 import enums.RoleUser;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
 import javafx.stage.Stage;
 
+import javax.swing.*;
+import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.List;
 
 public class SeanceFormController {
 
     // ================= UI =================
+    @FXML
+    private Label planningInfoLabel;
     @FXML private Label titleLabel;
     @FXML private Label errorLabel;
 
@@ -38,6 +41,7 @@ public class SeanceFormController {
     private UserApp connectedUser;
     private Seance seance;
     private int planningId;
+
 
     // =================================================
     // INITIALISATION
@@ -140,46 +144,44 @@ public class SeanceFormController {
 
         clearValidationUI();
 
-        String validationError = validateForm();
-
-        if (validationError != null) {
-            showValidationError(validationError);
-            return;
-        }
-
         try {
 
+            // 1️⃣ Validation UI simple
+            String validationError = validateForm();
+            if (validationError != null) {
+                showValidationError(validationError);
+                return;
+            }
+
+            // 2️⃣ Remplir l'objet
             populateSeanceFromFields();
 
+            // 3️⃣ Appel Service (logique métier)
             if (seance.getIdSeance() == 0) {
-
                 seanceService.add(seance);
-
-                DialogUtils.showInfo(
-                        "Succès",
-                        "Séance ajoutée avec succès."
-                );
+                DialogUtils.showInfo("Succès", "Séance ajoutée avec succès.");
             } else {
-
                 seanceService.update(seance);
-
-                DialogUtils.showInfo(
-                        "Succès",
-                        "Séance modifiée avec succès."
-                );
+                synchroniserGoogleAfterUpdate(seance);
+                DialogUtils.showInfo("Succès", "Séance modifiée avec succès.");
             }
 
             close();
 
-        } catch (ValidationException e) {
+        }
+        catch (ValidationException e) {
 
+            // 🔥 Affiche les erreurs venant du Service
             showValidationError(e.getMessage());
 
-        } catch (Exception e) {
-            e.printStackTrace();  // ← Affiche l'erreur complète dans la console
+        }
+        catch (Exception e) {
+
+            e.printStackTrace(); // pour debug
+
             DialogUtils.showError(
                     "Erreur",
-                    "Erreur lors de l'enregistrement : " + e.getMessage()
+                    e.getMessage()   // plus utile que message générique
             );
         }
     }
@@ -339,5 +341,79 @@ public class SeanceFormController {
     private void close() {
         Stage stage = (Stage) datePicker.getScene().getWindow();
         stage.close();
+    }
+    public void setPlanning(int planningId, String nomPlanning) {
+
+        try {
+            this.planningId = planningId;
+
+            PlanningService planningService = new PlanningService();
+            Planning planning = planningService.getById(planningId);
+
+            if (planning == null) {
+                planningInfoLabel.setText("Planning introuvable.");
+                return;
+            }
+
+            planningInfoLabel.setText(
+                    "Période autorisée : "
+                            + planning.getDateDebut()
+                            + " → "
+                            + planning.getDateFin()
+            );
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+    private void synchroniserGoogleAfterUpdate(Seance s) {
+
+        try {
+
+            ReservationSeanceService reservationService =
+                    new ReservationSeanceService();
+
+            List<ReservationSeance> reservations =
+                    reservationService.getReservationsBySeance(
+                            s.getIdSeance()
+                    );
+
+            for (ReservationSeance r : reservations) {
+
+                if (r.getGoogleEventId() == null ||
+                        r.getGoogleEventId().isBlank())
+                    continue;
+
+                LocalDateTime start =
+                        LocalDateTime.of(
+                                s.getDateSeance(),
+                                s.getHeureDebut()
+                        );
+
+                LocalDateTime end =
+                        LocalDateTime.of(
+                                s.getDateSeance(),
+                                s.getHeureFin()
+                        );
+
+                try {
+                    GoogleCalendarService.updateEvent(
+                            r.getIdUser(),
+                            r.getGoogleEventId(),
+                            "Séance : " + s.getNom(),
+                            "Séance EcoAdventure (modifiée)",
+                            start,
+                            end
+                    );
+                } catch (Exception ex) {
+                    System.out.println(
+                            "Erreur sync Google user "
+                                    + r.getIdUser());
+                }
+            }
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 }

@@ -5,13 +5,16 @@ import Entities.Seance;
 import Services.ReservationSeanceService;
 import enums.StatutPresence;
 import javafx.animation.FadeTransition;
-import javafx.beans.property.SimpleStringProperty;
+import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.collections.*;
 import javafx.fxml.FXML;
 import javafx.geometry.Pos;
 import javafx.scene.control.*;
-import javafx.scene.control.cell.*;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
 import javafx.scene.layout.HBox;
+import javafx.scene.layout.VBox;
+import javafx.scene.shape.Circle;
 import javafx.stage.Stage;
 import javafx.util.Duration;
 import GUI.utils.DialogUtils;
@@ -20,6 +23,7 @@ import java.util.List;
 import Entities.Session;
 import Entities.UserApp;
 import enums.RoleUser;
+
 public class PresenceController {
 
     @FXML private Label lblSeanceTitle;
@@ -28,116 +32,87 @@ public class PresenceController {
     @FXML private TableColumn<ReservationSeance, Void> colAction;
     @FXML private TableView<ReservationSeance> tablePresence;
     @FXML private TableColumn<ReservationSeance, String> colNom;
-    @FXML private TableColumn<ReservationSeance, String> colEmail;
     @FXML private TableColumn<ReservationSeance, StatutPresence> colStatut;
 
     private Seance currentSeance;
-    private final ReservationSeanceService service =
-            new ReservationSeanceService();
+    private final ReservationSeanceService service = new ReservationSeanceService();
+    private final ObservableList<ReservationSeance> data = FXCollections.observableArrayList();
 
-    private ObservableList<ReservationSeance> data =
-            FXCollections.observableArrayList();
-
+    // ================= SET SEANCE =================
     public void setSeance(Seance s) {
-        if (s.getDateSeance().isAfter(LocalDate.now())) {
 
-            lblStats.setText("Séance non commencée");
-            lblTaux.setText("Appel indisponible");
-
-            tablePresence.setDisable(true);
-        }
-        lblSeanceTitle.getStyleClass().add("presence-title");
-        lblStats.getStyleClass().add("presence-stats");
-        lblTaux.getStyleClass().add("presence-taux");
         this.currentSeance = s;
 
         lblSeanceTitle.setText("Appel de présence - " + s.getNom());
 
         if (s.getDateSeance().isAfter(LocalDate.now())) {
-            tablePresence.getStyleClass().add("table-disabled");
+            lblStats.setText("Séance non commencée");
+            lblTaux.setText("Appel indisponible");
             tablePresence.setDisable(true);
         }
 
         loadData();
     }
+
+    // ================= INITIALIZE =================
     @FXML
     public void initialize() {
 
         UserApp connectedUser = Session.getConnectedUser();
 
         if (connectedUser == null) {
-            DialogUtils.showError(
-                    "Erreur",
-                    "Utilisateur non connecté."
-            );
+            DialogUtils.showError("Erreur", "Utilisateur non connecté.");
             closeWindow();
             return;
         }
 
         if (connectedUser.getRole() != RoleUser.COACH) {
-            DialogUtils.showError(
-                    "Accès refusé",
-                    "Cette page est réservée aux coachs."
-            );
+            DialogUtils.showError("Accès refusé", "Cette page est réservée aux coachs.");
             closeWindow();
             return;
         }
 
-        tablePresence.setColumnResizePolicy(
-                TableView.CONSTRAINED_RESIZE_POLICY
-        );
-
-        tablePresence.setPlaceholder(
-                new Label("Aucun participant inscrit")
-        );
+        tablePresence.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY);
+        tablePresence.setPlaceholder(new Label("Aucun participant inscrit"));
 
         configureRowStyle();
     }
+
     private void closeWindow() {
-        if (tablePresence != null && tablePresence.getScene() != null) {
-            Stage stage = (Stage) tablePresence.getScene().getWindow();
-            stage.close();
-        }
+        Stage stage = (Stage) tablePresence.getScene().getWindow();
+        stage.close();
     }
+
+    // ================= ROW STYLE =================
     private void configureRowStyle() {
 
         tablePresence.setRowFactory(tv -> new TableRow<>() {
 
             @Override
             protected void updateItem(ReservationSeance item, boolean empty) {
-
                 super.updateItem(item, empty);
 
-                getStyleClass().removeAll(
-                        "row-present",
-                        "row-absent",
-                        "row-nonmarque"
-                );
+                getStyleClass().removeAll("row-present", "row-absent", "row-nonmarque");
 
                 if (item == null || empty) return;
 
                 switch (item.getStatutPresence()) {
-                    case PRESENT ->
-                            getStyleClass().add("row-present");
-                    case ABSENT ->
-                            getStyleClass().add("row-absent");
-                    case NON_MARQUE ->
-                            getStyleClass().add("row-nonmarque");
+                    case PRESENT -> getStyleClass().add("row-present");
+                    case ABSENT -> getStyleClass().add("row-absent");
+                    case NON_MARQUE -> getStyleClass().add("row-nonmarque");
                 }
             }
         });
     }
 
+    // ================= LOAD DATA =================
     private void loadData() {
 
         List<ReservationSeance> list =
-                service.getReservationsBySeance(
-                        currentSeance.getIdSeance()
-                );
+                service.getReservationsBySeance(currentSeance.getIdSeance());
 
         data.setAll(list);
 
-        // 🔥 Sécuriser NON_MARQUE
         for (ReservationSeance r : data) {
             if (r.getStatutPresence() == null) {
                 r.setStatutPresence(StatutPresence.NON_MARQUE);
@@ -146,25 +121,88 @@ public class PresenceController {
 
         tablePresence.setItems(data);
 
-        // ================= NOM =================
-        colNom.setCellValueFactory(c ->
-                new SimpleStringProperty(
-                        c.getValue().getUser() != null
-                                ? c.getValue().getUser().getNom()
-                                : "Inconnu"
-                )
-        );
+        configureUserColumn();
+        configureStatutColumn();
+        configureActionColumn();
 
-        // ================= EMAIL =================
-        colEmail.setCellValueFactory(c ->
-                new SimpleStringProperty(
-                        c.getValue().getUser() != null
-                                ? c.getValue().getUser().getEmail()
-                                : "-"
-                )
-        );
+        updateStats();
+    }
 
-        // ================= STATUT BADGE =================
+    // ================= USER COLUMN (Avatar + Nom + Email) =================
+    private void configureUserColumn() {
+
+        colNom.setCellValueFactory(cellData ->
+                new javafx.beans.property.SimpleStringProperty(""));
+
+        colNom.setCellFactory(col -> new TableCell<>() {
+
+            private final ImageView avatar = new ImageView();
+            private final Label name = new Label();
+            private final Label email = new Label();
+            private final VBox userInfo = new VBox(2);
+            private final HBox container = new HBox(12);
+
+            {
+                avatar.setFitWidth(40);
+                avatar.setFitHeight(40);
+
+                Circle clip = new Circle(20, 20, 20);
+                avatar.setClip(clip);
+
+                avatar.getStyleClass().add("avatar-image");
+                name.getStyleClass().add("user-name");
+                email.getStyleClass().add("user-email");
+
+                userInfo.getChildren().addAll(name, email);
+                container.getChildren().addAll(avatar, userInfo);
+                container.setAlignment(Pos.CENTER_LEFT);
+            }
+
+            @Override
+            protected void updateItem(String item, boolean empty) {
+                super.updateItem(item, empty);
+
+                if (empty || getIndex() >= data.size()) {
+                    setGraphic(null);
+                    return;
+                }
+
+                ReservationSeance r = data.get(getIndex());
+
+                if (r == null || r.getUser() == null) {
+                    setGraphic(null);
+                    return;
+                }
+
+                UserApp user = r.getUser();
+
+                name.setText(user.getNom());
+                email.setText(user.getEmail());
+
+                try {
+                    if (user.getImage_url() != null && !user.getImage_url().isEmpty()) {
+                        avatar.setImage(new Image(user.getImage_url(), true));
+                    } else {
+                        avatar.setImage(new Image(
+                                getClass().getResource("/gui/default-user.png").toExternalForm()
+                        ));
+                    }
+                } catch (Exception e) {
+                    avatar.setImage(new Image(
+                            getClass().getResource("/gui/default-user.png").toExternalForm()
+                    ));
+                }
+
+                setGraphic(container);
+            }
+        });
+    }
+
+    // ================= STATUT COLUMN =================
+    private void configureStatutColumn() {
+
+        colStatut.setCellValueFactory(new PropertyValueFactory<>("statutPresence"));
+
         colStatut.setCellFactory(col -> new TableCell<>() {
 
             private final Label badge = new Label();
@@ -183,10 +221,7 @@ public class PresenceController {
                 }
 
                 badge.getStyleClass().removeAll(
-                        "badge-present",
-                        "badge-absent",
-                        "badge-neutral"
-                );
+                        "badge-present", "badge-absent", "badge-neutral");
 
                 switch (statut) {
                     case PRESENT -> {
@@ -206,12 +241,11 @@ public class PresenceController {
                 setGraphic(badge);
             }
         });
+    }
 
-        colStatut.setCellValueFactory(
-                new PropertyValueFactory<>("statutPresence")
-        );
+    // ================= ACTION COLUMN =================
+    private void configureActionColumn() {
 
-        // ================= ACTION BUTTONS =================
         colAction.setCellFactory(col -> new TableCell<>() {
 
             private final Button btnPresent = new Button("✔");
@@ -224,12 +258,12 @@ public class PresenceController {
                 pane.setAlignment(Pos.CENTER);
 
                 btnPresent.setOnAction(e -> {
-                    ReservationSeance r = getTableView().getItems().get(getIndex());
+                    ReservationSeance r = data.get(getIndex());
                     updatePresence(r, StatutPresence.PRESENT);
                 });
 
                 btnAbsent.setOnAction(e -> {
-                    ReservationSeance r = getTableView().getItems().get(getIndex());
+                    ReservationSeance r = data.get(getIndex());
                     updatePresence(r, StatutPresence.ABSENT);
                 });
             }
@@ -238,28 +272,22 @@ public class PresenceController {
             protected void updateItem(Void item, boolean empty) {
                 super.updateItem(item, empty);
 
-                if (empty) {
+                if (empty || getIndex() >= data.size()) {
                     setGraphic(null);
                     return;
                 }
 
-                ReservationSeance r =
-                        getTableView().getItems().get(getIndex());
+                ReservationSeance r = data.get(getIndex());
 
-                btnPresent.setDisable(
-                        r.getStatutPresence() == StatutPresence.PRESENT
-                );
-
-                btnAbsent.setDisable(
-                        r.getStatutPresence() == StatutPresence.ABSENT
-                );
+                btnPresent.setDisable(r.getStatutPresence() == StatutPresence.PRESENT);
+                btnAbsent.setDisable(r.getStatutPresence() == StatutPresence.ABSENT);
 
                 setGraphic(pane);
             }
         });
-
-        updateStats();
     }
+
+    // ================= UPDATE STATS =================
     private void updateStats() {
 
         long present = data.stream()
@@ -275,18 +303,51 @@ public class PresenceController {
         double taux = total == 0 ? 0 :
                 (double) present / total * 100;
 
-        lblStats.setText(
-                "Présents: " + present +
-                        " | Absents: " + absent +
-                        " | Total: " + total
-        );
+        lblStats.setText("Présents: " + present +
+                " | Absents: " + absent +
+                " | Total: " + total);
 
-        lblTaux.setText(
-                "Taux de présence: "
-                        + String.format("%.1f %%", taux)
-        );
+        lblTaux.setText("Taux de présence: " +
+                String.format("%.1f %%", taux));
     }
 
+    // ================= UPDATE PRESENCE =================
+    private void updatePresence(ReservationSeance r, StatutPresence statut) {
+
+        try {
+            r.setStatutPresence(statut);
+            service.updatePresence(r.getIdReservation(), statut);
+
+            tablePresence.refresh();
+            updateStats();
+            animateSingleRow(r);
+
+        } catch (Exception e) {
+            DialogUtils.showError("Erreur",
+                    "Impossible de mettre à jour la présence.");
+        }
+    }
+
+    private void animateSingleRow(ReservationSeance r) {
+
+        tablePresence.lookupAll(".table-row-cell").forEach(node -> {
+
+            TableRow<ReservationSeance> row =
+                    (TableRow<ReservationSeance>) node;
+
+            if (row.getItem() == r) {
+
+                FadeTransition ft =
+                        new FadeTransition(Duration.millis(250), row);
+
+                ft.setFromValue(0.5);
+                ft.setToValue(1);
+                ft.play();
+            }
+        });
+    }
+
+    // ================= BUTTONS =================
     @FXML
     private void handleSave() {
 
@@ -298,83 +359,26 @@ public class PresenceController {
         }
 
         updateStats();
-        DialogUtils.showInfo(
-                "Succès",
-                "Présences sauvegardées avec succès."
-        );
+        DialogUtils.showInfo("Succès",
+                "Présences sauvegardées avec succès.");
     }
 
     @FXML
     private void handleClose() {
-
-        Stage stage = (Stage) tablePresence.getScene().getWindow();
-        stage.close();
+        closeWindow();
     }
-    private void updatePresence(ReservationSeance r, StatutPresence statut) {
 
-        try {
-
-            r.setStatutPresence(statut);
-
-            service.updatePresence(
-                    r.getIdReservation(),
-                    statut
-            );
-
-            tablePresence.refresh();
-            updateStats();
-            animateSingleRow(r);
-
-        } catch (Exception e) {
-
-            DialogUtils.showError(
-                    "Erreur",
-                    "Impossible de mettre à jour la présence."
-            );
-
-            e.printStackTrace();
-        }
-    }
-    private void animateSingleRow(ReservationSeance r) {
-
-        for (TableRow<ReservationSeance> row : tablePresence.lookupAll(".table-row-cell")
-                .stream()
-                .map(n -> (TableRow<ReservationSeance>) n)
-                .toList()) {
-
-            if (row.getItem() == r) {
-
-                FadeTransition ft = new FadeTransition(
-                        Duration.millis(250),
-                        row
-                );
-
-                ft.setFromValue(0.5);
-                ft.setToValue(1);
-                ft.play();
-
-                break;
-            }
-        }
-    }
     @FXML
     private void handleCloturer() {
 
-
         boolean confirmed = DialogUtils.showConfirmation(
                 "Clôturer séance",
-                "Clôturer définitivement cette séance ?"
-        );
+                "Clôturer définitivement cette séance ?");
 
         if (confirmed) {
-
             tablePresence.setDisable(true);
-
-            DialogUtils.showInfo(
-                    "Séance clôturée",
-                    "La séance a été clôturée avec succès."
-            );
+            DialogUtils.showInfo("Séance clôturée",
+                    "La séance a été clôturée avec succès.");
         }
-        }
-
     }
+}

@@ -2,18 +2,20 @@
 /* MAIN CONTAINER */
 /* ============================= */
 .main-container {
-    -fx-background-color: linear-gradient(to bottom right, #F7F9F8, #EEF2F1);
+    -fx-background-color: linear-gradient(to bottom right, #F5F9F8, #EDF2F0);
     -fx-padding: 40;
+    -fx-font-family: 'Segoe UI', 'Helvetica Neue', Arial, sans-serif;
 }
 
 /* ============================= */
 /* TITLE */
 /* ============================= */
 .title-label {
-    -fx-font-size: 28px;
-    -fx-font-weight: 800;
-    -fx-text-fill: #123C33;
-    -fx-padding: 0 0 10 0;
+    -fx-font-size: 32px;
+    -fx-font-weight: 700;
+    -fx-text-fill: #0F3D35;
+    -fx-padding: 0 0 20 0;
+    -fx-letter-spacing: 0.5px;
 }
 
 /* ============================= */
@@ -22,40 +24,49 @@
 .card {
     -fx-background-color: white;
     -fx-padding: 25;
-    -fx-background-radius: 20;
-    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.08), 15, 0, 0, 6);
-    -fx-transition: all 0.3s ease;
+    -fx-background-radius: 16;
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.08), 12, 0, 0, 5);
+    -fx-border-color: #F0F4F3;
+    -fx-border-radius: 16;
+    -fx-border-width: 1;
 }
 
 .card:hover {
-    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.15), 25, 0, 0, 10);
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.12), 20, 0, 0, 8);
 }
 
 /* ============================= */
 /* SECTION TITLE */
 /* ============================= */
 .section-title {
-    -fx-font-size: 17px;
-    -fx-font-weight: 700;
+    -fx-font-size: 16px;
+    -fx-font-weight: 600;
     -fx-text-fill: #143D30;
+    -fx-padding: 0 0 5 0;
+    -fx-letter-spacing: 0.3px;
 }
 
 /* ============================= */
 /* TEXT FIELDS */
 /* ============================= */
 .text-field {
-    -fx-background-color: #F9FBFA;
-    -fx-background-radius: 12;
-    -fx-border-radius: 12;
-    -fx-border-color: #E2E8F0;
+    -fx-background-color: #FAFBFA;
+    -fx-background-radius: 10;
+    -fx-border-radius: 10;
+    -fx-border-color: #E5ECEB;
+    -fx-border-width: 1.5;
     -fx-padding: 12;
     -fx-font-size: 14px;
+    -fx-font-family: 'Segoe UI', Arial;
     -fx-prompt-text-fill: #9CA3AF;
+    -fx-text-fill: #1F2937;
 }
 
 .text-field:focused {
     -fx-border-color: #16A34A;
     -fx-background-color: white;
+    -fx-border-width: 2;
+    -fx-effect: dropshadow(gaussian, rgba(22, 163, 74, 0.1), 8, 0, 0, 2);
 }
 
 /* ============================= */
@@ -65,9 +76,11 @@
     -fx-background-color: #F9FBFA;
     -fx-background-radius: 12;
     -fx-border-radius: 12;
-    -fx-border-color: #E5E7EB;
+    -fx-border-color: #E5ECEB;
+    -fx-border-width: 1;
     -fx-padding: 15;
     -fx-font-size: 14px;
+    -fx-text-fill: #1F2937;
 }
 
 /* ============================= */
@@ -77,8 +90,22 @@
     -fx-font-size: 14px;
     -fx-font-weight: 600;
     -fx-background-radius: 12;
-    -fx-padding: 8 18 8 18;
+    -fx-padding: 10 20 10 20;
     -fx-cursor: hand;
+    -fx-text-fill: white;
+    -fx-border-width: 0;
+    -fx-focus-color: transparent;
+    -fx-faint-focus-color: transparent;
+}
+
+.button:hover {
+    -fx-scale-x: 1.02;
+    -fx-scale-y: 1.02;
+}
+
+.button:pressed {
+    -fx-scale-x: 0.98;
+    -fx-scale-y: 0.98;
 }
 
 /* Primary */
@@ -89,6 +116,7 @@
 
 .primary-btn:hover {
     -fx-background-color: #1F5C47;
+    -fx-effect: dropshadow(gaussian, rgba(20, 61, 48, 0.3), 10, 0, 0, 4);
 }
 
 /* Success */
@@ -99,6 +127,7 @@
 
 .success-btn:hover {
     -fx-background-color: #15803D;
+    -fx-effect: dropshadow(gaussian, rgba(22, 163, 74, 0.3), 10, 0, 0, 4);
 }
 
 /* Secondary */
@@ -109,20 +138,24 @@
 
 .secondary-btn:hover {
     -fx-background-color: #D1D5DB;
+    -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.1), 8, 0, 0, 3);
 }
+
 
 /* ============================= */
 /* IMC RESULT */
 /* ============================= */
 .imc-result {
-    -fx-font-size: 20px;
-    -fx-font-weight: bold;
-    -fx-text-fill: #123C33;
+    -fx-font-size: 24px;
+    -fx-font-weight: 700;
+    -fx-text-fill: #0F3D35;
+    -fx-padding: 10 0 0 0;
 }
 
 .imc-remark {
     -fx-font-size: 14px;
-    -fx-text-fill: #555;
+    -fx-text-fill: #6B7280;
+    -fx-padding: 5 0 0 0;
 }
 
 /* ============================= */
@@ -132,53 +165,26 @@
     -fx-background-color: transparent;
     -fx-text-fill: #14532d;
     -fx-font-size: 14px;
-    -fx-font-weight: bold;
+    -fx-font-weight: 600;
+    -fx-padding: 8 12 8 12;
+    -fx-cursor: hand;
 }
 
-.btn-retour:hover {
-    -fx-underline: true;
-}
-.button:hover {
-    -fx-scale-x: 1.03;
-    -fx-scale-y: 1.03;
-}
 /* ============================= */
 /* RESULT DESIGN PREMIUM */
 /* ============================= */
 
 .result-calories {
-    -fx-font-size: 30px;
+    -fx-font-size: 48px;
     -fx-font-weight: 800;
     -fx-text-fill: #16A34A;
+    -fx-padding: 10 0 10 0;
 }
 
-.macro-box {
-    -fx-background-color: #F3F4F6;
-    -fx-padding: 15;
-    -fx-background-radius: 16;
-    -fx-min-width: 100;
-}
-
-.macro-box:hover {
-    -fx-background-color: #E5E7EB;
-}
-
-.macro-label {
-    -fx-font-size: 12px;
-    -fx-text-fill: #6B7280;
-}
 .result-message {
     -fx-font-size: 14px;
-    -fx-text-fill: #555;
-}
-/* ============================= */
-/* CALORIES */
-/* ============================= */
-
-.result-calories {
-    -fx-font-size: 32px;
-    -fx-font-weight: 800;
-    -fx-text-fill: #16A34A;
+    -fx-text-fill: #6B7280;
+    -fx-padding: 10 0 0 0;
 }
 
 /* ============================= */
@@ -192,16 +198,24 @@
     -fx-min-width: 110;
     -fx-alignment: center;
     -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.06), 10, 0, 0, 4);
+    -fx-cursor: hand;
+}
+
+.macro-card:hover {
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.12), 15, 0, 0, 6);
+    -fx-scale-x: 1.05;
+    -fx-scale-y: 1.05;
 }
 
 .macro-value {
-    -fx-font-size: 18px;
+    -fx-font-size: 22px;
     -fx-font-weight: 700;
 }
 
 .macro-title {
     -fx-font-size: 12px;
     -fx-text-fill: #6B7280;
+    -fx-padding: 5 0 0 0;
 }
 
 /* ============================= */
@@ -220,11 +234,3 @@
     -fx-text-fill: #10B981; /* vert */
 }
 
-/* ============================= */
-/* MESSAGE */
-/* ============================= */
-
-.result-message {
-    -fx-font-size: 14px;
-    -fx-text-fill: #555;
-}

@@ -10,8 +10,8 @@
       spacing="22"
       alignment="TOP_CENTER"
       styleClass="form-modal"
-      prefWidth="450"
-      prefHeight="380">
+      prefWidth="500"
+      prefHeight="520">
 
     <!-- ===== HEADER ===== -->
     <HBox alignment="CENTER_LEFT"
@@ -34,13 +34,37 @@
           alignment="CENTER_LEFT"
           style="-fx-padding: 5 10 0 10;">
 
-        <Label text="Période"
+        <!-- TITRE -->
+        <Label text="Titre"
                styleClass="form-label"/>
 
-        <TextField fx:id="periodeField"
-                   promptText="Ex : Mars 2026"
+        <TextField fx:id="titreField"
+                   promptText="Ex : Planning Mars 2026"
                    prefHeight="38"/>
 
+        <!-- DATE DEBUT -->
+        <Label text="Date de début"
+               styleClass="form-label"/>
+
+        <DatePicker fx:id="dateDebutPicker"
+                    prefHeight="38"/>
+
+        <!-- DATE FIN -->
+        <Label text="Date de fin"
+               styleClass="form-label"/>
+
+        <DatePicker fx:id="dateFinPicker"
+                    prefHeight="38"/>
+
+        <!-- STATUT -->
+        <Label text="Statut"
+               styleClass="form-label"/>
+
+        <ComboBox fx:id="statutCombo"
+                  prefHeight="38"
+                  promptText="Choisir un statut"/>
+
+        <!-- DESCRIPTION -->
         <Label text="Description"
                styleClass="form-label"/>
 

@@ -3,56 +3,42 @@ package GUI;
 import Entities.Planning;
 import Entities.Seance;
 import Entities.UserApp;
-import Entities.Session;
-
 import GUI.utils.DialogUtils;
 import GUI.utils.SceneUtils;
-
 import Services.PlanningService;
 import Services.ReservationSeanceService;
 import Services.SeanceService;
-
+import Services.UserService;
 import com.itextpdf.text.*;
 import com.itextpdf.text.Font;
 import com.itextpdf.text.Image;
 import com.itextpdf.text.Rectangle;
 import com.itextpdf.text.pdf.*;
-import com.itextpdf.text.BaseColor;
-import com.itextpdf.text.Document;
-import com.itextpdf.text.Element;
-import com.itextpdf.text.Font;
-import com.itextpdf.text.Image;
-import com.itextpdf.text.PageSize;
-import com.itextpdf.text.Paragraph;
-import com.itextpdf.text.Phrase;
-import com.itextpdf.text.Rectangle;
-
-import com.itextpdf.text.pdf.ColumnText;
-import com.itextpdf.text.pdf.PdfContentByte;
-import com.itextpdf.text.pdf.PdfPCell;
-import com.itextpdf.text.pdf.PdfPTable;
-import com.itextpdf.text.pdf.PdfPageEventHelper;
-import com.itextpdf.text.pdf.PdfWriter;
-
 import enums.RoleUser;
 import enums.StatutPresence;
 import enums.StatutSeance;
-
+import Entities.Session;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.geometry.Insets;
-import javafx.geometry.Pos;
 import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
+import javafx.scene.control.Label;
+import javafx.scene.control.TextField;
 import javafx.scene.layout.*;
+import javafx.geometry.Pos;
 import javafx.scene.shape.Circle;
+
+import javafx.scene.control.Button;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
-import javafx.scene.control.TextField;
-import java.awt.Desktop;
+import Entities.Session;
+import Entities.UserApp;
+import javax.management.relation.Role;
+import java.awt.*;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.InputStream;
@@ -75,12 +61,11 @@ public class CoachDashboardController {
     // ================= SERVICES =================
     private final SeanceService seanceService = new SeanceService();
     private final PlanningService planningService = new PlanningService();
-    private final ReservationSeanceService reservationService = new ReservationSeanceService();
 
     private final Map<Integer, String> planningMap = new HashMap<>();
 
     private UserApp connectedCoach;
-    private int coachId;
+    private int coachId; // ⚠️ login plus tard
 
     private List<Seance> masterData;
 
@@ -97,8 +82,12 @@ public class CoachDashboardController {
             return;
         }
 
+        // ✅ Vérification du rôle ICI
         if (connectedCoach.getRole() != RoleUser.COACH) {
-            DialogUtils.showError("Accès refusé", "Cette page est réservée aux coachs.");
+            DialogUtils.showError(
+                    "Accès refusé",
+                    "Cette page est réservée aux coachs."
+            );
             return;
         }
 
@@ -113,9 +102,12 @@ public class CoachDashboardController {
         loadData();
     }
 
+    // =================================================
+    // CONFIG FILTER
+    // =================================================
     private void configureFilters() {
 
-        statutFilter.getItems().setAll(
+        statutFilter.getItems().addAll(
                 "Tous",
                 "PLANIFIEE",
                 "TERMINEE",
@@ -129,82 +121,124 @@ public class CoachDashboardController {
         searchField.setPromptText("🔍 Rechercher une séance...");
     }
 
+    // =================================================
+    // LOAD DATA
+    // =================================================
     private void loadData() {
+
         try {
+
             masterData = seanceService.getByCoach(coachId);
+
             updateStats(masterData);
             refreshCards();
+
         } catch (Exception e) {
-            e.printStackTrace();
-            DialogUtils.showError("Erreur", "Impossible de charger les séances.");
+
+            DialogUtils.showError(
+                    "Erreur",
+                    "Impossible de charger les séances."
+            );
         }
     }
 
     private void loadPlannings() {
+
         try {
+
             List<Planning> list = planningService.getAll();
-            planningMap.clear();
+
             for (Planning p : list) {
-                planningMap.put(p.getIdPlanning(), p.getPeriode());
+                planningMap.put(
+                        p.getIdPlanning(),
+                        p.getPeriode()
+                );
             }
+
         } catch (Exception e) {
-            e.printStackTrace();
-            DialogUtils.showError("Erreur", "Impossible de charger les plannings.");
+
+            DialogUtils.showError(
+                    "Erreur",
+                    "Impossible de charger les plannings."
+            );
         }
     }
 
     // =================================================
-    // CARDS
-    // =================================================
+    // CARD SYSTEM (PRO VERSION CLEAN)
     private void refreshCards() {
 
         cardContainer.getChildren().clear();
-        if (masterData == null) return;
 
-        String search = (searchField.getText() == null) ? "" : searchField.getText().toLowerCase();
+        if (masterData == null || masterData.isEmpty()) {
+            Label empty = new Label("📭 Aucune séance trouvée.");
+            empty.getStyleClass().add("empty-state");
+            cardContainer.getChildren().add(empty);
+            return;
+        }
+
+        String search = searchField.getText() == null ?
+                "" : searchField.getText().toLowerCase();
+
         String statutSelected = statutFilter.getValue();
 
-        for (Seance s : masterData) {
+        List<Seance> filtered = masterData.stream()
+                .filter(s ->
+                        s.getNom().toLowerCase().contains(search)
+                                || s.getDateSeance().toString().contains(search))
+                .filter(s ->
+                        statutSelected.equals("Tous")
+                                || s.getStatutSeance().name().equals(statutSelected))
+                .toList();
 
-            boolean matchesSearch =
-                    (s.getNom() != null && s.getNom().toLowerCase().contains(search))
-                            || (s.getDateSeance() != null && s.getDateSeance().toString().contains(search));
+        if (filtered.isEmpty()) {
+            Label empty = new Label("🔎 Aucun résultat trouvé.");
+            empty.getStyleClass().add("empty-state");
+            cardContainer.getChildren().add(empty);
+            return;
+        }
 
-            boolean matchesStatut =
-                    "Tous".equals(statutSelected)
-                            || (s.getStatutSeance() != null && s.getStatutSeance().name().equals(statutSelected));
+        // 🔥 SECTION PROCHAINE SEANCE
+        Seance prochaine = filtered.stream()
+                .filter(s -> s.getDateSeance().isAfter(LocalDate.now())
+                        && s.getStatutSeance() == StatutSeance.PLANIFIEE)
+                .sorted((a, b) -> a.getDateSeance().compareTo(b.getDateSeance()))
+                .findFirst()
+                .orElse(null);
 
-            if (matchesSearch && matchesStatut) {
-                cardContainer.getChildren().add(createCard(s));
-            }
+        if (prochaine != null) {
+            VBox nextCard = createNextSeanceCard(prochaine);
+            cardContainer.getChildren().add(nextCard);
+        }
+
+        // 🔥 AUTRES CARTES
+        for (Seance s : filtered) {
+            cardContainer.getChildren().add(createCardModern(s));
         }
     }
+    private VBox createCardModern(Seance s) {
 
-    private VBox createCard(Seance s) {
-
-        VBox card = new VBox(16);
-        card.getStyleClass().add("coach-card-modern");
-        card.setPrefWidth(300);
-        card.setPadding(new Insets(18));
+        VBox card = new VBox(18);
+        card.getStyleClass().add("coach-card-v2");
+        card.setPrefWidth(330);
+        card.setPadding(new Insets(22));
 
         // ================= HEADER =================
         HBox header = new HBox();
         header.setAlignment(Pos.CENTER_LEFT);
 
         Label title = new Label(s.getNom());
-        title.getStyleClass().add("card-title-modern");
+        title.getStyleClass().add("card-title-v2");
 
         Region spacer = new Region();
         HBox.setHgrow(spacer, Priority.ALWAYS);
 
-        Circle statusDot = new Circle(6);
+        Circle statusDot = new Circle(5);
 
-        if (s.getStatutSeance() != null) {
-            switch (s.getStatutSeance()) {
-                case PLANIFIEE -> statusDot.setStyle("-fx-fill: #1565c0;");
-                case TERMINEE -> statusDot.setStyle("-fx-fill: #43a047;");
-                case ANNULEE -> statusDot.setStyle("-fx-fill: #e53935;");
-            }
+        switch (s.getStatutSeance()) {
+            case PLANIFIEE -> statusDot.getStyleClass().add("dot-planifiee");
+            case TERMINEE -> statusDot.getStyleClass().add("dot-terminee");
+            case ANNULEE -> statusDot.getStyleClass().add("dot-annulee");
         }
 
         header.getChildren().addAll(title, spacer, statusDot);
@@ -212,92 +246,129 @@ public class CoachDashboardController {
         // ================= INFO =================
         VBox infoBox = new VBox(6);
 
-        Label dateLabel = new Label("📅  " + s.getDateSeance());
-        dateLabel.getStyleClass().add("card-info-modern");
+        Label dateLabel = new Label("📅 " + s.getDateSeance());
+        dateLabel.getStyleClass().add("card-info-v2");
 
-        Label timeLabel = new Label("⏰  " + s.getHeureDebut() + " - " + s.getHeureFin());
-        timeLabel.getStyleClass().add("card-info-modern");
+        Label timeLabel = new Label("⏰ "
+                + s.getHeureDebut() + " - " + s.getHeureFin());
+        timeLabel.getStyleClass().add("card-info-v2");
 
-        Label planningLabel = new Label("📁  " + planningMap.getOrDefault(s.getIdPlanning(), "Inconnu"));
-        planningLabel.getStyleClass().add("card-info-modern");
+        long days = java.time.temporal.ChronoUnit.DAYS
+                .between(LocalDate.now(), s.getDateSeance());
 
-        infoBox.getChildren().addAll(dateLabel, timeLabel, planningLabel);
+        if (days >= 0) {
+            Label countdown = new Label(
+                    days == 0 ? "🚀 Aujourd'hui"
+                            : days == 1 ? "⏳ Demain"
+                            : "⏳ Dans " + days + " jours"
+            );
+            countdown.getStyleClass().add("countdown-v2");
+            infoBox.getChildren().add(countdown);
+        }
+
+        infoBox.getChildren().addAll(dateLabel, timeLabel);
 
         // ================= PARTICIPANTS =================
         int reserved = 0;
         try {
+            ReservationSeanceService reservationService =
+                    new ReservationSeanceService();
             reserved = reservationService.countReservations(s.getIdSeance());
         } catch (Exception ignored) {}
 
         int capacite = s.getCapacite();
-        double taux = (capacite == 0) ? 0 : (double) reserved / capacite;
+        double taux = capacite == 0 ? 0 :
+                (double) reserved / capacite;
 
         ProgressBar progressBar = new ProgressBar(taux);
-        progressBar.setPrefHeight(8);
+        progressBar.setPrefHeight(6);
         progressBar.setMaxWidth(Double.MAX_VALUE);
-        progressBar.getStyleClass().add("progress-modern");
+        progressBar.getStyleClass().add("progress-v2");
 
-        Label participantsLabel = new Label(reserved + " / " + capacite + " participants");
-        participantsLabel.getStyleClass().add("participants-label");
+        Label participantsLabel = new Label(
+                reserved + " / " + capacite +
+                        " participants (" +
+                        String.format("%.0f%%", taux * 100) + ")"
+        );
 
-        // ================= BADGE =================
-        Label badge = new Label(s.getStatutSeance() != null ? s.getStatutSeance().name() : "INCONNU");
-        badge.getStyleClass().add("badge-modern");
+        participantsLabel.getStyleClass().add("participants-v2");
 
-        if (s.getStatutSeance() != null) {
-            switch (s.getStatutSeance()) {
-                case PLANIFIEE -> badge.getStyleClass().add("badge-blue-modern");
-                case TERMINEE -> badge.getStyleClass().add("badge-grey-modern");
-                case ANNULEE -> badge.getStyleClass().add("badge-red-modern");
-            }
-        }
+        if (taux >= 0.7)
+            participantsLabel.getStyleClass().add("participants-high");
+        else if (taux >= 0.3)
+            participantsLabel.getStyleClass().add("participants-medium");
+        else
+            participantsLabel.getStyleClass().add("participants-low");
 
-        // ================= ACTIONS =================
+        // ================= ACTIONS PRESENCE =================
+// ================= ACTIONS =================
         HBox actions = new HBox(10);
-        actions.setAlignment(Pos.CENTER_LEFT);
 
-        boolean isFuture = s.getDateSeance() != null && s.getDateSeance().isAfter(LocalDate.now());
+        Button btnPresence = new Button();
+        btnPresence.setPrefWidth(200);
+
+        LocalDate today = LocalDate.now();
 
         if (s.getStatutSeance() == StatutSeance.ANNULEE) {
-            Label info = new Label("Séance annulée");
-            info.setStyle("-fx-text-fill: #999;");
-            actions.getChildren().add(info);
-        } else if (isFuture) {
-            Button btnPresence = new Button("Appel (indisponible)");
+
+            btnPresence.setText("Séance annulée");
             btnPresence.setDisable(true);
-            btnPresence.getStyleClass().add("btn-disabled");
-            actions.getChildren().add(btnPresence);
-        } else {
-            Button btnPresence = new Button("Faire l'appel");
-            btnPresence.getStyleClass().add("btn-presence-modern");
+            btnPresence.getStyleClass().add("presence-cancelled");
+
+        }
+        else if (s.getDateSeance().isAfter(today)) {
+
+            // 🟡 Avant le jour J
+            btnPresence.setText("Disponible le jour J");
+            btnPresence.setDisable(true);
+            btnPresence.getStyleClass().add("presence-before");
+
+        }
+        else if (s.getDateSeance().isBefore(today)) {
+
+            // 🔵 Après
+            btnPresence.setText("Appel clôturé");
+            btnPresence.setDisable(true);
+            btnPresence.getStyleClass().add("presence-after");
+
+        }
+        else {
+
+            // 🟢 Aujourd’hui
+            btnPresence.setText("Faire l'appel");
+            btnPresence.setDisable(false);
+            btnPresence.getStyleClass().add("presence-active");
+
             btnPresence.setOnAction(e -> ouvrirFenetrePresence(s));
-            actions.getChildren().add(btnPresence);
         }
 
-        VBox footer = new VBox(8);
-        footer.getChildren().addAll(progressBar, participantsLabel, badge, actions);
+        actions.getChildren().add(btnPresence);
 
-        card.getChildren().addAll(header, infoBox, footer);
+        card.getChildren().addAll(
+                header,
+                infoBox,
+                progressBar,
+                participantsLabel,
+                actions
+        );
+
+        card.setOnMouseEntered(e ->
+                card.getStyleClass().add("card-hover-v2"));
+
+        card.setOnMouseExited(e ->
+                card.getStyleClass().remove("card-hover-v2"));
 
         return card;
     }
-
     // =================================================
     // STATS
     // =================================================
     private void updateStats(List<Seance> list) {
 
-        if (list == null) {
-            lblTotal.setText("0");
-            lblToday.setText("0");
-            lblTerminee.setText("0");
-            return;
-        }
-
         lblTotal.setText(String.valueOf(list.size()));
 
         long today = list.stream()
-                .filter(s -> s.getDateSeance() != null && s.getDateSeance().equals(LocalDate.now()))
+                .filter(s -> s.getDateSeance().equals(LocalDate.now()))
                 .count();
 
         lblToday.setText(String.valueOf(today));
@@ -314,50 +385,61 @@ public class CoachDashboardController {
     // =================================================
     @FXML
     private void handleRetour(ActionEvent event) {
-        SceneUtils.loadScene("/GUI/MainLayoutcoach.fxml", (Node) event.getSource());
-    }
 
+        SceneUtils.loadScene(
+                "/gui/MainLayoutcoach.fxml",
+                (Node) event.getSource()
+        );
+    }
     @FXML
     private void handleExportPDF() {
 
         try {
+
             List<Seance> seances = seanceService.getByCoach(coachId);
 
-            if (seances == null || seances.isEmpty()) {
-                DialogUtils.showWarning("Export PDF", "Aucune séance à exporter.");
+            if (seances.isEmpty()) {
+                DialogUtils.showWarning(
+                        "Export PDF",
+                        "Aucune séance à exporter."
+                );
                 return;
             }
 
             String filePath = "seances_coach.pdf";
+
             generatePDF(seances, filePath);
 
-            DialogUtils.showInfo("Succès", "PDF généré avec succès !");
+            DialogUtils.showInfo(
+                    "Succès",
+                    "PDF généré avec succès !"
+            );
 
-            // ✅ safer open
-            try {
-                if (Desktop.isDesktopSupported() && Desktop.getDesktop().isSupported(Desktop.Action.OPEN)) {
-                    Desktop.getDesktop().open(new File(filePath));
-                } else {
-                    DialogUtils.showInfo("Info", "PDF généré: " + filePath);
-                }
-            } catch (Exception ex) {
-                DialogUtils.showInfo("Info", "PDF généré: " + filePath);
-            }
+            Desktop.getDesktop().open(
+                    new File(filePath)
+            );
 
         } catch (Exception e) {
             e.printStackTrace();
-            DialogUtils.showError("Erreur", "Impossible de générer le PDF.");
+            DialogUtils.showError(
+                    "Erreur",
+                    "Impossible de générer le PDF."
+            );
         }
     }
-
     private void generatePDF(List<Seance> seances, String filePath) throws Exception {
 
         Document document = new Document(PageSize.A4, 40, 40, 110, 60);
 
-        PdfWriter writer = PdfWriter.getInstance(document, new FileOutputStream(filePath));
+        PdfWriter writer = PdfWriter.getInstance(
+                document,
+                new FileOutputStream(filePath)
+        );
+
         writer.setPageEvent(new PdfPageEventHelperCustom());
         document.open();
 
+        // ================= HEADER =================
         PdfPTable header = new PdfPTable(1);
         header.setWidthPercentage(100);
 
@@ -372,31 +454,42 @@ public class CoachDashboardController {
         header.addCell(headerCell);
 
         document.add(header);
-
+        // ================= COACH + DATE =================
         UserApp coach = Session.getConnectedUser();
 
         String coachName = "Inconnu";
-        if (coach != null) coachName = coach.getNom() + " " + coach.getPrenom();
+        if (coach != null) {
+            coachName = coach.getNom() + " " + coach.getPrenom();
+        }
 
-        String today = LocalDate.now().toString();
+        String today = java.time.LocalDate.now().toString();
 
         Paragraph coachInfo = new Paragraph(
-                "Coach : " + coachName + "\n" +
-                        "Date de génération : " + today,
+                "Coach : " + coachName + "\n"
+                        + "Date de génération : " + today,
                 new Font(Font.FontFamily.HELVETICA, 11)
         );
 
         coachInfo.setSpacingBefore(15);
         coachInfo.setSpacingAfter(20);
+
         document.add(coachInfo);
 
-        Font titleFont = new Font(Font.FontFamily.HELVETICA, 20, Font.BOLD, new BaseColor(25, 95, 60));
+        // ================= TITRE =================
+        Font titleFont = new Font(
+                Font.FontFamily.HELVETICA,
+                20,
+                Font.BOLD,
+                new BaseColor(25, 95, 60)
+        );
+
         Paragraph title = new Paragraph("Rapport des Séances", titleFont);
         title.setAlignment(Element.ALIGN_CENTER);
         title.setSpacingBefore(20);
         title.setSpacingAfter(20);
         document.add(title);
 
+        // ================= TABLE =================
         PdfPTable table = new PdfPTable(8);
         table.setWidthPercentage(100);
         table.setSpacingBefore(10);
@@ -405,13 +498,25 @@ public class CoachDashboardController {
         table.setWidths(columnWidths);
 
         String[] headers = {
-                "Séance", "Date", "Horaire", "Statut",
-                "Capacité", "Inscrits", "Présence (P/A/N)", "Taux Présence"
+                "Séance",
+                "Date",
+                "Horaire",
+                "Statut",
+                "Capacité",
+                "Inscrits",
+                "Présence (P/A/N)",
+                "Taux Présence"
         };
 
-        Font headerFont = new Font(Font.FontFamily.HELVETICA, 11, Font.BOLD, BaseColor.WHITE);
+        Font headerFont = new Font(
+                Font.FontFamily.HELVETICA,
+                11,
+                Font.BOLD,
+                BaseColor.WHITE
+        );
 
         for (String h : headers) {
+
             PdfPCell cell = new PdfPCell(new Phrase(h, headerFont));
             cell.setBackgroundColor(new BaseColor(41, 128, 185));
             cell.setPadding(8);
@@ -421,70 +526,121 @@ public class CoachDashboardController {
 
         int totalParticipants = 0;
         int totalCapacite = 0;
+
         boolean alternate = false;
+
+        ReservationSeanceService reservationService =
+                new ReservationSeanceService();
 
         for (Seance s : seances) {
 
-            int reserved = 0, presents = 0, absents = 0, nonMarques = 0;
-
-            try {
-                reserved = reservationService.countReservations(s.getIdSeance());
-                presents = reservationService.countByPresence(s.getIdSeance(), StatutPresence.PRESENT);
-                absents = reservationService.countByPresence(s.getIdSeance(), StatutPresence.ABSENT);
-                nonMarques = reservationService.countByPresence(s.getIdSeance(), StatutPresence.NON_MARQUE);
-            } catch (Exception ignored) {}
+            int reserved =
+                    reservationService.countReservations(s.getIdSeance());
 
             int capacite = s.getCapacite();
-            double tauxPresence = (reserved == 0) ? 0 : (double) presents / reserved * 100;
+
+            int presents =
+                    reservationService.countByPresence(
+                            s.getIdSeance(),
+                            StatutPresence.PRESENT
+                    );
+
+            int absents =
+                    reservationService.countByPresence(
+                            s.getIdSeance(),
+                            StatutPresence.ABSENT
+                    );
+
+            int nonMarques =
+                    reservationService.countByPresence(
+                            s.getIdSeance(),
+                            StatutPresence.NON_MARQUE
+                    );
+
+            double tauxPresence = reserved == 0
+                    ? 0
+                    : (double) presents / reserved * 100;
 
             totalParticipants += reserved;
             totalCapacite += capacite;
 
-            BaseColor rowColor = alternate ? new BaseColor(245, 245, 245) : BaseColor.WHITE;
+            BaseColor rowColor = alternate
+                    ? new BaseColor(245, 245, 245)
+                    : BaseColor.WHITE;
 
+            // Séance
             table.addCell(createCell(s.getNom(), rowColor));
-            table.addCell(createCell(String.valueOf(s.getDateSeance()), rowColor));
-            table.addCell(createCell(s.getHeureDebut() + " - " + s.getHeureFin(), rowColor));
 
+            // Date
+            table.addCell(createCell(s.getDateSeance().toString(), rowColor));
+
+            // Horaire
+            table.addCell(createCell(
+                    s.getHeureDebut() + " - " + s.getHeureFin(),
+                    rowColor
+            ));
+
+            // Statut coloré
             Font statutFont;
-            if (s.getStatutSeance() == null) {
-                statutFont = new Font(Font.FontFamily.HELVETICA, 10);
-            } else {
-                switch (s.getStatutSeance()) {
-                    case PLANIFIEE ->
-                            statutFont = new Font(Font.FontFamily.HELVETICA, 10, Font.BOLD, new BaseColor(52, 152, 219));
-                    case TERMINEE ->
-                            statutFont = new Font(Font.FontFamily.HELVETICA, 10, Font.BOLD, new BaseColor(39, 174, 96));
-                    case ANNULEE ->
-                            statutFont = new Font(Font.FontFamily.HELVETICA, 10, Font.BOLD, new BaseColor(231, 76, 60));
-                    default ->
-                            statutFont = new Font(Font.FontFamily.HELVETICA, 10);
-                }
+
+            switch (s.getStatutSeance()) {
+                case PLANIFIEE ->
+                        statutFont = new Font(Font.FontFamily.HELVETICA, 10, Font.BOLD, new BaseColor(52, 152, 219));
+                case TERMINEE ->
+                        statutFont = new Font(Font.FontFamily.HELVETICA, 10, Font.BOLD, new BaseColor(39, 174, 96));
+                case ANNULEE ->
+                        statutFont = new Font(Font.FontFamily.HELVETICA, 10, Font.BOLD, new BaseColor(231, 76, 60));
+                default ->
+                        statutFont = new Font(Font.FontFamily.HELVETICA, 10);
             }
 
-            PdfPCell statutCell = new PdfPCell(new Phrase(
-                    s.getStatutSeance() != null ? s.getStatutSeance().name() : "INCONNU",
-                    statutFont
-            ));
+            PdfPCell statutCell =
+                    new PdfPCell(new Phrase(
+                            s.getStatutSeance().name(),
+                            statutFont
+                    ));
+
             statutCell.setBackgroundColor(rowColor);
             statutCell.setHorizontalAlignment(Element.ALIGN_CENTER);
             table.addCell(statutCell);
 
-            table.addCell(createCenterCell(String.valueOf(capacite), rowColor));
-            table.addCell(createCenterCell(String.valueOf(reserved), rowColor));
+            // Capacité
+            table.addCell(createCenterCell(
+                    String.valueOf(capacite),
+                    rowColor
+            ));
 
-            String presenceResume = presents + " / " + absents + " / " + nonMarques;
-            table.addCell(createCenterCell(presenceResume, rowColor));
+            // Inscrits
+            table.addCell(createCenterCell(
+                    String.valueOf(reserved),
+                    rowColor
+            ));
 
+            // Présence regroupée
+            String presenceResume =
+                    presents + " / " + absents + " / " + nonMarques;
+
+            table.addCell(createCenterCell(
+                    presenceResume,
+                    rowColor
+            ));
+
+            // Taux présence coloré
             Font tauxFont;
-            if (tauxPresence >= 80)
-                tauxFont = new Font(Font.FontFamily.HELVETICA, 10, Font.BOLD, new BaseColor(39, 174, 96));
-            else if (tauxPresence >= 50)
-                tauxFont = new Font(Font.FontFamily.HELVETICA, 10, Font.BOLD, new BaseColor(243, 156, 18));
-            else
-                tauxFont = new Font(Font.FontFamily.HELVETICA, 10, Font.BOLD, new BaseColor(231, 76, 60));
 
-            PdfPCell tauxCell = new PdfPCell(new Phrase(String.format("%.1f %%", tauxPresence), tauxFont));
+            if (tauxPresence >= 80)
+                tauxFont = new Font(Font.FontFamily.HELVETICA, 10, Font.BOLD, new BaseColor(39,174,96));
+            else if (tauxPresence >= 50)
+                tauxFont = new Font(Font.FontFamily.HELVETICA, 10, Font.BOLD, new BaseColor(243,156,18));
+            else
+                tauxFont = new Font(Font.FontFamily.HELVETICA, 10, Font.BOLD, new BaseColor(231,76,60));
+
+            PdfPCell tauxCell =
+                    new PdfPCell(new Phrase(
+                            String.format("%.1f %%", tauxPresence),
+                            tauxFont
+                    ));
+
             tauxCell.setBackgroundColor(rowColor);
             tauxCell.setHorizontalAlignment(Element.ALIGN_CENTER);
             table.addCell(tauxCell);
@@ -494,9 +650,12 @@ public class CoachDashboardController {
 
         document.add(table);
 
+        // ================= STATISTIQUES =================
         document.add(new Paragraph("\n"));
 
-        double tauxGlobal = (totalCapacite == 0) ? 0 : (double) totalParticipants / totalCapacite * 100;
+        double tauxGlobal = totalCapacite == 0
+                ? 0
+                : (double) totalParticipants / totalCapacite * 100;
 
         PdfPTable statsTable = new PdfPTable(1);
         statsTable.setWidthPercentage(100);
@@ -507,7 +666,8 @@ public class CoachDashboardController {
                                 "Total Séances : " + seances.size() + "\n" +
                                 "Total Participants : " + totalParticipants + "\n" +
                                 "Capacité Totale : " + totalCapacite + "\n" +
-                                "Taux Global de Remplissage : " + String.format("%.1f %%", tauxGlobal),
+                                "Taux Global de Remplissage : "
+                                + String.format("%.1f %%", tauxGlobal),
                         new Font(Font.FontFamily.HELVETICA, 11)
                 )
         );
@@ -522,40 +682,69 @@ public class CoachDashboardController {
 
         document.close();
     }
-
     class PdfPageEventHelperCustom extends PdfPageEventHelper {
 
         private Image watermark;
 
         public PdfPageEventHelperCustom() {
             try {
-                InputStream stream = getClass().getResourceAsStream("/images/logo_pdf.png");
+
+                InputStream stream =
+                        getClass().getResourceAsStream("/images/logo_pdf.png");
+
                 if (stream != null) {
+
                     watermark = Image.getInstance(stream.readAllBytes());
+
+                    // 🔥 Taille watermark
                     watermark.scaleToFit(350, 180);
+
+                    // 🔥 Transparence élégante
                     watermark.setTransparency(new int[]{30, 30});
                 }
+
             } catch (Exception ignored) {}
         }
 
         @Override
         public void onEndPage(PdfWriter writer, Document document) {
 
+            // ================= WATERMARK =================
             if (watermark != null) {
+
                 try {
-                    PdfContentByte canvas = writer.getDirectContentUnder();
-                    float x = (document.getPageSize().getWidth() - watermark.getScaledWidth()) / 2;
-                    float y = (document.getPageSize().getHeight() - watermark.getScaledHeight()) / 2;
+
+                    PdfContentByte canvas =
+                            writer.getDirectContentUnder();
+
+                    float x = (document.getPageSize().getWidth()
+                            - watermark.getScaledWidth()) / 2;
+
+                    float y = (document.getPageSize().getHeight()
+                            - watermark.getScaledHeight()) / 2;
+
                     watermark.setAbsolutePosition(x, y);
+
                     canvas.addImage(watermark);
+
                 } catch (Exception ignored) {}
             }
 
-            Font footerFont = new Font(Font.FontFamily.HELVETICA, 9, Font.ITALIC, new BaseColor(120, 120, 120));
-            Phrase footer = new Phrase(
-                    "EcoAdventure © 2026   |   Rapport Confidentiel   |   Page " + writer.getPageNumber(),
-                    footerFont
-            );
+            // ================= FOOTER =================
+            Font footerFont =
+                    new Font(
+                            Font.FontFamily.HELVETICA,
+                            9,
+                            Font.ITALIC,
+                            new BaseColor(120, 120, 120)
+                    );
+
+            Phrase footer =
+                    new Phrase(
+                            "EcoAdventure © 2026   |   Rapport Confidentiel   |   Page "
+                                    + writer.getPageNumber(),
+                            footerFont
+                    );
 
             ColumnText.showTextAligned(
                     writer.getDirectContent(),
@@ -567,36 +756,52 @@ public class CoachDashboardController {
             );
         }
     }
-
     private PdfPCell createCell(String text, BaseColor bg) {
-        PdfPCell cell = new PdfPCell(new Phrase(text == null ? "" : text));
+
+        PdfPCell cell = new PdfPCell(new Phrase(text));
         cell.setBackgroundColor(bg);
         cell.setPadding(6);
         return cell;
     }
 
     private PdfPCell createCenterCell(String text, BaseColor bg) {
-        PdfPCell cell = new PdfPCell(new Phrase(text == null ? "" : text));
+
+        PdfPCell cell = new PdfPCell(new Phrase(text));
         cell.setBackgroundColor(bg);
         cell.setHorizontalAlignment(Element.ALIGN_CENTER);
         cell.setPadding(6);
         return cell;
     }
-
     private void ouvrirFenetrePresence(Seance s) {
 
+        LocalDate today = LocalDate.now();
+
+        // 🔒 Bloquer si annulée
         if (s.getStatutSeance() == StatutSeance.ANNULEE) {
-            DialogUtils.showWarning("Présence", "Impossible de faire l'appel pour une séance annulée.");
+
+            DialogUtils.showWarning(
+                    "Présence",
+                    "Impossible de faire l'appel pour une séance annulée."
+            );
             return;
         }
 
-        if (s.getDateSeance() != null && s.getDateSeance().isAfter(LocalDate.now())) {
-            DialogUtils.showWarning("Présence", "L'appel de présence est disponible uniquement le jour J.");
+        // 🔒 Autoriser uniquement le jour J
+        if (!s.getDateSeance().equals(today)) {
+
+            DialogUtils.showWarning(
+                    "Présence",
+                    "L'appel de présence est disponible uniquement le jour de la séance."
+            );
             return;
         }
 
         try {
-            FXMLLoader loader = new FXMLLoader(getClass().getResource("/PresenceView.fxml"));
+
+            FXMLLoader loader = new FXMLLoader(
+                    getClass().getResource("/PresenceView.fxml")
+            );
+
             Parent root = loader.load();
 
             PresenceController controller = loader.getController();
@@ -612,8 +817,109 @@ public class CoachDashboardController {
             refreshCards();
 
         } catch (Exception e) {
-            e.printStackTrace();
-            DialogUtils.showError("Erreur", "Impossible d'ouvrir la fenêtre de présence.");
+
+            DialogUtils.showError(
+                    "Erreur",
+                    "Impossible d'ouvrir la fenêtre de présence."
+            );
         }
+    }
+    private VBox createNextSeanceCard(Seance s) {
+
+        VBox card = new VBox(18);
+        card.getStyleClass().add("next-seance-card-v2");
+        card.setPadding(new Insets(24));
+        card.setPrefWidth(430);
+
+        // ================= HEADER =================
+        HBox header = new HBox();
+        header.setAlignment(Pos.CENTER_LEFT);
+
+        Label badge = new Label("🔥 Prochaine séance");
+        badge.getStyleClass().add("next-badge-v2");
+
+        Region spacer = new Region();
+        HBox.setHgrow(spacer, Priority.ALWAYS);
+
+        header.getChildren().addAll(badge, spacer);
+
+        // ================= NOM =================
+        Label name = new Label(s.getNom());
+        name.getStyleClass().add("next-name-v2");
+
+        // ================= DATE + HEURE =================
+        Label date = new Label("📅  " + s.getDateSeance());
+        date.getStyleClass().add("next-info-v2");
+
+        Label time = new Label("⏰  "
+                + s.getHeureDebut() + " - " + s.getHeureFin());
+        time.getStyleClass().add("next-info-v2");
+
+        // ================= COUNTDOWN =================
+        long days = java.time.temporal.ChronoUnit.DAYS
+                .between(LocalDate.now(), s.getDateSeance());
+
+        Label countdown = new Label(
+                days == 0 ? "🚀 Aujourd'hui"
+                        : days == 1 ? "⏳ Demain"
+                        : "⏳ Dans " + days + " jours"
+        );
+
+        countdown.getStyleClass().add("next-countdown-v2");
+
+        // ================= PRESENCE BUTTON =================
+        Button btnPresence = new Button();
+        btnPresence.setPrefHeight(40);
+        btnPresence.setMinWidth(220);
+        btnPresence.getStyleClass().add("next-presence-base");
+
+        LocalDate today = LocalDate.now();
+        LocalDate dateSeance = s.getDateSeance();
+
+        if (s.getStatutSeance() == StatutSeance.ANNULEE) {
+
+            btnPresence.setText("Séance annulée");
+            btnPresence.getStyleClass().add("next-presence-cancel");
+            btnPresence.setDisable(true);
+        }
+        else if (dateSeance.isAfter(today)) {
+
+            // 🟡 Avant
+            btnPresence.setText("Disponible le jour J");
+            btnPresence.getStyleClass().add("next-presence-before");
+            btnPresence.setDisable(true);
+        }
+        else if (dateSeance.equals(today)) {
+
+            // 🟢 Jour J
+            btnPresence.setText("Faire l'appel");
+            btnPresence.getStyleClass().add("next-presence-active");
+            btnPresence.setOnAction(e -> ouvrirFenetrePresence(s));
+        }
+        else {
+
+            // 🔵 Après
+            btnPresence.setText("Appel clôturé");
+            btnPresence.getStyleClass().add("next-presence-after");
+            btnPresence.setDisable(true);
+        }
+
+        card.getChildren().addAll(
+                header,
+                name,
+                date,
+                time,
+                countdown,
+                btnPresence
+        );
+
+        // Hover
+        card.setOnMouseEntered(e ->
+                card.getStyleClass().add("next-hover-v2"));
+
+        card.setOnMouseExited(e ->
+                card.getStyleClass().remove("next-hover-v2"));
+
+        return card;
     }
 }

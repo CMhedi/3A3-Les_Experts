@@ -180,4 +180,58 @@ public class GoogleCalendarService {
             System.out.println("Event non trouvé ou déjà supprimé.");
         }
     }
+    // ================= UPDATE EVENT =================
+    public static void updateEvent(
+            int userId,
+            String eventId,
+            String summary,
+            String description,
+            LocalDateTime start,
+            LocalDateTime end) throws Exception {
+
+        if (eventId == null || eventId.isBlank()) {
+            throw new IllegalArgumentException("EventId invalide !");
+        }
+
+        if (start == null || end == null) {
+            throw new IllegalArgumentException("Start ou End null !");
+        }
+
+        if (!start.isBefore(end)) {
+            throw new IllegalArgumentException(
+                    "La date de début doit être avant la fin !");
+        }
+
+        Calendar service = getService(userId);
+
+        Event event = service.events()
+                .get("primary", eventId)
+                .execute();
+
+        event.setSummary(summary);
+        event.setDescription(description);
+
+        String timeZone = "Africa/Tunis";
+
+        EventDateTime startDateTime = new EventDateTime()
+                .setDateTime(new com.google.api.client.util.DateTime(
+                        Date.from(start.atZone(
+                                ZoneId.of(timeZone)).toInstant())))
+                .setTimeZone(timeZone);
+
+        EventDateTime endDateTime = new EventDateTime()
+                .setDateTime(new com.google.api.client.util.DateTime(
+                        Date.from(end.atZone(
+                                ZoneId.of(timeZone)).toInstant())))
+                .setTimeZone(timeZone);
+
+        event.setStart(startDateTime);
+        event.setEnd(endDateTime);
+
+        service.events()
+                .update("primary", eventId, event)
+                .execute();
+
+        System.out.println("Event mis à jour : " + eventId);
+    }
 }

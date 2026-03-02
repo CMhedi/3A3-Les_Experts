@@ -310,8 +310,11 @@ public class AdminSeanceController {
 
             Parent root = loader.load();
 
-            loader.<SeanceFormController>getController()
-                    .setSeance(seance, planningId);
+            SeanceFormController controller =
+                    loader.getController();
+
+            controller.setPlanning(planningId, planningLabel.getText());
+            controller.setSeance(seance, planningId);
 
             Stage stage = new Stage();
             stage.setTitle("Formulaire Séance");
@@ -328,7 +331,7 @@ public class AdminSeanceController {
             loadData();
 
         } catch (Exception e) {
-
+            e.printStackTrace(); // 🔥 laisse pour debug
             DialogUtils.showError(
                     "Erreur",
                     "Impossible d’ouvrir le formulaire."

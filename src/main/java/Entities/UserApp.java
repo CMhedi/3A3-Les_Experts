@@ -81,4 +81,7 @@ public class UserApp {
     }
 
 
+    public String getImage_url() {
+        return imageUrl;
+    }
 }
