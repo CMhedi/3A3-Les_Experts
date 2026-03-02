@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.web.WebView?>
+
+<BorderPane xmlns:fx="http://javafx.com/fxml"
+            fx:controller="controllers.LocalisationController"
+            stylesheets="@localisation.css"
+            styleClass="root-bg">
+
+    <top>
+        <HBox spacing="12" alignment="CENTER_LEFT" styleClass="topbar">
+            <Label text="Eco " styleClass="brand"/>
+            <Label text="Adventure" styleClass="brand-accent"/>
+            <Region HBox.hgrow="ALWAYS"/>
+            <Button text="Retour" onAction="#close" styleClass="secondary-btn"/>
+        </HBox>
+    </top>
+
+    <center>
+        <StackPane styleClass="content-wrap">
+            <VBox spacing="18" alignment="CENTER" styleClass="card">
+
+                <Label text="📍 Votre position actuelle" styleClass="card-title"/>
+
+                <!-- ✅ IMPORTANT: la WebView doit grandir -->
+                <StackPane styleClass="map-view" VBox.vgrow="ALWAYS">
+                    <WebView fx:id="webView"
+                             maxWidth="Infinity"
+                             maxHeight="Infinity"/>
+                </StackPane>
+
+            </VBox>
+        </StackPane>
+    </center>
+
+</BorderPane>

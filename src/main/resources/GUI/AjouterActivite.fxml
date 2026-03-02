@@ -1,0 +1,116 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.shape.Line?>
+
+<AnchorPane xmlns:fx="http://javafx.com/fxml"
+            fx:controller="controllers.AjouterActiviteController"
+            stylesheets="@ajouterActivite.css"
+            styleClass="root-bg">
+
+    <children>
+
+        <!-- Center wrapper -->
+        <StackPane AnchorPane.topAnchor="0"
+                   AnchorPane.bottomAnchor="0"
+                   AnchorPane.leftAnchor="0"
+                   AnchorPane.rightAnchor="0"
+                   styleClass="page-wrap">
+
+            <!-- Card -->
+            <VBox spacing="16" styleClass="form-card">
+                <padding>
+                    <Insets top="26" right="26" bottom="22" left="26"/>
+                </padding>
+
+                <!-- Header -->
+                <VBox spacing="6" styleClass="header-wrap">
+                    <HBox spacing="10" styleClass="title-row">
+                        <Label text="⦿" styleClass="title-icon"/>
+                        <Label text="Ajouter une Activité" styleClass="title-label"/>
+                    </HBox>
+
+                    <Label text="Ajoutez les détails de l’activité (type, catégorie, niveau, prix...)."
+                           styleClass="subtitle-label"/>
+
+                    <Line styleClass="divider-line"/>
+                </VBox>
+
+                <!-- Form (2 columns) -->
+                <GridPane hgap="14" vgap="12" styleClass="grid-form">
+
+                    <!-- Date -->
+                    <VBox spacing="6" GridPane.rowIndex="0" GridPane.columnIndex="0" styleClass="field">
+                        <Label text="Date" styleClass="form-label"/>
+                        <DatePicker fx:id="dateReservation" prefWidth="260" styleClass="date-blue"/>
+                    </VBox>
+
+                    <!-- Statut -->
+                    <VBox spacing="6" GridPane.rowIndex="0" GridPane.columnIndex="1" styleClass="field">
+                        <Label text="Statut" styleClass="form-label"/>
+                        <ComboBox fx:id="statutBox" prefWidth="260" styleClass="combo"/>
+                    </VBox>
+
+                    <!-- Nom -->
+                    <VBox spacing="6" GridPane.rowIndex="1" GridPane.columnIndex="0" GridPane.columnSpan="2" styleClass="field">
+                        <Label text="Nom" styleClass="form-label"/>
+                        <TextField fx:id="nomField" promptText="Nom de l'activité" styleClass="input"/>
+                    </VBox>
+
+                    <!-- Type -->
+                    <VBox spacing="6" GridPane.rowIndex="2" GridPane.columnIndex="0" styleClass="field">
+                        <Label text="Type" styleClass="form-label"/>
+                        <ComboBox fx:id="typeBox" prefWidth="260" styleClass="combo"/>
+                    </VBox>
+
+                    <!-- Catégorie -->
+                    <VBox spacing="6" GridPane.rowIndex="2" GridPane.columnIndex="1" styleClass="field">
+                        <Label text="Catégorie" styleClass="form-label"/>
+                        <ComboBox fx:id="categorieBox" prefWidth="260" styleClass="combo"/>
+                    </VBox>
+
+                    <!-- Niveau -->
+                    <VBox spacing="6" GridPane.rowIndex="3" GridPane.columnIndex="0" styleClass="field">
+                        <Label text="Niveau" styleClass="form-label"/>
+                        <ComboBox fx:id="niveauBox" prefWidth="260" styleClass="combo"/>
+                    </VBox>
+
+                    <!-- Prix -->
+                    <VBox spacing="6" GridPane.rowIndex="3" GridPane.columnIndex="1" styleClass="field">
+                        <Label text="Prix" styleClass="form-label"/>
+                        <TextField fx:id="prixField" promptText="Ex: 25" styleClass="input"/>
+                    </VBox>
+
+                    <!-- Image URL -->
+                      <VBox spacing="6" GridPane.rowIndex="4" GridPane.columnIndex="0" GridPane.columnSpan="2" styleClass="field">
+                          <Label text="Image URL (optionnel)" styleClass="form-label"/>
+                          <TextField fx:id="imageField" promptText="https://..." styleClass="input"/>
+                      </VBox>
+
+                </GridPane>
+
+                <!-- Buttons -->
+                <HBox spacing="12" styleClass="btn-row">
+                    <Region HBox.hgrow="ALWAYS"/>
+
+                    <Button text="↩ Retourner"
+                            onAction="#goUserSeances"
+                            styleClass="btn btn-secondary"/>
+
+                    <Button text="☁ Météo"
+                            onAction="#goToWeather"
+                            styleClass="btn btn-weather"/>
+
+                    <Button text="✔ Ajouter"
+                            onAction="#ajouterActivite"
+                            styleClass="btn btn-save"/>
+                </HBox>
+
+            </VBox>
+
+        </StackPane>
+
+    </children>
+</AnchorPane>

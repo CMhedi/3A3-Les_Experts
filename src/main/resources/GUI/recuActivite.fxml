@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.geometry.Insets?>
+
+<AnchorPane xmlns:fx="http://javafx.com/fxml"
+            fx:controller="controllers.RecuActiviteController"
+            stylesheets="@recuActivite.css"
+            styleClass="main-bg">
+
+    <children>
+
+        <StackPane AnchorPane.topAnchor="0"
+                   AnchorPane.bottomAnchor="0"
+                   AnchorPane.leftAnchor="0"
+                   AnchorPane.rightAnchor="0">
+
+            <VBox fx:id="receiptCard"
+                  spacing="20"
+                  alignment="CENTER"
+                  styleClass="receipt-card">
+
+                <padding>
+                    <Insets top="35" right="40" bottom="35" left="40"/>
+                </padding>
+
+                <!-- Titre -->
+                <Label text="Détails de l'Activité"
+                       styleClass="title-label"/>
+
+                <Separator styleClass="separator-modern"/>
+
+                <!-- Infos activité -->
+                <VBox spacing="12"
+                      alignment="CENTER_LEFT"
+                      styleClass="receipt-content">
+
+                    <Label fx:id="lblType" styleClass="receipt-type"/>
+                    <Label fx:id="lblNom" styleClass="receipt-text"/>
+                    <Label fx:id="lblCategorie" styleClass="receipt-text"/>
+                    <Label fx:id="lblNiveau" styleClass="receipt-text"/>
+                    <Label fx:id="lblPrix" styleClass="receipt-price"/>
+                    <Label fx:id="lblStatut" styleClass="receipt-status"/>
+                    <Label fx:id="lblDate" styleClass="receipt-text"/>
+
+                </VBox>
+
+                <Separator styleClass="separator-modern"/>
+
+                <!-- Boutons -->
+                <HBox spacing="15" alignment="CENTER">
+
+                    <Button text="Télécharger PDF"
+                            onAction="#downloadPdf"
+                            styleClass="reserve-button"/>
+
+                    <Button text="Aller réserver cette activité"
+                            onAction="#reserver"
+                            styleClass="reserve-button"/>
+
+                    <Button text="Fermer"
+                            onAction="#fermer"
+                            styleClass="secondary-button"/>
+
+                </HBox>
+
+            </VBox>
+
+        </StackPane>
+
+    </children>
+</AnchorPane>

@@ -1,0 +1,109 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<BorderPane xmlns="http://javafx.com/javafx/21"
+            xmlns:fx="http://javafx.com/fxml/1"
+            fx:controller="controllers.ReservationController"
+            styleClass="root"
+            stylesheets="@/css/app.css, @reservation.css">
+
+    <!-- ================= SIDEBAR ================= -->
+    <left>
+        <StackPane maxWidth="270" minWidth="270" prefWidth="270" styleClass="sidebar">
+
+            <Region styleClass="sidebar-overlay"/>
+
+            <VBox spacing="14" styleClass="sidebar-content">
+
+                <Label text="EcoAdventure" styleClass="brand"/>
+                <Label text="Gestion Réservations" styleClass="brand-sub"/>
+
+                <Region styleClass="sep"/>
+
+                <Button text="MainLayout" styleClass="nav-item" onAction="#goToUserSeances"/>
+                <Button text="Activités" styleClass="nav-item" onAction="#goActivites"/>
+                <Button text="Réservations" styleClass="nav-item active-nav"/>
+
+
+                <Region VBox.vgrow="ALWAYS"/>
+            </VBox>
+        </StackPane>
+    </left>
+
+    <!-- ================= TOPBAR ================= -->
+    <top>
+        <HBox alignment="CENTER_LEFT" spacing="12" styleClass="topbar">
+            <padding>
+                <Insets top="14" bottom="14" left="18" right="18"/>
+            </padding>
+
+            <VBox spacing="2">
+                <Label text="Gestion des Réservations" styleClass="title"/>
+                <Label text="Vue complète des réservations et tickets" styleClass="subtitle"/>
+            </VBox>
+
+            <Region HBox.hgrow="ALWAYS"/>
+
+            <Label text="Admin" styleClass="pill"/>
+        </HBox>
+    </top>
+
+    <!-- ================= CENTER CONTENT ================= -->
+    <center>
+        <VBox spacing="20" styleClass="page">
+            <padding>
+                <Insets top="20" right="20" bottom="20" left="20"/>
+            </padding>
+
+            <!-- KPI CARDS -->
+            <HBox spacing="20">
+                <VBox spacing="6" alignment="CENTER" styleClass="card kpi-card">
+                    <Label text="Total Réservations" styleClass="subtitle"/>
+                    <Label fx:id="lblTotal" text="0" styleClass="title"/>
+                </VBox>
+
+                <VBox spacing="6" alignment="CENTER" styleClass="card kpi-card">
+                    <Label text="Tickets générés" styleClass="subtitle"/>
+                    <Label fx:id="lblTickets" text="0" styleClass="title"/>
+                </VBox>
+
+                <VBox spacing="6" alignment="CENTER" styleClass="card kpi-card">
+                    <Label text="Check-in" styleClass="subtitle"/>
+                    <Label fx:id="lblChecked" text="0" styleClass="title"/>
+                </VBox>
+            </HBox>
+
+            <!-- TABLE CARD -->
+            <VBox spacing="15" styleClass="card content-card" VBox.vgrow="ALWAYS">
+
+                <Label text="Liste des Réservations" styleClass="title"/>
+
+                <TableView fx:id="tableReservation"
+                           VBox.vgrow="ALWAYS">
+
+                    <columns>
+                        <TableColumn fx:id="colStatut" text="Statut" prefWidth="130"/>
+                        <TableColumn fx:id="colNb" text="Participants" prefWidth="120"/>
+                        <TableColumn fx:id="colToken" text="Ticket Token" prefWidth="220"/>
+                        <TableColumn fx:id="colGeneratedAt" text="Généré le" prefWidth="160"/>
+                        <TableColumn fx:id="colCheckedIn" text="Check-in" prefWidth="110"/>
+                        <TableColumn fx:id="colCheckinTime" text="Heure check-in" prefWidth="160"/>
+                    </columns>
+
+                </TableView>
+
+                <HBox spacing="12" alignment="CENTER_RIGHT">
+                    <Button text="Rafraîchir" styleClass="btn-secondary" onAction="#refreshTable"/>
+                    <Button text="Modifier" styleClass="btn-primary" onAction="#modifierReservation"/>
+                    <Button text="Supprimer" styleClass="btn-danger" onAction="#supprimerReservation"/>
+                </HBox>
+
+            </VBox>
+
+        </VBox>
+    </center>
+
+</BorderPane>

@@ -60,7 +60,7 @@
                     <Button fx:id="btnInsights" onAction="#openInsights" styleClass="nav-item" text="Insights" />
                     <Button fx:id="btnPacks" onAction="#openPacks" styleClass="nav-item" text="Packs" />
                     <Button fx:id="btnInscriptions" onAction="#openInscriptions" styleClass="nav-item" text="Inscriptions" />
-
+                    <Button fx:id="btnReservActiv" onAction="#openReservActiv" styleClass="nav-item" text="ReservActiv" />
 
                     <Button fx:id="btnPackBuilder" onAction="#openPackBuilder" styleClass="nav-item" text="Pack Builder" />
                     <Button onAction="#openSideBar" styleClass="nav-item" text="⬅️ Retour Sidebar" />

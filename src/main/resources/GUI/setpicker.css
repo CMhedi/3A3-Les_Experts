@@ -1,0 +1,86 @@
+/* seatPicker.css (COMPLET) */
+
+.root{
+    -fx-background-color: #1f2329;
+    -fx-font-family: "Segoe UI";
+}
+
+.page{ -fx-background-color: transparent; }
+.topbar{ -fx-padding: 6 8; }
+
+.menu{ -fx-text-fill: #b9c0ca; -fx-font-size: 18px; }
+.title{ -fx-text-fill: white; -fx-font-size: 18px; -fx-font-weight: bold; }
+.subtitle{ -fx-text-fill: #cfd3da; -fx-font-size: 14px; }
+
+.screen{
+    -fx-pref-width: 280;
+    -fx-pref-height: 10;
+    -fx-background-color: #2f3640;
+    -fx-background-radius: 20;
+    -fx-opacity: 0.75;
+}
+
+.seats-grid{ -fx-padding: 10 0 10 0; }
+
+.bottom{
+    -fx-background-color: #252a32;
+    -fx-background-radius: 18;
+    -fx-padding: 14 14;
+}
+
+.infoLabel{ -fx-text-fill: #b9c0ca; -fx-font-size: 12px; }
+.infoValue{ -fx-text-fill: white; -fx-font-size: 12px; -fx-font-weight: bold; }
+
+.legendText{ -fx-text-fill: #cfd3da; -fx-font-size: 12px; }
+.status{ -fx-text-fill: #ffd166; -fx-font-weight: bold; -fx-padding: 6 0 0 0; }
+
+.total{ -fx-text-fill: white; -fx-font-size: 14px; -fx-font-weight: bold; }
+
+.confirmBtn{
+    -fx-background-color: #22c55e; /* green */
+    -fx-text-fill: #111;
+    -fx-font-weight: bold;
+    -fx-background-radius: 14;
+    -fx-padding: 10 40;
+}
+.confirmBtn:hover{ -fx-opacity: 0.9; }
+
+.backBtn{
+    -fx-background-color: transparent;
+    -fx-border-color: #3b4250;
+    -fx-border-radius: 14;
+    -fx-text-fill: #cfd3da;
+    -fx-padding: 8 34;
+}
+
+/* legend dots */
+.dotRemaining{ -fx-fill: #6b7280; }  /* grey */
+.dotReserved{  -fx-fill: #ef4444; }  /* red */
+.dotSelected{  -fx-fill: #22c55e; }  /* green */
+
+/* seats */
+.seat{
+    -fx-min-width: 14;
+    -fx-min-height: 14;
+    -fx-max-width: 14;
+    -fx-max-height: 14;
+    -fx-background-radius: 4;
+    -fx-padding: 0;
+    -fx-cursor: hand;
+}
+
+/* remaining = grey */
+.seatRemaining{
+    -fx-background-color: #6b7280;
+}
+
+/* reserved = red */
+.seatReserved{
+    -fx-background-color: #ef4444;
+    -fx-opacity: 0.95;
+}
+
+/* selected = green */
+.seatSelected{
+    -fx-background-color: #22c55e;
+}

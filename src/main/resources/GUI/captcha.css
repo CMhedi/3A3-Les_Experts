@@ -1,0 +1,41 @@
+.bg {
+    -fx-background-color: linear-gradient(to bottom right, #1e5631, #163d24);
+}
+.card {
+    -fx-background-color: rgba(255,255,255,0.96);
+    -fx-background-radius: 16;
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.22), 18, 0.25, 0, 6);
+    -fx-min-width: 420;
+}
+.title {
+    -fx-text-fill: #1e5631;
+    -fx-font-size: 16px;
+    -fx-font-weight: 800;
+}
+.sub {
+    -fx-text-fill: #6b7280;
+    -fx-font-size: 12px;
+}
+.input {
+    -fx-pref-width: 220;
+    -fx-background-radius: 10;
+    -fx-padding: 10 12;
+}
+.btn1 {
+    -fx-background-color: #1e5631;
+    -fx-text-fill: white;
+    -fx-background-radius: 10;
+    -fx-font-weight: bold;
+    -fx-padding: 9 14;
+}
+.btn2 {
+    -fx-background-color: #e5e7eb;
+    -fx-text-fill: #111827;
+    -fx-background-radius: 10;
+    -fx-font-weight: bold;
+    -fx-padding: 9 14;
+}
+.error {
+    -fx-text-fill: #dc2626;
+    -fx-font-size: 12px;
+}

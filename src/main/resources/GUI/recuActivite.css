@@ -1,0 +1,111 @@
+/* ===================== GLOBAL / BACKGROUND ===================== */
+.main-bg {
+    -fx-background-color: linear-gradient(to bottom right, #0b2e1a, #0f1f2e);
+    -fx-font-family: "Segoe UI";
+}
+
+/* ===================== RECEIPT CARD (GLASS / PREMIUM) ===================== */
+.receipt-card {
+    -fx-background-color: rgba(255, 255, 255, 0.10);
+    -fx-background-radius: 22;
+    -fx-border-radius: 22;
+    -fx-border-color: rgba(255, 255, 255, 0.18);
+    -fx-border-width: 1;
+
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.45), 28, 0.35, 0, 12);
+    -fx-max-width: 560;
+    -fx-padding: 24;
+}
+
+/* ===================== TITLE ===================== */
+.title-label {
+    -fx-text-fill: white;
+    -fx-font-size: 26px;
+    -fx-font-weight: 900;
+    -fx-letter-spacing: 1px;
+}
+
+/* ===================== SEPARATOR ===================== */
+.separator-modern {
+    -fx-background-color: rgba(255,255,255,0.18);
+    -fx-opacity: 0.9;
+    -fx-pref-height: 1.2;
+}
+
+/* ===================== CONTENT ===================== */
+.receipt-content {
+    -fx-padding: 10 0 10 0;
+}
+
+/* ===================== TEXT ===================== */
+.receipt-text {
+    -fx-font-size: 14.5px;
+    -fx-text-fill: rgba(255,255,255,0.82);
+}
+
+/* ===================== TYPE (IMPORTANT) ===================== */
+.receipt-type {
+    -fx-font-size: 16px;
+    -fx-font-weight: 900;
+    -fx-text-fill: #f4b400; /* gold */
+}
+
+/* ===================== PRICE ===================== */
+.receipt-price {
+    -fx-font-size: 16px;
+    -fx-font-weight: 900;
+    -fx-text-fill: #ffd27a; /* warm gold */
+}
+
+/* ===================== STATUS ===================== */
+.receipt-status {
+    -fx-font-size: 14px;
+    -fx-font-weight: 900;
+    -fx-text-fill: #4ef08b; /* mint green */
+}
+
+/* ===================== PRIMARY BUTTON (RESERVE) ===================== */
+.reserve-button {
+    -fx-background-color: linear-gradient(to right, #f4b400, #f1a738);
+    -fx-text-fill: #0b1a12;       /* dark text on gold */
+    -fx-font-weight: 900;
+    -fx-background-radius: 28;
+    -fx-padding: 10 22;
+    -fx-cursor: hand;
+
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.25), 10, 0.25, 0, 3);
+}
+
+.reserve-button:hover {
+    -fx-translate-y: -2;
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.33), 14, 0.28, 0, 5);
+}
+
+.reserve-button:pressed {
+    -fx-translate-y: 0;
+    -fx-opacity: 0.92;
+}
+
+/* ===================== SECONDARY BUTTON ===================== */
+.secondary-button {
+    -fx-background-color: rgba(255,255,255,0.14);
+    -fx-text-fill: white;
+    -fx-font-weight: 800;
+
+    -fx-background-radius: 28;
+    -fx-padding: 10 20;
+    -fx-cursor: hand;
+
+    -fx-border-color: rgba(255,255,255,0.18);
+    -fx-border-width: 1;
+    -fx-border-radius: 28;
+}
+
+.secondary-button:hover {
+    -fx-background-color: rgba(255,255,255,0.20);
+    -fx-translate-y: -1;
+}
+
+.secondary-button:pressed {
+    -fx-opacity: 0.92;
+}
