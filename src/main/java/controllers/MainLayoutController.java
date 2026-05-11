@@ -1,6 +1,7 @@
 package controllers;
 
 import javafx.animation.FadeTransition;
+import javafx.application.Platform;
 import javafx.animation.ScaleTransition;
 import javafx.animation.TranslateTransition;
 import javafx.event.ActionEvent;
@@ -32,9 +33,28 @@ public class MainLayoutController {
     @FXML private VBox sidebarContent;
     @FXML private HBox topbar;
 
+    private String currentFxmlPath;
+    private String lastTitle;
+
     @FXML
     private void initialize() {
         animateIntro();
+        
+        // Shortcut Ctrl + R pour actualiser la vue centrale
+        Platform.runLater(() -> {
+            if (contentPane != null && contentPane.getScene() != null) {
+                contentPane.getScene().getAccelerators().put(
+                    new javafx.scene.input.KeyCodeCombination(javafx.scene.input.KeyCode.R, javafx.scene.input.KeyCombination.CONTROL_DOWN),
+                    this::refreshCurrentView
+                );
+            }
+        });
+    }
+
+    private void refreshCurrentView() {
+        if (currentFxmlPath != null) {
+            loadIntoCenter(currentFxmlPath, lastTitle);
+        }
     }
 
     @FXML
@@ -122,6 +142,8 @@ public class MainLayoutController {
     }
 
     private void loadIntoCenter(String fxmlPath, String fallbackTitle) {
+        this.currentFxmlPath = fxmlPath;
+        this.lastTitle = fallbackTitle;
         try {
             URL url = getClass().getResource(fxmlPath);
             if (url == null) {

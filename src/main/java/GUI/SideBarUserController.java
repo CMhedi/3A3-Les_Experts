@@ -21,13 +21,18 @@ public class SideBarUserController {
     }
 
     @FXML
+    public void initialize() {
+        javafx.application.Platform.runLater(() -> changeCenter("/GUI/ListReclamation.fxml"));
+    }
+
+    @FXML
     void goToProfil(ActionEvent event) {
         changeCenter("/GUI/Profile.fxml");
     }
 
     @FXML
     void goToMyReclamations(ActionEvent event) {
-        changeCenter("/GUI/AddReclamation.fxml");
+        changeCenter("/GUI/ListReclamation.fxml");
     }
 
     @FXML

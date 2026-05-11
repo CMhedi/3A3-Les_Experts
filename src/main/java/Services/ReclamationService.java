@@ -23,9 +23,9 @@ public class ReclamationService {
     public List<Reclamation> afficher() throws SQLException {
         List<Reclamation> list = new ArrayList<>();
 
-
+        // Utilisation de LEFT JOIN au cas où l'utilisateur n'existe plus ou id_user est null
         String req = "SELECT r.*, u.nom FROM reclamation r " +
-                "JOIN user_app u ON r.id_user = u.id_user";
+                "LEFT JOIN user_app u ON r.id_user = u.id_user";
 
         try (Statement st = cnx.createStatement();
              ResultSet rs = st.executeQuery(req)) {
@@ -37,10 +37,16 @@ public class ReclamationService {
                 r.setContenu(rs.getString("contenu"));
                 r.setStatut(StatutReclamation.valueOf(rs.getString("statut")));
                 r.setReponse(rs.getString("reponse"));
+                
+                // On essaie de récupérer la date de création, si elle n'existe pas on ignore pour éviter de tout bloquer
+                try {
+                    Timestamp ts = rs.getTimestamp("date_creation");
+                    if (ts != null) r.setDateCreation(ts.toLocalDateTime());
+                } catch (SQLException e) {
+                    // Column might not exist or be named differently
+                }
 
-
-                r.setUserName(rs.getString("nom"));
-
+                r.setUserName(rs.getString("nom") != null ? rs.getString("nom") : "Inconnu");
                 list.add(r);
             }
         }
@@ -60,6 +66,10 @@ public class ReclamationService {
             r.setContenu(rs.getString("contenu"));
             r.setStatut(StatutReclamation.valueOf(rs.getString("statut")));
             r.setReponse(rs.getString("reponse"));
+            try {
+                Timestamp ts = rs.getTimestamp("date_creation");
+                if (ts != null) r.setDateCreation(ts.toLocalDateTime());
+            } catch (SQLException e) { }
             list.add(r);
         }
         return list;

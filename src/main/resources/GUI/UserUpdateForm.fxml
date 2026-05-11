@@ -1,99 +1,166 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
-
 <?import javafx.geometry.Insets?>
-<VBox spacing="0.0" xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1" fx:controller="GUI.UserUpdateController" style="-fx-background-color: #f1f5f9;">
+
+<VBox spacing="0.0" style="-fx-background-color: transparent;" xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1" fx:controller="GUI.UserUpdateController">
     <children>
-        <HBox spacing="10" style="-fx-background-color: #143d30; -fx-padding: 30;" alignment="CENTER_LEFT">
-            <VBox spacing="5">
-                <Label text="Modification du Profil" style="-fx-font-size: 24; -fx-font-weight: bold; -fx-text-fill: white;"/>
-                <Label text="EcoAdventure : Édition des paramètres" style="-fx-text-fill: #A7F3D0; -fx-font-size: 13;"/>
-            </VBox>
-        </HBox>
-
-        <ScrollPane fitToWidth="true" style="-fx-background-color: transparent; -fx-background: transparent;">
-            <content>
-                <VBox spacing="25" style="-fx-padding: 30;">
-                    <VBox spacing="25" style="-fx-background-color: white; -fx-padding: 35; -fx-background-radius: 15; -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.1), 20, 0, 0, 10);">
-
-                        <HBox spacing="20">
-                            <VBox spacing="5" HBox.hgrow="ALWAYS">
-                                <Label text="NOM" style="-fx-font-weight: 800; -fx-font-size: 11; -fx-text-fill: #64748b;"/>
-                                <TextField fx:id="txtNom" prefHeight="45" style="-fx-background-color: #f8fafc; -fx-border-color: #e2e8f0; -fx-border-radius: 8;"/>
-                                <Label fx:id="errorNom" visible="false" managed="false" style="-fx-text-fill: #ef4444; -fx-font-size: 10; -fx-font-weight: bold;"/>
-                            </VBox>
-                            <VBox spacing="5" HBox.hgrow="ALWAYS">
-                                <Label text="PRÉNOM" style="-fx-font-weight: 800; -fx-font-size: 11; -fx-text-fill: #64748b;"/>
-                                <TextField fx:id="txtPrenom" prefHeight="45" style="-fx-background-color: #f8fafc; -fx-border-color: #e2e8f0; -fx-border-radius: 8;"/>
-                                <Label fx:id="errorPrenom" visible="false" managed="false" style="-fx-text-fill: #ef4444; -fx-font-size: 10; -fx-font-weight: bold;"/>
-                            </VBox>
-                        </HBox>
-
-                        <HBox spacing="20">
-                            <VBox spacing="5" HBox.hgrow="ALWAYS">
-                                <Label text="EMAIL" style="-fx-font-weight: 800; -fx-font-size: 11; -fx-text-fill: #64748b;"/>
-                                <TextField fx:id="txtEmail" prefHeight="45" style="-fx-background-color: #f8fafc; -fx-border-color: #e2e8f0; -fx-border-radius: 8;"/>
-                                <Label fx:id="errorEmail" visible="false" managed="false" style="-fx-text-fill: #ef4444; -fx-font-size: 10; -fx-font-weight: bold;"/>
-                            </VBox>
-                            <VBox spacing="5" HBox.hgrow="ALWAYS">
-                                <Label text="RÔLE" style="-fx-font-weight: 800; -fx-font-size: 11; -fx-text-fill: #64748b;"/>
-                                <ComboBox fx:id="comboRole" maxWidth="Infinity" prefHeight="45" style="-fx-background-color: #f8fafc; -fx-border-color: #e2e8f0;"/>
-                            </VBox>
-                        </HBox>
-
-                        <VBox fx:id="coachFieldsContainer" spacing="15" style="-fx-background-color: #f0fdf4; -fx-padding: 20; -fx-background-radius: 12; -fx-border-color: #dcfce7;">
-                            <Label text="⭐ Détails Professionnels (Coach)" style="-fx-font-weight: bold; -fx-text-fill: #1B4D3E;"/>
-                            <HBox spacing="15">
-                                <VBox spacing="5" HBox.hgrow="ALWAYS">
-                                    <Label text="Âge" style="-fx-text-fill: #475569;"/>
-                                    <TextField fx:id="txtAge" prefHeight="40"/>
-                                    <Label fx:id="errorAge" visible="false" managed="false" style="-fx-text-fill: #ef4444; -fx-font-size: 10;"/>
-                                </VBox>
-                                <VBox spacing="5" HBox.hgrow="ALWAYS">
-                                    <Label text="Expérience" style="-fx-text-fill: #475569;" />
-                                    <TextField fx:id="txtExperience" prefHeight="40"/>
-                                    <Label fx:id="errorExperience" visible="false" managed="false" style="-fx-text-fill: #ef4444; -fx-font-size: 10;"/>
-                                </VBox>
-                            </HBox>
-                            <HBox spacing="15">
-                                <VBox spacing="5" HBox.hgrow="ALWAYS">
-                                    <Label text="Spécialité" style="-fx-text-fill: #475569;"/>
-                                    <ComboBox fx:id="comboSpecialite" prefWidth="350.0" promptText="Spécialité" styleClass="modern-combo" />
-                                    <Label fx:id="errorSpec" visible="false" managed="false" style="-fx-text-fill: #ef4444; -fx-font-size: 10;"/>
-                                </VBox>
-                                <VBox spacing="5" HBox.hgrow="ALWAYS">
-                                    <Label text="Disponibilité" style="-fx-text-fill: #475569;"/>
-                                    <ComboBox fx:id="comboDispo" prefWidth="350.0" promptText="Disponibilité" styleClass="modern-combo" />
-                                    <Label fx:id="errorDispo" visible="false" managed="false" style="-fx-text-fill: #ef4444; -fx-font-size: 10;"/>
-                                </VBox>
-                            </HBox>
+        <HBox alignment="CENTER" spacing="0" style="-fx-padding: 40;" VBox.vgrow="ALWAYS">
+            <children>
+                <!-- Left Pane: Identity Card -->
+                <VBox alignment="CENTER" prefWidth="320" spacing="25" style="-fx-background-color: #2D5A27; -fx-background-radius: 25 0 0 25; -fx-padding: 40;">
+                    <children>
+                        <StackPane>
+                            <children>
+                                <Label fx:id="lblLargeInitials" style="-fx-background-color: white; -fx-text-fill: #2D5A27; -fx-font-weight: 900; -fx-font-size: 40; -fx-min-width: 120; -fx-min-height: 120; -fx-background-radius: 30; -fx-alignment: center;" text="HC" />
+                                <Button style="-fx-background-color: #E67E22; -fx-background-radius: 50; -fx-min-width: 35; -fx-min-height: 35; -fx-padding: 0; -fx-cursor: hand;" text="📷" textFill="WHITE">
+                                    <StackPane.margin>
+                                        <Insets left="80" top="80" />
+                                    </StackPane.margin>
+                                </Button>
+                            </children>
+                        </StackPane>
+                        
+                        <VBox alignment="CENTER" spacing="8">
+                            <children>
+                                <Label fx:id="lblFullName" style="-fx-font-weight: 900; -fx-font-size: 24; -fx-text-fill: white;" text="hedi cheikh" />
+                                <Label fx:id="lblBadgeRole" style="-fx-background-color: rgba(255,255,255,0.15); -fx-text-fill: white; -fx-padding: 4 15; -fx-background-radius: 20; -fx-font-size: 11; -fx-font-weight: bold;" text="ADMIN" />
+                            </children>
                         </VBox>
 
-                        <VBox spacing="5">
-                            <Label text="MOT DE PASSE" style="-fx-font-weight: 800; -fx-font-size: 11; -fx-text-fill: #1B4D3E;"/>
-                            <StackPane alignment="CENTER_RIGHT">
-                                <children>
-                                    <PasswordField fx:id="txtPassword" prefHeight="45" style="-fx-background-color: #f0fdf4; -fx-border-color: #1B4D3E; -fx-border-radius: 8; -fx-padding: 0 40 0 10;"/>
-
-                                    <TextField fx:id="txtPasswordVisible" visible="false" managed="false" prefHeight="45" style="-fx-background-color: #f0fdf4; -fx-border-color: #1B4D3E; -fx-border-radius: 8; -fx-padding: 0 40 0 10;"/>
-
-                                    <Button fx:id="btnShowPass" onAction="#togglePassword" style="-fx-background-color: transparent; -fx-cursor: hand;" text="👁️">
-                                        <StackPane.margin>
-                                            <Insets right="10.0" />
-                                        </StackPane.margin>
-                                    </Button>
-                                </children>
-                            </StackPane>
-                            <Label fx:id="errorPassword" visible="false" managed="false" style="-fx-text-fill: #ef4444; -fx-font-size: 10;"/>
+                        <Region VBox.vgrow="ALWAYS" />
+                        
+                        <VBox alignment="CENTER" spacing="5">
+                            <children>
+                                <Label style="-fx-text-fill: #A7F3D0; -fx-font-size: 12;" text="📅 Membre depuis:" />
+                                <Label style="-fx-text-fill: white; -fx-font-weight: bold; -fx-font-size: 13;" text="Mai 2026" />
+                            </children>
                         </VBox>
-                        <HBox spacing="15" alignment="CENTER_RIGHT">
-                            <Button text="ANNULER" onAction="#handleCancel" prefHeight="45" prefWidth="120" style="-fx-background-color: #f1f5f9; -fx-text-fill: #475569; -fx-font-weight: bold; -fx-background-radius: 8;"/>
-                            <Button fx:id="btnUpdate" text="ENREGISTRER" onAction="#handleUpdate" prefHeight="45" prefWidth="200" style="-fx-background-color: #1B4D3E; -fx-text-fill: white; -fx-font-weight: bold; -fx-background-radius: 8;"/>
-                        </HBox>
-                    </VBox>
+                    </children>
                 </VBox>
-            </content>
-        </ScrollPane>
+
+                <!-- Right Pane: Form -->
+                <VBox prefWidth="700" spacing="30" style="-fx-background-color: white; -fx-background-radius: 0 25 25 0; -fx-padding: 45; -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.1), 20, 0, 0, 0);">
+                    <children>
+                        <!-- Section: Identity Details -->
+                        <VBox spacing="15">
+                            <children>
+                                <Label style="-fx-text-fill: #E67E22; -fx-font-weight: 900; -fx-font-size: 13; -fx-letter-spacing: 1;" text="👤  IDENTITY DETAILS" />
+                                <Separator />
+                                <GridPane hgap="25" vgap="15">
+                                    <columnConstraints>
+                                        <ColumnConstraints hgrow="ALWAYS" percentWidth="50" />
+                                        <ColumnConstraints hgrow="ALWAYS" percentWidth="50" />
+                                    </columnConstraints>
+                                    <children>
+                                        <VBox spacing="8" GridPane.columnIndex="0" GridPane.rowIndex="0">
+                                            <Label style="-fx-font-weight: bold; -fx-text-fill: #475569;" text="Prénom" />
+                                            <TextField fx:id="txtPrenom" prefHeight="45" promptText="Prénom" style="-fx-background-color: #F8FAFC; -fx-background-radius: 12; -fx-padding: 0 15; -fx-border-color: #E2E8F0;" />
+                                            <Label fx:id="errorPrenom" managed="false" style="-fx-text-fill: #ef4444; -fx-font-size: 10;" visible="false" />
+                                        </VBox>
+                                        <VBox spacing="8" GridPane.columnIndex="1" GridPane.rowIndex="0">
+                                            <Label style="-fx-font-weight: bold; -fx-text-fill: #475569;" text="Nom" />
+                                            <TextField fx:id="txtNom" prefHeight="45" promptText="Nom" style="-fx-background-color: #F8FAFC; -fx-background-radius: 12; -fx-padding: 0 15; -fx-border-color: #E2E8F0;" />
+                                            <Label fx:id="errorNom" managed="false" style="-fx-text-fill: #ef4444; -fx-font-size: 10;" visible="false" />
+                                        </VBox>
+                                        <VBox spacing="8" GridPane.columnIndex="0" GridPane.rowIndex="1">
+                                            <Label style="-fx-font-weight: bold; -fx-text-fill: #475569;" text="Âge" />
+                                            <TextField fx:id="txtAge" prefHeight="45" promptText="Âge" style="-fx-background-color: #F8FAFC; -fx-background-radius: 12; -fx-padding: 0 15; -fx-border-color: #E2E8F0;" />
+                                            <Label fx:id="errorAge" managed="false" style="-fx-text-fill: #ef4444; -fx-font-size: 10;" visible="false" />
+                                        </VBox>
+                                        <VBox spacing="8" GridPane.columnIndex="1" GridPane.rowIndex="1">
+                                            <Label style="-fx-font-weight: bold; -fx-text-fill: #475569;" text="Téléphone" />
+                                            <TextField fx:id="txtPhone" prefHeight="45" promptText="20202020" style="-fx-background-color: #F8FAFC; -fx-background-radius: 12; -fx-padding: 0 15; -fx-border-color: #E2E8F0;" />
+                                        </VBox>
+                                    </children>
+                                </GridPane>
+                            </children>
+                        </VBox>
+
+                        <!-- Section: Access & Security -->
+                        <VBox spacing="15">
+                            <children>
+                                <Label style="-fx-text-fill: #E67E22; -fx-font-weight: 900; -fx-font-size: 13; -fx-letter-spacing: 1;" text="🛡️  ACCESS &amp; SECURITY" />
+                                <Separator />
+                                <GridPane hgap="25" vgap="15">
+                                    <columnConstraints>
+                                        <ColumnConstraints hgrow="ALWAYS" percentWidth="50" />
+                                        <ColumnConstraints hgrow="ALWAYS" percentWidth="50" />
+                                    </columnConstraints>
+                                    <children>
+                                        <VBox spacing="8" GridPane.columnIndex="0" GridPane.rowIndex="0">
+                                            <Label style="-fx-font-weight: bold; -fx-text-fill: #475569;" text="Email (Read-only)" />
+                                            <TextField fx:id="txtEmail" editable="false" prefHeight="45" style="-fx-background-color: #F1F5F9; -fx-background-radius: 12; -fx-padding: 0 15; -fx-text-fill: #94A3B8; -fx-border-color: #E2E8F0;" />
+                                            <Label fx:id="errorEmail" managed="false" style="-fx-text-fill: #ef4444; -fx-font-size: 10;" visible="false" />
+                                        </VBox>
+                                        <VBox spacing="8" GridPane.columnIndex="1" GridPane.rowIndex="0">
+                                            <Label style="-fx-font-weight: bold; -fx-text-fill: #475569;" text="Mot de passe" />
+                                            <StackPane alignment="CENTER_RIGHT">
+                                                <children>
+                                                    <PasswordField fx:id="txtPassword" prefHeight="45" style="-fx-background-color: #F8FAFC; -fx-background-radius: 12; -fx-padding: 0 45 0 15; -fx-border-color: #E2E8F0;" />
+                                                    <TextField fx:id="txtPasswordVisible" managed="false" prefHeight="45" style="-fx-background-color: #F8FAFC; -fx-background-radius: 12; -fx-padding: 0 45 0 15; -fx-border-color: #E2E8F0;" visible="false" />
+                                                    <Button fx:id="btnShowPass" onAction="#togglePassword" style="-fx-background-color: transparent; -fx-cursor: hand;" text="👁">
+                                                        <StackPane.margin>
+                                                            <Insets right="10" />
+                                                        </StackPane.margin>
+                                                    </Button>
+                                                </children>
+                                            </StackPane>
+                                            <Label fx:id="errorPassword" managed="false" style="-fx-text-fill: #ef4444; -fx-font-size: 10;" visible="false" />
+                                        </VBox>
+                                        
+                                        <VBox spacing="8" GridPane.columnIndex="0" GridPane.rowIndex="1">
+                                            <Label style="-fx-font-weight: bold; -fx-text-fill: #475569;" text="Rôle" />
+                                            <ComboBox fx:id="comboRole" maxWidth="Infinity" prefHeight="45" style="-fx-background-color: #F8FAFC; -fx-background-radius: 12; -fx-border-color: #E2E8F0;" />
+                                        </VBox>
+                                    </children>
+                                </GridPane>
+                            </children>
+                        </VBox>
+
+                        <!-- Section: Coach Details (Conditional) -->
+                        <VBox fx:id="coachFieldsContainer" spacing="15">
+                            <children>
+                                <Label style="-fx-text-fill: #E67E22; -fx-font-weight: 900; -fx-font-size: 13; -fx-letter-spacing: 1;" text="⭐  COACH DETAILS" />
+                                <Separator />
+                                <GridPane hgap="25" vgap="15">
+                                    <columnConstraints>
+                                        <ColumnConstraints hgrow="ALWAYS" percentWidth="50" />
+                                        <ColumnConstraints hgrow="ALWAYS" percentWidth="50" />
+                                    </columnConstraints>
+                                    <children>
+                                        <VBox spacing="8" GridPane.columnIndex="0" GridPane.rowIndex="0">
+                                            <Label style="-fx-font-weight: bold; -fx-text-fill: #475569;" text="Spécialité" />
+                                            <ComboBox fx:id="comboSpecialite" maxWidth="Infinity" prefHeight="45" style="-fx-background-color: #F8FAFC; -fx-background-radius: 12; -fx-border-color: #E2E8F0;" />
+                                            <Label fx:id="errorSpec" managed="false" style="-fx-text-fill: #ef4444; -fx-font-size: 10;" visible="false" />
+                                        </VBox>
+                                        <VBox spacing="8" GridPane.columnIndex="1" GridPane.rowIndex="0">
+                                            <Label style="-fx-font-weight: bold; -fx-text-fill: #475569;" text="Disponibilité" />
+                                            <ComboBox fx:id="comboDispo" maxWidth="Infinity" prefHeight="45" style="-fx-background-color: #F8FAFC; -fx-background-radius: 12; -fx-border-color: #E2E8F0;" />
+                                            <Label fx:id="errorDispo" managed="false" style="-fx-text-fill: #ef4444; -fx-font-size: 10;" visible="false" />
+                                        </VBox>
+                                        <VBox spacing="8" GridPane.columnIndex="0" GridPane.rowIndex="1">
+                                            <Label style="-fx-font-weight: bold; -fx-text-fill: #475569;" text="Expérience" />
+                                            <TextField fx:id="txtExperience" prefHeight="45" promptText="Années d'expérience" style="-fx-background-color: #F8FAFC; -fx-background-radius: 12; -fx-padding: 0 15; -fx-border-color: #E2E8F0;" />
+                                            <Label fx:id="errorExperience" managed="false" style="-fx-text-fill: #ef4444; -fx-font-size: 10;" visible="false" />
+                                        </VBox>
+                                    </children>
+                                </GridPane>
+                            </children>
+                        </VBox>
+
+                        <Region VBox.vgrow="ALWAYS" />
+
+                        <!-- Action Buttons -->
+                        <VBox alignment="CENTER" spacing="15">
+                            <children>
+                                <Button fx:id="btnUpdate" maxWidth="Infinity" onAction="#handleUpdate" prefHeight="55" style="-fx-background-color: #2D5A27; -fx-text-fill: white; -fx-font-weight: 900; -fx-font-size: 15; -fx-background-radius: 15; -fx-cursor: hand;" text="✓ Sauvegarder les modifications" />
+                                <Button maxWidth="Infinity" onAction="#handleCancel" prefHeight="55" style="-fx-background-color: #F1F5F9; -fx-text-fill: #475569; -fx-font-weight: bold; -fx-font-size: 14; -fx-background-radius: 15; -fx-cursor: hand;" text="Annuler" />
+                            </children>
+                        </VBox>
+                    </children>
+                </VBox>
+            </children>
+        </HBox>
     </children>
 </VBox>

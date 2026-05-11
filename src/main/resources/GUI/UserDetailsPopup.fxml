@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.shape.*?>
+<?import javafx.geometry.Insets?>
+
+<VBox spacing="20" style="-fx-background-color: white; -fx-padding: 30; -fx-background-radius: 20;" 
+      xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1" 
+      fx:controller="GUI.UserDetailsPopupController" prefWidth="400">
+    <children>
+        <HBox alignment="CENTER_LEFT" spacing="15">
+            <children>
+                <Label fx:id="lblInitials" style="-fx-background-color: #F1F5F9; -fx-text-fill: #475569; -fx-font-weight: 900; -fx-font-size: 20; -fx-min-width: 70; -fx-min-height: 70; -fx-background-radius: 15; -fx-alignment: center;" />
+                <VBox spacing="5">
+                    <children>
+                        <Label fx:id="lblName" style="-fx-font-weight: 900; -fx-font-size: 20; -fx-text-fill: #111827;" />
+                        <Label fx:id="lblRole" style="-fx-padding: 4 12; -fx-background-radius: 20; -fx-font-size: 11; -fx-font-weight: 900; -fx-background-color: #DBEAFE; -fx-text-fill: #2563EB;" />
+                    </children>
+                </VBox>
+            </children>
+        </HBox>
+
+        <Separator style="-fx-opacity: 0.5;" />
+
+        <GridPane vgap="15" hgap="10">
+            <columnConstraints>
+                <ColumnConstraints prefWidth="120" />
+                <ColumnConstraints hgrow="ALWAYS" />
+            </columnConstraints>
+            <children>
+                <Label text="📧 Email" style="-fx-text-fill: #64748B; -fx-font-weight: bold;" GridPane.rowIndex="0" />
+                <Label fx:id="lblEmail" style="-fx-text-fill: #1E293B; -fx-font-weight: bold;" GridPane.columnIndex="1" GridPane.rowIndex="0" />
+
+                <Label text="📞 Téléphone" style="-fx-text-fill: #64748B; -fx-font-weight: bold;" GridPane.rowIndex="1" />
+                <Label fx:id="lblPhone" style="-fx-text-fill: #1E293B; -fx-font-weight: bold;" GridPane.columnIndex="1" GridPane.rowIndex="1" />
+
+                <Label text="📅 Créé le" style="-fx-text-fill: #64748B; -fx-font-weight: bold;" GridPane.rowIndex="2" />
+                <Label fx:id="lblDate" style="-fx-text-fill: #1E293B; -fx-font-weight: bold;" GridPane.columnIndex="1" GridPane.rowIndex="2" />
+            </children>
+        </GridPane>
+
+        <VBox fx:id="coachInfoBox" spacing="10" visible="false" managed="false">
+            <children>
+                <Separator style="-fx-opacity: 0.5;" />
+                <Label text="Informations Coach" style="-fx-font-weight: 900; -fx-text-fill: #111827;" />
+                <GridPane vgap="10" hgap="10">
+                    <children>
+                        <Label text="🎂 Âge" style="-fx-text-fill: #64748B;" GridPane.rowIndex="0" />
+                        <Label fx:id="lblAge" style="-fx-font-weight: bold;" GridPane.columnIndex="1" GridPane.rowIndex="0" />
+                        
+                        <Label text="🏆 Expérience" style="-fx-text-fill: #64748B;" GridPane.rowIndex="1" />
+                        <Label fx:id="lblExp" style="-fx-font-weight: bold;" GridPane.columnIndex="1" GridPane.rowIndex="1" />
+                        
+                        <Label text="🎯 Spécialité" style="-fx-text-fill: #64748B;" GridPane.rowIndex="2" />
+                        <Label fx:id="lblSpec" style="-fx-font-weight: bold;" GridPane.columnIndex="1" GridPane.rowIndex="2" />
+                    </children>
+                </GridPane>
+            </children>
+        </VBox>
+
+        <Button text="Fermer" onAction="#handleClose" maxWidth="Infinity" style="-fx-background-color: #F1F5F9; -fx-text-fill: #475569; -fx-background-radius: 12; -fx-padding: 12; -fx-font-weight: bold; -fx-cursor: hand;" />
+    </children>
+</VBox>

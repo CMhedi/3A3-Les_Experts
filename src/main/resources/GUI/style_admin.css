@@ -145,36 +145,45 @@
     -fx-background-color: white;
     -fx-border-color: transparent;
     -fx-border-width: 0;
-    -fx-padding: 15 10;
+    -fx-padding: 12 10;
 }
 .table-view .column-header .label {
-    -fx-text-fill: #111827;
+    -fx-text-fill: #64748B; /* Gris kima Symfony */
     -fx-font-weight: 900;
-    -fx-font-size: 13px;
+    -fx-font-size: 11px;
     -fx-alignment: CENTER_LEFT;
 }
 
 /* El Rows: Cards Style */
 .table-row-cell {
-    -fx-background-color: #F0FDF4; /* Pale green mté3 Symfony */
-    -fx-background-radius: 10;
-    -fx-border-color: transparent transparent white transparent;
-    -fx-border-width: 0 0 10 0; /* Espace blanc bin les lignes */
-    -fx-border-radius: 10;
-    -fx-padding: 5;
-    -fx-text-fill: #111827;
-    -fx-font-weight: 800;
-    -fx-cell-size: 55px; /* Nsagghrou fel hauteur mté3 ligne */
+    -fx-background-color: white;
+    -fx-background-radius: 15;
+    -fx-border-color: #F8FAFC; /* Couleur de fond pour simuler l'espace */
+    -fx-border-width: 5 0;
+    -fx-padding: 0;
+    -fx-text-fill: #1E293B;
+    -fx-cell-size: 60px;
+}
+
+.table-row-cell:odd {
+    -fx-background-color: #F9FAFB; /* Subtle alternate */
 }
 
 .table-row-cell:hover {
-    -fx-background-color: #DCFCE7; 
+    -fx-background-color: #DCFCE7;
+    -fx-translate-y: -1;
 }
 
-.table-row-cell:selected {
-    -fx-background-color: white;
-    -fx-border-color: #10B981 transparent white transparent;
-    -fx-border-width: 2 0 10 0;
+.table-cell {
+    -fx-border-color: transparent;
+    -fx-padding: 0 15;
+    -fx-alignment: CENTER_LEFT;
+}
+
+/* Center specific columns */
+.table-view .column-header:nth-child(2), .table-view .column-header:nth-child(3), .table-view .column-header:nth-child(4),
+.table-view .table-cell:nth-child(2), .table-view .table-cell:nth-child(3), .table-view .table-cell:nth-child(4) {
+    -fx-alignment: CENTER;
 }
 
 /* Cache el scrollbar ken mafehech barcha data */

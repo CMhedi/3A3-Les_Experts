@@ -3,7 +3,7 @@
 <?import javafx.scene.layout.*?>
 <?import javafx.scene.shape.*?>
 
-<AnchorPane prefHeight="750.0" prefWidth="1100.0" styleClass="main-container" stylesheets="@style_admin.css" xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1" fx:controller="GUI.AdminReclamationController">
+<AnchorPane fx:id="rootPane" prefHeight="750.0" prefWidth="1100.0" styleClass="main-container" stylesheets="@style_admin.css" xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1" fx:controller="GUI.AdminReclamationController">
     <!-- Hidden Stats to keep Controller working -->
     <Label fx:id="lblPending" visible="false" managed="false"/>
     <Label fx:id="lblProcessing" visible="false" managed="false"/>
@@ -34,14 +34,12 @@
             <!-- Table -->
             <TableView fx:id="tableReclamations" VBox.vgrow="ALWAYS" styleClass="custom-table">
                 <columns>
-                    <TableColumn fx:id="colType" prefWidth="250.0" text="TYPE DE PLAINTE" />
-                    <TableColumn fx:id="colUser" prefWidth="200.0" text="UTILISATEUR" />
-                    <TableColumn fx:id="colStatut" prefWidth="200.0" text="ÉTAT" />
+                    <TableColumn fx:id="colType" prefWidth="220.0" text="TYPE DE PLAINTE" />
+                    <TableColumn fx:id="colDate" prefWidth="200.0" text="DATE DE CRÉATION" />
+                    <TableColumn fx:id="colStatut" prefWidth="180.0" text="ÉTAT" />
+                    <TableColumn fx:id="colPriority" prefWidth="150.0" text="PRIORITÉ" />
                     <TableColumn fx:id="colActions" prefWidth="250.0" text="ACTIONS" />
                 </columns>
-                <columnResizePolicy>
-                    <TableView fx:constant="CONSTRAINED_RESIZE_POLICY" />
-                </columnResizePolicy>
             </TableView>
         </children>
     </VBox>

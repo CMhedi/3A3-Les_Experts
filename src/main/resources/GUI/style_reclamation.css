@@ -47,11 +47,6 @@
     -fx-effect: dropshadow(three-pass-box, rgba(46, 204, 113, 0.4), 30, 0, 0, 15);
 }
 
-.mini-progress .bar {
-    -fx-background-color: #27ae60;
-    -fx-background-radius: 10;
-}
-
 /* ==========================================================
    SECTION 2: STYLE POPUP (Kima Formulaire Événement)
    ========================================================== */
@@ -60,7 +55,6 @@
     -fx-background-radius: 20;
 }
 
-/* El Box el de5li mta3 el popup */
 .dialog-content-box {
     -fx-background-color: white;
     -fx-padding: 20;
@@ -85,13 +79,6 @@
     -fx-background-radius: 15;
     -fx-padding: 10 20;
     -fx-cursor: hand;
-    -fx-effect: dropshadow(three-pass-box, rgba(46, 204, 113, 0.2), 20, 0, 0, 10);
-}
-
-.btn-save-modern:hover {
-    -fx-background-color: linear-gradient(to bottom right, #2ecc71, #27ae60);
-    -fx-translate-y: -2;
-    -fx-effect: dropshadow(three-pass-box, rgba(46, 204, 113, 0.4), 30, 0, 0, 15);
 }
 
 .btn-cancel-modern {
@@ -103,6 +90,82 @@
     -fx-cursor: hand;
 }
 
-.btn-cancel-modern:hover {
-    -fx-background-color: #dfe4ea;
+/* ==========================================================
+   SECTION 3: STYLE DASHBOARD (ListView & Badges)
+   ========================================================== */
+.list-view {
+    -fx-background-color: transparent;
+    -fx-border-color: transparent;
+}
+
+.list-cell {
+    -fx-background-color: transparent;
+    -fx-padding: 0;
+}
+
+.list-cell:filled:hover {
+    -fx-background-color: #F8FAFC;
+}
+
+/* Row Style */
+.table-row-box {
+    -fx-padding: 20 30;
+    -fx-border-color: #F1F5F9;
+    -fx-border-width: 0 0 1 0;
+}
+
+/* Badge Base */
+.badge {
+    -fx-padding: 6 15;
+    -fx-background-radius: 20;
+    -fx-font-size: 11;
+    -fx-font-weight: 900;
+}
+
+/* Statut Badges */
+.badge-pending {
+    -fx-background-color: #FEF9C3;
+    -fx-text-fill: #854D0E;
+}
+
+.badge-process {
+    -fx-background-color: #DBEAFE;
+    -fx-text-fill: #1E40AF;
+}
+
+.badge-done {
+    -fx-background-color: #DCFCE7;
+    -fx-text-fill: #166534;
+}
+
+/* Priority Badges */
+.badge-low {
+    -fx-background-color: #CCFBF1;
+    -fx-text-fill: #0F766E;
+}
+
+.badge-high {
+    -fx-background-color: #FEE2E2;
+    -fx-text-fill: #B91C1C;
+}
+
+/* Action Buttons */
+.btn-action-view {
+    -fx-background-color: #2D5A27;
+    -fx-text-fill: white;
+    -fx-font-weight: bold;
+    -fx-font-size: 12;
+    -fx-background-radius: 8;
+    -fx-padding: 6 15;
+    -fx-cursor: hand;
+}
+
+.btn-action-delete {
+    -fx-background-color: #FEE2E2;
+    -fx-text-fill: #B91C1C;
+    -fx-font-weight: bold;
+    -fx-font-size: 12;
+    -fx-background-radius: 8;
+    -fx-padding: 6 15;
+    -fx-cursor: hand;
 }

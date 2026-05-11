@@ -95,12 +95,18 @@ public class LoginController {
             String stored = user.getMotDePasse();
             boolean ok;
 
-            // ✅ Support: hashed (BCrypt) + fallback plain-text (si anciens comptes)
-            if (stored != null
-                    && (stored.startsWith("$2a$") || stored.startsWith("$2b$") || stored.startsWith("$2y$"))) {
-                ok = BCrypt.checkpw(mdp, stored);
+            if (stored != null) {
+                // ✅ Support: BCrypt (with Symfony $2y$ compatibility)
+                String compatibleHash = stored.replace("$2y$", "$2a$");
+
+                if (compatibleHash.startsWith("$2a$") || compatibleHash.startsWith("$2b$")) {
+                    ok = BCrypt.checkpw(mdp, compatibleHash);
+                } else {
+                    // Fallback plain-text (si anciens comptes)
+                    ok = mdp.equals(stored);
+                }
             } else {
-                ok = mdp.equals(stored);
+                ok = false;
             }
 
             if (!ok) {

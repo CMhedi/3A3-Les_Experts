@@ -14,13 +14,14 @@ import org.mindrot.jbcrypt.BCrypt;
 
 public class UserUpdateController {
 
-    @FXML private TextField txtNom, txtPrenom, txtEmail, txtAge, txtExperience;
+    @FXML private TextField txtNom, txtPrenom, txtEmail, txtAge, txtExperience, txtPhone;
     @FXML private PasswordField txtPassword;
     @FXML private ComboBox<String> comboRole, comboSpecialite, comboDispo;
     @FXML private Button btnUpdate;
     @FXML private Label errorNom, errorPrenom, errorEmail, errorPassword, errorAge, errorExperience, errorSpec, errorDispo;
     @FXML private VBox coachFieldsContainer;
-    @FXML private TextField txtPasswordVisible; // الحقل الجديد
+    @FXML private Label lblLargeInitials, lblFullName, lblBadgeRole;
+    @FXML private TextField txtPasswordVisible;
     @FXML private Button btnShowPass;
     private boolean isPasswordVisible = false;
     private UserApp currentUser;
@@ -66,11 +67,10 @@ public class UserUpdateController {
 
         setupButtonBinding();
     }
+
     @FXML
     void togglePassword(ActionEvent event) {
         if (!isPasswordVisible) {
-
-            txtPasswordVisible.setText(txtPassword.getText());
             txtPasswordVisible.setVisible(true);
             txtPasswordVisible.setManaged(true);
             txtPassword.setVisible(false);
@@ -78,16 +78,15 @@ public class UserUpdateController {
             btnShowPass.setText("🔒");
             isPasswordVisible = true;
         } else {
-
-            txtPassword.setText(txtPasswordVisible.getText());
             txtPassword.setVisible(true);
             txtPassword.setManaged(true);
             txtPasswordVisible.setVisible(false);
             txtPasswordVisible.setManaged(false);
-            btnShowPass.setText("👁️");
+            btnShowPass.setText("👁");
             isPasswordVisible = false;
         }
     }
+
     public void initData(UserApp user, AdminUsersController parent) {
         this.currentUser = user;
         this.parentController = parent;
@@ -96,8 +95,21 @@ public class UserUpdateController {
             txtNom.setText(user.getNom());
             txtPrenom.setText(user.getPrenom());
             txtEmail.setText(user.getEmail());
+            txtPhone.setText(user.getTelephone() != null ? user.getTelephone() : "");
 
-            txtPassword.setText(user.getMotDePasse());
+            // Populate Identity Card
+            String initials = (user.getNom() != null && !user.getNom().isEmpty()) ? user.getNom().substring(0, 1).toUpperCase() : "";
+            if (user.getPrenom() != null && !user.getPrenom().isEmpty()) {
+                initials = user.getPrenom().substring(0, 1).toUpperCase() + initials;
+            }
+            lblLargeInitials.setText(initials);
+            lblFullName.setText(user.getPrenom() + " " + user.getNom());
+            lblBadgeRole.setText(user.getRole() != null ? user.getRole().name() : "USER");
+
+            txtPassword.setText("");
+            txtPassword.setPromptText("Laisser vide pour ne pas changer");
+            txtPasswordVisible.setText("");
+            txtPasswordVisible.setPromptText("Laisser vide pour ne pas changer");
 
             if (user.getRole() != null) {
                 comboRole.setValue(user.getRole().name());
@@ -173,9 +185,8 @@ public class UserUpdateController {
             currentUser.setRole(RoleUser.valueOf(comboRole.getValue()));
 
             String newPass = txtPassword.getText();
-
-            if (newPass != null && !newPass.isEmpty() && !newPass.equals(currentUser.getMotDePasse())) {
-                String hashed = org.mindrot.jbcrypt.BCrypt.hashpw(newPass, org.mindrot.jbcrypt.BCrypt.gensalt());
+            if (newPass != null && !newPass.isEmpty()) {
+                String hashed = BCrypt.hashpw(newPass, BCrypt.gensalt());
                 currentUser.setMotDePasse(hashed);
             }
 

@@ -1,29 +1,84 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
-<?import java.net.URL?>
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.image.*?>
 
-<AnchorPane prefHeight="650.0" prefWidth="950.0" xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1" fx:controller="GUI.UserReclamationController">
-    <stylesheets>
-        <URL value="@style_reclamation.css" />
-    </stylesheets>
+<StackPane alignment="TOP_CENTER" xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1" fx:controller="GUI.UserReclamationController">
     <children>
-        <VBox spacing="20.0" AnchorPane.bottomAnchor="20.0" AnchorPane.leftAnchor="20.0" AnchorPane.rightAnchor="20.0" AnchorPane.topAnchor="20.0">
-            <children>
-                <HBox alignment="CENTER_LEFT" spacing="20">
+        <!-- Background Landscape -->
+        <ImageView fx:id="bgImage" fitWidth="1200.0" fitHeight="800.0" pickOnBounds="true" preserveRatio="false">
+             <image>
+                 <Image url="@../images/lake_bg.png" />
+             </image>
+        </ImageView>
+
+        <ScrollPane fitToWidth="true" style="-fx-background-color: transparent; -fx-background: transparent;">
+            <content>
+                <VBox alignment="TOP_CENTER" spacing="0" style="-fx-padding: 30 20 60 20;">
                     <children>
-                        <Button onAction="#switchToForm" text="⬅ Retour" style="-fx-background-color: #f1f5f9; -fx-font-weight: bold; -fx-background-radius: 10;"/>
-                        <Label text="Mes demandes" style="-fx-font-size: 24; -fx-font-weight: 800; -fx-text-fill: #143D30;"/>
-                        <Region HBox.hgrow="ALWAYS" />
+                        <!-- Main Card -->
+                        <VBox maxWidth="1000" spacing="25" style="-fx-background-color: white; -fx-background-radius: 30; -fx-padding: 40; -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.1), 20, 0, 0, 10);">
+                            <children>
+                                
+                                <!-- Top Bar: Title and Action -->
+                                <HBox alignment="CENTER_LEFT" spacing="20">
+                                    <children>
+                                        <VBox spacing="5" HBox.hgrow="ALWAYS">
+                                            <children>
+                                                <Label text="Mes Réclamations" style="-fx-font-weight: 900; -fx-font-size: 32; -fx-text-fill: #143D30; -fx-letter-spacing: -1;" />
+                                                <Label text="Suivez l'état de vos demandes en temps réel" style="-fx-text-fill: #64748B; -fx-font-size: 14;" />
+                                            </children>
+                                        </VBox>
+                                        <Button onAction="#switchToForm" prefHeight="45" style="-fx-background-color: #2D5A27; -fx-text-fill: white; -fx-font-weight: 800; -fx-font-size: 14; -fx-background-radius: 12; -fx-padding: 0 25; -fx-cursor: hand;" text="⊕ Nouvelle Plainte" />
+                                    </children>
+                                </HBox>
 
-                        <TextField fx:id="txtSearch" promptText="Rechercher une réclamation..."
-                                   style="-fx-background-radius: 15; -fx-pref-width: 250; -fx-padding: 8 15; -fx-border-color: #e2e8f0; -fx-border-radius: 15;"/>
+                                <!-- Search Field -->
+                                <HBox alignment="CENTER_LEFT">
+                                    <children>
+                                        <StackPane alignment="CENTER_LEFT" style="-fx-background-color: #F8FAFC; -fx-background-radius: 12; -fx-border-color: #E2E8F0; -fx-border-radius: 12;">
+                                            <children>
+                                                <TextField fx:id="txtSearch" prefHeight="45" prefWidth="350" promptText="Rechercher par type, date..." style="-fx-background-color: transparent; -fx-padding: 0 15 0 45; -fx-font-size: 14;" />
+                                                <Label text="🔍" style="-fx-text-fill: #94A3B8; -fx-font-size: 18;">
+                                                    <padding>
+                                                        <Insets left="15" />
+                                                    </padding>
+                                                </Label>
+                                            </children>
+                                        </StackPane>
+                                    </children>
+                                </HBox>
+
+                                <!-- Table Content -->
+                                <VBox spacing="10">
+                                    <children>
+                                        <!-- Header -->
+                                        <GridPane style="-fx-padding: 0 20 10 20;">
+                                            <columnConstraints>
+                                                <ColumnConstraints hgrow="ALWAYS" percentWidth="22" />
+                                                <ColumnConstraints hgrow="ALWAYS" percentWidth="23" />
+                                                <ColumnConstraints hgrow="ALWAYS" percentWidth="15" />
+                                                <ColumnConstraints hgrow="ALWAYS" percentWidth="15" />
+                                                <ColumnConstraints hgrow="ALWAYS" percentWidth="25" />
+                                            </columnConstraints>
+                                            <children>
+                                                <Label text="TYPE DE PLAINTE" style="-fx-font-weight: 800; -fx-font-size: 11; -fx-text-fill: #1E293B; -fx-letter-spacing: 0.5;" GridPane.columnIndex="0" />
+                                                <Label text="DATE DE CRÉATION" style="-fx-font-weight: 800; -fx-font-size: 11; -fx-text-fill: #1E293B; -fx-letter-spacing: 0.5;" GridPane.columnIndex="1" />
+                                                <Label text="ÉTAT" style="-fx-font-weight: 800; -fx-font-size: 11; -fx-text-fill: #1E293B; -fx-letter-spacing: 0.5;" GridPane.columnIndex="2" />
+                                                <Label text="PRIORITÉ" style="-fx-font-weight: 800; -fx-font-size: 11; -fx-text-fill: #1E293B; -fx-letter-spacing: 0.5;" GridPane.columnIndex="3" />
+                                                <Label text="ACTIONS" style="-fx-font-weight: 800; -fx-font-size: 11; -fx-text-fill: #1E293B; -fx-letter-spacing: 0.5;" GridPane.columnIndex="4" alignment="CENTER" maxWidth="Infinity" />
+                                            </children>
+                                        </GridPane>
+                                        
+                                        <ListView fx:id="listMyRecs" fixedCellSize="75" prefHeight="400" stylesheets="@style_reclamation.css" style="-fx-background-color: transparent; -fx-background-insets: 0; -fx-padding: 0;" />
+                                    </children>
+                                </VBox>
+                            </children>
+                        </VBox>
                     </children>
-                </HBox>
-
-                <ListView fx:id="listMyRecs" VBox.vgrow="ALWAYS" style="-fx-background-color: transparent; -fx-border-color: transparent;" />
-            </children>
-        </VBox>
-
+                </VBox>
+            </content>
+        </ScrollPane>
     </children>
-</AnchorPane>
+</StackPane>

@@ -233,6 +233,12 @@ public class UserService implements IGenericService<UserApp> {
     // (اختياري) helper للـ login: تتحقق من password
     public boolean checkPassword(String rawPassword, String hashedFromDb) {
         if (rawPassword == null || hashedFromDb == null) return false;
-        return BCrypt.checkpw(rawPassword, hashedFromDb);
+        // ✅ Symfony compatibility: replace $2y$ with $2a$
+        String compatibleHash = hashedFromDb.replace("$2y$", "$2a$");
+        try {
+            return BCrypt.checkpw(rawPassword, compatibleHash);
+        } catch (Exception e) {
+            return rawPassword.equals(hashedFromDb);
+        }
     }
 }

@@ -11,30 +11,38 @@
         <URL value="@user.css" />
     </stylesheets>
     <children>
-        <HBox alignment="BOTTOM_LEFT">
+        <HBox alignment="CENTER_LEFT" spacing="20">
             <children>
-                <VBox spacing="5">
-                    <Label text="Gestion des Utilisateurs" style="-fx-font-size: 32; -fx-font-weight: 800;" textFill="#111827"/>
-                    <Label text="Consultez et gérez les membres de votre plateforme." style="-fx-font-size: 15;" textFill="#6b7280"/>
+                <VBox spacing="5" HBox.hgrow="ALWAYS">
+                    <Label style="-fx-font-size: 20; -fx-font-weight: bold;" text="Communauté EcoAdventure" textFill="#1B4D3E" />
+                    <Label style="-fx-font-size: 32; -fx-font-weight: 900;" text="Membres Actifs" textFill="#111827" />
+                    <Label style="-fx-font-size: 14;" text="Recherchez et gérez les membres de la plateforme" textFill="#6b7280" />
                 </VBox>
-                <Region HBox.hgrow="ALWAYS"/>
-                <Button onAction="#showAddModal" text="+ Nouvel Utilisateur" prefHeight="45" styleClass="pro-add-btn"/>
+                <HBox alignment="CENTER_LEFT" spacing="10" style="-fx-background-color: #F3F4F6; -fx-padding: 10 20; -fx-background-radius: 25;">
+                    <children>
+                        <Label style="-fx-text-fill: #9CA3AF;" text="🔍" />
+                        <TextField fx:id="txtSearch" promptText="Nom, email, rôle..." style="-fx-background-color: transparent; -fx-pref-width: 250;" />
+                    </children>
+                </HBox>
+                <Button onAction="#showAddModal" prefHeight="50" style="-fx-background-color: #3B82F6; -fx-text-fill: white; -fx-background-radius: 15; -fx-font-weight: bold; -fx-padding: 0 25; -fx-cursor: hand;" text="➕ Ajouter Membre" />
             </children>
         </HBox>
 
-        <HBox alignment="CENTER_LEFT" style="-fx-background-color: white; -fx-padding: 15; -fx-background-radius: 12; -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.05), 10, 0, 0, 5);">
+        <!-- Table Headers -->
+        <HBox spacing="20" style="-fx-padding: 0 40 0 40;">
             <children>
-                <TextField fx:id="txtSearch" promptText="🔍 Rechercher un nom, email..." prefWidth="400" prefHeight="40" styleClass="pro-search"/>
+                <Label prefWidth="250" style="-fx-font-weight: bold; -fx-text-fill: #9CA3AF; -fx-font-size: 12;" text="MEMBRE" />
+                <Label prefWidth="250" style="-fx-font-weight: bold; -fx-text-fill: #9CA3AF; -fx-font-size: 12;" text="COORDONNÉES" />
+                <Label alignment="CENTER" prefWidth="150" style="-fx-font-weight: bold; -fx-text-fill: #9CA3AF; -fx-font-size: 12;" text="RÔLE" />
+                <Label alignment="CENTER" prefWidth="150" style="-fx-font-weight: bold; -fx-text-fill: #9CA3AF; -fx-font-size: 12;" text="PROFIL" />
+                <Region HBox.hgrow="ALWAYS" />
+                <Label alignment="CENTER_RIGHT" style="-fx-font-weight: bold; -fx-text-fill: #9CA3AF; -fx-font-size: 12;" text="ACTIONS" />
             </children>
         </HBox>
 
-        <StackPane VBox.vgrow="ALWAYS" style="-fx-background-color: white; -fx-background-radius: 12; -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.05), 15, 0, 0, 10);">
-            <padding>
-                <Insets top="10" right="10" bottom="10" left="10"/>
-            </padding>
+        <StackPane style="-fx-background-color: transparent;" VBox.vgrow="ALWAYS">
             <children>
-                <ListView fx:id="userListView" VBox.vgrow="ALWAYS"
-                          style="-fx-background-color: transparent; -fx-border-color: transparent;" />
+                <ListView fx:id="userListView" style="-fx-background-color: transparent; -fx-border-color: transparent;" VBox.vgrow="ALWAYS" />
             </children>
         </StackPane>
     </children>

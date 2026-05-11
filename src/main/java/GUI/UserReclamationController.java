@@ -59,63 +59,62 @@ public class UserReclamationController {
         if (text == null) text = "";
         int length = text.length();
         String input = text.toLowerCase();
-        // 1. Counter (1000 kima fel label mte3ek)
-        lblCharCount.setText(length + "/1000");
-
-        // 2. Progress Calculation (Forci el double bech yet7arek el khatt)
-        double progressValue = (double) length / 1000.0;
-        progressChar.setProgress(progressValue);
-// Dans updateSmartFeatures
-        if (length > 200) {
-            lblCharCount.setStyle("-fx-text-fill: #ef4444;"); // Rouge alerte
-        } else {
-            lblCharCount.setStyle("-fx-text-fill: #94a3b8;");
+        
+        // 1. Counter
+        if (lblCharCount != null) {
+            lblCharCount.setText(length + "/1000");
+            if (length > 200) {
+                lblCharCount.setStyle("-fx-text-fill: #ef4444;"); 
+            } else {
+                lblCharCount.setStyle("-fx-text-fill: #94a3b8;");
+            }
         }
 
-// Désactiver le bouton si vide
-        btnEnvoyer.setDisable(text.trim().isEmpty() || comboType.getValue() == null);
-        // 3. Force Color Change (Bel -fx-accent)
-        if (length > 200) {
-
-            progressChar.setStyle("-fx-accent: #ef4444; -fx-control-inner-background: #fee2e2;");
-        } else {
-            // A5dher EcoAdventure kenou 3adi
-            progressChar.setStyle("-fx-accent: #143D30; -fx-control-inner-background: #f1f5f9;");
-        }
-        // 1. Définir l'emoji et la couleur
-        String emoji = "😐";
-        String colorHex = "#e2e8f0"; // Gris par défaut
-
-        if (input.contains("merci") || input.contains("top") || input.contains("super")) {
-            emoji = "😎";
-            colorHex = "#4ade80"; // Vert
-        } else if (input.contains("nul") || input.contains("faddit") || input.contains("mauvais")) {
-            emoji = "😡";
-            colorHex = "#f87171"; // Rouge
-        } else if (input.contains("urgent") || input.contains("vite")) {
-            emoji = "🆘";
-            colorHex = "#fbbf24"; // Gold
+        // 2. Progress Calculation
+        if (progressChar != null) {
+            double progressValue = (double) length / 1000.0;
+            progressChar.setProgress(progressValue);
+            if (length > 200) {
+                progressChar.setStyle("-fx-accent: #ef4444; -fx-control-inner-background: #fee2e2;");
+            } else {
+                progressChar.setStyle("-fx-accent: #2D5A27; -fx-control-inner-background: #f1f5f9;");
+            }
         }
 
-        // 2. Appliquer l'emoji
-        lblSentiment.setText(emoji);
+        if (btnEnvoyer != null) {
+            btnEnvoyer.setDisable(text.trim().isEmpty() || (comboType != null && comboType.getValue() == null));
+        }
 
-        // 3. Appliquer le Glow dynamiquement
-        javafx.scene.paint.Color color = javafx.scene.paint.Color.web(colorHex);
+        // 3. Sentiment Analysis (Ken fama Label)
+        if (lblSentiment != null) {
+            String emoji = "😐";
+            String colorHex = "#e2e8f0"; 
 
-        // On crée un nouvel effet à chaque fois pour éviter les erreurs de cast
-        javafx.scene.effect.DropShadow glow = new javafx.scene.effect.DropShadow();
-        glow.setRadius(25);
-        glow.setSpread(0.15);
-        glow.setColor(color);
+            if (input.contains("merci") || input.contains("top") || input.contains("super")) {
+                emoji = "😎";
+                colorHex = "#4ade80"; 
+            } else if (input.contains("nul") || input.contains("faddit") || input.contains("mauvais")) {
+                emoji = "😡";
+                colorHex = "#f87171"; 
+            } else if (input.contains("urgent") || input.contains("vite")) {
+                emoji = "🆘";
+                colorHex = "#fbbf24"; 
+            }
 
-        lblSentiment.setEffect(glow);
+            lblSentiment.setText(emoji);
+            javafx.scene.paint.Color color = javafx.scene.paint.Color.web(colorHex);
+            javafx.scene.effect.DropShadow glow = new javafx.scene.effect.DropShadow();
+            glow.setRadius(25);
+            glow.setSpread(0.15);
+            glow.setColor(color);
+            lblSentiment.setEffect(glow);
 
-        // 4. Animation de pulsation
-        javafx.animation.ScaleTransition st = new javafx.animation.ScaleTransition(javafx.util.Duration.millis(250), lblSentiment);
-        st.setFromX(0.8); st.setFromY(0.8);
-        st.setToX(1.0);   st.setToY(1.0);
-        st.play();
+            javafx.animation.ScaleTransition st = new javafx.animation.ScaleTransition(javafx.util.Duration.millis(250), lblSentiment);
+            st.setFromX(0.8); st.setFromY(0.8);
+            st.setToX(1.0);   st.setToY(1.0);
+            st.play();
+        }
+
         handleAutoReply(text);
     }
 
@@ -130,6 +129,8 @@ public class UserReclamationController {
     }};
 
     private void handleAutoReply(String text) {
+        if (lblAutoReply == null) return;
+        
         if (text == null || text.length() < 3) {
             lblAutoReply.setVisible(false);
             lblAutoReply.setManaged(false);
@@ -170,69 +171,74 @@ public class UserReclamationController {
                 if (empty || item == null) {
                     setGraphic(null);
                 } else {
-                    // 1. El Card el kbir
-                    VBox card = new VBox(15);
-                    card.setStyle("-fx-padding: 20; -fx-background-color: white; -fx-background-radius: 15; " +
-                            "-fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.05), 15, 0, 0, 5); " +
-                            "-fx-border-color: #f1f5f9; -fx-border-width: 1; -fx-border-radius: 15;");
+                    GridPane row = new GridPane();
+                    row.getStyleClass().add("table-row-box");
+                    row.setHgap(0);
+                    row.setPrefHeight(75);
+                    row.setAlignment(Pos.CENTER_LEFT);
 
-                    // 2. Header (Type + Timeline)
-                    HBox header = new HBox();
-                    header.setAlignment(Pos.CENTER_LEFT);
+                    ColumnConstraints col1 = new ColumnConstraints(); col1.setPercentWidth(22);
+                    ColumnConstraints col2 = new ColumnConstraints(); col2.setPercentWidth(23);
+                    ColumnConstraints col3 = new ColumnConstraints(); col3.setPercentWidth(15);
+                    ColumnConstraints col4 = new ColumnConstraints(); col4.setPercentWidth(15);
+                    ColumnConstraints col5 = new ColumnConstraints(); col5.setPercentWidth(25);
+                    row.getColumnConstraints().addAll(col1, col2, col3, col4, col5);
 
-                    Label type = new Label(item.getType());
-                    type.setStyle("-fx-font-weight: 900; -fx-font-size: 18px; -fx-text-fill: #143D30; -fx-letter-spacing: 1;");
+                    // 1. TYPE DE PLAINTE
+                    HBox typeBox = new HBox(12);
+                    typeBox.setAlignment(Pos.CENTER_LEFT);
+                    
+                    StackPane iconContainer = new StackPane();
+                    iconContainer.setPrefSize(35, 35);
+                    iconContainer.setStyle("-fx-background-color: white; -fx-background-radius: 10; -fx-border-color: #E2E8F0; -fx-border-radius: 10;");
+                    Label typeIcon = new Label("⚠️");
+                    typeIcon.setStyle("-fx-text-fill: #F59E0B; -fx-font-size: 14;");
+                    iconContainer.getChildren().add(typeIcon);
+                    
+                    Label typeText = new Label(item.getType());
+                    typeText.setStyle("-fx-font-weight: 800; -fx-text-fill: #1E293B; -fx-font-size: 14;");
+                    typeBox.getChildren().addAll(iconContainer, typeText);
+                    row.add(typeBox, 0, 0);
 
-                    Region spacer = new Region();
-                    HBox.setHgrow(spacer, Priority.ALWAYS);
+                    // 2. DATE DE CRÉATION
+                    VBox dateBox = new VBox(2);
+                    String dateStr = item.getDateCreation() != null ? item.getDateCreation().format(java.time.format.DateTimeFormatter.ofPattern("dd MMM yyyy")) : "11 May 2026";
+                    String timeStr = item.getDateCreation() != null ? item.getDateCreation().format(java.time.format.DateTimeFormatter.ofPattern("HH:mm")) : "18:20";
+                    Label dateLabel = new Label(dateStr);
+                    dateLabel.setStyle("-fx-font-weight: 700; -fx-text-fill: #1E293B; -fx-font-size: 13;");
+                    Label timeLabel = new Label(timeStr);
+                    timeLabel.setStyle("-fx-text-fill: #64748B; -fx-font-size: 11;");
+                    dateBox.getChildren().addAll(dateLabel, timeLabel);
+                    row.add(dateBox, 1, 0);
 
-                    Node timeline = createTimeline(item.getStatut());
-                    header.getChildren().addAll(type, spacer, timeline);
+                    // 3. ÉTAT
+                    Label statusLabel = new Label(item.getStatut().toString());
+                    statusLabel.getStyleClass().add("badge");
+                    if (item.getStatut().toString().equals("EN_ATTENTE")) statusLabel.getStyleClass().add("badge-pending");
+                    else if (item.getStatut().toString().equals("EN_COURS")) statusLabel.getStyleClass().add("badge-process");
+                    else statusLabel.getStyleClass().add("badge-done");
+                    row.add(statusLabel, 2, 0);
 
-                    // 3. Contenu (Text)
-                    Label contenu = new Label(item.getContenu());
-                    contenu.setWrapText(true);
-                    contenu.setStyle("-fx-text-fill: #64748b; -fx-font-size: 14px; -fx-line-spacing: 5;");
-                    contenu.setMaxWidth(850); // Bech mayfoutch el card
+                    // 4. PRIORITÉ (Simulated)
+                    Label priorityLabel = new Label("BASSE");
+                    priorityLabel.getStyleClass().addAll("badge", "badge-low");
+                    row.add(priorityLabel, 3, 0);
 
-                    // 4. Reponse (ken fama)
-                    VBox responseContainer = new VBox();
-                    if (item.getReponse() != null && !item.getReponse().isEmpty()) {
-                        Label repTitle = new Label("Réponse de l'admin :");
-                        repTitle.setStyle("-fx-font-weight: bold; -fx-font-size: 12px; -fx-text-fill: #0369A1;");
+                    // 5. ACTIONS
+                    HBox actionBox = new HBox(10);
+                    actionBox.setAlignment(Pos.CENTER);
+                    Button btnView = new Button("👁 Détails");
+                    btnView.getStyleClass().add("btn-action-view");
+                    btnView.setOnAction(e -> handleUpdateFromCard(item));
 
-                        Label repBody = new Label(item.getReponse());
-                        repBody.setStyle("-fx-text-fill: #334155; -fx-background-color: #f0f9ff; -fx-padding: 12; -fx-background-radius: 10; -fx-wrap-text: true;");
-                        responseContainer.getChildren().addAll(repTitle, repBody);
-                        responseContainer.setSpacing(5);
-                    }
+                    Button btnDel = new Button("🗑");
+                    btnDel.getStyleClass().add("btn-action-delete");
+                    btnDel.setOnAction(e -> handleDeleteFromCard(item));
 
-                    // 5. Buttons (Modif/Supp)
-                    HBox actions = new HBox(12);
-                    actions.setAlignment(Pos.CENTER_RIGHT);
+                    actionBox.getChildren().addAll(btnView, btnDel);
+                    row.add(actionBox, 4, 0);
 
-                    if (item.getStatut().toString().equals("EN_ATTENTE")) {
-                        Button btnModif = new Button("Modifier");
-                        btnModif.setStyle("-fx-background-color: #f1f5f9; -fx-text-fill: #143D30; -fx-font-weight: bold; -fx-background-radius: 8; -fx-padding: 5 15; -fx-cursor: hand;");
-                        btnModif.setOnAction(e -> handleUpdateFromCard(item));
-
-                        Button btnSupp = new Button("Supprimer");
-                        btnSupp.setStyle("-fx-background-color: #fff1f2; -fx-text-fill: #e11d48; -fx-font-weight: bold; -fx-background-radius: 8; -fx-padding: 5 15; -fx-cursor: hand;");
-                        btnSupp.setOnAction(e -> handleDeleteFromCard(item));
-
-                        actions.getChildren().addAll(btnModif, btnSupp);
-                    }
-
-                    // Montage final
-                    card.getChildren().addAll(header, contenu);
-                    if (!responseContainer.getChildren().isEmpty()) card.getChildren().add(responseContainer);
-                    card.getChildren().add(actions);
-
-                    // Animation FadeIn ki t-loadi el list
-                    javafx.animation.FadeTransition ft = new javafx.animation.FadeTransition(javafx.util.Duration.millis(300), card);
-                    ft.setFromValue(0.0); ft.setToValue(1.0); ft.play();
-
-                    setGraphic(card);
+                    setGraphic(row);
                 }
             }
         });

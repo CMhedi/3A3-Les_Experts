@@ -1,49 +1,92 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
-<?import java.net.URL?>
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.image.*?>
 <?import javafx.scene.shape.Circle?>
 
-<?import javafx.scene.effect.DropShadow?>
-<VBox alignment="TOP_CENTER" spacing="30.0" style="-fx-padding: 40;" xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1" fx:controller="GUI.UserReclamationController">
-    <stylesheets>
-        <URL value="@style_reclamation.css" />
-    </stylesheets>
-        <children>
-            <VBox alignment="CENTER" spacing="8">
-                <Label text="Centre d'Assistance" style="-fx-font-size: 36; -fx-font-weight: 800; -fx-text-fill: #143D30;"/>
-                <Label text="Une question ? Une remarque ? Notre équipe est à votre écoute." style="-fx-text-fill: #64748b; -fx-font-size: 15;"/>
-            </VBox>
+<StackPane alignment="TOP_CENTER" xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1" fx:controller="GUI.UserReclamationController">
+    <children>
+        <!-- Background Image -->
+        <ImageView fx:id="bgImage" fitWidth="1200.0" fitHeight="800.0" pickOnBounds="true" preserveRatio="false">
+             <image>
+                 <Image url="@../images/lake_bg.png" />
+             </image>
+        </ImageView>
 
-            <VBox maxWidth="550.0" spacing="25.0" styleClass="main-card">
-                <children>
-                    <VBox spacing="10">
-                        <Label text="Type de réclamation" style="-fx-font-weight: bold; -fx-text-fill: #1e293b; -fx-font-size: 14;"/>
-                        <ComboBox fx:id="comboType" promptText="Choisir une catégorie..." maxWidth="Infinity" />
-                    </VBox>
+        <!-- Main Layout with ScrollPane -->
+        <ScrollPane fitToWidth="true" style="-fx-background-color: transparent; -fx-background: transparent;">
+            <content>
+                <VBox alignment="TOP_CENTER" spacing="0" style="-fx-padding: 30 20 60 20;">
+                    <children>
+                        
+                        <!-- Floating Content Card (Even more compact) -->
+                        <VBox maxWidth="500" alignment="TOP_CENTER" spacing="0">
+                            <children>
+                                
+                                <!-- Robot Icon -->
+                                <HBox alignment="CENTER_RIGHT" prefHeight="0">
+                                    <children>
+                                        <StackPane style="-fx-padding: 0 25 -25 0;">
+                                            <children>
+                                                <Circle radius="25" fill="white" style="-fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.1), 5, 0, 0, 3);" />
+                                                <Label text="🤖" style="-fx-font-size: 20;" />
+                                            </children>
+                                        </StackPane>
+                                    </children>
+                                </HBox>
 
-                    <VBox spacing="10">
-                        <HBox alignment="BOTTOM_LEFT">
-                            <Label text="Détails du message" style="-fx-font-weight: bold; -fx-text-fill: #1e293b; -fx-font-size: 14;"/>
-                            <Region HBox.hgrow="ALWAYS" />
-                            <Label fx:id="lblSentiment" text="😐" style="-fx-font-size: 35;" />
-                        </HBox>
+                                <!-- Glassmorphic Card -->
+                                <VBox spacing="20" style="-fx-background-color: white; -fx-background-radius: 30; -fx-padding: 35; -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.15), 25, 0, 0, 10);">
+                                    <children>
+                                        <!-- Header -->
+                                        <VBox spacing="5">
+                                            <children>
+                                                <Label text="Nouvelle Plainte" style="-fx-font-weight: 900; -fx-font-size: 28; -fx-text-fill: #143D30; -fx-letter-spacing: -0.5;" />
+                                                <Label text="Notre équipe est là pour vous aider." style="-fx-text-fill: #64748B; -fx-font-size: 13;" />
+                                            </children>
+                                        </VBox>
 
-                        <TextArea fx:id="txtContenu" prefHeight="180.0" promptText="Décrivez votre situation ici..." wrapText="true" />
+                                        <!-- Form Fields -->
+                                        <VBox spacing="15">
+                                            <children>
+                                                <VBox spacing="6">
+                                                    <children>
+                                                        <Label text=" Quel est le type de votre problème ?" style="-fx-font-weight: 700; -fx-text-fill: #1E293B; -fx-font-size: 12;" />
+                                                        <ComboBox fx:id="comboType" maxWidth="Infinity" prefHeight="40" promptText="Choisir une catégorie..." style="-fx-background-color: #F8FAFC; -fx-background-radius: 10; -fx-border-color: #E2E8F0; -fx-border-radius: 10;" />
+                                                    </children>
+                                                </VBox>
 
-                        <HBox alignment="CENTER_LEFT" spacing="15">
-                            <ProgressBar fx:id="progressChar" progress="0.0" HBox.hgrow="ALWAYS" prefHeight="8.0" styleClass="mini-progress"/>
-                            <Label fx:id="lblCharCount" text="0/1000" style="-fx-font-size: 11; -fx-text-fill: #94a3b8; -fx-font-weight: bold;"/>
-                        </HBox>
-                    </VBox>
+                                                <VBox spacing="6">
+                                                    <children>
+                                                        <Label text=" Détails de votre réclamation" style="-fx-font-weight: 700; -fx-text-fill: #1E293B; -fx-font-size: 12;" />
+                                                        <TextArea fx:id="txtContenu" prefHeight="120" promptText="Expliquez-nous dhoabt chnoua sarr..." wrapText="true" style="-fx-background-color: #F8FAFC; -fx-background-radius: 12; -fx-border-color: #E2E8F0; -fx-border-radius: 12;" />
+                                                        
+                                                        <HBox alignment="CENTER_LEFT" spacing="10">
+                                                            <children>
+                                                                <ProgressBar fx:id="progressChar" progress="0.0" prefHeight="4" HBox.hgrow="ALWAYS" style="-fx-accent: #2D5A27;" />
+                                                                <Label fx:id="lblCharCount" text="0/1000" style="-fx-font-size: 10; -fx-text-fill: #94A3B8;" />
+                                                            </children>
+                                                        </HBox>
+                                                    </children>
+                                                </VBox>
+                                            </children>
+                                        </VBox>
 
-                    <Label fx:id="lblAutoReply" visible="false" managed="false" styleClass="auto-reply-box" />
-
-                    <Button fx:id="btnEnvoyer" onAction="#handleEnvoyer" text="Envoyer mon message" maxWidth="Infinity" styleClass="btn-submit" />
-                </children>
-            </VBox>
-
-            <Button onAction="#switchToList" text="Consulter l'historique de mes demandes"
-                    style="-fx-background-color: transparent; -fx-text-fill: #64748b; -fx-font-weight: bold; -fx-cursor: hand; -fx-underline: false;"/>
-        </children>
-    </VBox>
+                                        <!-- Submit Section -->
+                                        <VBox spacing="12" alignment="CENTER">
+                                            <children>
+                                                <Button fx:id="btnEnvoyer" onAction="#handleEnvoyer" maxWidth="Infinity" prefHeight="45" style="-fx-background-color: #1E293B; -fx-text-fill: white; -fx-font-weight: 800; -fx-font-size: 14; -fx-background-radius: 10; -fx-cursor: hand;" text="Envoyer ma réclamation" />
+                                                <Button onAction="#switchToList" style="-fx-background-color: transparent; -fx-text-fill: #64748B; -fx-font-weight: bold; -fx-font-size: 12; -fx-cursor: hand;" text="Annuler et retour" />
+                                            </children>
+                                        </VBox>
+                                    </children>
+                                </VBox>
+                            </children>
+                        </VBox>
+                    </children>
+                </VBox>
+            </content>
+        </ScrollPane>
+    </children>
+</StackPane>

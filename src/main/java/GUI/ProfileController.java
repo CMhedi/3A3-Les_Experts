@@ -247,7 +247,7 @@ public class ProfileController implements Initializable {
         String inputPass = txtOldPass.getText();
         String hashedPass = currentUser.getMotDePasse();
 
-        if (BCrypt.checkpw(inputPass, hashedPass)) {
+        if (us.checkPassword(inputPass, hashedPass)) {
             // Success Alert mrigla mel DialogUtils
             DialogUtils.showInfo("Vérification Réussie", "Votre mot de passe actuel est correct.");
 

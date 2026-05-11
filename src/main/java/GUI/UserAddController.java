@@ -19,7 +19,7 @@ import java.io.IOException;
 
 public class UserAddController {
 
-    @FXML private TextField txtNom, txtPrenom, txtEmail, txtAge, txtExperience;
+    @FXML private TextField txtNom, txtPrenom, txtEmail, txtAge, txtExperience, txtPhone;
     @FXML private PasswordField txtPassword;
     @FXML private ComboBox<String> comboRole, comboSpecialite, comboDispo;
     @FXML private Button btnEnregistrer;
@@ -191,6 +191,7 @@ public class UserAddController {
             newUser.setNom(txtNom.getText().trim());
             newUser.setPrenom(txtPrenom.getText().trim());
             newUser.setEmail(txtEmail.getText().trim());
+            newUser.setTelephone(txtPhone.getText() != null ? txtPhone.getText().trim() : "");
             newUser.setRole(RoleUser.valueOf(comboRole.getValue()));
             newUser.setMotDePasse(txtPassword.getText()); // hashing يتحلّ في UserService.add()
 
