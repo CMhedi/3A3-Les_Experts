@@ -24,7 +24,7 @@ public class AdminReclamationController {
     @FXML private TableColumn<Reclamation, Integer> colUser;
     @FXML private TableColumn<Reclamation, String> colType;
     @FXML private TableColumn<Reclamation, StatutReclamation> colStatut;
-    @FXML private TableColumn<Reclamation, String> colReponse; // ✅
+    @FXML private TableColumn<Reclamation, Void> colActions; // ✅ Actions column
 
     @FXML private TextField txtSearch;
     @FXML private Label lblPending;
@@ -40,7 +40,7 @@ public class AdminReclamationController {
 
         colType.setCellValueFactory(new PropertyValueFactory<>("type"));
         colStatut.setCellValueFactory(new PropertyValueFactory<>("statut"));
-        colReponse.setCellValueFactory(new PropertyValueFactory<>("reponse")); // ✅
+        // Removed colReponse
 
         // 2. Custom Cell Factory for Colors (Statut)
         colStatut.setCellFactory(column -> new TableCell<>() {
@@ -58,6 +58,41 @@ public class AdminReclamationController {
                         case EN_COURS -> setStyle("-fx-background-color: #E0F2FE; -fx-text-fill: #0369A1; -fx-background-radius: 10; -fx-alignment: center;");
                         case REJETEE -> setStyle("-fx-background-color: #FEE2E2; -fx-text-fill: #991B1B; -fx-background-radius: 10; -fx-alignment: center;");
                     }
+                }
+            }
+        });
+
+        // 3. Custom Cell Factory for Actions (Détails & Trash)
+        colActions.setCellFactory(param -> new TableCell<>() {
+            private final Button btnDetails = new Button("👁 Détails");
+            private final Button btnDelete = new Button("🗑");
+            private final javafx.scene.layout.HBox pane = new javafx.scene.layout.HBox(10, btnDetails, btnDelete);
+
+            {
+                btnDetails.setStyle("-fx-background-color: #143D30; -fx-text-fill: white; -fx-font-weight: bold; -fx-background-radius: 8; -fx-cursor: hand; -fx-padding: 5 15;");
+                btnDelete.setStyle("-fx-background-color: #FEE2E2; -fx-text-fill: #EF4444; -fx-font-weight: bold; -fx-background-radius: 8; -fx-cursor: hand; -fx-padding: 5 15;");
+                pane.setAlignment(javafx.geometry.Pos.CENTER);
+
+                btnDetails.setOnAction(event -> {
+                    Reclamation r = getTableView().getItems().get(getIndex());
+                    tableReclamations.getSelectionModel().select(r);
+                    showDetailsPopup(r);
+                });
+
+                btnDelete.setOnAction(event -> {
+                    Reclamation r = getTableView().getItems().get(getIndex());
+                    tableReclamations.getSelectionModel().select(r);
+                    try { handleDelete(); } catch (SQLException e) { e.printStackTrace(); }
+                });
+            }
+
+            @Override
+            protected void updateItem(Void item, boolean empty) {
+                super.updateItem(item, empty);
+                if (empty) {
+                    setGraphic(null);
+                } else {
+                    setGraphic(pane);
                 }
             }
         });

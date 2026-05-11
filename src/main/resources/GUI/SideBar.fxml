@@ -3,7 +3,7 @@
 <?import javafx.scene.layout.*?>
 
 <VBox fx:id="sidebarRoot" prefWidth="230.0" spacing="15.0"
-      style="-fx-background-color: #143D30; -fx-padding: 30 15 15 15;"
+      style="-fx-background-color: #1E293B; -fx-padding: 30 15 15 15;"
       xmlns="http://javafx.com/javafx/17"
       xmlns:fx="http://javafx.com/fxml/1"
       fx:controller="GUI.SideBarController">

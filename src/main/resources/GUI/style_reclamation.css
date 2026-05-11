@@ -7,44 +7,48 @@
 }
 
 .main-card {
-    -fx-background-color: white;
+    -fx-background-color: rgba(255, 255, 255, 0.95);
     -fx-background-radius: 20;
     -fx-padding: 40;
-    -fx-effect: dropshadow(three-pass-box, rgba(0, 0, 0, 0.06), 20, 0, 0, 10);
+    -fx-effect: dropshadow(three-pass-box, rgba(0, 0, 0, 0.1), 30, 0, 0, 10);
 }
 
-.combo-box, .text-area {
-    -fx-background-color: #FFFFFF;
-    -fx-border-color: #E2E8F0;
-    -fx-border-width: 1.5;
-    -fx-border-radius: 10;
-    -fx-background-radius: 10;
+.combo-box, .text-area, .text-field {
+    -fx-background-color: #f8f9fa;
+    -fx-border-color: #f1f2f6;
+    -fx-border-width: 2px;
+    -fx-border-radius: 15;
+    -fx-background-radius: 15;
     -fx-font-size: 14px;
+    -fx-text-fill: #2f3542;
+    -fx-padding: 10px;
 }
 
-.combo-box:focused, .text-area:focused {
-    -fx-border-color: #143D30;
-    -fx-background-color: #FFFFFF;
-    -fx-effect: dropshadow(three-pass-box, rgba(20, 61, 48, 0.1), 10, 0, 0, 0);
+.combo-box:focused, .text-area:focused, .text-field:focused {
+    -fx-border-color: #3a7bd5;
+    -fx-background-color: white;
+    -fx-effect: dropshadow(three-pass-box, rgba(58, 123, 213, 0.1), 10, 0, 0, 0);
 }
 
 .btn-submit {
-    -fx-background-color: linear-gradient(to bottom right, #143D30, #1A4D3D);
+    -fx-background-color: linear-gradient(to bottom right, #27ae60, #2ecc71);
     -fx-text-fill: white;
     -fx-font-weight: bold;
     -fx-font-size: 15px;
-    -fx-background-radius: 12;
+    -fx-background-radius: 15;
     -fx-padding: 15 30;
     -fx-cursor: hand;
+    -fx-effect: dropshadow(three-pass-box, rgba(46, 204, 113, 0.2), 20, 0, 0, 10);
 }
 
 .btn-submit:hover {
-    -fx-background-color: linear-gradient(to bottom right, #1A4D3D, #24634F);
+    -fx-background-color: linear-gradient(to bottom right, #2ecc71, #27ae60);
     -fx-translate-y: -2;
+    -fx-effect: dropshadow(three-pass-box, rgba(46, 204, 113, 0.4), 30, 0, 0, 15);
 }
 
 .mini-progress .bar {
-    -fx-background-color: #10B981;
+    -fx-background-color: #27ae60;
     -fx-background-radius: 10;
 }
 
@@ -65,27 +69,40 @@
 .label-header {
     -fx-font-size: 20px;
     -fx-font-weight: 800;
-    -fx-text-fill: #143D30;
+    -fx-text-fill: #2f3542;
 }
 
 .label-field {
-    -fx-font-size: 13px;
+    -fx-font-size: 14px;
     -fx-font-weight: bold;
-    -fx-text-fill: #475569;
+    -fx-text-fill: #2f3542;
 }
 
 .btn-save-modern {
-    -fx-background-color: #28a745; /* Vert kima el Formulaire Evénement */
+    -fx-background-color: linear-gradient(to bottom right, #27ae60, #2ecc71);
     -fx-text-fill: white;
     -fx-font-weight: bold;
-    -fx-background-radius: 10;
+    -fx-background-radius: 15;
+    -fx-padding: 10 20;
+    -fx-cursor: hand;
+    -fx-effect: dropshadow(three-pass-box, rgba(46, 204, 113, 0.2), 20, 0, 0, 10);
+}
+
+.btn-save-modern:hover {
+    -fx-background-color: linear-gradient(to bottom right, #2ecc71, #27ae60);
+    -fx-translate-y: -2;
+    -fx-effect: dropshadow(three-pass-box, rgba(46, 204, 113, 0.4), 30, 0, 0, 15);
+}
+
+.btn-cancel-modern {
+    -fx-background-color: #f1f2f6;
+    -fx-text-fill: #2f3542;
+    -fx-font-weight: bold;
+    -fx-background-radius: 12;
     -fx-padding: 10 20;
     -fx-cursor: hand;
 }
 
-.btn-cancel-modern {
-    -fx-background-color: transparent;
-    -fx-text-fill: #1e293b;
-    -fx-font-weight: bold;
-    -fx-cursor: hand;
+.btn-cancel-modern:hover {
+    -fx-background-color: #dfe4ea;
 }
