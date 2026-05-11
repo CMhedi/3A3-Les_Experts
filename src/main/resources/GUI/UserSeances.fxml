@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<BorderPane xmlns="http://javafx.com/javafx/17"
+            xmlns:fx="http://javafx.com/fxml"
+            fx:controller="controllers.UserSeancesController"
+            stylesheets="@userSeances.css"
+            styleClass="root">
+
+    <!-- TOP BAR -->
+    <top>
+        <HBox alignment="CENTER_LEFT" spacing="12" styleClass="topbar">
+            <Button alignment="TOP_LEFT" styleClass="menu-btn"
+                    maxWidth="Infinity"
+                    onAction="#handleDashb"></Button>
+            <!---->
+
+            <Label alignment="CENTER" text="Espaces Reservations" styleClass="topbar-title"/>
+            <Region HBox.hgrow="ALWAYS"/>
+            <Button alignment="TOP_RIGHT" text="Utilisateur"
+
+                    styleClass="user-pill"/>
+
+        </HBox>
+    </top>
+
+    <!-- LEFT SIDEBAR -->
+    <left>
+        <VBox spacing="14" styleClass="sidebar">
+            <Label text="Eco " styleClass="brand">
+                <graphic>
+                    <Label text="Adventure" styleClass="brand-accent"/>
+                </graphic>
+            </Label>
+
+            <Separator styleClass="sep"/>
+
+            <Button text="Résev_Activite" styleClass="side-btn"/>
+            <Button text="Mainlayout" styleClass="side-btn" onAction="#handleDashb"/>
+        </VBox>
+    </left>
+
+    <!-- CENTER CONTENT -->
+    <center>
+        <StackPane styleClass="content-wrap">
+            <VBox spacing="30" alignment="CENTER" styleClass="card">
+
+                <Label text="Actions disponibles"
+                       styleClass="card-title"/>
+
+                <Button text="✓ Pour Réserver la séance"
+
+                        styleClass="primary-btn"
+                        prefWidth="260"/>
+
+                <Button text="+ Ajouter une activité"
+                        onAction="#openAjouterActivite"
+                        styleClass="secondary-btn"
+                        prefWidth="260"/>
+
+                <Button text="Top 3 Client"
+                        styleClass="primary-btn"
+                        onAction="#goTopActivites"
+                        prefWidth="260"/>
+
+                <Button text="Parler Avec Notre Chat"
+                        styleClass="secondary-btn-btn"
+                        onAction="#goToIA"
+                        prefWidth="260"/>
+
+                <!-- NOUVEAU BOUTON -->
+                <Button text="📍 Voir ma localisation"
+                        onAction="#openLocalisation"
+                        styleClass="primary-btn"
+                        prefWidth="260"/>
+
+            </VBox>
+        </StackPane>
+    </center>
+
+</BorderPane>

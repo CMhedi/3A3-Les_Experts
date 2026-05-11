@@ -1,0 +1,85 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.shape.Circle?>
+
+<AnchorPane xmlns:fx="http://javafx.com/fxml"
+            fx:controller="controllers.SeatPickerController"
+            stylesheets="@setpicker.css"
+            styleClass="root">
+
+    <children>
+        <VBox spacing="16" AnchorPane.topAnchor="0" AnchorPane.bottomAnchor="0"
+              AnchorPane.leftAnchor="0" AnchorPane.rightAnchor="0"
+              styleClass="page">
+
+            <padding>
+                <Insets top="18" right="18" bottom="18" left="18"/>
+            </padding>
+
+            <HBox alignment="CENTER_LEFT" spacing="10" styleClass="topbar">
+                <Label text="☰" styleClass="menu"/>
+                <Region HBox.hgrow="ALWAYS"/>
+                <Label text="VERIFIEZ DISPONIBILITE" styleClass="title"/>
+                <Region HBox.hgrow="ALWAYS"/>
+                <Label text="" styleClass="menu"/>
+            </HBox>
+
+            <VBox alignment="CENTER" spacing="8">
+                <Label text="Choose seats" styleClass="subtitle"/>
+                <Region styleClass="screen"/>
+            </VBox>
+
+            <GridPane fx:id="gridSeats" hgap="8" vgap="8" alignment="CENTER" styleClass="seats-grid"/>
+
+            <HBox spacing="16" styleClass="bottom">
+                <VBox spacing="8" styleClass="infoBox">
+                    <HBox spacing="8" alignment="CENTER_LEFT">
+                        <Label text="Category:" styleClass="infoLabel"/>
+                        <Label fx:id="lblCategorie" text="..." styleClass="infoValue"/>
+                    </HBox>
+                    <HBox spacing="8" alignment="CENTER_LEFT">
+                        <Label text="Capacity:" styleClass="infoLabel"/>
+                        <Label fx:id="lblCapacite" text="0" styleClass="infoValue"/>
+                    </HBox>
+                    <HBox spacing="8" alignment="CENTER_LEFT">
+                        <Label text="Reserved:" styleClass="infoLabel"/>
+                        <Label fx:id="lblReservees" text="0" styleClass="infoValue"/>
+                    </HBox>
+                    <HBox spacing="8" alignment="CENTER_LEFT">
+                        <Label text="Remaining:" styleClass="infoLabel"/>
+                        <Label fx:id="lblRestantes" text="0" styleClass="infoValue"/>
+                    </HBox>
+                </VBox>
+
+                <Region HBox.hgrow="ALWAYS"/>
+
+                <VBox spacing="10" styleClass="legend">
+                    <HBox spacing="8" alignment="CENTER_LEFT">
+                        <Circle radius="5" styleClass="dotRemaining"/>
+                        <Label text="Remaining (grey)" styleClass="legendText"/>
+                    </HBox>
+                    <HBox spacing="8" alignment="CENTER_LEFT">
+                        <Circle radius="5" styleClass="dotReserved"/>
+                        <Label text="Reserved (red)" styleClass="legendText"/>
+                    </HBox>
+                    <HBox spacing="8" alignment="CENTER_LEFT">
+                        <Circle radius="5" styleClass="dotSelected"/>
+                        <Label text="My seats (green)" styleClass="legendText"/>
+                    </HBox>
+
+                    <Label fx:id="lblStatut" text="..." styleClass="status"/>
+                </VBox>
+            </HBox>
+
+            <VBox spacing="10" alignment="CENTER">
+                <Label fx:id="lblTotal" text="Selected: 0" styleClass="total"/>
+                <Button text="Confirmer" onAction="#continuer" styleClass="confirmBtn"/>
+                <Button text="Retour" onAction="#retour" styleClass="backBtn"/>
+            </VBox>
+
+        </VBox>
+    </children>
+</AnchorPane>

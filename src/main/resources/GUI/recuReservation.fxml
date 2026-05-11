@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.image.ImageView?>
+
+<AnchorPane xmlns:fx="http://javafx.com/fxml"
+            fx:controller="controllers.RecuReservationController"
+            stylesheets="@recuReserevation.css"
+            styleClass="main-bg">
+
+    <children>
+
+        <StackPane AnchorPane.topAnchor="0"
+                   AnchorPane.bottomAnchor="0"
+                   AnchorPane.leftAnchor="0"
+                   AnchorPane.rightAnchor="0"
+                   styleClass="root-wrap">
+
+            <VBox spacing="18"
+                  alignment="CENTER"
+                  styleClass="receipt-card">
+
+                <padding>
+                    <Insets top="34" right="42" bottom="34" left="42"/>
+                </padding>
+
+                <Label text="REÇU DE RÉSERVATION"
+                       styleClass="title-label"/>
+
+                <Label text="EcoAdventure • Ticket et Check-in"
+                       styleClass="subtitle-label"/>
+
+                <Separator styleClass="separator-modern"/>
+
+                <VBox spacing="10"
+                      alignment="CENTER_LEFT"
+                      styleClass="receipt-content">
+
+                    <!-- ✅ Keep reservation info -->
+                    <Label fx:id="lblId" styleClass="receipt-highlight"/>
+                    <Label fx:id="lblStatut" styleClass="receipt-status"/>
+                    <Label fx:id="lblNb" styleClass="receipt-text"/>
+
+                    <!-- ✅ Ticket token + QR -->
+                    <Label fx:id="lblToken" styleClass="receipt-text" wrapText="true"/>
+                    <StackPane styleClass="qr-box">
+                        <ImageView fx:id="qrView" fitWidth="220" fitHeight="220" preserveRatio="true"/>
+                    </StackPane>
+
+                </VBox>
+
+                <Separator styleClass="separator-modern"/>
+
+                <HBox alignment="CENTER" spacing="12" styleClass="buttons-row">
+
+                    <Button text="🎟 Générer Ticket QR"
+                            onAction="#genererQr"
+                            styleClass="primary-button"/>
+
+                    <Button text="Scanner / Check-In"
+                            onAction="#openCheckIn"
+                            styleClass="secondary-button"/>
+
+                    <Button text="Fermer"
+                            onAction="#fermer"
+                            styleClass="ghost-button"/>
+
+                </HBox>
+
+            </VBox>
+
+        </StackPane>
+
+    </children>
+</AnchorPane>

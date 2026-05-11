@@ -1,0 +1,30 @@
+/* ==============================================
+   RESERVATION PAGE STYLE
+   ============================================== */
+
+.kpi-card {
+    -fx-padding: 18;
+    -fx-min-width: 200;
+    -fx-alignment: center;
+}
+
+/* Active navigation item */
+.active-nav {
+    -fx-background-color: rgba(255,255,255,0.25);
+}
+
+/* Table spacing fix */
+.table-view {
+    -fx-background-radius: 16;
+}
+
+/* Improve card spacing */
+.content-card {
+    -fx-padding: 20;
+}
+
+/* Make KPI numbers bigger */
+.kpi-card .title {
+    -fx-font-size: 22px;
+    -fx-font-weight: 900;
+}

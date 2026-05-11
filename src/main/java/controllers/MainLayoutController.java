@@ -66,6 +66,13 @@ public class MainLayoutController {
         setActive(btnInsights);
         loadIntoCenter("/fxml/AdminInsights.fxml", "Insights");
     }
+    @FXML private Button btnReservActiv;
+    @FXML
+    private void openReservActiv() {
+
+        setActive(btnReservActiv);
+        loadIntoCenter("/GUI/AdminActivites.fxml", "ReservActiv");
+    }
 
     @FXML
     private void openSideBar(ActionEvent event) {

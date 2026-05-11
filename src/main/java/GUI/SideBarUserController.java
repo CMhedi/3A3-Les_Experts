@@ -101,5 +101,9 @@ public class SideBarUserController {
         }
     }
 
+    public void goToUserSeance(ActionEvent event) {
+        SceneUtils.loadScene("/GUI/UserSeances.fxml", "/GUI/userSeances.css", (Node) event.getSource());
+    }
+
     @FXML private Node sidebarRoot; // matensech tzid fx:id="sidebarRoot" fi el FXML mta' el user sidebar
 }

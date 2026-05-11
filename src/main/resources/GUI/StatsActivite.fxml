@@ -1,0 +1,141 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.chart.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<BorderPane xmlns:fx="http://javafx.com/fxml"
+            fx:controller="controllers.StatsActiviteController"
+            stylesheets="@statsActivite.css"
+            styleClass="root">
+
+    <!-- ========== LEFT SIDEBAR ========== -->
+    <left>
+        <VBox styleClass="sidebar" spacing="14">
+            <HBox alignment="CENTER_LEFT">
+                <Label text="Eco" styleClass="brand-eco"/>
+                <Label text="Adventure" styleClass="brand-adventure"/>
+            </HBox>
+
+            <Button text="Activités" styleClass="side-btn" onAction="#goActivites"/>
+            <Button text="Réservations" styleClass="side-btn" onAction="#goReservations"/>
+            <Button text="Statistiques" styleClass="side-btn-active"/>
+
+            <Region VBox.vgrow="ALWAYS"/>
+
+            <Button text="Retour" styleClass="side-btn" onAction="#goBack"/>
+        </VBox>
+    </left>
+
+    <!-- ========== CENTER ========== -->
+    <center>
+        <ScrollPane fitToWidth="true" styleClass="scroll">
+            <content>
+                <VBox spacing="18" styleClass="content">
+
+                    <!-- ✅ FIX: padding must be Insets, not "20" -->
+                    <padding>
+                        <Insets top="20" right="20" bottom="20" left="20"/>
+                    </padding>
+
+                    <!-- Header -->
+                    <HBox alignment="CENTER_LEFT" spacing="12">
+                        <Label text="Dashboard Statistiques - Activités" styleClass="title"/>
+                        <Region HBox.hgrow="ALWAYS"/>
+                        <Button text="Rafraîchir" styleClass="primary-btn" onAction="#refresh"/>
+                    </HBox>
+
+                    <!-- KPI Cards -->
+                    <GridPane hgap="14" vgap="14">
+                        <columnConstraints>
+                            <ColumnConstraints percentWidth="25"/>
+                            <ColumnConstraints percentWidth="25"/>
+                            <ColumnConstraints percentWidth="25"/>
+                            <ColumnConstraints percentWidth="25"/>
+                        </columnConstraints>
+
+                        <VBox GridPane.columnIndex="0" styleClass="card">
+                            <Label text="Total activités" styleClass="card-title"/>
+                            <Label fx:id="kpiTotalActivites" text="0" styleClass="kpi"/>
+                            <Label text="Toutes les activités" styleClass="card-sub"/>
+                        </VBox>
+
+                        <VBox GridPane.columnIndex="1" styleClass="card">
+                            <Label text="Disponibles" styleClass="card-title"/>
+                            <Label fx:id="kpiDisponibles" text="0" styleClass="kpi"/>
+                            <Label text="Statut = disponible" styleClass="card-sub"/>
+                        </VBox>
+
+                        <VBox GridPane.columnIndex="2" styleClass="card">
+                            <Label text="Réservations" styleClass="card-title"/>
+                            <Label fx:id="kpiReservations" text="0" styleClass="kpi"/>
+                            <Label text="Total reservation_activite" styleClass="card-sub"/>
+                        </VBox>
+
+                        <VBox GridPane.columnIndex="3" styleClass="card">
+                            <Label text="Prix moyen" styleClass="card-title"/>
+                            <Label fx:id="kpiPrixMoyen" text="0 DT" styleClass="kpi"/>
+                            <Label text="Moyenne des prix" styleClass="card-sub"/>
+                        </VBox>
+                    </GridPane>
+
+                    <!-- Charts row 1 -->
+                    <GridPane hgap="14" vgap="14">
+                        <columnConstraints>
+                            <ColumnConstraints percentWidth="45"/>
+                            <ColumnConstraints percentWidth="55"/>
+                        </columnConstraints>
+
+                        <VBox GridPane.columnIndex="0" styleClass="panel">
+                            <HBox alignment="CENTER_LEFT">
+                                <Label text="Répartition par catégorie" styleClass="panel-title"/>
+                            </HBox>
+                            <PieChart fx:id="pieCategories" prefHeight="330"/>
+                        </VBox>
+
+                        <VBox GridPane.columnIndex="1" styleClass="panel">
+                            <HBox alignment="CENTER_LEFT">
+                                <Label text="Top activités réservées" styleClass="panel-title"/>
+                            </HBox>
+                            <BarChart fx:id="barTopReserved" prefHeight="330">
+                                <xAxis>
+                                    <CategoryAxis label="Activité"/>
+                                </xAxis>
+                                <yAxis>
+                                    <NumberAxis label="Réservations"/>
+                                </yAxis>
+                            </BarChart>
+                        </VBox>
+                    </GridPane>
+
+                    <!-- Charts row 2 -->
+                    <GridPane hgap="14" vgap="14">
+                        <columnConstraints>
+                            <ColumnConstraints percentWidth="100"/>
+                        </columnConstraints>
+
+                        <VBox styleClass="panel">
+                            <HBox alignment="CENTER_LEFT">
+                                <Label text="Évolution (activités par date)" styleClass="panel-title"/>
+                                <Region HBox.hgrow="ALWAYS"/>
+                                <Label fx:id="lblLineHint" text="" styleClass="hint"/>
+                            </HBox>
+
+                            <LineChart fx:id="lineEvolution" prefHeight="320">
+                                <xAxis>
+                                    <CategoryAxis label="Date"/>
+                                </xAxis>
+                                <yAxis>
+                                    <NumberAxis label="Nombre"/>
+                                </yAxis>
+                            </LineChart>
+                        </VBox>
+                    </GridPane>
+
+                </VBox>
+            </content>
+        </ScrollPane>
+    </center>
+
+</BorderPane>

@@ -1,0 +1,88 @@
+/* ===== Overlay background ===== */
+.overlay {
+    -fx-background-color: rgba(0, 0, 0, 0.45);
+    -fx-padding: 30;
+    -fx-font-family: "Segoe UI";
+}
+
+/* ===== Outer dialog container ===== */
+.dialog {
+    -fx-max-width: 820;
+    -fx-pref-width: 820;
+}
+
+/* ===== Header ===== */
+.header {
+    -fx-padding: 16 22;
+    -fx-background-color: linear-gradient(to right, #2f6b2f, #58d35a);
+    -fx-background-radius: 10 10 0 0;
+}
+
+.header-title {
+    -fx-text-fill: white;
+    -fx-font-size: 22px;
+    -fx-font-weight: 800;
+}
+
+/* ===== Card ===== */
+.card {
+    -fx-background-color: #2f3a48;
+    -fx-background-radius: 0 0 14 14;
+    -fx-border-color: #48d85b;
+    -fx-border-width: 2;
+    -fx-border-radius: 0 0 14 14;
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.35), 18, 0.15, 0, 6);
+}
+
+/* ===== Fields ===== */
+.field-label {
+    -fx-text-fill: #57d85c;
+    -fx-font-weight: 700;
+}
+
+.field {
+    -fx-background-color: white;
+    -fx-background-radius: 6;
+    -fx-border-radius: 6;
+    -fx-border-color: #cfd6df;
+    -fx-padding: 10 12;
+}
+
+.read-only {
+    -fx-opacity: 0.92;
+}
+
+/* DatePicker icon area */
+.date-picker > .arrow-button {
+    -fx-background-color: #e9eef5;
+    -fx-background-radius: 0 6 6 0;
+}
+
+/* ===== Buttons ===== */
+.buttons {
+    -fx-padding: 8 0 0 0;
+}
+
+.btn-save {
+    -fx-background-color: #2f80ed;
+    -fx-text-fill: white;
+    -fx-font-weight: 800;
+    -fx-padding: 10 26;
+    -fx-background-radius: 8;
+}
+
+.btn-save:hover {
+    -fx-background-color: #2468c5;
+}
+
+.btn-cancel {
+    -fx-background-color: #6c757d;
+    -fx-text-fill: white;
+    -fx-font-weight: 800;
+    -fx-padding: 10 26;
+    -fx-background-radius: 8;
+}
+
+.btn-cancel:hover {
+    -fx-background-color: #5a6268;
+}

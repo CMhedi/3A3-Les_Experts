@@ -1,0 +1,88 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<AnchorPane xmlns="http://javafx.com/javafx/17"
+            xmlns:fx="http://javafx.com/fxml"
+            fx:controller="controllers.EditActiviteController"
+            stylesheets="@editActivite.css"
+            prefWidth="900" prefHeight="520">
+
+    <!-- Top bar -->
+    <HBox styleClass="top-bar" prefHeight="70.0"
+          AnchorPane.leftAnchor="0" AnchorPane.rightAnchor="0" AnchorPane.topAnchor="0">
+        <Label text="Modifier Activité" styleClass="top-title"/>
+    </HBox>
+
+    <!-- Card -->
+    <StackPane AnchorPane.topAnchor="90" AnchorPane.leftAnchor="30" AnchorPane.rightAnchor="30" AnchorPane.bottomAnchor="30">
+        <VBox styleClass="card" spacing="18" maxWidth="820">
+            <padding>
+                <Insets top="22" right="22" bottom="22" left="22"/>
+            </padding>
+
+            <GridPane hgap="22" vgap="14">
+                <columnConstraints>
+                    <ColumnConstraints percentWidth="50"/>
+                    <ColumnConstraints percentWidth="50"/>
+                </columnConstraints>
+
+                <!-- Row 0 -->
+                <VBox spacing="6" GridPane.rowIndex="0" GridPane.columnIndex="0">
+                    <Label text="Nom" styleClass="field-label"/>
+                    <TextField fx:id="tfNom" promptText="Nom activité..." styleClass="field"/>
+                </VBox>
+
+                <VBox spacing="6" GridPane.rowIndex="0" GridPane.columnIndex="1">
+                    <Label text="Date Réservation" styleClass="field-label"/>
+                    <DatePicker fx:id="dpDate" styleClass="field"/>
+                </VBox>
+
+                <!-- Row 1 -->
+                <VBox spacing="6" GridPane.rowIndex="1" GridPane.columnIndex="0">
+                    <Label text="Type Activité" styleClass="field-label"/>
+                    <ComboBox fx:id="cbType" promptText="SPORT / CAMPING ..." styleClass="field"/>
+                </VBox>
+
+                <VBox spacing="6" GridPane.rowIndex="1" GridPane.columnIndex="1">
+                    <Label text="Statut" styleClass="field-label"/>
+                    <ComboBox fx:id="cbStatut" promptText="DISPONIBLE / INDISPONIBLE" styleClass="field"/>
+                </VBox>
+
+                <!-- Row 2 -->
+                <VBox spacing="6" GridPane.rowIndex="2" GridPane.columnIndex="0">
+                    <Label text="Catégorie" styleClass="field-label"/>
+                    <ComboBox fx:id="cbCategorie" promptText="FITNESS / RUNNING ..." styleClass="field"/>
+                </VBox>
+
+                <VBox spacing="6" GridPane.rowIndex="2" GridPane.columnIndex="1">
+                    <Label text="Niveau" styleClass="field-label"/>
+                    <ComboBox fx:id="cbNiveau" promptText="DEBUTANT / INTERMEDIAIRE / AVANCE" styleClass="field"/>
+                </VBox>
+
+                <!-- Row 3 -->
+                <VBox spacing="6" GridPane.rowIndex="3" GridPane.columnIndex="0">
+                    <Label text="Prix" styleClass="field-label"/>
+                    <TextField fx:id="tfPrix" promptText="Ex: 25.5" styleClass="field"/>
+                </VBox>
+
+                <!-- Row 4 -->
+                <VBox spacing="6" GridPane.rowIndex="4" GridPane.columnIndex="0" GridPane.columnSpan="2">
+                    <Label text="Image URL" styleClass="field-label"/>
+                    <TextField fx:id="tfImageUrl" promptText="https://..." styleClass="field"/>
+                </VBox>
+
+            </GridPane>
+
+
+            <!-- Buttons -->
+            <HBox spacing="14" alignment="CENTER">
+                <Button text="ENREGISTRER" onAction="#handleSave" styleClass="btn-primary"/>
+                <Button text="ANNULER" onAction="#handleCancel" styleClass="btn-secondary"/>
+            </HBox>
+        </VBox>
+    </StackPane>
+
+</AnchorPane>

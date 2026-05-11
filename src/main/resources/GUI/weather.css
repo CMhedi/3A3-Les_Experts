@@ -1,0 +1,60 @@
+.root {
+    -fx-font-family: "Segoe UI";
+    -fx-background-color: #f5f7fa;
+}
+
+.topbar {
+    -fx-padding: 14 18;
+    -fx-background-color: linear-gradient(to right, #1e5631, #163d24);
+}
+
+.eco {
+    -fx-text-fill: white;
+    -fx-font-size: 20px;
+    -fx-font-weight: 900;
+}
+
+.adventure {
+    -fx-text-fill: #f4b400;
+    -fx-font-size: 20px;
+    -fx-font-weight: 900;
+}
+
+.card {
+    -fx-background-color: white;
+    -fx-background-radius: 14;
+    -fx-padding: 18;
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.10), 18, 0.2, 0, 6);
+    -fx-min-width: 520;
+}
+
+.lineTitle {
+    -fx-font-size: 16px;
+    -fx-font-weight: 800;
+    -fx-text-fill: #111827;
+}
+
+.line {
+    -fx-font-size: 14px;
+    -fx-text-fill: #1f2937;
+}
+
+.status {
+    -fx-text-fill: #6b7280;
+}
+
+.btn-primary {
+    -fx-background-color: #1e5631;
+    -fx-text-fill: white;
+    -fx-font-weight: bold;
+    -fx-background-radius: 10;
+    -fx-padding: 8 14;
+}
+
+.btn-secondary {
+    -fx-background-color: rgba(255,255,255,0.15);
+    -fx-text-fill: white;
+    -fx-font-weight: bold;
+    -fx-background-radius: 10;
+    -fx-padding: 8 14;
+}

@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.shape.Line?>
+
+<AnchorPane xmlns:fx="http://javafx.com/fxml"
+            fx:controller="controllers.AjouterReservationController"
+            stylesheets="@addres.css"
+            styleClass="root-bg">
+
+    <children>
+
+        <StackPane AnchorPane.topAnchor="0"
+                   AnchorPane.bottomAnchor="0"
+                   AnchorPane.leftAnchor="0"
+                   AnchorPane.rightAnchor="0"
+                   styleClass="page-wrap">
+
+            <VBox spacing="16" styleClass="form-card">
+
+                <padding>
+                    <Insets top="26" right="26" bottom="22" left="26"/>
+                </padding>
+
+                <VBox spacing="6" styleClass="header-wrap">
+                    <HBox spacing="10" styleClass="title-row">
+                        <Label text="⦿" styleClass="title-icon"/>
+                        <Label text="Ajouter une Réservation" styleClass="title-label"/>
+                    </HBox>
+
+                    <Label text="Remplissez les informations puis cliquez sur Ajouter."
+                           styleClass="subtitle-label"/>
+
+                    <Line styleClass="divider-line"/>
+                </VBox>
+
+                <VBox spacing="12" styleClass="form-wrap">
+
+                    <VBox spacing="6" styleClass="field">
+                        <Label text="Statut" styleClass="form-label"/>
+                        <ComboBox fx:id="statutRes"
+                                  prefWidth="420"
+                                  maxWidth="1.7976931348623157E308"
+                                  styleClass="combo"/>
+                    </VBox>
+
+                    <VBox spacing="6" styleClass="field">
+                        <Label text="Nombre de personnes" styleClass="form-label"/>
+                        <TextField fx:id="nbPersonnes"
+                                   promptText="Ex: 3"
+                                   styleClass="input"/>
+                    </VBox>
+
+                    <!-- ✅ OPTIONAL: show connected user (read-only) -->
+                    <VBox spacing="6" styleClass="field">
+                        <Label text="De Nom" styleClass="form-label"/>
+                        <Label fx:id="userInfoLabel"
+                               text="Connecté"
+                               styleClass="input"/>
+                    </VBox>
+
+                </VBox>
+
+                <HBox spacing="12" styleClass="btn-row">
+                    <Region HBox.hgrow="ALWAYS"/>
+                    <Button text="↩ Retourner"
+                            onAction="#goUserSeances"
+                            styleClass="btn btn-secondary"/>
+                    <Button text="✔ Ajouter"
+                            fx:id="btnAjouter"
+                            onAction="#ajouterReservation"
+                            styleClass="btn btn-save"/>
+                </HBox>
+
+            </VBox>
+
+        </StackPane>
+
+    </children>
+</AnchorPane>
