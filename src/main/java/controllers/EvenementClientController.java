@@ -6,6 +6,8 @@ import Services.EvenementService;
 import Services.ReservationEvenementService;
 import javafx.application.Platform;
 import javafx.event.ActionEvent;
+import enums.StatutReservation;
+import java.time.LocalDateTime;
 import java.util.Optional;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -112,6 +114,9 @@ public class EvenementClientController {
         desc.setWrapText(true);
         desc.setStyle("-fx-text-fill: #64748b; -fx-font-size: 13px;");
 
+        Label placesLabel = new Label("🔥 " + ev.getPlacesRestantes() + " places restantes");
+        placesLabel.setStyle("-fx-text-fill: #e67e22; -fx-font-weight: bold; -fx-font-size: 12px;");
+
         HBox footer = new HBox(10);
         footer.setAlignment(Pos.CENTER_LEFT);
         Label dateLabel = new Label("📅 " + ev.getDateEvent());
@@ -127,7 +132,7 @@ public class EvenementClientController {
         btnReserver.setOnAction(e -> openReservationForm(ev));
 
         footer.getChildren().addAll(dateLabel, spacer2, btnReserver);
-        card.getChildren().addAll(header, location, desc, footer);
+        card.getChildren().addAll(header, location, desc, placesLabel, footer);
 
         return card;
     }
@@ -175,6 +180,12 @@ public class EvenementClientController {
                     return;
                 }
 
+                // ✅ CHECK PLACES DISPONIBLES
+                if (ev.getPlacesRestantes() < nb_places) {
+                    new Alert(Alert.AlertType.ERROR, "Désolé, il ne reste que " + ev.getPlacesRestantes() + " places.").show();
+                    return;
+                }
+
                 ReservationEvenement existing = resService.getByUserAndEvent(currentUserId, ev.getIdEvenement());
 
                 if (existing != null) {
@@ -188,6 +199,7 @@ public class EvenementClientController {
                     if (result.isPresent() && result.get() == ButtonType.OK) {
                         existing.setNbBillets(existing.getNbBillets() + nb_places);
                         resService.update(existing);
+
                         popup.close();
                         new Alert(Alert.AlertType.INFORMATION, "Réservation mise à jour !").show();
                         goToReservations(new ActionEvent(cardsContainer, null));
@@ -197,6 +209,10 @@ public class EvenementClientController {
                     res.setIdUser(currentUserId);
                     res.setIdEvenement(ev.getIdEvenement());
                     res.setNbBillets(nb_places);
+                    res.setDateReservation(LocalDateTime.now());
+                    res.setStatutRes(StatutReservation.CONFIRMEE);
+                    res.setNote(0);
+
                     resService.add(res);
 
                     popup.close();

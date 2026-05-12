@@ -15,7 +15,7 @@ public class EvenementService implements IGenericService<Evenement> {
 
     @Override
     public void add(Evenement e) throws Exception {
-        String sql = "INSERT INTO evenement (titre, description, categorie_evt, date_event, lieu, nb_places, statut, image_url, prix_event) "
+        String sql = "INSERT INTO evenement (titre, description, categorie_evt, date_event, lieu, nb_places, statut, image_url, prix) "
                 +
                 "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)";
         try (PreparedStatement ps = cnx.prepareStatement(sql)) {
@@ -34,7 +34,7 @@ public class EvenementService implements IGenericService<Evenement> {
 
     @Override
     public void update(Evenement e) throws Exception {
-        String sql = "UPDATE evenement SET titre=?, description=?, categorie_evt=?, date_event=?, lieu=?, nb_places=?, statut=?, image_url=?, prix_event=? "
+        String sql = "UPDATE evenement SET titre=?, description=?, categorie_evt=?, date_event=?, lieu=?, nb_places=?, statut=?, image_url=?, prix=? "
                 +
                 "WHERE id_evenement=?";
         try (PreparedStatement ps = cnx.prepareStatement(sql)) {
@@ -63,7 +63,7 @@ public class EvenementService implements IGenericService<Evenement> {
 
     @Override
     public List<Evenement> getAll() throws Exception {
-        String sql = "SELECT * FROM evenement ORDER BY id_evenement DESC";
+        String sql = "SELECT e.*, (SELECT COALESCE(SUM(nb_billets), 0) FROM reservation_evenement r WHERE r.id_evenement = e.id_evenement AND r.statut_res != 'ANNULEE') as occupied FROM evenement e ORDER BY id_evenement DESC";
         List<Evenement> list = new ArrayList<>();
         try (Statement st = cnx.createStatement();
                 ResultSet rs = st.executeQuery(sql)) {
@@ -77,7 +77,7 @@ public class EvenementService implements IGenericService<Evenement> {
 
     @Override
     public Evenement getById(int id) throws Exception {
-        String sql = "SELECT * FROM evenement WHERE id_evenement=?";
+        String sql = "SELECT e.*, (SELECT COALESCE(SUM(nb_billets), 0) FROM reservation_evenement r WHERE r.id_evenement = e.id_evenement AND r.statut_res != 'ANNULEE') as occupied FROM evenement e WHERE e.id_evenement=?";
         try (PreparedStatement ps = cnx.prepareStatement(sql)) {
             ps.setInt(1, id);
             try (ResultSet rs = ps.executeQuery()) {
@@ -110,7 +110,12 @@ public class EvenementService implements IGenericService<Evenement> {
         e.setNbPlaces(rs.getInt("nb_places"));
         e.setStatut(rs.getString("statut"));
         e.setImageUrl(rs.getString("image_url"));
-        e.setPrix(rs.getDouble("prix_event"));
+        e.setPrix(rs.getDouble("prix"));
+        
+        try {
+            e.setNbOccupiedPlaces(rs.getInt("occupied"));
+        } catch (SQLException ignored) {}
+        
         return e;
     }
 

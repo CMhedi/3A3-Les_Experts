@@ -1,9 +1,11 @@
 package enums;
 
 public enum StatutReservation {
-    CONFIRMEE("Ouvert"),
-    ANNULEE("Annulé"),
-    TERMINEE("Terminé");
+    EN_ATTENTE("En attente"),
+    LISTE_ATTENTE("Liste d'attente"),
+    CONFIRMEE("Confirmée"),
+    ANNULEE("Annulée"),
+    TERMINEE("Terminée");
 
     private final String label;
 

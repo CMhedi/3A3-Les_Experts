@@ -102,7 +102,7 @@ public class ReservationClientController implements Initializable {
 
                 star.setOnMouseClicked(e -> {
                     try {
-                        service.updateNote(res.getIdResEvt(), rating);
+                        service.updateNote(res.getIdUser(), res.getIdEvenement(), rating);
                         res.setNote(rating);
                         // Refresh the UI or at least the stars
                         loadUserReservations();

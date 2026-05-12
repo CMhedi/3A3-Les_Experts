@@ -19,23 +19,21 @@ public class ReservationEvenementService {
     }
 
     public void add(ReservationEvenement r) throws Exception {
-        String sql = "INSERT INTO reservation_evenement (date_reservation, statut_res, nb_billets, id_evenement, id_user, note) "
-                +
-                "VALUES (?, ?, ?, ?, ?, ?)";
+        String sql = "INSERT INTO reservation_evenement (date_reservation, statut_res, nb_billets, id_evenement, id_user) "
+                + "VALUES (?, ?, ?, ?, ?)";
         try (PreparedStatement ps = cnx.prepareStatement(sql)) {
             ps.setTimestamp(1, Timestamp.valueOf(r.getDateReservation()));
             ps.setString(2, r.getStatutRes().name());
             ps.setInt(3, r.getNbBillets());
             ps.setInt(4, r.getIdEvenement());
             ps.setInt(5, r.getIdUser());
-            ps.setInt(6, r.getNote());
             ps.executeUpdate();
         }
     }
 
     public void update(ReservationEvenement r) throws Exception {
         String sql = "UPDATE reservation_evenement " +
-                "SET date_reservation=?, statut_res=?, nb_billets=?, id_evenement=?, id_user=?, note=? " +
+                "SET date_reservation=?, statut_res=?, nb_billets=?, id_evenement=?, id_user=? " +
                 "WHERE id_res_evt=?";
         try (PreparedStatement ps = cnx.prepareStatement(sql)) {
             ps.setTimestamp(1, Timestamp.valueOf(r.getDateReservation()));
@@ -43,17 +41,20 @@ public class ReservationEvenementService {
             ps.setInt(3, r.getNbBillets());
             ps.setInt(4, r.getIdEvenement());
             ps.setInt(5, r.getIdUser());
-            ps.setInt(6, r.getNote());
-            ps.setInt(7, r.getIdResEvt());
+            ps.setInt(6, r.getIdResEvt());
             ps.executeUpdate();
         }
     }
 
-    public void updateNote(int idRes, int note) throws Exception {
-        String sql = "UPDATE reservation_evenement SET note=? WHERE id_res_evt=?";
+    public void updateNote(int idUser, int idEvent, int note) throws Exception {
+        // Since notes are in a separate table 'event_rating'
+        String sql = "INSERT INTO event_rating (id_user, id_evenement, note, created_at) VALUES (?, ?, ?, NOW()) " +
+                     "ON DUPLICATE KEY UPDATE note = ?, created_at = NOW()";
         try (PreparedStatement ps = cnx.prepareStatement(sql)) {
-            ps.setInt(1, note);
-            ps.setInt(2, idRes);
+            ps.setInt(1, idUser);
+            ps.setInt(2, idEvent);
+            ps.setInt(3, note);
+            ps.setInt(4, note);
             ps.executeUpdate();
         }
     }
@@ -68,7 +69,9 @@ public class ReservationEvenementService {
 
     public List<ReservationEvenement> getAll() throws Exception {
         List<ReservationEvenement> list = new ArrayList<>();
-        String sql = "SELECT r.*, e.titre, e.prix_event, u.nom, u.prenom FROM reservation_evenement r " +
+        String sql = "SELECT r.*, e.titre, e.prix, u.nom, u.prenom, " +
+                "(SELECT er.note FROM event_rating er WHERE er.id_user = r.id_user AND er.id_evenement = r.id_evenement LIMIT 1) as note " +
+                "FROM reservation_evenement r " +
                 "JOIN evenement e ON r.id_evenement = e.id_evenement " +
                 "JOIN user_app u ON r.id_user = u.id_user " +
                 "ORDER BY r.date_reservation DESC";
@@ -89,7 +92,7 @@ public class ReservationEvenementService {
                 r.setIdEvenement(rs.getInt("id_evenement"));
                 r.setIdUser(rs.getInt("id_user"));
                 r.setNomEvenement(rs.getString("titre"));
-                r.setPrixUnitaire(rs.getDouble("prix_event"));
+                r.setPrixUnitaire(rs.getDouble("prix"));
                 r.setNomUser(rs.getString("nom") + " " + rs.getString("prenom"));
                 r.setNote(rs.getInt("note"));
                 list.add(r);
@@ -100,7 +103,9 @@ public class ReservationEvenementService {
 
     public List<ReservationEvenement> getByUser(int idUser) throws Exception {
         List<ReservationEvenement> list = new ArrayList<>();
-        String sql = "SELECT r.*, e.titre, e.prix_event, u.nom, u.prenom FROM reservation_evenement r " +
+        String sql = "SELECT r.*, e.titre, e.prix, u.nom, u.prenom, " +
+                "(SELECT er.note FROM event_rating er WHERE er.id_user = r.id_user AND er.id_evenement = r.id_evenement LIMIT 1) as note " +
+                "FROM reservation_evenement r " +
                 "JOIN evenement e ON r.id_evenement = e.id_evenement " +
                 "JOIN user_app u ON r.id_user = u.id_user " +
                 "WHERE r.id_user = ? ORDER BY r.date_reservation DESC";
@@ -118,7 +123,7 @@ public class ReservationEvenementService {
                     r.setIdEvenement(rs.getInt("id_evenement"));
                     r.setIdUser(rs.getInt("id_user"));
                     r.setNomEvenement(rs.getString("titre"));
-                    r.setPrixUnitaire(rs.getDouble("prix_event"));
+                    r.setPrixUnitaire(rs.getDouble("prix"));
                     r.setNomUser(rs.getString("nom") + " " + rs.getString("prenom"));
                     r.setNote(rs.getInt("note"));
                     list.add(r);
@@ -129,7 +134,9 @@ public class ReservationEvenementService {
     }
 
     public ReservationEvenement getById(int id) throws Exception {
-        String sql = "SELECT r.*, e.titre, e.prix_event, u.nom, u.prenom FROM reservation_evenement r " +
+        String sql = "SELECT r.*, e.titre, e.prix, u.nom, u.prenom, " +
+                "(SELECT er.note FROM event_rating er WHERE er.id_user = r.id_user AND er.id_evenement = r.id_evenement LIMIT 1) as note " +
+                "FROM reservation_evenement r " +
                 "JOIN evenement e ON r.id_evenement = e.id_evenement " +
                 "JOIN user_app u ON r.id_user = u.id_user " +
                 "WHERE r.id_res_evt=?";
@@ -141,13 +148,18 @@ public class ReservationEvenementService {
 
                 ReservationEvenement r = new ReservationEvenement();
                 r.setIdResEvt(rs.getInt("id_res_evt"));
-                r.setDateReservation(rs.getTimestamp("date_reservation").toLocalDateTime());
-                r.setStatutRes(StatutReservation.valueOf(rs.getString("statut_res")));
+                
+                Timestamp ts = rs.getTimestamp("date_reservation");
+                r.setDateReservation(ts != null ? ts.toLocalDateTime() : null);
+                
+                String statut = rs.getString("statut_res");
+                r.setStatutRes(statut != null ? StatutReservation.valueOf(statut) : null);
+                
                 r.setNbBillets(rs.getInt("nb_billets"));
                 r.setIdEvenement(rs.getInt("id_evenement"));
                 r.setIdUser(rs.getInt("id_user"));
                 r.setNomEvenement(rs.getString("titre"));
-                r.setPrixUnitaire(rs.getDouble("prix_event"));
+                r.setPrixUnitaire(rs.getDouble("prix"));
                 r.setNomUser(rs.getString("nom") + " " + rs.getString("prenom"));
                 return r;
             }
@@ -155,7 +167,9 @@ public class ReservationEvenementService {
     }
 
     public ReservationEvenement getByUserAndEvent(int userId, int eventId) throws Exception {
-        String sql = "SELECT r.*, e.titre, e.prix_event FROM reservation_evenement r " +
+        String sql = "SELECT r.*, e.titre, e.prix, " +
+                "(SELECT er.note FROM event_rating er WHERE er.id_user = r.id_user AND er.id_evenement = r.id_evenement LIMIT 1) as note " +
+                "FROM reservation_evenement r " +
                 "JOIN evenement e ON r.id_evenement = e.id_evenement " +
                 "WHERE r.id_user = ? AND r.id_evenement = ?";
         try (PreparedStatement ps = cnx.prepareStatement(sql)) {
@@ -169,7 +183,7 @@ public class ReservationEvenementService {
                     r.setIdEvenement(eventId);
                     r.setNbBillets(rs.getInt("nb_billets"));
                     r.setNomEvenement(rs.getString("titre"));
-                    r.setPrixUnitaire(rs.getDouble("prix_event"));
+                    r.setPrixUnitaire(rs.getDouble("prix"));
                     return r;
                 }
             }
@@ -225,7 +239,7 @@ public class ReservationEvenementService {
     }
 
     public java.util.Map<Integer, Double> getAverageRatingsMap() throws Exception {
-        String sql = "SELECT id_evenement, AVG(note) as avg_note FROM reservation_evenement WHERE note > 0 GROUP BY id_evenement";
+        String sql = "SELECT id_evenement, AVG(note) as avg_note FROM event_rating WHERE note > 0 GROUP BY id_evenement";
         java.util.Map<Integer, Double> ratings = new java.util.HashMap<>();
         try (Statement st = cnx.createStatement(); ResultSet rs = st.executeQuery(sql)) {
             while (rs.next()) {
@@ -236,7 +250,7 @@ public class ReservationEvenementService {
     }
 
     public java.util.Map<Integer, Integer> getReviewCountMap() throws Exception {
-        String sql = "SELECT id_evenement, COUNT(note) as count FROM reservation_evenement WHERE note > 0 GROUP BY id_evenement";
+        String sql = "SELECT id_evenement, COUNT(note) as count FROM event_rating WHERE note > 0 GROUP BY id_evenement";
         java.util.Map<Integer, Integer> counts = new java.util.HashMap<>();
         try (Statement st = cnx.createStatement(); ResultSet rs = st.executeQuery(sql)) {
             while (rs.next()) {

@@ -102,6 +102,20 @@ public class Evenement {
         this.statut = statut;
     }
 
+    private int nbOccupiedPlaces = 0; // Calculé dynamiquement via les réservations
+
+    public int getNbOccupiedPlaces() {
+        return nbOccupiedPlaces;
+    }
+
+    public void setNbOccupiedPlaces(int nbOccupiedPlaces) {
+        this.nbOccupiedPlaces = nbOccupiedPlaces;
+    }
+
+    public int getPlacesRestantes() {
+        return Math.max(0, nbPlaces - nbOccupiedPlaces);
+    }
+
     public String getImageUrl() {
         return imageUrl;
     }

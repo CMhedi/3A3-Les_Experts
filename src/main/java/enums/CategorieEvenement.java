@@ -7,5 +7,8 @@ public enum CategorieEvenement {
     STAGE,
     FORMATION,
     FESTIVAL_SPORTIF,
+    NATURE,
+    NAUTIQUE,
+    AVENTURE,
     AUTRE
 }

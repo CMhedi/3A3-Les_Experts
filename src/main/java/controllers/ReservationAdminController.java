@@ -54,7 +54,9 @@ public class ReservationAdminController implements Initializable {
         }
 
         // Mise à jour des statistiques textuelles
-        long confirmes = list.stream().filter(r -> r.getStatutRes().equals(StatutReservation.CONFIRMEE)).count();
+        long confirmes = list.stream()
+                .filter(r -> r.getStatutRes() != null && r.getStatutRes().equals(StatutReservation.CONFIRMEE))
+                .count();
         lblStats.setText("📊 " + list.size() + " Total | ✅ " + confirmes + " Confirmées");
 
         for (ReservationEvenement res : list) {
@@ -96,14 +98,37 @@ public class ReservationAdminController implements Initializable {
         Region spacer = new Region();
         HBox.setHgrow(spacer, Priority.ALWAYS);
 
-        // --- 3. BLOC DROITE : Prix (Remplace l'icône/bouton) ---
+        // --- 3. BLOC DROITE : Prix & Actions ---
+        VBox rightBox = new VBox(10);
+        rightBox.setAlignment(Pos.CENTER_RIGHT);
+
         Label priceLabel = new Label(String.format("%.2f", res.getPrixTotal()) + " DT");
         priceLabel.setStyle("-fx-text-fill: #143D30; -fx-font-weight: 900; -fx-font-size: 22px;");
 
-        // Construction de la carte sans boutons ni badges de statut
-        card.getChildren().addAll(mainInfo, meta, spacer, priceLabel);
+        Button btnDelete = new Button("🗑 Supprimer");
+        btnDelete.setStyle("-fx-background-color: #fff1f2; -fx-text-fill: #e11d48; -fx-background-radius: 8; -fx-padding: 5 10; -fx-cursor: hand; -fx-font-weight: bold;");
+        btnDelete.setOnAction(e -> handleDelete(res));
+
+        rightBox.getChildren().addAll(priceLabel, btnDelete);
+
+        // Construction de la carte
+        card.getChildren().addAll(mainInfo, meta, spacer, rightBox);
 
         return card;
+    }
+
+    private void handleDelete(ReservationEvenement res) {
+        Alert alert = new Alert(Alert.AlertType.CONFIRMATION, "Supprimer la réservation de " + res.getNomUser() + " ?", ButtonType.YES, ButtonType.NO);
+        alert.showAndWait().ifPresent(response -> {
+            if (response == ButtonType.YES) {
+                try {
+                    service.delete(res.getIdResEvt());
+                    loadData();
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }
+        });
     }
 
     @FXML
