@@ -28,8 +28,6 @@
         <Button onAction="#goToEvenementsAdmin" maxWidth="Infinity" text="Gestion Evenement" styleClass="nav-button" style="-fx-background-color: transparent; -fx-text-fill: white; -fx-alignment: CENTER_LEFT; -fx-cursor: hand;"/>
         <Button onAction="#goToStats" maxWidth="Infinity" text="📊 Dashboard Événement" styleClass="nav-button" style="-fx-background-color: transparent; -fx-text-fill: white; -fx-alignment: CENTER_LEFT; -fx-cursor: hand;"/>
 
-        <Button onAction="#goToEvenements" maxWidth="Infinity" text="Évènements"
-                style="-fx-background-color: transparent; -fx-text-fill: white; -fx-alignment: CENTER_LEFT; -fx-cursor: hand;"/>
         <Button onAction="#goToReservations" maxWidth="Infinity" text="Réservations Evenements"
                 style="-fx-background-color: transparent; -fx-text-fill: white; -fx-alignment: CENTER_LEFT; -fx-cursor: hand;"/>
 

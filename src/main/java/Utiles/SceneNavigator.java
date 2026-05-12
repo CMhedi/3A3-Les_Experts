@@ -18,6 +18,8 @@ public final class SceneNavigator {
             }
             Parent root = FXMLLoader.load(res);
             stage.setScene(new Scene(root));
+            stage.setResizable(true);
+            stage.sizeToScene();
             stage.setTitle(title);
             stage.show();
         } catch (Exception e) {

@@ -2,100 +2,115 @@
 
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
+<?import javafx.scene.image.*?>
 
-<VBox xmlns="http://javafx.com/javafx/17"
-      xmlns:fx="http://javafx.com/fxml/1"
-      fx:controller="controllers.EvenementFormController"
-      spacing="14"
-      styleClass="formPage"
-      stylesheets="/styles/app.css">
+<ScrollPane xmlns="http://javafx.com/javafx/17"
+            xmlns:fx="http://javafx.com/fxml/1"
+            fx:controller="controllers.EvenementFormController"
+            fitToWidth="true"
+            prefHeight="650"
+            style="-fx-background-color: #f8fafc; -fx-background: #f8fafc; -fx-border-color: transparent;"
+            stylesheets="/styles/app.css">
 
-    <VBox spacing="16" styleClass="formCard">
+    <VBox spacing="14" styleClass="formPage" alignment="CENTER">
+        <VBox spacing="16" styleClass="formCard" maxWidth="600">
 
-        <Label text="Formulaire Événement" styleClass="formTitle"/>
+            <Label text="Formulaire Événement" styleClass="formTitle"/>
 
-        <GridPane hgap="12" vgap="12">
+            <GridPane hgap="12" vgap="12">
+                <columnConstraints>
+                    <ColumnConstraints minWidth="120" prefWidth="140" halignment="RIGHT"/>
+                    <ColumnConstraints hgrow="ALWAYS" prefWidth="320"/>
+                </columnConstraints>
 
-            <columnConstraints>
-                <ColumnConstraints minWidth="120" prefWidth="140" halignment="RIGHT"/>
-                <ColumnConstraints hgrow="ALWAYS" prefWidth="320"/>
-            </columnConstraints>
+                <Label text="Titre:" styleClass="formLabel"
+                       GridPane.rowIndex="0" GridPane.columnIndex="0"/>
+                <TextField fx:id="txtTitre"
+                           promptText="Ex: Randonnée Montagne"
+                           styleClass="formField"
+                           GridPane.rowIndex="0" GridPane.columnIndex="1"/>
 
-            <Label text="Titre:" styleClass="formLabel"
-                   GridPane.rowIndex="0" GridPane.columnIndex="0"/>
-            <TextField fx:id="txtTitre"
-                       promptText="Ex: Randonnée Montagne"
-                       styleClass="formField"
-                       GridPane.rowIndex="0" GridPane.columnIndex="1"/>
+                <Label text="Catégorie:" styleClass="formLabel"
+                       GridPane.rowIndex="1" GridPane.columnIndex="0"/>
+                <ComboBox fx:id="cbCategorie"
+                          promptText="Choisir..."
+                          styleClass="formField"
+                          GridPane.rowIndex="1" GridPane.columnIndex="1"/>
 
-            <Label text="Catégorie:" styleClass="formLabel"
-                   GridPane.rowIndex="1" GridPane.columnIndex="0"/>
-            <ComboBox fx:id="cbCategorie"
-                      promptText="Choisir..."
-                      styleClass="formField"
-                      GridPane.rowIndex="1" GridPane.columnIndex="1"/>
+                <Label text="Date &amp; heure:" styleClass="formLabel"
+                       GridPane.rowIndex="2" GridPane.columnIndex="0"/>
+                <HBox spacing="10"
+                      GridPane.rowIndex="2" GridPane.columnIndex="1">
+                    <DatePicker fx:id="dpDate"
+                                styleClass="formField dateField"/>
+                    <TextField fx:id="txtHeure"
+                               promptText="12:00"
+                               styleClass="formField timeField"/>
+                </HBox>
 
-            <Label text="Date &amp; heure:" styleClass="formLabel"
-                   GridPane.rowIndex="2" GridPane.columnIndex="0"/>
-            <HBox spacing="10"
-                  GridPane.rowIndex="2" GridPane.columnIndex="1">
-                <DatePicker fx:id="dpDate"
-                            styleClass="formField dateField"/>
-                <TextField fx:id="txtHeure"
-                           promptText="12:00"
-                           styleClass="formField timeField"/>
+                <Label text="Lieu:" styleClass="formLabel"
+                       GridPane.rowIndex="3" GridPane.columnIndex="0"/>
+                <TextField fx:id="txtLieu"
+                           promptText="Ex: Tunis, Sidi Bou"
+                           styleClass="formField"
+                           GridPane.rowIndex="3" GridPane.columnIndex="1"/>
+
+                <Label text="Places:" styleClass="formLabel"
+                       GridPane.rowIndex="4" GridPane.columnIndex="0"/>
+                <TextField fx:id="txtPlaces"
+                           promptText="Ex: 50"
+                           styleClass="formField"
+                           GridPane.rowIndex="4" GridPane.columnIndex="1"/>
+
+                <Label text="Statut:" styleClass="formLabel"
+                       GridPane.rowIndex="5" GridPane.columnIndex="0"/>
+                <ComboBox fx:id="cbStatut"
+                          promptText="Choisir..."
+                          styleClass="formField"
+                          GridPane.rowIndex="5" GridPane.columnIndex="1"/>
+
+                <Label text="Prix (DT):" styleClass="formLabel"
+                       GridPane.rowIndex="6" GridPane.columnIndex="0"/>
+                <TextField fx:id="txtPrix"
+                           promptText="Ex: 25.50"
+                           styleClass="formField"
+                           GridPane.rowIndex="6" GridPane.columnIndex="1"/>
+
+                <Label text="Photo:" styleClass="formLabel"
+                       GridPane.rowIndex="7" GridPane.columnIndex="0"/>
+                <HBox spacing="10" alignment="CENTER_LEFT"
+                      GridPane.rowIndex="7" GridPane.columnIndex="1">
+                    <Button text="Choisir..." onAction="#onChooseImage" styleClass="secondaryBtn"/>
+                    <Label fx:id="lblImageName" text="Aucune image" style="-fx-text-fill: #64748b;"/>
+                </HBox>
+            </GridPane>
+
+            <VBox spacing="6" alignment="CENTER">
+                <ImageView fx:id="imgPreview" fitHeight="120" fitWidth="200" preserveRatio="true" style="-fx-background-color: #f1f5f9; -fx-padding: 5;"/>
+            </VBox>
+
+            <VBox spacing="6">
+                <Label text="Description:" styleClass="formLabel"/>
+                <TextArea fx:id="txtDescription"
+                          prefHeight="80"
+                          promptText="Décrire l’événement..."
+                          styleClass="formArea"/>
+            </VBox>
+
+            <Label fx:id="lblInfo"
+                   managed="false"
+                   visible="false"
+                   styleClass="formInfo error"/>
+
+            <HBox spacing="10" alignment="CENTER_RIGHT">
+                <Button text="Annuler"
+                        onAction="#onCancel"
+                        styleClass="secondaryBtn"/>
+                <Button text="Enregistrer"
+                        onAction="#onSave"
+                        styleClass="primaryBtn"/>
             </HBox>
 
-            <Label text="Lieu:" styleClass="formLabel"
-                   GridPane.rowIndex="3" GridPane.columnIndex="0"/>
-            <TextField fx:id="txtLieu"
-                       promptText="Ex: Tunis, Sidi Bou"
-                       styleClass="formField"
-                       GridPane.rowIndex="3" GridPane.columnIndex="1"/>
-
-            <Label text="Places:" styleClass="formLabel"
-                   GridPane.rowIndex="4" GridPane.columnIndex="0"/>
-            <TextField fx:id="txtPlaces"
-                       promptText="Ex: 50"
-                       styleClass="formField"
-                       GridPane.rowIndex="4" GridPane.columnIndex="1"/>
-
-            <Label text="Statut:" styleClass="formLabel"
-                   GridPane.rowIndex="5" GridPane.columnIndex="0"/>
-            <ComboBox fx:id="cbStatut"
-                      promptText="Choisir..."
-                      styleClass="formField"
-                      GridPane.rowIndex="5" GridPane.columnIndex="1"/>
-
-            <Label text="Prix (DT):" styleClass="formLabel"
-                   GridPane.rowIndex="6" GridPane.columnIndex="0"/>
-            <TextField fx:id="txtPrix"
-                       promptText="Ex: 25.50"
-                       styleClass="formField"
-                       GridPane.rowIndex="6" GridPane.columnIndex="1"/>
-        </GridPane>
-
-        <VBox spacing="6">
-            <Label text="Description:" styleClass="formLabel"/>
-            <TextArea fx:id="txtDescription"
-                      prefHeight="90"
-                      promptText="Décrire l’événement..."
-                      styleClass="formArea"/>
         </VBox>
-
-        <Label fx:id="lblInfo"
-               managed="false"
-               visible="false"
-               styleClass="formInfo error"/>
-
-        <HBox spacing="10" alignment="CENTER_RIGHT">
-            <Button text="Annuler"
-                    onAction="#onCancel"
-                    styleClass="secondaryBtn"/>
-            <Button text="Enregistrer"
-                    onAction="#onSave"
-                    styleClass="primaryBtn"/>
-        </HBox>
-
     </VBox>
-</VBox>
+</ScrollPane>

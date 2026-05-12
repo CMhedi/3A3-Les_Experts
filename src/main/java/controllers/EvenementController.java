@@ -72,6 +72,24 @@ public class EvenementController {
                 "-fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.02), 15, 0, 0, 10);";
         card.setStyle(baseStyle);
 
+        // --- Thumbnail ---
+        if (e.getImageUrl() != null && !e.getImageUrl().isEmpty()) {
+            try {
+                java.io.File file = new java.io.File("src/main/resources/uploads/events/" + e.getImageUrl());
+                if (file.exists()) {
+                    javafx.scene.image.ImageView thumb = new javafx.scene.image.ImageView(new javafx.scene.image.Image(file.toURI().toString()));
+                    thumb.setFitWidth(80);
+                    thumb.setFitHeight(80);
+                    thumb.setPreserveRatio(true);
+                    
+                    StackPane thumbContainer = new StackPane(thumb);
+                    thumbContainer.setPrefSize(80, 80);
+                    thumbContainer.setStyle("-fx-background-color: #f1f5f9; -fx-background-radius: 12;");
+                    card.getChildren().add(thumbContainer);
+                }
+            } catch (Exception ignored) {}
+        }
+
         // --- Bloc Texte (Info) ---
         VBox infoBox = new VBox(8);
         HBox.setHgrow(infoBox, Priority.ALWAYS); // Très important : pousse les autres blocs vers la droite

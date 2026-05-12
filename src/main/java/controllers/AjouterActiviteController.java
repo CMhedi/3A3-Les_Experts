@@ -179,7 +179,7 @@ public class AjouterActiviteController {
             popup.setTitle("Vérification Anti-Bot");
             popup.initOwner(nomField.getScene().getWindow());
             popup.setScene(new Scene(root));
-            popup.setResizable(false);
+            popup.setResizable(true);
             popup.showAndWait();
 
         } catch (Exception e) {

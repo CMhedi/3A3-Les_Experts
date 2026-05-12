@@ -19,6 +19,7 @@ import javafx.stage.Stage;
 import org.mindrot.jbcrypt.BCrypt;
 
 import java.io.IOException;
+import java.net.URL;
 
 public class LoginController {
 
@@ -119,23 +120,32 @@ public class LoginController {
 
             String fxmlPath;
             switch (user.getRole()) {
-                case ADMIN -> fxmlPath = "/GUI/MainLayout.fxml";
-                case USER_SIMPLE -> fxmlPath = "/GUI/MainLayoutUser.fxml";
-                case COACH -> fxmlPath = "/GUI/MainLayoutcoach.fxml";
-                default -> fxmlPath = "/GUI/SuccessPage.fxml";
+                case ADMIN -> fxmlPath = "MainLayout.fxml";
+                case USER_SIMPLE -> fxmlPath = "MainLayoutUser.fxml";
+                case COACH -> fxmlPath = "MainLayoutcoach.fxml";
+                default -> fxmlPath = "SuccessPage.fxml";
             }
 
-            FXMLLoader loader = new FXMLLoader(getClass().getResource(fxmlPath));
+            URL resource = getClass().getResource(fxmlPath);
+            if (resource == null) {
+                System.err.println("❌ FXML non trouvé : " + fxmlPath + " (dans le package GUI)");
+                DialogUtils.showError("Erreur", "Fichier d'interface introuvable : " + fxmlPath);
+                return;
+            }
+
+            FXMLLoader loader = new FXMLLoader(resource);
             Parent root = loader.load();
 
             Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
             stage.setScene(new Scene(root));
+            stage.sizeToScene();
             stage.centerOnScreen();
             stage.show();
 
         } catch (Exception e) {
+            System.err.println("❌ Erreur Login: " + e.getMessage());
             e.printStackTrace();
-            DialogUtils.showError("Erreur système", "Une erreur est survenue lors du login : " + e.getMessage());
+            DialogUtils.showError("Erreur système", "Une erreur est survenue lors du login : " + (e.getMessage() != null ? e.getMessage() : e.getClass().getSimpleName()));
         }
     }
 
@@ -145,6 +155,8 @@ public class LoginController {
             Parent root = FXMLLoader.load(getClass().getResource("/GUI/UserManagement.fxml"));
             Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
             stage.setScene(new Scene(root));
+            stage.sizeToScene();
+            stage.centerOnScreen();
             stage.show();
         } catch (IOException e) {
             System.err.println("❌ Erreur redirection Register: " + e.getMessage());
@@ -174,7 +186,7 @@ public class LoginController {
                 Stage stage = new Stage();
                 stage.initModality(Modality.APPLICATION_MODAL);
                 stage.setScene(new Scene(root));
-                stage.setResizable(false);
+                stage.setResizable(true);
                 stage.show();
 
             } catch (IOException e) {

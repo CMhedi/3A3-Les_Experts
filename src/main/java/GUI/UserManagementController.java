@@ -327,6 +327,8 @@ public class UserManagementController {
         Parent root = FXMLLoader.load(getClass().getResource("/GUI/MainLayoutUser.fxml")); // بدلو بمسار صفحتك
         Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
         stage.setScene(new Scene(root));
+        stage.sizeToScene();
+        stage.centerOnScreen();
         stage.show();
     }
     @FXML
@@ -371,6 +373,7 @@ public class UserManagementController {
             Parent root = FXMLLoader.load(getClass().getResource("/GUI/Login.fxml"));
             Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
             stage.setScene(new Scene(root));
+            stage.sizeToScene();
             stage.centerOnScreen();
             stage.show();
 
@@ -386,6 +389,8 @@ public class UserManagementController {
             Parent root = FXMLLoader.load(getClass().getResource("/GUI/Login.fxml"));
             Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
             stage.setScene(new Scene(root));
+            stage.sizeToScene();
+            stage.centerOnScreen();
             stage.show();
         } catch (IOException e) {
             System.err.println("Erreur: Ma l9itich el fichier Login.fxml!");

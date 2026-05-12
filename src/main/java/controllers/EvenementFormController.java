@@ -9,6 +9,12 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
+import java.io.File;
+import java.nio.file.Files;
+import javafx.stage.FileChooser;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
+import javafx.scene.layout.HBox;
 
 public class EvenementFormController {
 
@@ -32,6 +38,13 @@ public class EvenementFormController {
     private TextArea txtDescription;
     @FXML
     private Label lblInfo;
+    @FXML
+    private Label lblImageName;
+    @FXML
+    private ImageView imgPreview;
+
+    private File selectedImageFile;
+    private String currentImageUrl;
 
     private final EvenementService evenementService = new EvenementService();
     private Evenement editing;
@@ -69,6 +82,18 @@ public class EvenementFormController {
         cbStatut.setValue(e.getStatut());
         txtPrix.setText(String.valueOf(e.getPrix()));
         txtDescription.setText(e.getDescription());
+        
+        if (e.getImageUrl() != null && !e.getImageUrl().isEmpty()) {
+            this.currentImageUrl = e.getImageUrl();
+            lblImageName.setText(e.getImageUrl());
+            try {
+                // Try to load from the uploads folder
+                File file = new File("src/main/resources/uploads/events/" + e.getImageUrl());
+                if (file.exists()) {
+                    imgPreview.setImage(new Image(file.toURI().toString()));
+                }
+            } catch (Exception ignored) {}
+        }
     }
 
     public void setOnSaved(Runnable callback) {
@@ -76,7 +101,7 @@ public class EvenementFormController {
     }
 
     @FXML
-    private void onSave() {
+    public void onSave() {
         if (validateFields()) {
             try {
                 Evenement e = (editing == null) ? new Evenement() : editing;
@@ -91,6 +116,15 @@ public class EvenementFormController {
                 e.setPrix(Double.parseDouble(txtPrix.getText().trim()));
                 e.setDescription(txtDescription.getText() == null ? "" : txtDescription.getText().trim());
 
+                if (selectedImageFile != null) {
+                    String fileName = System.currentTimeMillis() + "_" + selectedImageFile.getName();
+                    File dest = new File("src/main/resources/uploads/events/" + fileName);
+                    Files.copy(selectedImageFile.toPath(), dest.toPath());
+                    e.setImageUrl(fileName);
+                } else if (editing != null) {
+                    e.setImageUrl(currentImageUrl);
+                }
+
                 if (editing == null)
                     evenementService.add(e);
                 else
@@ -100,8 +134,24 @@ public class EvenementFormController {
                     onSaved.run();
                 onCancel();
             } catch (Exception ex) {
+                ex.printStackTrace();
                 showError("Erreur : " + ex.getMessage());
             }
+        }
+    }
+
+    @FXML
+    public void onChooseImage() {
+        FileChooser fileChooser = new FileChooser();
+        fileChooser.setTitle("Choisir une image");
+        fileChooser.getExtensionFilters().addAll(
+            new FileChooser.ExtensionFilter("Images", "*.png", "*.jpg", "*.jpeg", "*.gif")
+        );
+        File file = fileChooser.showOpenDialog(txtTitre.getScene().getWindow());
+        if (file != null) {
+            selectedImageFile = file;
+            lblImageName.setText(file.getName());
+            imgPreview.setImage(new Image(file.toURI().toString()));
         }
     }
 
@@ -200,7 +250,7 @@ public class EvenementFormController {
     }
 
     @FXML
-    private void onCancel() {
+    public void onCancel() {
         txtTitre.getScene().getWindow().hide();
     }
 }

@@ -213,7 +213,7 @@ public class ReservationController {
             Stage dialogStage = new Stage();
             dialogStage.initOwner(tableReservation.getScene().getWindow());
             dialogStage.initModality(javafx.stage.Modality.WINDOW_MODAL);
-            dialogStage.setResizable(false);
+            dialogStage.setResizable(true);
             dialogStage.setTitle("Modifier Réservation");
             dialogStage.setScene(new Scene(root));
             dialogStage.showAndWait();

@@ -59,6 +59,7 @@ public class SideBarUserController {
                 Parent root = FXMLLoader.load(getClass().getResource("/GUI/MessengerApp.fxml"));
                 Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
                 stage.setScene(new Scene(root));
+                stage.sizeToScene();
                 stage.centerOnScreen();
             }
         } catch (IOException e) {
@@ -86,6 +87,9 @@ public class SideBarUserController {
         Parent root = FXMLLoader.load(getClass().getResource("/GUI/Login.fxml"));
         Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
         stage.setScene(new Scene(root));
+        stage.sizeToScene();
+        stage.centerOnScreen();
+        stage.show();
     }
 
     private void changeCenter(String fxmlPath) {

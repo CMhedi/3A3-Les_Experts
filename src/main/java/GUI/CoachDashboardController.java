@@ -811,7 +811,7 @@ public class CoachDashboardController {
             stage.setTitle("Appel de présence - " + s.getNom());
             stage.setScene(new Scene(root));
             stage.initModality(Modality.APPLICATION_MODAL);
-            stage.setResizable(false);
+            stage.setResizable(true);
             stage.showAndWait();
 
             refreshCards();

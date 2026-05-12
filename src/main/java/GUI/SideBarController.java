@@ -85,6 +85,7 @@ public class SideBarController {
                 Parent root = FXMLLoader.load(getClass().getResource("/GUI/MessengerApp.fxml"));
                 Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
                 stage.setScene(new Scene(root));
+                stage.sizeToScene();
                 stage.centerOnScreen();
             }
         } catch (IOException e) {
@@ -105,6 +106,8 @@ public class SideBarController {
             Parent root = FXMLLoader.load(getClass().getResource("/gui/Login.fxml"));
             Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
             stage.setScene(new Scene(root));
+            stage.sizeToScene();
+            stage.centerOnScreen();
             stage.show();
         } catch (IOException e) {
             e.printStackTrace();
@@ -152,7 +155,9 @@ public class SideBarController {
                 return;
             Parent root = FXMLLoader.load(url);
             Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
-            stage.setScene(new Scene(root, stage.getWidth(), stage.getHeight()));
+            stage.setScene(new Scene(root));
+            stage.sizeToScene();
+            stage.centerOnScreen();
             stage.show();
         } catch (IOException e) {
             e.printStackTrace();

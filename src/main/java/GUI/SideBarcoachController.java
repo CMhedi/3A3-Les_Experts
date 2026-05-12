@@ -52,6 +52,7 @@ public class SideBarcoachController{
                     .getWindow();
 
             stage.setScene(scene);
+            stage.sizeToScene();
             stage.centerOnScreen();
             stage.show();
 
@@ -78,6 +79,7 @@ public class SideBarcoachController{
                 Parent root = FXMLLoader.load(getClass().getResource("/GUI/MessengerApp.fxml"));
                 Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
                 stage.setScene(new Scene(root));
+                stage.sizeToScene();
                 stage.centerOnScreen();
             }
         } catch (IOException e) {
@@ -111,5 +113,8 @@ public class SideBarcoachController{
         Parent root = FXMLLoader.load(getClass().getResource("/GUI/Login.fxml"));
         Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
         stage.setScene(new Scene(root));
+        stage.sizeToScene();
+        stage.centerOnScreen();
+        stage.show();
     }
 }

@@ -18,7 +18,7 @@ public class MainFX extends Application {
         Scene scene = new Scene(root);
 
         stage.setScene(scene);
-        stage.setMaximized(true);
+        stage.setResizable(true);
         stage.setTitle("EcoAdventure - Gestion Utilisateurs");
         stage.getIcons().add(
                 new javafx.scene.image.Image(

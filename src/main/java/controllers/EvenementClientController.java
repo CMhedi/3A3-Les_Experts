@@ -76,6 +76,23 @@ public class EvenementClientController {
         card.setStyle(
                 "-fx-background-color: white; -fx-background-radius: 15; -fx-padding: 20; -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.1), 10, 0, 0, 5);");
 
+        // --- Image de l'événement ---
+        if (ev.getImageUrl() != null && !ev.getImageUrl().isEmpty()) {
+            try {
+                java.io.File file = new java.io.File("src/main/resources/uploads/events/" + ev.getImageUrl());
+                if (file.exists()) {
+                    ImageView eventImg = new ImageView(new Image(file.toURI().toString()));
+                    eventImg.setFitHeight(150);
+                    eventImg.setFitWidth(350);
+                    eventImg.setPreserveRatio(true);
+                    
+                    StackPane imgContainer = new StackPane(eventImg);
+                    imgContainer.setStyle("-fx-background-radius: 10; -fx-overflow: hidden;");
+                    card.getChildren().add(imgContainer);
+                }
+            } catch (Exception ignored) {}
+        }
+
         // Header : Titre + Weather Badge
         HBox header = new HBox(10);
         header.setAlignment(Pos.CENTER_LEFT);

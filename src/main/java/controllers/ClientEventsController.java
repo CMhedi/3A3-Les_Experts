@@ -191,6 +191,23 @@ public class ClientEventsController implements Initializable {
         card.setStyle("-fx-background-color: white; -fx-background-radius: 20; " +
                 "-fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.08), 15, 0, 0, 8);");
 
+        // --- Image de l'événement ---
+        if (ev.getImageUrl() != null && !ev.getImageUrl().isEmpty()) {
+            try {
+                java.io.File file = new java.io.File("src/main/resources/uploads/events/" + ev.getImageUrl());
+                if (file.exists()) {
+                    ImageView eventImg = new ImageView(new Image(file.toURI().toString()));
+                    eventImg.setFitHeight(180);
+                    eventImg.setFitWidth(400); // Taille fixe pour la carte
+                    eventImg.setPreserveRatio(true);
+                    
+                    StackPane imgContainer = new StackPane(eventImg);
+                    imgContainer.setStyle("-fx-background-color: #f8fafc; -fx-background-radius: 15; -fx-overflow: hidden;");
+                    card.getChildren().add(imgContainer);
+                }
+            } catch (Exception ignored) {}
+        }
+
         HBox header = new HBox();
         header.setAlignment(Pos.CENTER_LEFT);
 

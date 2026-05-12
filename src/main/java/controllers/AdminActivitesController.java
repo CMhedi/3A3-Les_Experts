@@ -111,7 +111,7 @@ public class AdminActivitesController {
             Stage popup = new Stage();
             popup.setTitle("Modifier Activité");
             popup.initModality(Modality.APPLICATION_MODAL);
-            popup.setResizable(false);
+            popup.setResizable(true);
             popup.setScene(new Scene(root));
             popup.showAndWait();
 

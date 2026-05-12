@@ -119,7 +119,7 @@ public class PackListController {
             st.initModality(Modality.APPLICATION_MODAL);
             st.setTitle("Export PDF & QR Code");
             st.setScene(scene);
-            st.setResizable(false);
+            st.setResizable(true);
             st.showAndWait();
         } catch (Exception e) {
             showError(e);

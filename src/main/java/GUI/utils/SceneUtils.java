@@ -38,6 +38,8 @@ public class SceneUtils {
                     (Stage) source.getScene().getWindow();
 
             stage.setScene(scene);
+            stage.setResizable(true);
+            stage.sizeToScene();
             stage.show();
 
             return loader;
