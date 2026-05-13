@@ -9,7 +9,7 @@
 
         <Button onAction="#goToProfil" maxWidth="Infinity" text=" Mon Profil" styleClass="nav-btn-user" style="-fx-background-color: transparent; -fx-text-fill: white; -fx-alignment: CENTER_LEFT; -fx-cursor: hand;"/>
         <Button onAction="#goToMyReclamations" maxWidth="Infinity" text=" Réclamations" styleClass="nav-btn-user" style="-fx-background-color: transparent; -fx-text-fill: white; -fx-alignment: CENTER_LEFT; -fx-cursor: hand;"/>
-        <Button onAction="#goToMessengerie" maxWidth="Infinity" text="Messengerie" styleClass="nav-btn-user" style="-fx-background-color: transparent; -fx-text-fill: white; -fx-alignment: CENTER_LEFT; -fx-cursor: hand;"/>
+        <Button onAction="#goToMessengerie" maxWidth="Infinity" text=" Messengerie" styleClass="nav-btn-user" style="-fx-background-color: transparent; -fx-text-fill: white; -fx-alignment: CENTER_LEFT; -fx-cursor: hand;"/>
         <Button onAction="#goToNews" maxWidth="Infinity" text=" News" styleClass="nav-btn-user" style="-fx-background-color: transparent; -fx-text-fill: white; -fx-alignment: CENTER_LEFT; -fx-cursor: hand;"/>
         <Button onAction="#goTorsrv" maxWidth="Infinity" text=" Mes réservations" styleClass="nav-btn-user" style="-fx-background-color: transparent; -fx-text-fill: white; -fx-alignment: CENTER_LEFT; -fx-cursor: hand;"/>
         <Button onAction="#goToEvenements"
@@ -17,26 +17,52 @@
                 text=" Évènements"
                 styleClass="nav-btn-user"
                 style="-fx-background-color: transparent;
-               -fx-text-fill: white;
-               -fx-alignment: CENTER_LEFT;
-               -fx-cursor: hand;"/>    <Button onAction="#goToSeancesDisponibles"
+                       -fx-text-fill: white;
+                       -fx-alignment: CENTER_LEFT;
+                       -fx-cursor: hand;"/>
+        <Button onAction="#goToSeancesDisponibles"
                 maxWidth="Infinity"
                 text=" Séances disponibles"
                 styleClass="nav-btn-user"
                 style="-fx-background-color: transparent;
-               -fx-text-fill: white;
-               -fx-alignment: CENTER_LEFT;
-               -fx-cursor: hand;"/>
+                       -fx-text-fill: white;
+                       -fx-alignment: CENTER_LEFT;
+                       -fx-cursor: hand;"/>
         <Button onAction="#goToNutrition"
                 maxWidth="Infinity"
                 text=" 🍎 Nutrition &amp; Performance"
                 styleClass="nav-btn-user"
                 style="-fx-background-color: transparent;
-               -fx-text-fill: white;
-               -fx-alignment: CENTER_LEFT;
-               -fx-cursor: hand;"/>
-        <Button onAction="#goToUserSeance" maxWidth="Infinity" text="Seances" styleClass="nav-btn-user" style="-fx-background-color: transparent; -fx-text-fill: white; -fx-alignment: CENTER_LEFT; -fx-cursor: hand;"/>
-        <Button onAction="#handleLogout" maxWidth="Infinity" text=" Déconnexion" style="-fx-background-color: #ef4444; -fx-text-fill: white; -fx-font-weight: bold; -fx-background-radius: 8;">
+                       -fx-text-fill: white;
+                       -fx-alignment: CENTER_LEFT;
+                       -fx-cursor: hand;"/>
+        <Button onAction="#goToUserSeance"
+                maxWidth="Infinity"
+                text=" Séances"
+                styleClass="nav-btn-user"
+                style="-fx-background-color: transparent;
+                       -fx-text-fill: white;
+                       -fx-alignment: CENTER_LEFT;
+                       -fx-cursor: hand;"/>
+
+        <!-- NOUVEAU : Bouton inscription aux packs -->
+        <Button onAction="#goToPackInscription"
+                maxWidth="Infinity"
+                text=" 🎒 Nos Packs"
+                styleClass="nav-btn-user"
+                style="-fx-background-color: #10B981;
+                       -fx-text-fill: white;
+                       -fx-font-weight: bold;
+                       -fx-alignment: CENTER_LEFT;
+                       -fx-cursor: hand;
+                       -fx-background-radius: 8;">
+            <tooltip>
+                <Tooltip text="Découvrez et inscrivez-vous à nos packs exclusifs"/>
+            </tooltip>
+        </Button>
+
+        <Button onAction="#handleLogout" maxWidth="Infinity" text=" Déconnexion"
+                style="-fx-background-color: #ef4444; -fx-text-fill: white; -fx-font-weight: bold; -fx-background-radius: 8;">
             <VBox.margin>
                 <Insets top="20" />
             </VBox.margin>

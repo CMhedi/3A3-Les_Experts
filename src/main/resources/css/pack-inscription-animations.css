@@ -1,0 +1,299 @@
+/* =========================================================
+   pack-inscription-animations.css — Advanced Animations
+   EcoAdventure - Smooth transitions & interactions
+   ========================================================= */
+
+/* ============ FADE TRANSITIONS ============ */
+.fade-in {
+    -fx-opacity: 0;
+    -fx-animation: fadeIn 0.5s ease-out forwards;
+}
+
+@keyframes fadeIn {
+    from { -fx-opacity: 0; }
+    to { -fx-opacity: 1; }
+}
+
+.fade-out {
+    -fx-opacity: 1;
+    -fx-animation: fadeOut 0.3s ease-out forwards;
+}
+
+@keyframes fadeOut {
+    from { -fx-opacity: 1; }
+    to { -fx-opacity: 0; }
+}
+
+/* ============ SLIDE TRANSITIONS ============ */
+.slide-in-right {
+    -fx-translate-x: 50;
+    -fx-opacity: 0;
+    -fx-animation: slideInRight 0.5s ease-out forwards;
+}
+
+@keyframes slideInRight {
+    from {
+        -fx-translate-x: 50;
+        -fx-opacity: 0;
+    }
+    to {
+        -fx-translate-x: 0;
+        -fx-opacity: 1;
+    }
+}
+
+.slide-in-left {
+    -fx-translate-x: -50;
+    -fx-opacity: 0;
+    -fx-animation: slideInLeft 0.5s ease-out forwards;
+}
+
+@keyframes slideInLeft {
+    from {
+        -fx-translate-x: -50;
+        -fx-opacity: 0;
+    }
+    to {
+        -fx-translate-x: 0;
+        -fx-opacity: 1;
+    }
+}
+
+.slide-up {
+    -fx-translate-y: 30;
+    -fx-opacity: 0;
+    -fx-animation: slideUp 0.4s ease-out forwards;
+}
+
+@keyframes slideUp {
+    from {
+        -fx-translate-y: 30;
+        -fx-opacity: 0;
+    }
+    to {
+        -fx-translate-y: 0;
+        -fx-opacity: 1;
+    }
+}
+
+/* ============ SCALE ANIMATIONS ============ */
+.scale-in {
+    -fx-scale-x: 0.9;
+    -fx-scale-y: 0.9;
+    -fx-opacity: 0;
+    -fx-animation: scaleIn 0.4s ease-out forwards;
+}
+
+@keyframes scaleIn {
+    from {
+        -fx-scale-x: 0.9;
+        -fx-scale-y: 0.9;
+        -fx-opacity: 0;
+    }
+    to {
+        -fx-scale-x: 1;
+        -fx-scale-y: 1;
+        -fx-opacity: 1;
+    }
+}
+
+/* ============ HOVER EFFECTS ============ */
+.hover-lift {
+    -fx-transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+.hover-lift:hover {
+    -fx-translate-y: -8;
+    -fx-effect: dropshadow(gaussian, rgba(15, 23, 42, 0.20), 20, 0.2, 0, 10);
+}
+
+/* ============ PULSE ANIMATION ============ */
+.pulse {
+    -fx-animation: pulse 2s infinite;
+}
+
+@keyframes pulse {
+    0%, 100% {
+        -fx-opacity: 1;
+    }
+    50% {
+        -fx-opacity: 0.7;
+    }
+}
+
+/* ============ BOUNCE ANIMATION ============ */
+.bounce {
+    -fx-animation: bounce 1s ease-in-out;
+}
+
+@keyframes bounce {
+    0%, 100% { -fx-translate-y: 0; }
+    50% { -fx-translate-y: -10; }
+}
+
+/* ============ SHIMMER EFFECT ============ */
+.shimmer {
+    -fx-animation: shimmer 2s infinite;
+}
+
+@keyframes shimmer {
+    0% {
+        -fx-background-color: rgba(16, 185, 129, 0.1);
+    }
+    50% {
+        -fx-background-color: rgba(16, 185, 129, 0.3);
+    }
+    100% {
+        -fx-background-color: rgba(16, 185, 129, 0.1);
+    }
+}
+
+/* ============ BUTTON INTERACTIONS ============ */
+.btn-ripple {
+    -fx-transition: all 0.2s ease-out;
+}
+
+.btn-ripple:pressed {
+    -fx-scale-x: 0.95;
+    -fx-scale-y: 0.95;
+}
+
+/* ============ INPUT FOCUS ============ */
+.form-field-focus {
+    -fx-transition: all 0.3s ease-out;
+    -fx-effect: dropshadow(gaussian, rgba(16, 185, 129, 0.0), 0, 0, 0, 0);
+}
+
+.form-field-focus:focused {
+    -fx-effect: dropshadow(gaussian, rgba(16, 185, 129, 0.3), 12, 0.15, 0, 0);
+}
+
+/* ============ CARD ANIMATIONS ============ */
+.card-hover {
+    -fx-transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+.card-hover:hover {
+    -fx-translate-y: -4;
+    -fx-effect: dropshadow(gaussian, rgba(15, 23, 42, 0.15), 18, 0.18, 0, 8);
+}
+
+.card-highlight {
+    -fx-animation: cardHighlight 0.6s ease-out;
+}
+
+@keyframes cardHighlight {
+    0% {
+        -fx-border-color: #E2E8F0;
+    }
+    50% {
+        -fx-border-color: #10B981;
+        -fx-effect: dropshadow(gaussian, rgba(16, 185, 129, 0.3), 12, 0.2, 0, 0);
+    }
+    100% {
+        -fx-border-color: #10B981;
+        -fx-effect: dropshadow(gaussian, rgba(16, 185, 129, 0.1), 6, 0.1, 0, 0);
+    }
+}
+
+/* ============ LOADER ANIMATION ============ */
+.loader {
+    -fx-animation: rotate 2s linear infinite;
+}
+
+@keyframes rotate {
+    from { -fx-rotate: 0; }
+    to { -fx-rotate: 360; }
+}
+
+/* ============ CHECK MARK ANIMATION ============ */
+.checkmark {
+    -fx-animation: scaleCheck 0.5s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+}
+
+@keyframes scaleCheck {
+    0% {
+        -fx-scale-x: 0;
+        -fx-scale-y: 0;
+    }
+    100% {
+        -fx-scale-x: 1;
+        -fx-scale-y: 1;
+    }
+}
+
+/* ============ ERROR SHAKE ============ */
+.shake {
+    -fx-animation: shake 0.4s;
+}
+
+@keyframes shake {
+    0%, 100% { -fx-translate-x: 0; }
+    10%, 30%, 50%, 70%, 90% { -fx-translate-x: -5; }
+    20%, 40%, 60%, 80% { -fx-translate-x: 5; }
+}
+
+/* ============ SUCCESS ANIMATION ============ */
+.success-pop {
+    -fx-animation: successPop 0.6s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+}
+
+@keyframes successPop {
+    0% {
+        -fx-scale-x: 0.5;
+        -fx-scale-y: 0.5;
+        -fx-opacity: 0;
+    }
+    50% {
+        -fx-scale-x: 1.1;
+        -fx-scale-y: 1.1;
+    }
+    100% {
+        -fx-scale-x: 1;
+        -fx-scale-y: 1;
+        -fx-opacity: 1;
+    }
+}
+
+/* ============ GRADIENT ANIMATIONS ============ */
+.gradient-shift {
+    -fx-animation: gradientShift 4s ease-in-out infinite;
+}
+
+@keyframes gradientShift {
+    0% {
+        -fx-background-color: linear-gradient(to right, #14532D, #10B981);
+    }
+    50% {
+        -fx-background-color: linear-gradient(to right, #10B981, #38BDF8);
+    }
+    100% {
+        -fx-background-color: linear-gradient(to right, #14532D, #10B981);
+    }
+}
+
+/* ============ FLOATING EFFECT ============ */
+.float {
+    -fx-animation: float 3s ease-in-out infinite;
+}
+
+@keyframes float {
+    0%, 100% { -fx-translate-y: 0; }
+    50% { -fx-translate-y: -10; }
+}
+
+/* ============ STAGGER ANIMATIONS ============ */
+.stagger-1 { -fx-animation-delay: 0s; }
+.stagger-2 { -fx-animation-delay: 0.1s; }
+.stagger-3 { -fx-animation-delay: 0.2s; }
+.stagger-4 { -fx-animation-delay: 0.3s; }
+.stagger-5 { -fx-animation-delay: 0.4s; }
+
+/* ============ SMOOTH TRANSITIONS ============ */
+* {
+    -fx-transition: all 0.25s ease-out;
+}
+
+.smooth-transition {
+    -fx-transition: color 0.3s ease, background-color 0.3s ease, border-color 0.3s ease;
+}

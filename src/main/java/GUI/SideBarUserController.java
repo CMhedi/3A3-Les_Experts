@@ -44,7 +44,9 @@ public class SideBarUserController {
     void goToEvenements(ActionEvent event) {
         changeCenter("/views/ClientEvents.fxml");
     }
-    @FXML void goTorsrv(ActionEvent event) {
+
+    @FXML
+    void goTorsrv(ActionEvent event) {
         changeCenter("/views/reservation_list.fxml");
     }
 
@@ -70,15 +72,31 @@ public class SideBarUserController {
 
     @FXML
     void goToActivities(ActionEvent event) {
-        // logic pour les activités ken thib t-activiha
+        // logic pour les activités
     }
 
+    @FXML
     public void goToSeancesDisponibles(ActionEvent event) {
         SceneUtils.loadScene("/UserSeanceView.fxml", "/admin.css", (Node) event.getSource());
     }
 
+    @FXML
     public void goToNutrition(ActionEvent event) {
         SceneUtils.loadScene("/NuritionView.fxml", "/nutrition.css", (Node) event.getSource());
+    }
+
+    @FXML
+    public void goToUserSeance(ActionEvent event) {
+        SceneUtils.loadScene("/GUI/UserSeances.fxml", "/GUI/userSeances.css", (Node) event.getSource());
+    }
+
+    // =====================================================================
+    // NOUVEAU : Navigation vers la page d'inscription aux packs
+    // Appelé par onAction="#goToPackInscription" dans SideBarUser.fxml
+    // =====================================================================
+    @FXML
+    public void goToPackInscription(ActionEvent event) {
+        changeCenter("/FXML/PackInscriptionView.fxml");
     }
 
     @FXML
@@ -94,11 +112,11 @@ public class SideBarUserController {
 
     private void changeCenter(String fxmlPath) {
         try {
-            // Thabet hna: nesta'mlou el mainPane eli t-setta wala n-lawjou 'lih mel scene
-            BorderPane pane = (mainPane != null) ? mainPane : (BorderPane) sidebarRoot.getScene().lookup("#mainPaneUser");
+            BorderPane pane = (mainPane != null)
+                    ? mainPane
+                    : (BorderPane) sidebarRoot.getScene().lookup("#mainPaneUser");
 
             if (pane == null) {
-                // Fallback ken malqinech el pane bel-id
                 System.out.println("⚠ Impossible de trouver mainPaneUser");
                 return;
             }
@@ -110,9 +128,6 @@ public class SideBarUserController {
         }
     }
 
-    public void goToUserSeance(ActionEvent event) {
-        SceneUtils.loadScene("/GUI/UserSeances.fxml", "/GUI/userSeances.css", (Node) event.getSource());
-    }
-
-    @FXML private Node sidebarRoot; // matensech tzid fx:id="sidebarRoot" fi el FXML mta' el user sidebar
+    @FXML
+    private Node sidebarRoot;
 }

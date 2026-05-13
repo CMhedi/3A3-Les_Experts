@@ -1,5 +1,81 @@
 @import "app.css";
 
+/* ===================================================
+   SIDEBAR
+   =================================================== */
+
+.sidebar-scroll {
+    -fx-background-color: linear-gradient(to bottom, #1c3f2e, #14532D);
+    -fx-padding: 0;
+    -fx-border-color: transparent;
+}
+
+.sidebar {
+    -fx-background-color: transparent;
+    -fx-padding: 22;
+    -fx-pref-width: 240;
+    -fx-min-width: 240;
+}
+
+.logo {
+    -fx-text-fill: white;
+    -fx-font-size: 26px;
+    -fx-font-weight: 900;
+}
+
+.logo-accent {
+    -fx-text-fill: #F97316;
+    -fx-font-size: 26px;
+    -fx-font-weight: 900;
+}
+
+.sidebar-separator {
+    -fx-opacity: 0.20;
+}
+
+/* Section Titles */
+.sidebar-section-title {
+    -fx-text-fill: rgba(255, 255, 255, 0.60);
+    -fx-font-size: 11px;
+    -fx-font-weight: 700;
+    -fx-letter-spacing: 1;
+    -fx-padding: 10 0 6 16;
+}
+
+/* Menu Buttons */
+.menu-btn {
+    -fx-background-color: transparent;
+    -fx-text-fill: white;
+    -fx-font-size: 14px;
+    -fx-font-weight: 600;
+    -fx-alignment: CENTER_LEFT;
+    -fx-padding: 10 16;
+    -fx-graphic-text-gap: 12;
+    -fx-background-radius: 8;
+    -fx-border-radius: 8;
+    -fx-border-color: transparent;
+    -fx-pref-height: 40;
+    -fx-max-width: Infinity;
+    -fx-cursor: hand;
+}
+
+.menu-btn:hover {
+    -fx-background-color: rgba(255, 255, 255, 0.12);
+}
+
+.menu-btn-active {
+    -fx-background-color: #2b5d46;
+    -fx-border-color: #F97316;
+    -fx-border-width: 0 0 0 4;
+    -fx-padding: 10 12 10 16;
+}
+
+.menu-btn:focused,
+.button:focused {
+    -fx-focus-color: transparent;
+    -fx-faint-focus-color: transparent;
+}
+
 /* Dashboard root background stays consistent */
 .root {
     -fx-background-color: linear-gradient(to bottom right, -ea-sand, #D1FAE5);
@@ -7,14 +83,16 @@
 
 /* KPI blocks */
 .kpi {
-    -fx-border-color: rgba(16,185,129,0.35);
+    -fx-border-color: rgba(16, 185, 129, 0.35);
     -fx-border-width: 1;
     -fx-background-color: linear-gradient(to bottom right, -ea-white, -ea-surface);
 }
+
 .kpi-title {
     -fx-text-fill: -ea-muted;
     -fx-font-weight: 800;
 }
+
 .kpi-value {
     -fx-text-fill: -ea-forest;
     -fx-font-size: 26px;
@@ -34,6 +112,7 @@
     -fx-font-size: 15px;
     -fx-font-weight: 900;
 }
+
 .profile-metric {
     -fx-text-fill: -ea-forest;
     -fx-font-size: 14px;

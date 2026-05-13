@@ -17,7 +17,7 @@ public class InscriptionService {
 
     private final LoyaltyService loyaltyService = new LoyaltyService();
 
-    // cache بسيط للقيم المسموح بها
+    // cache simple pour les valeurs autorisées
     private List<String> cachedAllowedStatuts = null;
 
     /* =========================
@@ -26,7 +26,6 @@ public class InscriptionService {
 
     public List<Inscription> getAll() {
         MyDB2.getInstance();
-
         List<Inscription> list = new ArrayList<>();
         String sql = "SELECT * FROM inscription ORDER BY date_inscription DESC";
 
@@ -43,20 +42,29 @@ public class InscriptionService {
 
                 i.setStatutInscr(rs.getString("statut_inscr"));
                 i.setMontantTotal(rs.getBigDecimal("montant_total"));
-
+                i.setNomUser(rs.getString("nom_user"));
+                i.setNomPack(rs.getString("nom_pack"));
                 i.setIdUser(rs.getInt("id_user"));
                 i.setIdPack(rs.getInt("id_pack"));
 
+                try { i.setPaymentGateway(rs.getString("payment_gateway")); }   catch (Exception ignored) {}
+                try { i.setPaymentReference(rs.getString("payment_reference")); } catch (Exception ignored) {}
+                try { i.setPaymentOrderId(rs.getString("payment_order_id")); }   catch (Exception ignored) {}
+                try { i.setPaymentStatus(rs.getString("payment_status")); }      catch (Exception ignored) {}
+                try {
+                    Timestamp paidTs = rs.getTimestamp("paid_at");
+                    i.setPaidAt(paidTs != null ? paidTs.toLocalDateTime() : null);
+                } catch (Exception ignored) {}
+                try { i.setCardImage(rs.getString("card_image")); } catch (Exception ignored) {}
+
                 list.add(i);
             }
-
-            System.out.println("✅ Inscriptions loaded: " + list.size());
+            System.out.println("✅ Inscriptions chargées : " + list.size());
 
         } catch (Exception e) {
-            System.out.println("❌ InscriptionService.getAll error: " + e.getMessage());
+            System.out.println("❌ InscriptionService.getAll : " + e.getMessage());
             e.printStackTrace();
         }
-
         return list;
     }
 
@@ -64,75 +72,170 @@ public class InscriptionService {
        CREATE
        ========================= */
 
-    public void add(Inscription insc, Pack pack) {
+    /**
+     * Insère une inscription et retourne l'ID généré.
+     * Les colonnes paiement sont insérées en même temps si déjà renseignées sur l'objet.
+     */
+    public int add(Inscription insc, Pack pack) {
         MyDB2.getInstance();
 
         if (insc.getDateInscription() == null) insc.setDateInscription(LocalDateTime.now());
-
-        // montant auto
         insc.setMontantTotal(computeMontant(pack, insc.getIdUser()));
 
-        // ✅ أهم سطر: نطابق statut مع DB
         String statutDb = coerceStatutToDB(insc.getStatutInscr());
 
         String sql = """
-            INSERT INTO inscription(date_inscription, statut_inscr, montant_total, id_user, id_pack)
-            VALUES (?,?,?,?,?)
-        """;
+                INSERT INTO inscription
+                  (date_inscription, statut_inscr, montant_total,
+                   nom_user, nom_pack, id_user, id_pack,
+                   payment_gateway, payment_reference, payment_order_id,
+                   payment_status, paid_at, card_image)
+                VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?)
+                """;
 
+        int generatedId = -1;
         try (Connection cnx = MyDB2.getConnection();
-             PreparedStatement ps = cnx.prepareStatement(sql)) {
+             PreparedStatement ps = cnx.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
 
-            ps.setTimestamp(1, Timestamp.valueOf(insc.getDateInscription()));
-            ps.setString(2, statutDb); // ✅ القيمة اللي DB تقبلها
+            ps.setTimestamp(1,  Timestamp.valueOf(insc.getDateInscription()));
+            ps.setString(2,     statutDb);
             ps.setBigDecimal(3, insc.getMontantTotal());
-            ps.setInt(4, insc.getIdUser());
-            ps.setInt(5, insc.getIdPack());
+            ps.setString(4,     insc.getNomUser());
+            ps.setString(5,     insc.getNomPack());
+            setIntOrNull(ps, 6, insc.getIdUser());
+            setIntOrNull(ps, 7, insc.getIdPack());
+            ps.setString(8,     insc.getPaymentGateway());
+            ps.setString(9,     insc.getPaymentReference());
+            ps.setString(10,    insc.getPaymentOrderId());
+            ps.setString(11,    insc.getPaymentStatus());
+            ps.setTimestamp(12, toTimestamp(insc.getPaidAt()));
+            ps.setString(13,    insc.getCardImage());
 
-            ps.executeUpdate();
+            int rows = ps.executeUpdate();
+            System.out.println("✅ Inscription insérée, lignes : " + rows);
+
+            try (ResultSet keys = ps.getGeneratedKeys()) {
+                if (keys.next()) {
+                    generatedId = keys.getInt(1);
+                    insc.setIdInscription(generatedId);
+                    System.out.println("✅ ID généré : " + generatedId);
+                }
+            }
 
         } catch (Exception e) {
+            System.out.println("❌ InscriptionService.add : " + e.getMessage());
+            e.printStackTrace();
             throw new RuntimeException(e);
         }
+        return generatedId;
     }
 
     /* =========================
        UPDATE
        ========================= */
 
+    /**
+     * Met à jour les champs métier + les colonnes paiement si elles sont renseignées.
+     */
     public void update(Inscription insc, Pack pack) {
         MyDB2.getInstance();
 
         insc.setMontantTotal(computeMontant(pack, insc.getIdUser()));
-
-        // ✅ نفس الفكرة في update
         String statutDb = coerceStatutToDB(insc.getStatutInscr());
 
         String sql = """
-            UPDATE inscription
-            SET statut_inscr=?, montant_total=?, id_user=?, id_pack=?
-            WHERE id_inscription=?
-        """;
+                UPDATE inscription SET
+                    statut_inscr      = ?,
+                    montant_total     = ?,
+                    nom_user          = ?,
+                    nom_pack          = ?,
+                    id_user           = ?,
+                    id_pack           = ?,
+                    payment_gateway   = ?,
+                    payment_reference = ?,
+                    payment_order_id  = ?,
+                    payment_status    = ?,
+                    paid_at           = ?,
+                    card_image        = ?
+                WHERE id_inscription  = ?
+                """;
 
         try (Connection cnx = MyDB2.getConnection();
              PreparedStatement ps = cnx.prepareStatement(sql)) {
 
-            ps.setString(1, statutDb);
+            ps.setString(1,     statutDb);
             ps.setBigDecimal(2, insc.getMontantTotal());
-            ps.setInt(3, insc.getIdUser());
-            ps.setInt(4, insc.getIdPack());
-            ps.setInt(5, insc.getIdInscription());
+            ps.setString(3,     insc.getNomUser());
+            ps.setString(4,     insc.getNomPack());
+            setIntOrNull(ps, 5, insc.getIdUser());
+            setIntOrNull(ps, 6, insc.getIdPack());
+            ps.setString(7,     insc.getPaymentGateway());
+            ps.setString(8,     insc.getPaymentReference());
+            ps.setString(9,     insc.getPaymentOrderId());
+            ps.setString(10,    insc.getPaymentStatus());
+            ps.setTimestamp(11, toTimestamp(insc.getPaidAt()));
+            ps.setString(12,    insc.getCardImage());
+            ps.setInt(13,       insc.getIdInscription());
 
             ps.executeUpdate();
+            System.out.println("✅ Inscription #" + insc.getIdInscription() + " mise à jour.");
 
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
     }
 
-    public void delete(int id) {
+    /**
+     * Met à jour uniquement les colonnes paiement (après confirmation sandbox).
+     * Appelée depuis InscriptionFormController une fois le paiement simulé réussi.
+     */
+    public void updatePayment(int idInscription,
+                              String gateway,
+                              String reference,
+                              String orderId,
+                              String paymentStatus,
+                              LocalDateTime paidAt,
+                              String cardImage) {
         MyDB2.getInstance();
 
+        String sql = """
+                UPDATE inscription SET
+                    payment_gateway   = ?,
+                    payment_reference = ?,
+                    payment_order_id  = ?,
+                    payment_status    = ?,
+                    paid_at           = ?,
+                    card_image        = ?
+                WHERE id_inscription  = ?
+                """;
+
+        try (Connection cnx = MyDB2.getConnection();
+             PreparedStatement ps = cnx.prepareStatement(sql)) {
+
+            ps.setString(1,     gateway);
+            ps.setString(2,     reference);
+            ps.setString(3,     orderId);
+            ps.setString(4,     paymentStatus);
+            ps.setTimestamp(5,  toTimestamp(paidAt));
+            ps.setString(6,     cardImage);
+            ps.setInt(7,        idInscription);
+
+            int rows = ps.executeUpdate();
+            System.out.println("✅ Paiement mis à jour pour inscription #" + idInscription
+                    + " (" + rows + " ligne(s))");
+
+        } catch (Exception e) {
+            System.out.println("❌ updatePayment error : " + e.getMessage());
+            throw new RuntimeException(e);
+        }
+    }
+
+    /* =========================
+       DELETE
+       ========================= */
+
+    public void delete(int id) {
+        MyDB2.getInstance();
         String sql = "DELETE FROM inscription WHERE id_inscription=?";
         try (Connection cnx = MyDB2.getConnection();
              PreparedStatement ps = cnx.prepareStatement(sql)) {
@@ -154,31 +257,27 @@ public class InscriptionService {
     public BigDecimal computeMontant(Pack pack, int userId) {
         BigDecimal prix = (pack.getPrixBase() == null) ? BigDecimal.ZERO : pack.getPrixBase();
         int percent = discountPercent(userId);
-
         BigDecimal discount = prix.multiply(BigDecimal.valueOf(percent))
                 .divide(BigDecimal.valueOf(100), 2, RoundingMode.HALF_UP);
-
-        BigDecimal finalPrix = prix.subtract(discount);
-        return finalPrix.max(BigDecimal.ZERO);
+        return prix.subtract(discount).max(BigDecimal.ZERO);
     }
 
     /* =========================
-       ✅ STATUT: read allowed values from DB + mapping
+       STATUT — lecture BDD + coercition
        ========================= */
 
     public List<String> getAllowedStatutsFromDB() {
         MyDB2.getInstance();
-
         List<String> values = new ArrayList<>();
 
-        // 1) try read enum definition
+        // 1) Lire la définition ENUM si applicable
         String sql = "SHOW COLUMNS FROM inscription LIKE 'statut_inscr'";
         try (Connection cnx = MyDB2.getConnection();
              PreparedStatement ps = cnx.prepareStatement(sql);
              ResultSet rs = ps.executeQuery()) {
 
             if (rs.next()) {
-                String type = rs.getString("Type"); // enum('A','B'...) أو varchar(10)...
+                String type = rs.getString("Type");
                 if (type != null && type.toLowerCase().startsWith("enum(")) {
                     Matcher m = Pattern.compile("'([^']*)'").matcher(type);
                     while (m.find()) values.add(m.group(1));
@@ -186,7 +285,7 @@ public class InscriptionService {
             }
         } catch (Exception ignored) {}
 
-        // 2) fallback: read existing distinct values
+        // 2) Fallback : valeurs distinctes existantes
         if (values.isEmpty()) {
             String sql2 = "SELECT DISTINCT statut_inscr FROM inscription WHERE statut_inscr IS NOT NULL";
             try (Connection cnx = MyDB2.getConnection();
@@ -199,48 +298,61 @@ public class InscriptionService {
             } catch (Exception ignored) {}
         }
 
-        // 3) ultimate fallback
-        if (values.isEmpty()) values = new ArrayList<>(List.of("EN_ATTENTE"));
+        // 3) Fallback final : trois valeurs métier
+        if (values.isEmpty())
+            values = new ArrayList<>(List.of("EN_ATTENTE", "CONFIRMEE", "ANNULEE"));
+
+        // S'assurer que les trois valeurs métier sont toujours présentes
+        for (String required : List.of("EN_ATTENTE", "CONFIRMEE", "ANNULEE")) {
+            boolean present = values.stream().anyMatch(v -> v.equalsIgnoreCase(required));
+            if (!present) values.add(required);
+        }
 
         return values;
     }
 
     private String coerceStatutToDB(String wanted) {
         if (wanted == null) wanted = "";
-
-        // cache
         if (cachedAllowedStatuts == null) {
             cachedAllowedStatuts = getAllowedStatutsFromDB();
-            System.out.println("✅ Allowed statuts (DB) = " + cachedAllowedStatuts);
+            System.out.println("✅ Statuts autorisés (BDD) = " + cachedAllowedStatuts);
         }
 
         String w = wanted.trim();
         if (w.isEmpty()) return cachedAllowedStatuts.get(0);
-
-        // 1) exact match
         if (cachedAllowedStatuts.contains(w)) return w;
 
-        // 2) case-insensitive match
-        for (String a : cachedAllowedStatuts) {
+        for (String a : cachedAllowedStatuts)
             if (a != null && a.equalsIgnoreCase(w)) return a;
-        }
 
-        // 3) normalized match (remove accents, spaces, underscores, etc.)
         String nw = normalize(w);
-        for (String a : cachedAllowedStatuts) {
-            if (a == null) continue;
-            if (normalize(a).equals(nw)) return a;
-        }
+        for (String a : cachedAllowedStatuts)
+            if (a != null && normalize(a).equals(nw)) return a;
 
-        // 4) fallback
-        System.out.println("⚠️ Statut '" + wanted + "' not allowed. Using: " + cachedAllowedStatuts.get(0));
+        System.out.println("⚠ Statut '" + wanted + "' non autorisé → " + cachedAllowedStatuts.get(0));
         return cachedAllowedStatuts.get(0);
     }
 
     private String normalize(String s) {
         String n = Normalizer.normalize(s, Normalizer.Form.NFD);
-        n = n.replaceAll("\\p{M}", "");        // remove accents
-        n = n.replaceAll("[^A-Za-z0-9]", "");  // remove non-alphanum
+        n = n.replaceAll("\\p{M}", "");
+        n = n.replaceAll("[^A-Za-z0-9]", "");
         return n.toUpperCase();
+    }
+
+    /* =========================
+       UTILITAIRES PRIVÉS
+       ========================= */
+
+    private Timestamp toTimestamp(Object o) {
+        if (o == null) return null;
+        if (o instanceof LocalDateTime ldt)     return Timestamp.valueOf(ldt);
+        if (o instanceof Timestamp ts)          return ts;
+        return null;
+    }
+
+    private void setIntOrNull(PreparedStatement ps, int idx, int value) throws SQLException {
+        if (value > 0) ps.setInt(idx, value);
+        else           ps.setNull(idx, Types.INTEGER);
     }
 }

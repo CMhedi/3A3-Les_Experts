@@ -1,9 +1,16 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<?import javafx.stage.FileChooser?>
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
 
+<!--
+    PackInscriptionBuilder.fxml — amélioré selon les schémas `pack` + `inscription` + `activite`
+    Flow 4 onglets :
+      Tab 1 — Client     : id_user → nom_user, historique inscriptions
+      Tab 2 — Offre      : id_pack (nom/type/prix_base/reduction/nb_activites_max) + activités
+      Tab 3 — Devis      : calcul montant_total avec réduction + group discount + coupon
+      Tab 4 — Paiement   : payment_gateway | payment_reference | payment_order_id | payment_status | paid_at
+-->
 <TabPane xmlns="http://javafx.com/javafx/21"
          xmlns:fx="http://javafx.com/fxml/1"
          fx:controller="controllers.PackInscriptionBuilderController"
@@ -13,275 +20,378 @@
 
     <tabs>
 
-        <!-- =======================
+        <!-- ═══════════════════════════════════════
              TAB 1 — CLIENT
-             ======================= -->
-        <Tab text="1) Client">
+             Champs : id_user, nom_user, historique inscriptions précédentes
+             ═══════════════════════════════════════ -->
+        <Tab text="① Client">
             <content>
-                <VBox spacing="14" styleClass="pad">
-                    <padding>
-                        <Insets top="18" right="18" bottom="18" left="18"/>
-                    </padding>
+                <VBox spacing="16" styleClass="pad">
+                    <padding><Insets top="20" right="20" bottom="20" left="20"/></padding>
 
                     <HBox alignment="CENTER_LEFT" spacing="10">
                         <Button text="← Retour" onAction="#handleBack" styleClass="btn-ghost"/>
-                        <Label text="Pack Builder — Admin Flow" styleClass="page-title"/>
-                        <Region HBox.hgrow="ALWAYS"/>
+                        <Label text="Pack Builder" styleClass="page-title"/>
+                        <HBox HBox.hgrow="ALWAYS"/>
                         <Label fx:id="lblStatus" text="Prêt" styleClass="status-pill status-ok"/>
                     </HBox>
 
+                    <!-- Sélection utilisateur -->
                     <VBox styleClass="card" spacing="12">
-                        <padding>
-                            <Insets top="14" right="14" bottom="14" left="14"/>
-                        </padding>
+                        <padding><Insets top="14" right="14" bottom="14" left="14"/></padding>
+                        <Label text="Identification du client" styleClass="section-title"/>
 
-                        <GridPane hgap="12" vgap="10">
-                            <columnConstraints>
-                                <ColumnConstraints percentWidth="22"/>
-                                <ColumnConstraints percentWidth="78"/>
-                            </columnConstraints>
-
-                            <Label text="Client (User ID) :" styleClass="label-muted" GridPane.rowIndex="0" GridPane.columnIndex="0"/>
-                            <Spinner fx:id="spUserId" GridPane.rowIndex="0" GridPane.columnIndex="1"/>
-
-                            <Label text="Résumé :" styleClass="label-muted" GridPane.rowIndex="1" GridPane.columnIndex="0"/>
-                            <Label fx:id="lblClientSummary" text="—" wrapText="true" styleClass="details"
-                                   GridPane.rowIndex="1" GridPane.columnIndex="1"/>
-
-                            <Label text="Risk :" styleClass="label-muted" GridPane.rowIndex="2" GridPane.columnIndex="0"/>
-                            <Label fx:id="lblRisk" text="—" styleClass="hint"
-                                   GridPane.rowIndex="2" GridPane.columnIndex="1"/>
-                        </GridPane>
-
-                        <HBox spacing="10">
-                            <Button fx:id="btnLoadClient" text="Charger client" styleClass="btn-secondary"/>
-                            <Region HBox.hgrow="ALWAYS"/>
-                            <Button fx:id="btnGoBuild" text="Continuer →" styleClass="btn-primary"/>
-                        </HBox>
-                    </VBox>
-
-                </VBox>
-            </content>
-        </Tab>
-
-        <!-- =======================
-             TAB 2 — BUILD OFFER
-             ======================= -->
-        <Tab text="2) Build Offer">
-            <content>
-                <VBox spacing="12" styleClass="pad">
-                    <padding>
-                        <Insets top="18" right="18" bottom="18" left="18"/>
-                    </padding>
-
-                    <VBox styleClass="card" spacing="12">
-                        <padding>
-                            <Insets top="14" right="14" bottom="14" left="14"/>
-                        </padding>
-
-                        <GridPane hgap="12" vgap="10">
-                            <columnConstraints>
-                                <ColumnConstraints percentWidth="22"/>
-                                <ColumnConstraints percentWidth="78"/>
-                            </columnConstraints>
-
-                            <Label text="Pack :" styleClass="label-muted" GridPane.rowIndex="0" GridPane.columnIndex="0"/>
-                            <ComboBox fx:id="cbPack" promptText="Choisir un pack..." GridPane.rowIndex="0" GridPane.columnIndex="1"/>
-
-                            <Label text="Nb personnes :" styleClass="label-muted" GridPane.rowIndex="1" GridPane.columnIndex="0"/>
-                            <Spinner fx:id="spNbPersonnes" GridPane.rowIndex="1" GridPane.columnIndex="1"/>
-
-                            <Label text="Coupon :" styleClass="label-muted" GridPane.rowIndex="2" GridPane.columnIndex="0"/>
-                            <TextField fx:id="txtCoupon" promptText="Optionnel (ex: PROMO10)" GridPane.rowIndex="2" GridPane.columnIndex="1"/>
-
-                            <Label fx:id="lblMaxAct" text="Max activités : --" styleClass="hint"
-                                   GridPane.rowIndex="3" GridPane.columnIndex="1"/>
-                        </GridPane>
-                    </VBox>
-
-                    <HBox spacing="10" alignment="CENTER_LEFT" styleClass="toolbar">
-                        <TextField fx:id="txtSearch" promptText="Rechercher activité (nom/catégorie/niveau)..." HBox.hgrow="ALWAYS"/>
-                        <Button fx:id="btnSelectMax" text="Sélectionner max" styleClass="btn-secondary"/>
-                        <Label fx:id="lblSelected" text="0 sélectionnée(s)" styleClass="hint"/>
-                    </HBox>
-
-                    <VBox styleClass="tw-wrap">
-                        <HBox spacing="12" styleClass="tw-header" alignment="CENTER_LEFT">
-                            <Label text="✓" styleClass="tw-hcell" prefWidth="34"/>
-                            <Label text="Nom" styleClass="tw-hcell" HBox.hgrow="ALWAYS"/>
-                            <Label text="Catégorie" styleClass="tw-hcell" prefWidth="140"/>
-                            <Label text="Niveau" styleClass="tw-hcell" prefWidth="120"/>
-                            <Label text="Prix" styleClass="tw-hcell" prefWidth="120"/>
-                        </HBox>
-
-                        <ScrollPane fitToWidth="true" prefViewportHeight="260" styleClass="tw-scroll">
-                            <content>
-                                <VBox fx:id="vbRows" spacing="8" styleClass="tw-body"/>
-                            </content>
-                        </ScrollPane>
-                    </VBox>
-
-                    <HBox spacing="10">
-                        <Button fx:id="btnCalculer" text="Calculer" styleClass="btn-secondary"/>
-                        <Button fx:id="btnRiskGate" text="Vérifier risque" styleClass="btn-secondary"/>
-                        <Region HBox.hgrow="ALWAYS"/>
-                        <Button fx:id="btnGoDevis" text="Continuer →" styleClass="btn-primary"/>
-                    </HBox>
-
-                </VBox>
-            </content>
-        </Tab>
-
-        <!-- =======================
-             TAB 3 — DEVIS
-             ======================= -->
-        <Tab text="3) Devis">
-            <content>
-                <VBox spacing="12" styleClass="pad">
-                    <padding>
-                        <Insets top="18" right="18" bottom="18" left="18"/>
-                    </padding>
-
-                    <VBox styleClass="card" spacing="10">
-                        <padding>
-                            <Insets top="14" right="14" bottom="14" left="14"/>
-                        </padding>
-
-                        <Label text="Devis / Pricing" styleClass="section-title"/>
-
-                        <GridPane hgap="10" vgap="8">
+                        <GridPane hgap="14" vgap="10">
                             <columnConstraints>
                                 <ColumnConstraints percentWidth="28"/>
                                 <ColumnConstraints percentWidth="72"/>
                             </columnConstraints>
 
-                            <Label text="Pack base :" styleClass="label-muted" GridPane.rowIndex="0" GridPane.columnIndex="0"/>
-                            <Label fx:id="lblPackBase" text="--" styleClass="price-value" GridPane.rowIndex="0" GridPane.columnIndex="1"/>
+                            <Label text="ID utilisateur :" styleClass="label-muted"
+                                   GridPane.rowIndex="0" GridPane.columnIndex="0"/>
+                            <Spinner fx:id="spUserId"
+                                     GridPane.rowIndex="0" GridPane.columnIndex="1"/>
 
-                            <Label text="Activités total :" styleClass="label-muted" GridPane.rowIndex="1" GridPane.columnIndex="0"/>
-                            <Label fx:id="lblActTotal" text="--" styleClass="price-value" GridPane.rowIndex="1" GridPane.columnIndex="1"/>
+                            <!-- nom_user calculé automatiquement -->
+                            <Label text="Nom (nom_user) :" styleClass="label-muted"
+                                   GridPane.rowIndex="1" GridPane.columnIndex="0"/>
+                            <Label fx:id="lblNomUser" text="—" styleClass="details"
+                                   GridPane.rowIndex="1" GridPane.columnIndex="1"/>
 
-                            <Label text="Réduction pack :" styleClass="label-muted" GridPane.rowIndex="2" GridPane.columnIndex="0"/>
-                            <Label fx:id="lblDiscountPack" text="--" styleClass="price-discount" GridPane.rowIndex="2" GridPane.columnIndex="1"/>
+                            <!-- Nb d'inscriptions existantes -->
+                            <Label text="Inscriptions passées :" styleClass="label-muted"
+                                   GridPane.rowIndex="2" GridPane.columnIndex="0"/>
+                            <Label fx:id="lblClientSummary" text="—" wrapText="true" styleClass="details"
+                                   GridPane.rowIndex="2" GridPane.columnIndex="1"/>
 
-                            <Label text="Réduction groupe :" styleClass="label-muted" GridPane.rowIndex="3" GridPane.columnIndex="0"/>
-                            <Label fx:id="lblDiscountGroupe" text="--" styleClass="price-discount" GridPane.rowIndex="3" GridPane.columnIndex="1"/>
-
-                            <Label text="Coupon :" styleClass="label-muted" GridPane.rowIndex="4" GridPane.columnIndex="0"/>
-                            <Label fx:id="lblDiscountCoupon" text="--" styleClass="price-discount" GridPane.rowIndex="4" GridPane.columnIndex="1"/>
-
-                            <Label text="TOTAL :" styleClass="total-label" GridPane.rowIndex="5" GridPane.columnIndex="0"/>
-                            <Label fx:id="lblTotal" text="--" styleClass="total-value" GridPane.rowIndex="5" GridPane.columnIndex="1"/>
-
-                            <Label text="Détails :" styleClass="label-muted" GridPane.rowIndex="6" GridPane.columnIndex="0"/>
-                            <Label fx:id="lblDetails" text="" wrapText="true" styleClass="details"
-                                   GridPane.rowIndex="6" GridPane.columnIndex="1"/>
-
-                            <Label text="Expiry :" styleClass="label-muted" GridPane.rowIndex="7" GridPane.columnIndex="0"/>
-                            <Label fx:id="lblExpiry" text="—" styleClass="hint" GridPane.rowIndex="7" GridPane.columnIndex="1"/>
+                            <!-- Indicateur risque (EN_ATTENTE non payées) -->
+                            <Label text="Risque (impayés) :" styleClass="label-muted"
+                                   GridPane.rowIndex="3" GridPane.columnIndex="0"/>
+                            <Label fx:id="lblRisk" text="—" styleClass="hint"
+                                   GridPane.rowIndex="3" GridPane.columnIndex="1"/>
                         </GridPane>
+
+                        <HBox spacing="10">
+                            <Button fx:id="btnLoadClient" text="Charger client" styleClass="btn-secondary"/>
+                            <HBox HBox.hgrow="ALWAYS"/>
+                            <Button fx:id="btnGoBuild"   text="Continuer →"    styleClass="btn-primary"/>
+                        </HBox>
                     </VBox>
-
-                    <HBox spacing="10">
-                        <Button fx:id="btnCreateDraft" text="Créer Draft + HOLD" styleClass="btn-primary"/>
-                        <Button fx:id="btnDevisPdf" text="Devis PDF + QR" styleClass="btn-secondary"/>
-                        <Region HBox.hgrow="ALWAYS"/>
-                        <Button fx:id="btnGoPayment" text="Continuer →" styleClass="btn-primary"/>
-                    </HBox>
-
                 </VBox>
             </content>
         </Tab>
 
-        <!-- =======================
-             TAB 4 — PAYMENT & CONFIRM
-             ======================= -->
-        <Tab text="4) Payment &amp; Confirm">
+        <!-- ═══════════════════════════════════════
+             TAB 2 — OFFRE
+             Champs pack : nom | type_pack | prix_base | reduction | nb_activites_max
+             Activités   : nom | categorie_act | niveau_act | prix | statut
+             ═══════════════════════════════════════ -->
+        <Tab text="② Offre">
             <content>
-                <VBox spacing="12" styleClass="pad">
-                    <padding>
-                        <Insets top="18" right="18" bottom="18" left="18"/>
-                    </padding>
+                <VBox spacing="14" styleClass="pad">
+                    <padding><Insets top="20" right="20" bottom="20" left="20"/></padding>
 
+                    <!-- Sélection pack -->
                     <VBox styleClass="card" spacing="12">
-                        <padding>
-                            <Insets top="14" right="14" bottom="14" left="14"/>
-                        </padding>
+                        <padding><Insets top="14" right="14" bottom="14" left="14"/></padding>
+                        <Label text="Paramètres du pack" styleClass="section-title"/>
 
-                        <HBox alignment="CENTER_LEFT" spacing="10">
-                            <Label text="Paiement sécurisé" styleClass="section-title"/>
-                            <Region HBox.hgrow="ALWAYS"/>
-                            <Label fx:id="lblPayBadge" text="SANDBOX" styleClass="badge-warn"/>
+                        <GridPane hgap="14" vgap="10">
+                            <columnConstraints>
+                                <ColumnConstraints percentWidth="28"/>
+                                <ColumnConstraints percentWidth="72"/>
+                            </columnConstraints>
+
+                            <!-- id_pack / nom -->
+                            <Label text="Pack :" styleClass="label-muted"
+                                   GridPane.rowIndex="0" GridPane.columnIndex="0"/>
+                            <ComboBox fx:id="cbPack" promptText="Choisir un pack…"
+                                      maxWidth="Infinity"
+                                      GridPane.rowIndex="0" GridPane.columnIndex="1"/>
+
+                            <!-- type_pack -->
+                            <Label text="Type :" styleClass="label-muted"
+                                   GridPane.rowIndex="1" GridPane.columnIndex="0"/>
+                            <Label fx:id="lblPackType" text="—" styleClass="hint"
+                                   GridPane.rowIndex="1" GridPane.columnIndex="1"/>
+
+                            <!-- prix_base -->
+                            <Label text="Prix de base :" styleClass="label-muted"
+                                   GridPane.rowIndex="2" GridPane.columnIndex="0"/>
+                            <Label fx:id="lblPrixBase" text="— DT" styleClass="hint"
+                                   GridPane.rowIndex="2" GridPane.columnIndex="1"/>
+
+                            <!-- reduction -->
+                            <Label text="Réduction pack :" styleClass="label-muted"
+                                   GridPane.rowIndex="3" GridPane.columnIndex="0"/>
+                            <Label fx:id="lblReductionPack" text="— %" styleClass="hint discount"
+                                   GridPane.rowIndex="3" GridPane.columnIndex="1"/>
+
+                            <!-- nb_activites_max -->
+                            <Label text="Max. activités :" styleClass="label-muted"
+                                   GridPane.rowIndex="4" GridPane.columnIndex="0"/>
+                            <Label fx:id="lblMaxAct" text="—" styleClass="hint"
+                                   GridPane.rowIndex="4" GridPane.columnIndex="1"/>
+
+                            <!-- Nb personnes -->
+                            <Label text="Nb personnes :" styleClass="label-muted"
+                                   GridPane.rowIndex="5" GridPane.columnIndex="0"/>
+                            <Spinner fx:id="spNbPersonnes" min="1" max="200" initialValue="1"
+                                     GridPane.rowIndex="5" GridPane.columnIndex="1"/>
+
+                            <!-- Coupon -->
+                            <Label text="Coupon :" styleClass="label-muted"
+                                   GridPane.rowIndex="6" GridPane.columnIndex="0"/>
+                            <TextField fx:id="txtCoupon" promptText="Optionnel (ex : PROMO10)"
+                                       GridPane.rowIndex="6" GridPane.columnIndex="1"/>
+                        </GridPane>
+                    </VBox>
+
+                    <!-- Sélection activités -->
+                    <VBox styleClass="card" spacing="10">
+                        <padding><Insets top="14" right="14" bottom="14" left="14"/></padding>
+                        <Label text="Activités disponibles (statut = DISPONIBLE)" styleClass="section-title"/>
+
+                        <HBox spacing="10" alignment="CENTER_LEFT">
+                            <TextField fx:id="txtSearch"
+                                       promptText="Rechercher (nom / catégorie / niveau)…"
+                                       HBox.hgrow="ALWAYS"/>
+                            <Button fx:id="btnSelectMax" text="Sélectionner max" styleClass="btn-secondary"/>
+                            <Label fx:id="lblSelected" text="0 sélectionnée(s)" styleClass="hint"/>
                         </HBox>
 
-                        <VBox spacing="8" styleClass="subcard">
-                            <Label text="Méthode" styleClass="label-muted"/>
-                            <HBox spacing="10" alignment="CENTER_LEFT">
-                                <RadioButton fx:id="rbCard" text="Carte bancaire"/>
-                                <RadioButton fx:id="rbPaypal" text="PayPal"/>
-                                <RadioButton fx:id="rbLink" text="Lien Checkout"/>
+                        <!--
+                            En-tête tableau activités
+                            ✓ | nom | categorie_act | niveau_act | prix | statut
+                        -->
+                        <VBox styleClass="tw-wrap">
+                            <HBox spacing="10" styleClass="tw-header" alignment="CENTER_LEFT">
+                                <Label text="✓"          styleClass="tw-hcell" prefWidth="32"/>
+                                <Label text="Nom"        styleClass="tw-hcell" HBox.hgrow="ALWAYS"/>
+                                <Label text="Catégorie"  styleClass="tw-hcell" prefWidth="120"/>
+                                <Label text="Niveau"     styleClass="tw-hcell" prefWidth="110"/>
+                                <Label text="Prix (DT)"  styleClass="tw-hcell" prefWidth="100"/>
+                                <Label text="Statut"     styleClass="tw-hcell" prefWidth="100"/>
                             </HBox>
+
+                            <ScrollPane fitToWidth="true" prefViewportHeight="240" styleClass="tw-scroll">
+                                <content>
+                                    <VBox fx:id="vbRows" spacing="7" styleClass="tw-body"/>
+                                </content>
+                            </ScrollPane>
                         </VBox>
-
-                        <VBox fx:id="boxCardForm" spacing="10" styleClass="subcard">
-                            <Label text="Carte bancaire" styleClass="label-muted"/>
-
-                            <GridPane hgap="10" vgap="10">
-                                <columnConstraints>
-                                    <ColumnConstraints percentWidth="55"/>
-                                    <ColumnConstraints percentWidth="25"/>
-                                    <ColumnConstraints percentWidth="20"/>
-                                </columnConstraints>
-
-                                <TextField fx:id="txtCardName" promptText="Nom sur la carte" GridPane.columnIndex="0" GridPane.rowIndex="0"/>
-                                <TextField fx:id="txtCardExpiry" promptText="MM/YY" GridPane.columnIndex="1" GridPane.rowIndex="0"/>
-                                <PasswordField fx:id="txtCardCvv" promptText="CVV" GridPane.columnIndex="2" GridPane.rowIndex="0"/>
-
-                                <TextField fx:id="txtCardNumber" promptText="Numéro carte" GridPane.columnIndex="0" GridPane.rowIndex="1" GridPane.columnSpan="3"/>
-                            </GridPane>
-
-                            <!-- OCR + Test presets -->
-                            <HBox spacing="10" alignment="CENTER_LEFT">
-                                <Button fx:id="btnScanOcr" text="Scan Card (OCR)" styleClass="btn-secondary"/>
-                                <Label text="Exemples (TEST):" styleClass="label-muted"/>
-                                <Button fx:id="btnFillVisaGold" text="Visa Gold" styleClass="btn-secondary"/>
-                                <Button fx:id="btnFillMaster" text="Mastercard" styleClass="btn-secondary"/>
-                                <Button fx:id="btnFillAmex" text="Amex" styleClass="btn-secondary"/>
-                                <Button fx:id="btnClearCard" text="Vider" styleClass="btn-secondary"/>
-                            </HBox>
-
-                            <Label fx:id="lblCardHint" text="—" styleClass="label-muted"/>
-
-                            <HBox spacing="10" alignment="CENTER_LEFT">
-                                <Button fx:id="btnPayNow" text="Payer" styleClass="btn-primary"/>
-                                <ProgressIndicator fx:id="piPay" prefWidth="22" prefHeight="22" visible="false" managed="false"/>
-                                <Label fx:id="lblPayStatus" text="—" styleClass="label-muted"/>
-                                <Region HBox.hgrow="ALWAYS"/>
-                                <Button fx:id="btnFake3ds" text="Simuler 3DS" styleClass="btn-secondary"/>
-                            </HBox>
-                        </VBox>
-
-                        <VBox fx:id="boxLink" spacing="8" styleClass="subcard">
-                            <Label text="Lien Checkout" styleClass="label-muted"/>
-                            <TextField fx:id="txtPaymentLink" promptText="Payment link..." editable="false"/>
-                            <HBox spacing="10">
-                                <Button fx:id="btnOpenPayment" text="Ouvrir paiement" styleClass="btn-secondary"/>
-                                <Button fx:id="btnSendEmail" text="Envoyer email" styleClass="btn-secondary"/>
-                                <Region HBox.hgrow="ALWAYS"/>
-                            </HBox>
-                        </VBox>
-
-                        <VBox spacing="8" styleClass="subcard">
-                            <Label text="Reçu / Référence" styleClass="label-muted"/>
-                            <TextArea fx:id="txtReceipt" prefRowCount="5" wrapText="true" editable="false"/>
-                            <HBox spacing="10">
-                                <Button fx:id="btnCopyReceipt" text="Copier reçu" styleClass="btn-secondary"/>
-                                <Region HBox.hgrow="ALWAYS"/>
-                                <Button fx:id="btnConfirm" text="Confirmer réservation" styleClass="btn-danger"/>
-                            </HBox>
-                        </VBox>
-
                     </VBox>
+
+                    <HBox spacing="10">
+                        <Button fx:id="btnCalculer"  text="Calculer"       styleClass="btn-secondary"/>
+                        <Button fx:id="btnRiskGate"  text="Vérifier risque" styleClass="btn-secondary"/>
+                        <HBox HBox.hgrow="ALWAYS"/>
+                        <Button fx:id="btnGoDevis"   text="Continuer →"    styleClass="btn-primary"/>
+                    </HBox>
+                </VBox>
+            </content>
+        </Tab>
+
+        <!-- ═══════════════════════════════════════
+             TAB 3 — DEVIS
+             Calcul : prix_base + activités - reduction(%) - groupe - coupon = montant_total
+             ═══════════════════════════════════════ -->
+        <Tab text="③ Devis">
+            <content>
+                <VBox spacing="14" styleClass="pad">
+                    <padding><Insets top="20" right="20" bottom="20" left="20"/></padding>
+
+                    <VBox styleClass="card" spacing="12">
+                        <padding><Insets top="14" right="14" bottom="14" left="14"/></padding>
+                        <Label text="Récapitulatif tarifaire" styleClass="section-title"/>
+
+                        <GridPane hgap="12" vgap="10">
+                            <columnConstraints>
+                                <ColumnConstraints percentWidth="30"/>
+                                <ColumnConstraints percentWidth="70"/>
+                            </columnConstraints>
+
+                            <Label text="Pack (prix_base) :"       styleClass="label-muted"
+                                   GridPane.rowIndex="0" GridPane.columnIndex="0"/>
+                            <Label fx:id="lblPackBase"    text="—" styleClass="price-value"
+                                   GridPane.rowIndex="0" GridPane.columnIndex="1"/>
+
+                            <Label text="Activités sélectionnées :" styleClass="label-muted"
+                                   GridPane.rowIndex="1" GridPane.columnIndex="0"/>
+                            <Label fx:id="lblActTotal"    text="—" styleClass="price-value"
+                                   GridPane.rowIndex="1" GridPane.columnIndex="1"/>
+
+                            <Label text="Réduction pack (%) :"     styleClass="label-muted"
+                                   GridPane.rowIndex="2" GridPane.columnIndex="0"/>
+                            <Label fx:id="lblDiscountPack" text="—" styleClass="price-discount"
+                                   GridPane.rowIndex="2" GridPane.columnIndex="1"/>
+
+                            <Label text="Réduction groupe :"       styleClass="label-muted"
+                                   GridPane.rowIndex="3" GridPane.columnIndex="0"/>
+                            <Label fx:id="lblDiscountGroupe" text="—" styleClass="price-discount"
+                                   GridPane.rowIndex="3" GridPane.columnIndex="1"/>
+
+                            <Label text="Coupon :"                 styleClass="label-muted"
+                                   GridPane.rowIndex="4" GridPane.columnIndex="0"/>
+                            <Label fx:id="lblDiscountCoupon" text="—" styleClass="price-discount"
+                                   GridPane.rowIndex="4" GridPane.columnIndex="1"/>
+
+                            <Label text="MONTANT TOTAL :"          styleClass="total-label"
+                                   GridPane.rowIndex="5" GridPane.columnIndex="0"/>
+                            <Label fx:id="lblTotal"       text="—" styleClass="total-value"
+                                   GridPane.rowIndex="5" GridPane.columnIndex="1"/>
+
+                            <Label text="Détail activités :"       styleClass="label-muted"
+                                   GridPane.rowIndex="6" GridPane.columnIndex="0"/>
+                            <Label fx:id="lblDetails" text="" wrapText="true" styleClass="details"
+                                   GridPane.rowIndex="6" GridPane.columnIndex="1"/>
+
+                            <Label text="Devis valable jusqu'au :" styleClass="label-muted"
+                                   GridPane.rowIndex="7" GridPane.columnIndex="0"/>
+                            <Label fx:id="lblExpiry" text="—"      styleClass="hint"
+                                   GridPane.rowIndex="7" GridPane.columnIndex="1"/>
+                        </GridPane>
+                    </VBox>
+
+                    <HBox spacing="10">
+                        <Button fx:id="btnCreateDraft" text="Créer brouillon (HOLD)"  styleClass="btn-primary"/>
+                        <Button fx:id="btnDevisPdf"    text="Devis PDF + QR Code"     styleClass="btn-secondary"/>
+                        <HBox HBox.hgrow="ALWAYS"/>
+                        <Button fx:id="btnGoPayment"   text="Continuer →"             styleClass="btn-primary"/>
+                    </HBox>
+                </VBox>
+            </content>
+        </Tab>
+
+        <!-- ═══════════════════════════════════════
+             TAB 4 — PAIEMENT & CONFIRMATION
+             Champs : payment_gateway | payment_reference | payment_order_id | payment_status | paid_at
+             ═══════════════════════════════════════ -->
+        <Tab text="④ Paiement &amp; Confirmation">
+            <content>
+                <VBox spacing="14" styleClass="pad">
+                    <padding><Insets top="20" right="20" bottom="20" left="20"/></padding>
+
+                    <!-- En-tête paiement -->
+                    <HBox alignment="CENTER_LEFT" spacing="10">
+                        <Label text="Paiement sécurisé" styleClass="section-title"/>
+                        <HBox HBox.hgrow="ALWAYS"/>
+                        <Label fx:id="lblPayBadge" text="SANDBOX" styleClass="badge-warn"/>
+                    </HBox>
+
+                    <!-- Méthode = payment_gateway -->
+                    <VBox styleClass="card" spacing="10">
+                        <padding><Insets top="14" right="14" bottom="14" left="14"/></padding>
+                        <Label text="Passerelle (payment_gateway)" styleClass="label-muted"/>
+                        <HBox spacing="12" alignment="CENTER_LEFT">
+                            <RadioButton fx:id="rbCard"    text="Carte bancaire (card_demo)"/>
+                            <RadioButton fx:id="rbPaypal"  text="PayPal"/>
+                            <RadioButton fx:id="rbLink"    text="Lien Checkout"/>
+                        </HBox>
+                    </VBox>
+
+                    <!-- Formulaire carte -->
+                    <VBox fx:id="boxCardForm" styleClass="card" spacing="10">
+                        <padding><Insets top="14" right="14" bottom="14" left="14"/></padding>
+                        <Label text="Informations carte" styleClass="label-muted"/>
+
+                        <GridPane hgap="10" vgap="10">
+                            <columnConstraints>
+                                <ColumnConstraints percentWidth="50"/>
+                                <ColumnConstraints percentWidth="25"/>
+                                <ColumnConstraints percentWidth="25"/>
+                            </columnConstraints>
+                            <TextField fx:id="txtCardName"   promptText="Nom sur la carte"
+                                       GridPane.columnIndex="0" GridPane.rowIndex="0"/>
+                            <TextField fx:id="txtCardExpiry" promptText="MM/AA"
+                                       GridPane.columnIndex="1" GridPane.rowIndex="0"/>
+                            <PasswordField fx:id="txtCardCvv" promptText="CVV"
+                                           GridPane.columnIndex="2" GridPane.rowIndex="0"/>
+                            <TextField fx:id="txtCardNumber" promptText="Numéro de carte"
+                                       GridPane.columnIndex="0" GridPane.rowIndex="1"
+                                       GridPane.columnSpan="3"/>
+                        </GridPane>
+
+                        <HBox spacing="8" alignment="CENTER_LEFT">
+                            <Button fx:id="btnScanOcr"     text="Scan OCR"       styleClass="btn-secondary"/>
+                            <Label text="Exemples TEST :"  styleClass="label-muted"/>
+                            <Button fx:id="btnFillVisaGold" text="Visa Gold"      styleClass="btn-secondary"/>
+                            <Button fx:id="btnFillMaster"   text="Mastercard"     styleClass="btn-secondary"/>
+                            <Button fx:id="btnFillAmex"     text="Amex"           styleClass="btn-secondary"/>
+                            <Button fx:id="btnClearCard"    text="Vider"          styleClass="btn-secondary"/>
+                        </HBox>
+
+                        <Label fx:id="lblCardHint" text="—" styleClass="label-muted"/>
+
+                        <HBox spacing="10" alignment="CENTER_LEFT">
+                            <Button fx:id="btnPayNow"  text="Payer maintenant" styleClass="btn-primary"/>
+                            <ProgressIndicator fx:id="piPay" prefWidth="22" prefHeight="22"
+                                               visible="false" managed="false"/>
+                            <!-- payment_status affiché ici -->
+                            <Label fx:id="lblPayStatus" text="—" styleClass="label-muted"/>
+                            <HBox HBox.hgrow="ALWAYS"/>
+                            <Button fx:id="btnFake3ds"  text="Simuler 3DS"     styleClass="btn-secondary"/>
+                        </HBox>
+                    </VBox>
+
+                    <!-- Lien checkout -->
+                    <VBox fx:id="boxLink" styleClass="card" spacing="8">
+                        <padding><Insets top="14" right="14" bottom="14" left="14"/></padding>
+                        <Label text="Lien Checkout" styleClass="label-muted"/>
+                        <TextField fx:id="txtPaymentLink" promptText="Lien généré…" editable="false"/>
+                        <HBox spacing="10">
+                            <Button fx:id="btnOpenPayment" text="Ouvrir dans le navigateur" styleClass="btn-secondary"/>
+                            <Button fx:id="btnSendEmail"   text="Envoyer par e-mail"        styleClass="btn-secondary"/>
+                        </HBox>
+                    </VBox>
+
+                    <!-- Récapitulatif paiement (champs inscription) -->
+                    <VBox styleClass="card" spacing="10">
+                        <padding><Insets top="14" right="14" bottom="14" left="14"/></padding>
+                        <Label text="Récapitulatif &amp; référence" styleClass="label-muted"/>
+
+                        <GridPane hgap="12" vgap="8">
+                            <columnConstraints>
+                                <ColumnConstraints percentWidth="30"/>
+                                <ColumnConstraints percentWidth="70"/>
+                            </columnConstraints>
+
+                            <!-- payment_reference -->
+                            <Label text="Référence :"      styleClass="label-muted"
+                                   GridPane.rowIndex="0" GridPane.columnIndex="0"/>
+                            <Label fx:id="lblPayRef"  text="—" styleClass="details"
+                                   GridPane.rowIndex="0" GridPane.columnIndex="1"/>
+
+                            <!-- payment_order_id -->
+                            <Label text="Order ID :"       styleClass="label-muted"
+                                   GridPane.rowIndex="1" GridPane.columnIndex="0"/>
+                            <Label fx:id="lblOrderId"  text="—" styleClass="details"
+                                   GridPane.rowIndex="1" GridPane.columnIndex="1"/>
+
+                            <!-- payment_status -->
+                            <Label text="Statut paiement :" styleClass="label-muted"
+                                   GridPane.rowIndex="2" GridPane.columnIndex="0"/>
+                            <Label fx:id="lblPayStatusSummary" text="—" styleClass="hint"
+                                   GridPane.rowIndex="2" GridPane.columnIndex="1"/>
+
+                            <!-- paid_at -->
+                            <Label text="Payé le :"        styleClass="label-muted"
+                                   GridPane.rowIndex="3" GridPane.columnIndex="0"/>
+                            <Label fx:id="lblPaidAt"   text="—" styleClass="hint"
+                                   GridPane.rowIndex="3" GridPane.columnIndex="1"/>
+                        </GridPane>
+
+                        <TextArea fx:id="txtReceipt" promptText="Reçu complet…"
+                                  prefRowCount="4" wrapText="true" editable="false"/>
+
+                        <HBox spacing="10">
+                            <Button fx:id="btnCopyReceipt" text="Copier le reçu" styleClass="btn-secondary"/>
+                            <HBox HBox.hgrow="ALWAYS"/>
+                            <!-- Confirme l'inscription : statut_inscr → CONFIRMEE, payment_status → paid -->
+                            <Button fx:id="btnConfirm" text="✔ Confirmer l'inscription" styleClass="btn-danger"/>
+                        </HBox>
+                    </VBox>
+
                 </VBox>
             </content>
         </Tab>

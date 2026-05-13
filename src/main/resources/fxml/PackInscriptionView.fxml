@@ -1,0 +1,301 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<!--
+    FLUX :
+    1. Page affiche tous les packs en cartes
+    2. Bouton "S'inscrire" sur chaque carte → affiche le formulaire en dessous
+    3. Formulaire : infos personnelles + paiement + résumé + confirmation
+-->
+<VBox xmlns="http://javafx.com/javafx/21"
+      xmlns:fx="http://javafx.com/fxml/1"
+      fx:controller="controllers.PackInscriptionViewController"
+      spacing="0"
+      style="-fx-background-color: #F0F4F8;">
+
+    <!-- ══════════════════ HEADER ══════════════════ -->
+    <HBox alignment="CENTER_LEFT" spacing="16"
+          style="-fx-background-color: #143D30; -fx-padding: 18 28 18 28;">
+        <Button fx:id="btnBack" text="← Retour"
+                style="-fx-background-color: rgba(255,255,255,0.15);
+                       -fx-text-fill: white; -fx-font-size: 13px;
+                       -fx-cursor: hand; -fx-border-radius: 6;
+                       -fx-background-radius: 6; -fx-padding: 6 16;"/>
+        <VBox spacing="2">
+            <Label text="🎒 Nos Packs EcoAdventure"
+                   style="-fx-font-size: 20px; -fx-font-weight: 700; -fx-text-fill: white;"/>
+            <Label text="Choisissez un pack et inscrivez-vous en quelques étapes"
+                   style="-fx-font-size: 12px; -fx-text-fill: rgba(255,255,255,0.65);"/>
+        </VBox>
+    </HBox>
+
+    <!-- ══════════════════ CONTENU SCROLLABLE ══════════════════ -->
+    <ScrollPane fitToWidth="true" VBox.vgrow="ALWAYS"
+                style="-fx-background-color: transparent; -fx-border-color: transparent;">
+
+        <VBox spacing="28" style="-fx-padding: 28 32 40 32;">
+
+            <!-- ────────────────────────────────────────────────
+                 SECTION 1 : LISTE DES PACKS
+                 Remplie dynamiquement par le contrôleur
+                 Chaque carte a un bouton "S'inscrire"
+            ──────────────────────────────────────────────── -->
+            <VBox spacing="14">
+                <HBox alignment="CENTER_LEFT" spacing="10">
+                    <Label text="Packs disponibles"
+                           style="-fx-font-size: 17px; -fx-font-weight: 700; -fx-text-fill: #1E293B;"/>
+                    <Label text="Cliquez sur « S'inscrire » pour rejoindre un pack"
+                           style="-fx-font-size: 12px; -fx-text-fill: #94A3B8;"/>
+                </HBox>
+
+                <!-- packsGrid rempli par le contrôleur (3 colonnes) -->
+                <GridPane fx:id="packsGrid" hgap="18" vgap="18">
+                    <columnConstraints>
+                        <ColumnConstraints percentWidth="33"/>
+                        <ColumnConstraints percentWidth="33"/>
+                        <ColumnConstraints percentWidth="34"/>
+                    </columnConstraints>
+                </GridPane>
+            </VBox>
+
+            <!-- ────────────────────────────────────────────────
+                 SECTION 2 : FORMULAIRE D'INSCRIPTION
+                 Caché par défaut, affiché quand un pack est sélectionné
+            ──────────────────────────────────────────────── -->
+
+            <!-- Titre du formulaire (avec nom du pack sélectionné) -->
+            <VBox fx:id="detailsSection" spacing="0" visible="false" managed="false">
+
+                <!-- Bandeau titre pack sélectionné -->
+                <HBox alignment="CENTER_LEFT" spacing="14"
+                      style="-fx-background-color: #10B981; -fx-padding: 14 20;
+                             -fx-background-radius: 12 12 0 0;">
+                    <Label text="✅" style="-fx-font-size: 18px;"/>
+                    <VBox spacing="2">
+                        <Label fx:id="lblPackName"
+                               style="-fx-font-size: 17px; -fx-font-weight: 800; -fx-text-fill: white;"/>
+                        <Label fx:id="lblPackDescription"
+                               style="-fx-font-size: 12px; -fx-text-fill: rgba(255,255,255,0.8);"
+                               wrapText="true"/>
+                    </VBox>
+                    <Region HBox.hgrow="ALWAYS"/>
+                    <!-- Prix -->
+                    <VBox alignment="CENTER_RIGHT" spacing="2">
+                        <HBox spacing="6" alignment="CENTER_RIGHT">
+                            <Label text="Base :"
+                                   style="-fx-font-size: 11px; -fx-text-fill: rgba(255,255,255,0.7);"/>
+                            <Label fx:id="lblPriceBase"
+                                   style="-fx-font-size: 12px; -fx-text-fill: rgba(255,255,255,0.9);
+                                          -fx-strikethrough: true;"/>
+                        </HBox>
+                        <HBox spacing="6" alignment="CENTER_RIGHT">
+                            <Label text="Réd. :"
+                                   style="-fx-font-size: 11px; -fx-text-fill: rgba(255,255,255,0.7);"/>
+                            <Label fx:id="lblReduction"
+                                   style="-fx-font-size: 12px; -fx-text-fill: #FEF08A; -fx-font-weight: 700;"/>
+                        </HBox>
+                        <Label fx:id="lblPriceTotal"
+                               style="-fx-font-size: 22px; -fx-font-weight: 900; -fx-text-fill: white;"/>
+                    </VBox>
+                </HBox>
+
+                <!-- Corps formulaire -->
+                <VBox spacing="0"
+                      style="-fx-background-color: white;
+                             -fx-background-radius: 0 0 12 12;
+                             -fx-effect: dropshadow(gaussian,rgba(0,0,0,0.10),16,0,0,4);">
+
+                    <!-- Activités incluses -->
+                    <VBox spacing="10" style="-fx-padding: 20 20 16 20;
+                                              -fx-border-color: transparent transparent #F1F5F9 transparent;
+                                              -fx-border-width: 0 0 1 0;">
+                        <Label text="Activités incluses dans ce pack"
+                               style="-fx-font-size: 13px; -fx-font-weight: 700; -fx-text-fill: #374151;"/>
+                        <VBox fx:id="activitiesList" spacing="6"/>
+                    </VBox>
+
+                    <!-- ── INFORMATIONS PERSONNELLES ── -->
+                    <VBox fx:id="personalInfoSection" spacing="14"
+                          style="-fx-padding: 20 20 16 20;
+                                 -fx-border-color: transparent transparent #F1F5F9 transparent;
+                                 -fx-border-width: 0 0 1 0;">
+
+                        <HBox alignment="CENTER_LEFT" spacing="8">
+                            <Label text="👤"  style="-fx-font-size: 15px;"/>
+                            <Label text="Vos informations"
+                                   style="-fx-font-size: 14px; -fx-font-weight: 700; -fx-text-fill: #1E293B;"/>
+                        </HBox>
+
+                        <GridPane hgap="14" vgap="10">
+                            <columnConstraints>
+                                <ColumnConstraints percentWidth="50"/>
+                                <ColumnConstraints percentWidth="50"/>
+                            </columnConstraints>
+
+                            <!-- Prénom -->
+                            <Label text="Prénom *"
+                                   style="-fx-font-size: 12px; -fx-font-weight: 600; -fx-text-fill: #475569;"
+                                   GridPane.columnIndex="0" GridPane.rowIndex="0"/>
+                            <TextField fx:id="txtFirstName" promptText="Votre prénom"
+                                       style="-fx-border-color: #E2E8F0; -fx-border-radius: 8;
+                                              -fx-background-radius: 8; -fx-padding: 9 12;
+                                              -fx-font-size: 13px;"
+                                       GridPane.columnIndex="0" GridPane.rowIndex="1"/>
+
+                            <!-- Nom -->
+                            <Label text="Nom *"
+                                   style="-fx-font-size: 12px; -fx-font-weight: 600; -fx-text-fill: #475569;"
+                                   GridPane.columnIndex="1" GridPane.rowIndex="0"/>
+                            <TextField fx:id="txtLastName" promptText="Votre nom"
+                                       style="-fx-border-color: #E2E8F0; -fx-border-radius: 8;
+                                              -fx-background-radius: 8; -fx-padding: 9 12;
+                                              -fx-font-size: 13px;"
+                                       GridPane.columnIndex="1" GridPane.rowIndex="1"/>
+
+                            <!-- Email -->
+                            <Label text="Email *"
+                                   style="-fx-font-size: 12px; -fx-font-weight: 600; -fx-text-fill: #475569;"
+                                   GridPane.columnIndex="0" GridPane.rowIndex="2"/>
+                            <TextField fx:id="txtEmail" promptText="votre@email.com"
+                                       style="-fx-border-color: #E2E8F0; -fx-border-radius: 8;
+                                              -fx-background-radius: 8; -fx-padding: 9 12;
+                                              -fx-font-size: 13px;"
+                                       GridPane.columnIndex="0" GridPane.rowIndex="3"/>
+
+                            <!-- Téléphone -->
+                            <Label text="Téléphone *"
+                                   style="-fx-font-size: 12px; -fx-font-weight: 600; -fx-text-fill: #475569;"
+                                   GridPane.columnIndex="1" GridPane.rowIndex="2"/>
+                            <TextField fx:id="txtPhone" promptText="+216 XX XXX XXX"
+                                       style="-fx-border-color: #E2E8F0; -fx-border-radius: 8;
+                                              -fx-background-radius: 8; -fx-padding: 9 12;
+                                              -fx-font-size: 13px;"
+                                       GridPane.columnIndex="1" GridPane.rowIndex="3"/>
+
+                            <!-- Nb personnes -->
+                            <Label text="Nombre de personnes"
+                                   style="-fx-font-size: 12px; -fx-font-weight: 600; -fx-text-fill: #475569;"
+                                   GridPane.columnIndex="0" GridPane.rowIndex="4"/>
+                            <Spinner fx:id="spnbPersonnes" prefWidth="130"
+                                     style="-fx-font-size: 13px;"
+                                     GridPane.columnIndex="0" GridPane.rowIndex="5"/>
+
+                            <!-- Code promo -->
+                            <Label text="Code promo (optionnel)"
+                                   style="-fx-font-size: 12px; -fx-font-weight: 600; -fx-text-fill: #475569;"
+                                   GridPane.columnIndex="1" GridPane.rowIndex="4"/>
+                            <TextField fx:id="txtPromoCode" promptText="Ex: ECO2026"
+                                       style="-fx-border-color: #E2E8F0; -fx-border-radius: 8;
+                                              -fx-background-radius: 8; -fx-padding: 9 12;
+                                              -fx-font-size: 13px;"
+                                       GridPane.columnIndex="1" GridPane.rowIndex="5"/>
+                        </GridPane>
+                    </VBox>
+
+                    <!-- ── PAIEMENT ── -->
+                    <VBox fx:id="paymentSection" spacing="14"
+                          style="-fx-padding: 20 20 16 20;
+                                 -fx-border-color: transparent transparent #F1F5F9 transparent;
+                                 -fx-border-width: 0 0 1 0;">
+
+                        <HBox alignment="CENTER_LEFT" spacing="8">
+                            <Label text="💳" style="-fx-font-size: 15px;"/>
+                            <Label text="Méthode de paiement"
+                                   style="-fx-font-size: 14px; -fx-font-weight: 700; -fx-text-fill: #1E293B;"/>
+                        </HBox>
+
+                        <HBox spacing="20">
+                            <!-- FIX : pas de toggleGroup dans FXML, géré dans le contrôleur -->
+                            <RadioButton fx:id="rbCardPayment"   text="💳 Carte bancaire"
+                                         style="-fx-font-size: 13px; -fx-cursor: hand;"/>
+                            <RadioButton fx:id="rbMobilePayment" text="📱 Mobile"
+                                         style="-fx-font-size: 13px; -fx-cursor: hand;"/>
+                            <RadioButton fx:id="rbBankTransfer"  text="🏦 Virement"
+                                         style="-fx-font-size: 13px; -fx-cursor: hand;"/>
+                        </HBox>
+
+                        <!-- Champs carte (visible si carte sélectionnée) -->
+                        <VBox fx:id="cardPaymentPanel" spacing="10" visible="false" managed="false"
+                              style="-fx-background-color: #F8FAFC; -fx-background-radius: 8;
+                                     -fx-padding: 14; -fx-border-color: #E2E8F0;
+                                     -fx-border-radius: 8; -fx-border-width: 1;">
+
+                            <Label text="Numéro de carte"
+                                   style="-fx-font-size: 12px; -fx-font-weight: 600; -fx-text-fill: #475569;"/>
+                            <TextField fx:id="txtCardNumber" promptText="1234 5678 9012 3456"
+                                       style="-fx-border-color: #E2E8F0; -fx-border-radius: 8;
+                                              -fx-background-radius: 8; -fx-padding: 9 12; -fx-font-size: 13px;"/>
+
+                            <HBox spacing="14">
+                                <VBox spacing="6" HBox.hgrow="ALWAYS">
+                                    <Label text="Expiration"
+                                           style="-fx-font-size: 12px; -fx-font-weight: 600; -fx-text-fill: #475569;"/>
+                                    <TextField fx:id="txtExpiry" promptText="MM/AA"
+                                               style="-fx-border-color: #E2E8F0; -fx-border-radius: 8;
+                                                      -fx-background-radius: 8; -fx-padding: 9 12; -fx-font-size: 13px;"/>
+                                </VBox>
+                                <VBox spacing="6" prefWidth="110">
+                                    <Label text="CVV"
+                                           style="-fx-font-size: 12px; -fx-font-weight: 600; -fx-text-fill: #475569;"/>
+                                    <TextField fx:id="txtCvv" promptText="123"
+                                               style="-fx-border-color: #E2E8F0; -fx-border-radius: 8;
+                                                      -fx-background-radius: 8; -fx-padding: 9 12; -fx-font-size: 13px;"/>
+                                </VBox>
+                            </HBox>
+                        </VBox>
+                    </VBox>
+
+                    <!-- ── RÉSUMÉ + BOUTONS ── -->
+                    <VBox spacing="14" style="-fx-padding: 20;">
+
+                        <!-- Résumé -->
+                        <VBox spacing="10"
+                              style="-fx-background-color: #F0FDF4; -fx-background-radius: 10;
+                                     -fx-padding: 16; -fx-border-color: #10B981;
+                                     -fx-border-radius: 10; -fx-border-width: 1.5;">
+
+                            <Label text="Récapitulatif"
+                                   style="-fx-font-size: 13px; -fx-font-weight: 700; -fx-text-fill: #065F46;"/>
+
+                            <HBox spacing="8" alignment="CENTER_LEFT">
+                                <Label text="Pack :"
+                                       style="-fx-font-size: 13px; -fx-text-fill: #374151; -fx-min-width: 80;"/>
+                                <Label fx:id="summaryPack"
+                                       style="-fx-font-size: 13px; -fx-font-weight: 600; -fx-text-fill: #0F172A;"/>
+                            </HBox>
+                            <HBox spacing="8" alignment="CENTER_LEFT">
+                                <Label text="Montant :"
+                                       style="-fx-font-size: 13px; -fx-text-fill: #374151; -fx-min-width: 80;"/>
+                                <Label fx:id="summaryAmount"
+                                       style="-fx-font-size: 20px; -fx-font-weight: 900; -fx-text-fill: #10B981;"/>
+                            </HBox>
+                            <HBox spacing="8" alignment="CENTER_LEFT">
+                                <Label text="Statut :"
+                                       style="-fx-font-size: 13px; -fx-text-fill: #374151; -fx-min-width: 80;"/>
+                                <Label fx:id="summaryStatus"
+                                       style="-fx-font-size: 13px; -fx-font-weight: 700; -fx-text-fill: #F59E0B;"/>
+                            </HBox>
+                        </VBox>
+
+                        <!-- Boutons -->
+                        <HBox spacing="12" alignment="CENTER_RIGHT">
+                            <Button fx:id="btnCancel" text="Annuler"
+                                    style="-fx-background-color: #F1F5F9; -fx-text-fill: #64748B;
+                                           -fx-font-size: 13px; -fx-font-weight: 600;
+                                           -fx-background-radius: 8; -fx-padding: 10 22; -fx-cursor: hand;"/>
+                            <Button fx:id="btnContinue" text="✅  Confirmer l'inscription"
+                                    style="-fx-background-color: #10B981; -fx-text-fill: white;
+                                           -fx-font-size: 14px; -fx-font-weight: 700;
+                                           -fx-background-radius: 8; -fx-padding: 10 28; -fx-cursor: hand;"/>
+                        </HBox>
+
+                    </VBox>
+                </VBox>
+            </VBox>
+            <!-- fin formulaire -->
+
+        </VBox>
+    </ScrollPane>
+</VBox>

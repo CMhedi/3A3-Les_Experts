@@ -32,6 +32,16 @@ public class SideBarController {
     }
 
     @FXML
+    private void goToPackList(ActionEvent event) {
+        changeCenter("/fxml/PackList.fxml");
+    }
+
+    @FXML
+    private void goToInscriptionList(ActionEvent event) {
+        changeCenter("/fxml/InscriptionList.fxml");
+    }
+
+    @FXML
     void goToReclamations(ActionEvent event) {
         changeCenter("/GUI/AdminReclamation.fxml");
     }
@@ -75,6 +85,11 @@ public class SideBarController {
     }
 
     @FXML
+    private void goToAdminMessagerie(ActionEvent event) {
+        changeCenter("/fxml/AdminMessagerie.fxml");
+    }
+
+    @FXML
     private void goToMessengerie(ActionEvent event) {
         try {
             BorderPane mainPane = (BorderPane) ((Node) event.getSource()).getScene().lookup("#mainPaneUser");
@@ -114,6 +129,10 @@ public class SideBarController {
         }
     }
 
+    // ─────────────────────────────────────────────────────────
+    //  Utilitaires privés
+    // ─────────────────────────────────────────────────────────
+
     private void changeCenter(String fxmlPath) {
         try {
             BorderPane mainPane = getHostBorderPane();
@@ -124,7 +143,7 @@ public class SideBarController {
 
             URL url = getClass().getResource(fxmlPath);
             if (url == null) {
-                System.out.println("❌ Erreur: Fichier introuvable -> " + fxmlPath);
+                System.out.println("❌ Fichier introuvable : " + fxmlPath);
                 return;
             }
 
@@ -144,15 +163,13 @@ public class SideBarController {
         Node rootNode = sidebarRoot.getScene().getRoot();
         if (rootNode.lookup("#mainPaneUser") instanceof BorderPane bp)
             return bp;
-
         return null;
     }
 
     private void loadScene(String fxmlPath, ActionEvent event) {
         try {
             URL url = getClass().getResource(fxmlPath);
-            if (url == null)
-                return;
+            if (url == null) return;
             Parent root = FXMLLoader.load(url);
             Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
             stage.setScene(new Scene(root));

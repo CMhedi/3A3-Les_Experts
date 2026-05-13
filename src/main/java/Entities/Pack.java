@@ -67,6 +67,8 @@ public class Pack {
         this.nbActivitesMax = nbActivitesMax;
     }
 
+    // FIX : était "public String getStatutPack()" mais le champ est StatutPack (enum)
+    // → le type de retour doit être StatutPack
     public StatutPack getStatutPack() {
         return statutPack;
     }
@@ -75,7 +77,6 @@ public class Pack {
         this.statutPack = statutPack;
     }
 
-    // ===== toString =====
     @Override
     public String toString() {
         return nom + " | " + typePack + " | " + statutPack;

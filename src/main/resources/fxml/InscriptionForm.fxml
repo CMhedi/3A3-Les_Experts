@@ -4,43 +4,272 @@
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
 
-<VBox xmlns="http://javafx.com/javafx/21"
-      xmlns:fx="http://javafx.com/fxml/1"
-      fx:controller="controllers.InscriptionFormController"
-      stylesheets="@/css/InscriptionForm.css"
-      spacing="14" styleClass="page">
+<ScrollPane fitToWidth="true"
+            xmlns="http://javafx.com/javafx/21"
+            xmlns:fx="http://javafx.com/fxml/1"
+            fx:controller="controllers.InscriptionFormController"
+            style="-fx-background-color: #f1f5f9; -fx-background: #f1f5f9;">
+    <content>
+        <VBox spacing="16"
+              style="-fx-background-color: #f1f5f9; -fx-padding: 24;">
 
-    <padding>
-        <Insets top="18" right="18" bottom="18" left="18"/>
-    </padding>
+            <!-- ══════ EN-TÊTE ══════ -->
+            <HBox alignment="CENTER_LEFT" spacing="12"
+                  style="-fx-background-color: #1E293B; -fx-background-radius: 12;
+                         -fx-padding: 16 20 16 20;">
+                <VBox spacing="3">
+                    <Label fx:id="lblFormTitle" text="Nouvelle Inscription"
+                           style="-fx-text-fill: white; -fx-font-size: 18; -fx-font-weight: 800;"/>
+                    <Label text="Remplissez les informations puis choisissez un mode de paiement."
+                           style="-fx-text-fill: #94a3b8; -fx-font-size: 12;"/>
+                </VBox>
+                <HBox HBox.hgrow="ALWAYS"/>
+                <Label fx:id="lblInscrId" text="#—"
+                       style="-fx-text-fill: #64748b; -fx-font-size: 12;"/>
+            </HBox>
 
-    <Label text="Inscription" styleClass="page-title"/>
+            <!-- ══════ SECTION 1 : Client & Pack ══════ -->
+            <VBox spacing="12"
+                  style="-fx-background-color: white; -fx-background-radius: 10;
+                         -fx-border-color: #e2e8f0; -fx-border-radius: 10; -fx-border-width: 1;
+                         -fx-padding: 16;">
 
-    <GridPane hgap="12" vgap="10">
-        <columnConstraints>
-            <ColumnConstraints percentWidth="35"/>
-            <ColumnConstraints percentWidth="65"/>
-        </columnConstraints>
+                <Label text="👤  Client &amp; Pack"
+                       style="-fx-font-size: 14; -fx-font-weight: bold; -fx-text-fill: #1e293b;"/>
 
-        <Label text="Utilisateur :" GridPane.rowIndex="0" GridPane.columnIndex="0"/>
-        <ComboBox fx:id="cbUser" GridPane.rowIndex="0" GridPane.columnIndex="1"/>
+                <GridPane hgap="14" vgap="10">
+                    <columnConstraints>
+                        <ColumnConstraints percentWidth="28"/>
+                        <ColumnConstraints percentWidth="72"/>
+                    </columnConstraints>
 
-        <Label text="Pack :" GridPane.rowIndex="1" GridPane.columnIndex="0"/>
-        <ComboBox fx:id="cbPack" GridPane.rowIndex="1" GridPane.columnIndex="1"/>
+                    <Label text="Utilisateur :"
+                           style="-fx-text-fill: #64748b; -fx-font-size: 13;"
+                           GridPane.rowIndex="0" GridPane.columnIndex="0"/>
+                    <ComboBox fx:id="cbUser" maxWidth="Infinity"
+                              promptText="Choisir un utilisateur…"
+                              GridPane.rowIndex="0" GridPane.columnIndex="1"/>
 
-        <Label text="Statut :" GridPane.rowIndex="2" GridPane.columnIndex="0"/>
-        <ComboBox fx:id="cbStatut" GridPane.rowIndex="2" GridPane.columnIndex="1"/>
+                    <Label text="Nom stocké :"
+                           style="-fx-text-fill: #94a3b8; -fx-font-size: 12;"
+                           GridPane.rowIndex="1" GridPane.columnIndex="0"/>
+                    <Label fx:id="lblNomUser" text="—"
+                           style="-fx-text-fill: #1e293b; -fx-font-size: 13;"
+                           GridPane.rowIndex="1" GridPane.columnIndex="1"/>
 
-        <Label text="Réduction :" GridPane.rowIndex="3" GridPane.columnIndex="0"/>
-        <Label fx:id="lblDiscount" text="0%" GridPane.rowIndex="3" GridPane.columnIndex="1"/>
+                    <Label text="Pack :"
+                           style="-fx-text-fill: #64748b; -fx-font-size: 13;"
+                           GridPane.rowIndex="2" GridPane.columnIndex="0"/>
+                    <ComboBox fx:id="cbPack" maxWidth="Infinity"
+                              promptText="Choisir un pack…"
+                              GridPane.rowIndex="2" GridPane.columnIndex="1"/>
 
-        <Label text="Montant :" GridPane.rowIndex="4" GridPane.columnIndex="0"/>
-        <TextField fx:id="txtMontant" editable="false" promptText="Calculé automatiquement"
-                   GridPane.rowIndex="4" GridPane.columnIndex="1"/>
-    </GridPane>
+                    <Label text="Nom pack :"
+                           style="-fx-text-fill: #94a3b8; -fx-font-size: 12;"
+                           GridPane.rowIndex="3" GridPane.columnIndex="0"/>
+                    <Label fx:id="lblNomPack" text="—"
+                           style="-fx-text-fill: #1e293b; -fx-font-size: 13;"
+                           GridPane.rowIndex="3" GridPane.columnIndex="1"/>
+                </GridPane>
+            </VBox>
 
-    <HBox spacing="10" alignment="CENTER_RIGHT">
-        <Button text="Annuler" onAction="#onCancel" styleClass="btn-secondary"/>
-        <Button text="Enregistrer" onAction="#onSave" styleClass="btn-primary"/>
-    </HBox>
-</VBox>
+            <!-- ══════ SECTION 2 : Tarification ══════ -->
+            <VBox spacing="12"
+                  style="-fx-background-color: white; -fx-background-radius: 10;
+                         -fx-border-color: #e2e8f0; -fx-border-radius: 10; -fx-border-width: 1;
+                         -fx-padding: 16;">
+
+                <Label text="💰  Tarification"
+                       style="-fx-font-size: 14; -fx-font-weight: bold; -fx-text-fill: #1e293b;"/>
+
+                <GridPane hgap="14" vgap="10">
+                    <columnConstraints>
+                        <ColumnConstraints percentWidth="28"/>
+                        <ColumnConstraints percentWidth="72"/>
+                    </columnConstraints>
+
+                    <Label text="Prix de base :"
+                           style="-fx-text-fill: #64748b; -fx-font-size: 13;"
+                           GridPane.rowIndex="0" GridPane.columnIndex="0"/>
+                    <Label fx:id="lblPrixBase" text="— DT"
+                           style="-fx-text-fill: #1e293b; -fx-font-size: 13;"
+                           GridPane.rowIndex="0" GridPane.columnIndex="1"/>
+
+                    <Label text="Réduction (%) :"
+                           style="-fx-text-fill: #64748b; -fx-font-size: 13;"
+                           GridPane.rowIndex="1" GridPane.columnIndex="0"/>
+                    <Label fx:id="lblDiscount" text="0 %"
+                           style="-fx-text-fill: #16a34a; -fx-font-size: 13; -fx-font-weight: bold;"
+                           GridPane.rowIndex="1" GridPane.columnIndex="1"/>
+
+                    <Label text="Montant total :"
+                           style="-fx-text-fill: #64748b; -fx-font-size: 13;"
+                           GridPane.rowIndex="2" GridPane.columnIndex="0"/>
+                    <TextField fx:id="txtMontant" editable="false"
+                               promptText="Calculé automatiquement"
+                               style="-fx-background-color: #f8fafc; -fx-text-fill: #1e293b;
+                                      -fx-border-color: #e2e8f0; -fx-border-radius: 6;
+                                      -fx-background-radius: 6; -fx-padding: 6 10 6 10;
+                                      -fx-font-size: 14; -fx-font-weight: bold;"
+                               GridPane.rowIndex="2" GridPane.columnIndex="1"/>
+                </GridPane>
+            </VBox>
+
+            <!-- ══════ SECTION 3 : Statut Inscription ══════ -->
+            <VBox spacing="12"
+                  style="-fx-background-color: white; -fx-background-radius: 10;
+                         -fx-border-color: #e2e8f0; -fx-border-radius: 10; -fx-border-width: 1;
+                         -fx-padding: 16;">
+
+                <Label text="📋  Statut de l'inscription"
+                       style="-fx-font-size: 14; -fx-font-weight: bold; -fx-text-fill: #1e293b;"/>
+
+                <HBox spacing="12" alignment="CENTER_LEFT">
+                    <Label text="Statut :"
+                           style="-fx-text-fill: #64748b; -fx-font-size: 13;"/>
+                    <!-- Valeurs injectées par le contrôleur : EN_ATTENTE | CONFIRMEE | ANNULEE -->
+                    <ComboBox fx:id="cbStatut" prefWidth="220"/>
+                    <Label fx:id="lblStatutBadge" text=""
+                           style="-fx-background-radius: 20; -fx-padding: 4 14 4 14;
+                                  -fx-font-size: 12; -fx-font-weight: bold;"/>
+                </HBox>
+            </VBox>
+
+            <!-- ══════ SECTION 4 : Paiement ══════ -->
+            <VBox spacing="12"
+                  style="-fx-background-color: white; -fx-background-radius: 10;
+                         -fx-border-color: #e2e8f0; -fx-border-radius: 10; -fx-border-width: 1;
+                         -fx-padding: 16;">
+
+                <HBox alignment="CENTER_LEFT" spacing="10">
+                    <Label text="💳  Paiement"
+                           style="-fx-font-size: 14; -fx-font-weight: bold; -fx-text-fill: #1e293b;"/>
+                    <HBox HBox.hgrow="ALWAYS"/>
+                    <Label text="SANDBOX"
+                           style="-fx-background-color: #fef3c7; -fx-text-fill: #92400e;
+                                  -fx-background-radius: 6; -fx-padding: 2 8 2 8;
+                                  -fx-font-size: 11; -fx-font-weight: bold;"/>
+                </HBox>
+
+                <!-- Choix méthode -->
+                <HBox spacing="16" alignment="CENTER_LEFT">
+                    <Label text="Méthode :"
+                           style="-fx-text-fill: #64748b; -fx-font-size: 13;"/>
+                    <RadioButton fx:id="rbCard"     text="💳 Carte bancaire" selected="true"/>
+                    <RadioButton fx:id="rbPaypal"   text="🅿 PayPal"/>
+                    <RadioButton fx:id="rbVirement" text="🏦 Virement"/>
+                </HBox>
+
+                <!-- ── Formulaire carte (visible si rbCard sélectionné) ── -->
+                <VBox fx:id="boxCardForm" spacing="10"
+                      style="-fx-background-color: #f8fafc; -fx-background-radius: 8;
+                             -fx-border-color: #e2e8f0; -fx-border-radius: 8; -fx-border-width: 1;
+                             -fx-padding: 14;">
+
+                    <Label text="Informations de la carte"
+                           style="-fx-text-fill: #64748b; -fx-font-size: 12; -fx-font-weight: bold;"/>
+
+                    <!-- Numéro carte -->
+                    <TextField fx:id="txtCardNumber"
+                               promptText="1234  5678  9012  3456"
+                               style="-fx-font-size: 16; -fx-font-family: monospace;
+                                      -fx-padding: 9 12 9 12; -fx-background-radius: 8;
+                                      -fx-border-color: #cbd5e1; -fx-border-radius: 8;
+                                      -fx-border-width: 1; -fx-letter-spacing: 2;"/>
+
+                    <GridPane hgap="12" vgap="0">
+                        <columnConstraints>
+                            <ColumnConstraints percentWidth="50"/>
+                            <ColumnConstraints percentWidth="25"/>
+                            <ColumnConstraints percentWidth="25"/>
+                        </columnConstraints>
+
+                        <TextField fx:id="txtCardName"
+                                   promptText="Nom sur la carte"
+                                   style="-fx-padding: 8 12 8 12; -fx-background-radius: 8;
+                                          -fx-border-color: #cbd5e1; -fx-border-radius: 8;
+                                          -fx-border-width: 1;"
+                                   GridPane.columnIndex="0"/>
+                        <TextField fx:id="txtCardExpiry"
+                                   promptText="MM/AA"
+                                   style="-fx-padding: 8 12 8 12; -fx-background-radius: 8;
+                                          -fx-border-color: #cbd5e1; -fx-border-radius: 8;
+                                          -fx-border-width: 1;"
+                                   GridPane.columnIndex="1"/>
+                        <PasswordField fx:id="txtCardCvv"
+                                       promptText="CVV"
+                                       style="-fx-padding: 8 12 8 12; -fx-background-radius: 8;
+                                              -fx-border-color: #cbd5e1; -fx-border-radius: 8;
+                                              -fx-border-width: 1;"
+                                       GridPane.columnIndex="2"/>
+                    </GridPane>
+
+                    <!-- OCR + Presets -->
+                    <HBox spacing="8" alignment="CENTER_LEFT">
+                        <Button fx:id="btnScanOcr" text="📷  Scanner la carte (OCR)"
+                                onAction="#onScanOcr"
+                                style="-fx-background-color: #1E293B; -fx-text-fill: white;
+                                       -fx-background-radius: 7; -fx-padding: 7 14 7 14;
+                                       -fx-font-weight: bold; -fx-cursor: hand;"/>
+                        <Label text="Exemples TEST :"
+                               style="-fx-text-fill: #94a3b8; -fx-font-size: 12;"/>
+                        <Button text="Visa"   onAction="#onFillVisa"
+                                style="-fx-background-color: #1a56db; -fx-text-fill: white;
+                                       -fx-background-radius: 6; -fx-padding: 5 10 5 10; -fx-cursor: hand;"/>
+                        <Button text="Master" onAction="#onFillMaster"
+                                style="-fx-background-color: #eb5e28; -fx-text-fill: white;
+                                       -fx-background-radius: 6; -fx-padding: 5 10 5 10; -fx-cursor: hand;"/>
+                        <Button text="Vider"  onAction="#onClearCard"
+                                style="-fx-background-color: #f1f5f9; -fx-text-fill: #64748b;
+                                       -fx-background-radius: 6; -fx-padding: 5 10 5 10; -fx-cursor: hand;"/>
+                    </HBox>
+
+                    <Label fx:id="lblCardHint" text=""
+                           style="-fx-text-fill: #94a3b8; -fx-font-size: 11;"/>
+
+                    <!-- Bouton Payer -->
+                    <HBox spacing="10" alignment="CENTER_LEFT">
+                        <Button fx:id="btnPayNow" text="✔  Payer maintenant"
+                                onAction="#onPayNow"
+                                style="-fx-background-color: #16a34a; -fx-text-fill: white;
+                                       -fx-font-weight: bold; -fx-font-size: 14;
+                                       -fx-background-radius: 8; -fx-padding: 9 20 9 20;
+                                       -fx-cursor: hand;"/>
+                        <ProgressIndicator fx:id="piPay" prefWidth="22" prefHeight="22"
+                                           visible="false" managed="false"/>
+                        <Label fx:id="lblPayStatus" text=""
+                               style="-fx-font-size: 13; -fx-font-weight: bold;"/>
+                    </HBox>
+                </VBox>
+
+                <!-- Récapitulatif paiement (affiché après paiement) -->
+                <VBox fx:id="boxPayRecap" visible="false" managed="false" spacing="6"
+                      style="-fx-background-color: #f0fdf4; -fx-background-radius: 8;
+                             -fx-border-color: #bbf7d0; -fx-border-radius: 8; -fx-border-width: 1;
+                             -fx-padding: 12;">
+                    <Label text="✅  Paiement enregistré"
+                           style="-fx-font-weight: bold; -fx-text-fill: #166534; -fx-font-size: 13;"/>
+                    <Label fx:id="lblPayRef"    text="Référence : —"
+                           style="-fx-text-fill: #374151; -fx-font-size: 12;"/>
+                    <Label fx:id="lblOrderId"   text="Order ID : —"
+                           style="-fx-text-fill: #374151; -fx-font-size: 12;"/>
+                    <Label fx:id="lblPaidAtInfo" text="Payé le : —"
+                           style="-fx-text-fill: #374151; -fx-font-size: 12;"/>
+                </VBox>
+
+            </VBox>
+
+            <!-- ══════ BOUTONS ══════ -->
+            <HBox spacing="10" alignment="CENTER_RIGHT">
+                <Button text="Annuler"    onAction="#onCancel"
+                        style="-fx-background-color: #f1f5f9; -fx-text-fill: #64748b;
+                               -fx-background-radius: 8; -fx-padding: 9 20 9 20; -fx-cursor: hand;"/>
+                <Button fx:id="btnSave" text="💾  Enregistrer" onAction="#onSave"
+                        style="-fx-background-color: #1E293B; -fx-text-fill: white;
+                               -fx-font-weight: bold; -fx-background-radius: 8;
+                               -fx-padding: 9 20 9 20; -fx-cursor: hand;"/>
+            </HBox>
+
+        </VBox>
+    </content>
+</ScrollPane>

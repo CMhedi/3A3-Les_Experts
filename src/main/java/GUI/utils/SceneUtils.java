@@ -14,43 +14,13 @@ public class SceneUtils {
             String fxmlPath,
             String cssPath,
             Node source) {
-
-        try {
-
-            FXMLLoader loader = new FXMLLoader(
-                    SceneUtils.class.getResource(fxmlPath)
-            );
-
-            Parent root = loader.load();
-
-            Scene scene = new Scene(root);
-
-            // Charger CSS spécifique
-            if (cssPath != null) {
-                scene.getStylesheets().add(
-                        SceneUtils.class
-                                .getResource(cssPath)
-                                .toExternalForm()
-                );
-            }
-
-            Stage stage =
-                    (Stage) source.getScene().getWindow();
-
-            stage.setScene(scene);
-            stage.setResizable(true);
-            stage.sizeToScene();
-            stage.show();
-
-            return loader;
-
-        } catch (IOException e) {
-            e.printStackTrace();
-            return null;
-        }
+        return null;
     }
     public static FXMLLoader loadScene(String fxml,
                                        Node source) {
         return loadScene(fxml, null, source);
+    }
+
+    public static void switchScene(String s) {
     }
 }

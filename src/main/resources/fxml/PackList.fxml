@@ -10,95 +10,142 @@
 <?import javafx.scene.layout.ColumnConstraints?>
 <?import javafx.scene.layout.GridPane?>
 <?import javafx.scene.layout.HBox?>
-<?import javafx.scene.layout.Priority?>
 <?import javafx.scene.layout.VBox?>
 
 <BorderPane xmlns="http://javafx.com/javafx/21"
             xmlns:fx="http://javafx.com/fxml/1"
             fx:controller="controllers.PackListController"
-            stylesheets="/css/PackList.css"
-            styleClass="pack-page">
+            style="-fx-background-color: #f1f5f9;">
 
-    <!-- TOP -->
+    <!-- ═══════════ TOP — barre titre + actions ═══════════ -->
     <top>
-        <VBox spacing="10" BorderPane.alignment="CENTER" styleClass="top-wrap">
-            <padding>
-                <Insets top="16" right="16" bottom="10" left="16"/>
-            </padding>
+        <VBox style="-fx-background-color: #1E293B; -fx-padding: 16 20 14 20;"
+              spacing="10">
 
-            <HBox spacing="12" alignment="CENTER_LEFT" styleClass="toolbar">
-                <Label text="Packs" styleClass="page-title"/>
-
-                <HBox spacing="10" alignment="CENTER_LEFT">
-                    <TextField fx:id="txtSearch"
-                               styleClass="search"
-                               promptText="Rechercher (nom, type, statut)..."
-                               prefWidth="340"/>
-                    <Label fx:id="lblTotal" text="0 / 0" styleClass="muted"/>
-                </HBox>
-
+            <HBox spacing="14" alignment="CENTER_LEFT">
+                <VBox spacing="3">
+                    <Label text="📦  Gestion des Packs"
+                           style="-fx-text-fill: white; -fx-font-size: 20; -fx-font-weight: 800;"/>
+                    <Label text="Créez, modifiez et gérez les packs EcoAdventure."
+                           style="-fx-text-fill: #94a3b8; -fx-font-size: 12;"/>
+                </VBox>
                 <HBox HBox.hgrow="ALWAYS"/>
-
-                <HBox spacing="8" alignment="CENTER_RIGHT">
-                    <Button text="Ajouter" onAction="#onAdd" styleClass="tool-btn"/>
-                    <Button text="Modifier" onAction="#onEdit" styleClass="tool-btn"/>
-                    <Button text="Supprimer" onAction="#onDelete" styleClass="tool-btn danger"/>
-                    <Button text="Rafraîchir" onAction="#onRefresh" styleClass="tool-btn"/>
-                    <Button text="Export PDF" onAction="#onOpenQrPdfDialog" styleClass="tool-btn"/>
-                    <Button text="QR Code" onAction="#onOpenQrPdfDialog" styleClass="tool-btn"/>
-                </HBox>
+                <Label fx:id="lblActifs"   text="— actifs"
+                       style="-fx-background-color: #166534; -fx-text-fill: #bbf7d0;
+                              -fx-background-radius: 20; -fx-padding: 4 12 4 12;
+                              -fx-font-size: 12; -fx-font-weight: bold;"/>
+                <Label fx:id="lblInactifs" text="— inactifs"
+                       style="-fx-background-color: #374151; -fx-text-fill: #d1d5db;
+                              -fx-background-radius: 20; -fx-padding: 4 12 4 12;
+                              -fx-font-size: 12;"/>
             </HBox>
 
-            <Separator opacity="0.25"/>
+            <HBox spacing="10" alignment="CENTER_LEFT">
+                <TextField fx:id="txtSearch"
+                           promptText="🔍  Rechercher (nom, type, statut)…"
+                           prefWidth="340"
+                           style="-fx-background-color: #334155; -fx-text-fill: white;
+                                  -fx-prompt-text-fill: #64748b; -fx-background-radius: 8;
+                                  -fx-border-color: transparent; -fx-padding: 7 12 7 12;
+                                  -fx-font-size: 13;"/>
+                <Label fx:id="lblTotal" text="0 / 0"
+                       style="-fx-text-fill: #64748b; -fx-font-size: 12;"/>
+                <HBox HBox.hgrow="ALWAYS"/>
+                <Button text="＋ Ajouter"   onAction="#onAdd"
+                        style="-fx-background-color: #F37021; -fx-text-fill: white;
+                               -fx-font-weight: bold; -fx-background-radius: 8;
+                               -fx-padding: 7 16 7 16; -fx-cursor: hand;"/>
+                <Button text="✎ Modifier"   onAction="#onEdit"
+                        style="-fx-background-color: #334155; -fx-text-fill: white;
+                               -fx-background-radius: 8; -fx-padding: 7 14 7 14; -fx-cursor: hand;"/>
+                <Button text="✕ Supprimer"  onAction="#onDelete"
+                        style="-fx-background-color: #ef4444; -fx-text-fill: white;
+                               -fx-background-radius: 8; -fx-padding: 7 14 7 14; -fx-cursor: hand;"/>
+                <Button text="↻ Rafraîchir" onAction="#onRefresh"
+                        style="-fx-background-color: #334155; -fx-text-fill: #94a3b8;
+                               -fx-background-radius: 8; -fx-padding: 7 14 7 14; -fx-cursor: hand;"/>
+                <Button text="PDF / QR"     onAction="#onOpenQrPdfDialog"
+                        style="-fx-background-color: #334155; -fx-text-fill: #94a3b8;
+                               -fx-background-radius: 8; -fx-padding: 7 14 7 14; -fx-cursor: hand;"/>
+            </HBox>
         </VBox>
     </top>
 
-    <!-- CENTER -->
+    <!-- ═══════════ CENTER — tableau ═══════════ -->
     <center>
-        <HBox BorderPane.alignment="CENTER">
-            <padding>
-                <Insets top="10" right="16" bottom="16" left="16"/>
-            </padding>
+        <VBox BorderPane.alignment="CENTER"
+              style="-fx-padding: 20;" spacing="0">
 
-            <VBox spacing="10" HBox.hgrow="ALWAYS" styleClass="card table-wrap">
-                <Label text="Liste des packs" styleClass="card-title"/>
+            <VBox spacing="0" VBox.vgrow="ALWAYS"
+                  style="-fx-background-color: white; -fx-background-radius: 12;
+                         -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.08), 12, 0, 0, 3);
+                         -fx-border-color: #e2e8f0; -fx-border-radius: 12; -fx-border-width: 1;">
 
-                <!-- ✅ Header grid (TH) -->
-                <GridPane styleClass="table-head" hgap="0" vgap="0">
+                <!-- En-tête colonnes -->
+                <GridPane style="-fx-background-color: #1E293B;
+                                 -fx-background-radius: 12 12 0 0;
+                                 -fx-padding: 12 14 12 14;"
+                          hgap="0" vgap="0">
                     <columnConstraints>
-                        <ColumnConstraints prefWidth="240"/>
-                        <ColumnConstraints prefWidth="170"/>
-                        <ColumnConstraints prefWidth="120"/>
-                        <ColumnConstraints prefWidth="140"/>
-                        <ColumnConstraints prefWidth="140"/>
-                        <ColumnConstraints prefWidth="120"/>
+                        <ColumnConstraints prefWidth="200" minWidth="140"/>
+                        <ColumnConstraints prefWidth="130" minWidth="90"/>
+                        <ColumnConstraints prefWidth="120" minWidth="80"/>
+                        <ColumnConstraints prefWidth="110" minWidth="70"/>
+                        <ColumnConstraints prefWidth="120" minWidth="80"/>
+                        <ColumnConstraints prefWidth="120" minWidth="90"/>
+                        <ColumnConstraints prefWidth="150" minWidth="110"/>
                     </columnConstraints>
-
-                    <Label text="Nom" GridPane.columnIndex="0" styleClass="th"/>
-                    <Label text="Type" GridPane.columnIndex="1" styleClass="th sep"/>
-                    <Label text="Prix" GridPane.columnIndex="2" styleClass="th sep"/>
-                    <Label text="Max" GridPane.columnIndex="3" styleClass="th sep"/>
-                    <Label text="Statut" GridPane.columnIndex="4" styleClass="th sep"/>
-                    <Label text="Actions" GridPane.columnIndex="5" styleClass="th sep"/>
+                    <Label text="NOM DU PACK"
+                           style="-fx-text-fill: #94a3b8; -fx-font-size: 11; -fx-font-weight: bold; -fx-padding: 0 0 0 6;"
+                           GridPane.columnIndex="0"/>
+                    <Label text="TYPE"
+                           style="-fx-text-fill: #94a3b8; -fx-font-size: 11; -fx-font-weight: bold;"
+                           GridPane.columnIndex="1"/>
+                    <Label text="PRIX (DT)"
+                           style="-fx-text-fill: #94a3b8; -fx-font-size: 11; -fx-font-weight: bold;"
+                           GridPane.columnIndex="2"/>
+                    <Label text="RÉDUCTION %"
+                           style="-fx-text-fill: #94a3b8; -fx-font-size: 11; -fx-font-weight: bold;"
+                           GridPane.columnIndex="3"/>
+                    <Label text="MAX ACTIVITÉS"
+                           style="-fx-text-fill: #94a3b8; -fx-font-size: 11; -fx-font-weight: bold;"
+                           GridPane.columnIndex="4"/>
+                    <Label text="STATUT"
+                           style="-fx-text-fill: #94a3b8; -fx-font-size: 11; -fx-font-weight: bold;"
+                           GridPane.columnIndex="5"/>
+                    <Label text="ACTIONS"
+                           style="-fx-text-fill: #94a3b8; -fx-font-size: 11; -fx-font-weight: bold;"
+                           GridPane.columnIndex="6"/>
                 </GridPane>
 
-                <!-- ✅ Body scroll -->
+                <Separator style="-fx-background-color: #e2e8f0;"/>
+
+                <!-- Corps scrollable — lignes injectées par PackListController -->
                 <ScrollPane fitToWidth="true"
                             hbarPolicy="NEVER"
                             vbarPolicy="AS_NEEDED"
                             VBox.vgrow="ALWAYS"
-                            styleClass="table-scroll">
+                            style="-fx-background-color: transparent;
+                                   -fx-background: transparent;
+                                   -fx-border-color: transparent;">
                     <content>
-                        <VBox fx:id="rowsBox" spacing="10" fillWidth="true">
-                            <padding>
-                                <Insets top="6" right="6" bottom="6" left="6"/>
-                            </padding>
-                        </VBox>
+                        <VBox fx:id="rowsBox" spacing="0" fillWidth="true"
+                              style="-fx-background-color: white; -fx-padding: 2 0 4 0;"/>
                     </content>
                 </ScrollPane>
 
+                <!-- Pied de tableau -->
+                <HBox alignment="CENTER_RIGHT" spacing="10"
+                      style="-fx-background-color: #f8fafc;
+                             -fx-background-radius: 0 0 12 12;
+                             -fx-border-color: #e2e8f0 transparent transparent transparent;
+                             -fx-border-width: 1; -fx-padding: 8 14 8 14;">
+                    <Label fx:id="lblFooter" text=""
+                           style="-fx-text-fill: #94a3b8; -fx-font-size: 12;"/>
+                </HBox>
+
             </VBox>
-        </HBox>
+        </VBox>
     </center>
 
 </BorderPane>

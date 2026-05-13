@@ -3,12 +3,77 @@
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
+<?import de.jensd.fx.glyphs.fontawesome.FontAwesomeIconView?>
 
 <BorderPane xmlns="http://javafx.com/javafx/21"
             xmlns:fx="http://javafx.com/fxml/1"
             fx:controller="controllers.DashboardAllController"
             stylesheets="@/css/dashboard.css"
             styleClass="root">
+
+    <!-- ================= SIDEBAR ================= -->
+    <left>
+        <VBox styleClass="sidebar"
+              spacing="20"
+              alignment="TOP_LEFT">
+
+            <!-- Logo -->
+            <HBox spacing="6" alignment="CENTER_LEFT">
+                <Label text="Eco" styleClass="logo"/>
+                <Label text="Adventure" styleClass="logo-accent"/>
+            </HBox>
+
+            <Separator styleClass="sidebar-separator"/>
+
+            <!-- Menu Items -->
+            <Button styleClass="menu-btn menu-btn-active"
+                    maxWidth="Infinity"
+                    onAction="#onDashboard">
+                <graphic>
+                    <FontAwesomeIconView glyphName="HOME"
+                                         size="16"
+                                         fill="WHITE"/>
+                </graphic>
+                <text>Dashboard</text>
+            </Button>
+
+            <Button styleClass="menu-btn"
+                    maxWidth="Infinity"
+                    onAction="#onPacks">
+                <graphic>
+                    <FontAwesomeIconView glyphName="SUITCASE"
+                                         size="16"
+                                         fill="WHITE"/>
+                </graphic>
+                <text>Gestion des Packs</text>
+            </Button>
+
+            <Button styleClass="menu-btn"
+                    maxWidth="Infinity"
+                    onAction="#onInscriptions">
+                <graphic>
+                    <FontAwesomeIconView glyphName="CLIPBOARD"
+                                         size="16"
+                                         fill="WHITE"/>
+                </graphic>
+                <text>Inscriptions</text>
+            </Button>
+
+            <Separator styleClass="sidebar-separator"/>
+
+            <Button styleClass="menu-btn"
+                    maxWidth="Infinity"
+                    onAction="#onRetour">
+                <graphic>
+                    <FontAwesomeIconView glyphName="ARROW_LEFT"
+                                         size="16"
+                                         fill="WHITE"/>
+                </graphic>
+                <text>Retour Menu</text>
+            </Button>
+
+        </VBox>
+    </left>
 
     <top>
         <HBox spacing="12" alignment="CENTER_LEFT" styleClass="topbar">

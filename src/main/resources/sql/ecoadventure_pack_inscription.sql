@@ -16,10 +16,21 @@ CREATE TABLE IF NOT EXISTS inscription (
   date_inscription DATETIME NOT NULL,
   statut_inscr VARCHAR(60) NOT NULL,
   montant_total DECIMAL(10,2) NOT NULL DEFAULT 0.00,
+  nom_user VARCHAR(255) DEFAULT NULL,
+  nom_pack VARCHAR(255) DEFAULT NULL,
   id_user INT NOT NULL,
   id_pack INT NOT NULL,
+  payment_gateway VARCHAR(50) DEFAULT NULL,
+  payment_reference VARCHAR(100) DEFAULT NULL,
+  payment_order_id VARCHAR(100) DEFAULT NULL,
+  payment_status VARCHAR(50) DEFAULT NULL,
+  paid_at DATETIME DEFAULT NULL,
+  card_image VARCHAR(255) DEFAULT NULL,
   CONSTRAINT fk_inscription_pack FOREIGN KEY (id_pack) REFERENCES pack(id_pack)
-    ON UPDATE CASCADE ON DELETE RESTRICT
+    ON UPDATE CASCADE ON DELETE RESTRICT,
+  KEY idx_id_user (id_user),
+  KEY idx_statut_inscr (statut_inscr),
+  KEY idx_date_inscription (date_inscription)
 );
 
 -- Exemples (optionnel)

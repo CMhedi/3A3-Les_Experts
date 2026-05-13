@@ -66,6 +66,111 @@ public class DashboardAllController {
         refreshAll();
     }
 
+    @FXML
+    private void onDashboard(ActionEvent e) {
+        // Stay on Dashboard - just refresh
+        refreshAll();
+    }
+
+    @FXML
+    private void onPacks(ActionEvent e) {
+        try {
+            navigateTo("/fxml/PackList.fxml");
+        } catch (Exception ex) {
+            showError("Erreur de navigation", ex.getMessage());
+        }
+    }
+
+    @FXML
+    private void onInscriptions(ActionEvent e) {
+        try {
+            navigateTo("/fxml/InscriptionList.fxml");
+        } catch (Exception ex) {
+            showError("Erreur de navigation", ex.getMessage());
+        }
+    }
+
+    @FXML
+    private void onRetour(ActionEvent e) {
+        try {
+            navigateTo("/Menu.fxml");
+        } catch (Exception ex) {
+            showError("Erreur de navigation", ex.getMessage());
+        }
+    }
+
+    @FXML
+    private void onUsers(ActionEvent e) {
+        // Placeholder - you can add user management FXML later
+        showError("Gestion des Utilisateurs", "Interface en développement");
+    }
+
+    @FXML
+    private void onReclamations(ActionEvent e) {
+        try {
+            navigateTo("/GUI/AddReclamation.fxml");
+        } catch (Exception ex) {
+            showError("Erreur de navigation", ex.getMessage());
+        }
+    }
+
+    @FXML
+    private void onMessaging(ActionEvent e) {
+        // Placeholder - you can add messaging FXML later
+        showError("Messagerie", "Interface en développement");
+    }
+
+    @FXML
+    private void onProfile(ActionEvent e) {
+        // Placeholder - you can add profile FXML later
+        showError("Mon Profil", "Interface en développement");
+    }
+
+    @FXML
+    private void onEvents(ActionEvent e) {
+        // Placeholder - you can add event management FXML later
+        showError("Gestion Événement", "Interface en développement");
+    }
+
+    @FXML
+    private void onEventDashboard(ActionEvent e) {
+        // Placeholder - you can add event dashboard FXML later
+        showError("Dashboard Événement", "Interface en développement");
+    }
+
+    @FXML
+    private void onEventReservations(ActionEvent e) {
+        // Placeholder - you can add event reservations FXML later
+        showError("Réservations Événements", "Interface en développement");
+    }
+
+    @FXML
+    private void onPlanning(ActionEvent e) {
+        try {
+            navigateTo("/AdminPlanningView.fxml");
+        } catch (Exception ex) {
+            showError("Erreur de navigation", ex.getMessage());
+        }
+    }
+
+    /**
+     * Navigation helper - loads the specified FXML file in the current stage
+     */
+    private void navigateTo(String fxmlPath) throws Exception {
+        javafx.fxml.FXMLLoader loader = new javafx.fxml.FXMLLoader(getClass().getResource(fxmlPath));
+        javafx.scene.Parent root = loader.load();
+        javafx.scene.Scene scene = new javafx.scene.Scene(root);
+        javafx.stage.Stage stage = (javafx.stage.Stage) lblDate.getScene().getWindow();
+        stage.setScene(scene);
+    }
+
+    private void showError(String title, String message) {
+        javafx.scene.control.Alert alert = new javafx.scene.control.Alert(javafx.scene.control.Alert.AlertType.ERROR);
+        alert.setTitle(title);
+        alert.setContentText(message);
+        alert.showAndWait();
+    }
+
     private void refreshAll() {
         lblDate.setText(LocalDateTime.now().toString().replace("T", "  "));
 
@@ -115,17 +220,14 @@ public class DashboardAllController {
     }
 
     // =========================
-    // DAO minimal (à adapter selon tes noms de tables exacts)
+    // DAO minimal
     // =========================
-    private Connection cx() {
-        MyDB2.getInstance(); // ensure connection created
-        return MyDB2.getInstance().getConnection();
-    }
 
     private List<Pack> loadPacks() {
         List<Pack> list = new ArrayList<>();
         String sql = "SELECT id_pack, nom, type_pack, prix_base, reduction, nb_activites_max, statut_pack FROM pack";
-        try (PreparedStatement ps = cx().prepareStatement(sql);
+        try (Connection cnx = MyDB2.getConnection();
+             PreparedStatement ps = cnx.prepareStatement(sql);
              ResultSet rs = ps.executeQuery()) {
             while (rs.next()) {
                 Pack p = new Pack();
@@ -138,7 +240,7 @@ public class DashboardAllController {
                 try { p.setStatutPack(StatutPack.valueOf(rs.getString("statut_pack"))); } catch (Exception ignored) {}
                 list.add(p);
             }
-        } catch (SQLException e) {
+        } catch (Exception e) {
             System.out.println("Pack load error: " + e.getMessage());
         }
         return list;
@@ -147,7 +249,8 @@ public class DashboardAllController {
     private List<UserApp> loadUsers() {
         List<UserApp> list = new ArrayList<>();
         String sql = "SELECT id_user, nom, prenom, email, telephone, image_url, role, mot_de_passe, date_creation FROM user_app";
-        try (PreparedStatement ps = cx().prepareStatement(sql);
+        try (Connection cnx = MyDB2.getConnection();
+             PreparedStatement ps = cnx.prepareStatement(sql);
              ResultSet rs = ps.executeQuery()) {
             while (rs.next()) {
                 UserApp u = new UserApp();
@@ -163,7 +266,7 @@ public class DashboardAllController {
                 if (t != null) u.setDateCreation(t.toLocalDateTime());
                 list.add(u);
             }
-        } catch (SQLException e) {
+        } catch (Exception e) {
             System.out.println("User load error: " + e.getMessage());
         }
         return list;
@@ -172,7 +275,8 @@ public class DashboardAllController {
     private List<Inscription> loadInscriptions() {
         List<Inscription> list = new ArrayList<>();
         String sql = "SELECT id_inscription, date_inscription, statut_inscr, montant_total, id_user, id_pack FROM inscription";
-        try (PreparedStatement ps = cx().prepareStatement(sql);
+        try (Connection cnx = MyDB2.getConnection();
+             PreparedStatement ps = cnx.prepareStatement(sql);
              ResultSet rs = ps.executeQuery()) {
             while (rs.next()) {
                 Inscription i = new Inscription();
@@ -185,14 +289,11 @@ public class DashboardAllController {
                 i.setIdPack(rs.getInt("id_pack"));
                 list.add(i);
             }
-        } catch (SQLException e) {
+        } catch (Exception e) {
             System.out.println("Inscription load error: " + e.getMessage());
         }
         return list;
     }
-
-    // ====== Les autres tables : même idée (si les tables existent)
-    // Si un SELECT échoue => tu verras l’erreur dans console et l’onglet restera vide.
 
     private List<Activite> loadActivites() { return loadGeneric("activite", Activite.class); }
     private List<Evenement> loadEvenements() { return loadGeneric("evenement", Evenement.class); }
@@ -204,17 +305,13 @@ public class DashboardAllController {
     private List<Conversation> loadConversations() { return loadGeneric("conversation", Conversation.class); }
     private List<Message> loadMessages() { return loadGeneric("message", Message.class); }
 
-    /**
-     * Loader simple "fallback" : il ne mappe pas les champs (juste évite crash).
-     * Si tu veux tables détaillées : on les mappe comme Pack/User/Inscription.
-     */
     private <T> List<T> loadGeneric(String table, Class<T> type) {
         List<T> list = new ArrayList<>();
         String sql = "SELECT * FROM " + table + " LIMIT 200";
-        try (PreparedStatement ps = cx().prepareStatement(sql);
+        try (Connection cnx = MyDB2.getConnection();
+             PreparedStatement ps = cnx.prepareStatement(sql);
              ResultSet rs = ps.executeQuery()) {
             while (rs.next()) {
-                // on ajoute juste un objet vide, pour montrer que l’onglet est vivant
                 list.add(type.getDeclaredConstructor().newInstance());
             }
         } catch (Exception e) {

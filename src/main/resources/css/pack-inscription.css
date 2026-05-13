@@ -1,0 +1,394 @@
+/* =========================================================
+   pack-inscription.css — Modern Pack Inscription UI
+   EcoAdventure - Responsive & Accessible Design
+   ========================================================= */
+
+.pack-inscription-page {
+    -fx-background-color: linear-gradient(to bottom right, #F5F3E7, #D1FAE5);
+    -fx-font-family: "Inter", "Segoe UI", "Poppins", "System";
+
+    /* Color Palette */
+    -color-forest: #14532D;
+    -color-emerald: #10B981;
+    -color-sky: #38BDF8;
+    -color-orange: #F97316;
+    -color-orange-hover: #EA580C;
+    -color-sand: #F5F3E7;
+    -color-slate: #0F172A;
+    -color-white: #FFFFFF;
+    -color-surface: #F1F5F9;
+    -color-border: #E2E8F0;
+    -color-muted: #64748B;
+    -color-danger: #EF4444;
+    -color-success: #10B981;
+
+    -shadow-sm: rgba(15, 23, 42, 0.05);
+    -shadow-md: rgba(15, 23, 42, 0.10);
+    -shadow-lg: rgba(15, 23, 42, 0.15);
+}
+
+/* ============ HEADER ============ */
+.pack-header {
+    -fx-background-color: -color-white;
+    -fx-border-color: -color-border;
+    -fx-border-width: 0 0 1 0;
+}
+
+.header-title {
+    -fx-text-fill: -color-slate;
+    -fx-font-size: 28px;
+    -fx-font-weight: 800;
+}
+
+.header-subtitle {
+    -fx-text-fill: -color-muted;
+    -fx-font-size: 14px;
+    -fx-font-weight: 500;
+}
+
+/* ============ CONTAINER ============ */
+.pack-container {
+    -fx-spacing: 24;
+}
+
+/* ============ BUTTONS ============ */
+.btn-ghost {
+    -fx-background-color: transparent;
+    -fx-text-fill: -color-slate;
+    -fx-font-size: 13px;
+    -fx-font-weight: 600;
+    -fx-padding: 8 12 8 12;
+    -fx-border-radius: 8;
+    -fx-background-radius: 8;
+    -fx-cursor: hand;
+}
+
+.btn-ghost:hover {
+    -fx-background-color: rgba(16, 185, 129, 0.1);
+    -fx-text-fill: -color-emerald;
+}
+
+.btn-primary {
+    -fx-background-color: -color-emerald;
+    -fx-text-fill: -color-white;
+    -fx-font-size: 14px;
+    -fx-font-weight: 700;
+    -fx-padding: 12 24 12 24;
+    -fx-border-radius: 12;
+    -fx-background-radius: 12;
+    -fx-cursor: hand;
+    -fx-effect: dropshadow(gaussian, -shadow-md, 12, 0.15, 0, 4);
+}
+
+.btn-primary:hover {
+    -fx-background-color: #059669;
+    -fx-effect: dropshadow(gaussian, -shadow-lg, 16, 0.20, 0, 6);
+}
+
+.btn-primary:pressed {
+    -fx-background-color: #047857;
+}
+
+.btn-secondary {
+    -fx-background-color: -color-surface;
+    -fx-text-fill: -color-slate;
+    -fx-font-size: 14px;
+    -fx-font-weight: 600;
+    -fx-padding: 12 24 12 24;
+    -fx-border-radius: 12;
+    -fx-background-radius: 12;
+    -fx-border-color: -color-border;
+    -fx-border-width: 1;
+    -fx-cursor: hand;
+}
+
+.btn-secondary:hover {
+    -fx-background-color: -color-border;
+}
+
+.btn-lg {
+    -fx-padding: 14 32 14 32;
+    -fx-font-size: 15px;
+}
+
+/* ============ SECTIONS ============ */
+.section-card {
+    -fx-background-color: -color-white;
+    -fx-border-color: -color-border;
+    -fx-border-width: 1;
+    -fx-border-radius: 16;
+    -fx-background-radius: 16;
+    -fx-effect: dropshadow(gaussian, -shadow-md, 16, 0.08, 0, 4);
+}
+
+.section-title {
+    -fx-text-fill: -color-slate;
+    -fx-font-size: 16px;
+    -fx-font-weight: 800;
+}
+
+/* ============ PACK CARDS ============ */
+.pack-card {
+    -fx-background-color: -color-white;
+    -fx-border-color: -color-border;
+    -fx-border-width: 2;
+    -fx-border-radius: 14;
+    -fx-background-radius: 14;
+    -fx-padding: 16 12 16 12;
+    -fx-cursor: hand;
+    -fx-effect: dropshadow(gaussian, -shadow-sm, 8, 0.05, 0, 2);
+}
+
+.pack-card:hover {
+    -fx-border-color: -color-emerald;
+    -fx-effect: dropshadow(gaussian, -shadow-md, 12, 0.12, 0, 4);
+}
+
+.pack-card.selected {
+    -fx-background-color: rgba(16, 185, 129, 0.08);
+    -fx-border-color: -color-emerald;
+    -fx-border-width: 2;
+    -fx-effect: dropshadow(gaussian, -shadow-lg, 14, 0.15, 0, 6);
+}
+
+.pack-card-title {
+    -fx-text-fill: -color-slate;
+    -fx-font-size: 15px;
+    -fx-font-weight: 700;
+}
+
+.pack-card-price {
+    -fx-text-fill: -color-emerald;
+    -fx-font-size: 20px;
+    -fx-font-weight: 800;
+}
+
+.pack-card-description {
+    -fx-text-fill: -color-muted;
+    -fx-font-size: 12px;
+    -fx-font-weight: 500;
+    -fx-wrap-text: true;
+}
+
+/* ============ DETAILS & PRICING ============ */
+.detail-label {
+    -fx-text-fill: -color-muted;
+    -fx-font-size: 12px;
+    -fx-font-weight: 700;
+}
+
+.detail-value {
+    -fx-text-fill: -color-slate;
+    -fx-font-size: 15px;
+    -fx-font-weight: 600;
+}
+
+.detail-text {
+    -fx-text-fill: -color-muted;
+    -fx-font-size: 13px;
+    -fx-font-weight: 500;
+    -fx-wrap-text: true;
+}
+
+.pricing-panel {
+    -fx-background-color: rgba(16, 185, 129, 0.05);
+    -fx-border-color: rgba(16, 185, 129, 0.2);
+    -fx-border-width: 1;
+    -fx-border-radius: 12;
+    -fx-background-radius: 12;
+}
+
+.price-label {
+    -fx-text-fill: -color-muted;
+    -fx-font-size: 13px;
+    -fx-font-weight: 600;
+}
+
+.price-label-total {
+    -fx-text-fill: -color-slate;
+    -fx-font-size: 14px;
+    -fx-font-weight: 700;
+}
+
+.price-old {
+    -fx-text-fill: -color-muted;
+    -fx-font-size: 13px;
+    -fx-strikethrough: true;
+}
+
+.price-reduction {
+    -fx-text-fill: -color-danger;
+    -fx-font-size: 13px;
+    -fx-font-weight: 700;
+}
+
+.price-total {
+    -fx-text-fill: -color-emerald;
+    -fx-font-size: 20px;
+    -fx-font-weight: 800;
+}
+
+.price-divider {
+    -fx-border-color: -color-border;
+}
+
+/* ============ FORM ELEMENTS ============ */
+.form-label {
+    -fx-text-fill: -color-slate;
+    -fx-font-size: 13px;
+    -fx-font-weight: 700;
+}
+
+.form-field {
+    -fx-background-color: -color-surface;
+    -fx-border-color: -color-border;
+    -fx-border-width: 1;
+    -fx-border-radius: 8;
+    -fx-background-radius: 8;
+    -fx-padding: 10 12 10 12;
+    -fx-font-size: 13px;
+    -fx-text-fill: -color-slate;
+    -fx-prompt-text-fill: -color-muted;
+    -fx-font-family: "Inter", "Segoe UI", Arial;
+}
+
+.form-field:focused {
+    -fx-border-color: -color-emerald;
+    -fx-border-width: 2;
+    -fx-background-color: -color-white;
+    -fx-effect: dropshadow(gaussian, rgba(16, 185, 129, 0.3), 8, 0.15, 0, 0);
+}
+
+.form-field:error {
+    -fx-border-color: -color-danger;
+}
+
+/* ============ RADIO BUTTONS ============ */
+.radio-payment {
+    -fx-text-fill: -color-slate;
+    -fx-font-size: 13px;
+    -fx-font-weight: 600;
+    -fx-padding: 10 12 10 12;
+}
+
+.radio-payment:selected {
+    -fx-text-fill: -color-emerald;
+}
+
+/* ============ NOTE BOX ============ */
+.note-box {
+    -fx-background-color: rgba(56, 189, 248, 0.08);
+    -fx-border-color: rgba(56, 189, 248, 0.2);
+    -fx-border-width: 1;
+    -fx-border-radius: 8;
+    -fx-background-radius: 8;
+}
+
+.note-text {
+    -fx-text-fill: -color-sky;
+    -fx-font-size: 12px;
+    -fx-font-weight: 500;
+    -fx-wrap-text: true;
+}
+
+/* ============ SUMMARY ============ */
+.summary-card {
+    -fx-background-color: linear-gradient(to right, rgba(16, 185, 129, 0.12), rgba(56, 189, 248, 0.08));
+    -fx-border-color: -color-emerald;
+    -fx-border-width: 2;
+    -fx-border-radius: 16;
+    -fx-background-radius: 16;
+}
+
+.summary-title {
+    -fx-text-fill: -color-slate;
+    -fx-font-size: 16px;
+    -fx-font-weight: 800;
+}
+
+.summary-label {
+    -fx-text-fill: -color-muted;
+    -fx-font-size: 13px;
+    -fx-font-weight: 600;
+}
+
+.summary-value {
+    -fx-text-fill: -color-slate;
+    -fx-font-size: 14px;
+    -fx-font-weight: 700;
+}
+
+.summary-amount {
+    -fx-text-fill: -color-emerald;
+    -fx-font-size: 18px;
+    -fx-font-weight: 800;
+}
+
+.summary-status {
+    -fx-text-fill: -color-sky;
+    -fx-font-size: 13px;
+    -fx-font-weight: 700;
+}
+
+/* ============ SPINNER ============ */
+.spinner {
+    -fx-background-color: -color-surface;
+    -fx-border-color: -color-border;
+    -fx-border-width: 1;
+    -fx-border-radius: 8;
+    -fx-background-radius: 8;
+}
+
+.spinner:focused {
+    -fx-border-color: -color-emerald;
+    -fx-border-width: 2;
+}
+
+/* ============ SEPARATOR ============ */
+.separator {
+    -fx-border-color: -color-border;
+}
+
+/* ============ ACTIVITIES LIST ============ */
+.activity-item {
+    -fx-background-color: -color-surface;
+    -fx-padding: 10 12 10 12;
+    -fx-border-radius: 6;
+    -fx-background-radius: 6;
+}
+
+.activity-name {
+    -fx-text-fill: -color-slate;
+    -fx-font-size: 13px;
+    -fx-font-weight: 600;
+}
+
+.activity-category {
+    -fx-text-fill: -color-muted;
+    -fx-font-size: 11px;
+    -fx-font-weight: 500;
+}
+
+.activity-price {
+    -fx-text-fill: -color-emerald;
+    -fx-font-size: 12px;
+    -fx-font-weight: 700;
+}
+
+/* ============ RESPONSIVE ============ */
+@media (max-width: 768px) {
+    .section-card { -fx-padding: 16 14 16 14; }
+    .btn-lg { -fx-padding: 12 24 12 24; }
+    .header-title { -fx-font-size: 22px; }
+    .pack-header { -fx-padding: 16 20 16 20; }
+    .pack-container { -fx-padding: 16 20 24 20; }
+}
+
+/* ============ ANIMATIONS ============ */
+.pack-card {
+    -fx-transition: all 0.3s ease-out;
+}
+
+.btn-primary {
+    -fx-transition: all 0.25s ease-out;
+}
