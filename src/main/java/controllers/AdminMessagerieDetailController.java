@@ -1,358 +1,243 @@
 package controllers;
 
-import Utiles.MyDB2;
+import Entities.Conversation;
+import Entities.Message;
+import Services.interfaces.ConversationDAO;
+import Services.interfaces.MessageDAO;
+
+import javafx.application.Platform;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.collections.FXCollections;
-import javafx.event.ActionEvent;
+import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
-import javafx.fxml.FXMLLoader;
-import javafx.scene.Parent;
+import javafx.fxml.Initializable;
+import javafx.geometry.Pos;
 import javafx.scene.control.*;
+import javafx.scene.layout.HBox;
+import javafx.stage.Stage;
 
-import java.sql.*;
+import java.net.URL;
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
-import java.util.Optional;
+import java.util.ResourceBundle;
 
-public class AdminMessagerieDetailController {
+public class AdminMessagerieDetailController implements Initializable {
 
-    // ── Header ────────────────────────────────────────────────────
-    @FXML private Label lblTitre, lblType, lblDateCreation;
-    @FXML private Label lblNbMessages, lblNbParticipants;
+    @FXML private Label lblTitre;
+    @FXML private Label lblType;
+    @FXML private Label lblDateCreation;
 
-    // ── Messages table ────────────────────────────────────────────
-    @FXML private TableView<MsgRow>           tblMessages;
-    @FXML private TableColumn<MsgRow, String> colMsgUser;
-    @FXML private TableColumn<MsgRow, String> colMsgType;
-    @FXML private TableColumn<MsgRow, String> colMsgContenu;
-    @FXML private TableColumn<MsgRow, String> colMsgStatut;
-    @FXML private TableColumn<MsgRow, String> colMsgDate;
-    @FXML private TableColumn<MsgRow, Void>   colMsgActions;
+    @FXML private TableView<Message> tblMessages;
+    @FXML private TableColumn<Message, String> colMsgUser;
+    @FXML private TableColumn<Message, String> colMsgType;
+    @FXML private TableColumn<Message, String> colMsgContenu;
+    @FXML private TableColumn<Message, String> colMsgStatut;
+    @FXML private TableColumn<Message, String> colMsgDate;
+    @FXML private TableColumn<Message, Void> colMsgActions;
+    @FXML private Label lblNbMessages;
 
-    // ── Participants list ─────────────────────────────────────────
     @FXML private ListView<String> lstParticipants;
+    @FXML private Label lblNbParticipants;
 
-    // ── Admin composer ────────────────────────────────────────────
     @FXML private TextField txtAdminMsg;
-    @FXML private Label     lblComposerFeedback;
+    @FXML private Label lblComposerFeedback;
 
-    private int     conversationId;
-    private String  conversationTitre;
-    private boolean estGroupe;
+    private MessageDAO messageDAO;
+    private ConversationDAO conversationDAO;
 
-    // ─────────────────────────────────────────────────────────────
-    @FXML
-    public void initialize() {
-        setupColumns();
+    private int conversationId;
+    // Note: Ensure this ID exists in your 'utilisateur' table to avoid SQL errors
+    private int ADMIN_USER_ID = 5011;
+
+    private final ObservableList<Message> messages = FXCollections.observableArrayList();
+    private final ObservableList<String> participants = FXCollections.observableArrayList();
+
+    private static final DateTimeFormatter FMT = DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm");
+    private static final String[] AVATAR_COLORS = {"#22c55e","#3b82f6","#f59e0b","#ef4444","#8b5cf6","#06b6d4","#ec4899"};
+
+    @Override
+    public void initialize(URL url, ResourceBundle rb) {
+        messageDAO = new MessageDAO();
+        conversationDAO = new ConversationDAO();
+        setupMessagesTable();
+        setupParticipantsList();
     }
 
-    public void setConversation(int id, String titre, boolean estGroupe) {
-        this.conversationId    = id;
-        this.conversationTitre = titre;
-        this.estGroupe         = estGroupe;
-        if (lblTitre != null) lblTitre.setText(titre);
-        if (lblType  != null) lblType.setText(estGroupe ? "👥 Groupe" : "💬 Conversation privée");
-        loadConversationDate();
-        refreshAll();
-    }
+    /**
+     * Updated to handle the 'est_groupe' logic from image_1da319.png (0 or 1)
+     */
+    public void setConversation(int id, String titre, int estGroupe, String dateCreation) {
+        this.conversationId = id;
+        lblTitre.setText(titre);
+        lblDateCreation.setText("Créée le " + dateCreation);
 
-    // ── Columns ───────────────────────────────────────────────────
-    private void setupColumns() {
-        colMsgUser   .setCellValueFactory(d -> new SimpleStringProperty(d.getValue().userNom));
-        colMsgType   .setCellValueFactory(d -> new SimpleStringProperty(typeLabel(d.getValue().typeMessage)));
-        colMsgContenu.setCellValueFactory(d -> new SimpleStringProperty(d.getValue().contenuResume));
-        colMsgStatut .setCellValueFactory(d -> new SimpleStringProperty(statutLabel(d.getValue().statutMessage)));
-        colMsgDate   .setCellValueFactory(d -> new SimpleStringProperty(
-                d.getValue().dateEnvoi != null
-                        ? d.getValue().dateEnvoi.toString().replace("T", " ").substring(0, 16) : ""));
+        boolean isGroup = (estGroupe == 1);
+        lblType.setText(isGroup ? "GROUPE" : "PRIVE");
+        String bg = isGroup ? "#3b82f6" : "#22c55e";
 
-        // Colour statut column
-        colMsgStatut.setCellFactory(col -> new TableCell<>() {
-            @Override protected void updateItem(String item, boolean empty) {
-                super.updateItem(item, empty);
-                if (empty || item == null) { setText(null); setStyle(""); return; }
-                setText(item);
-                String raw = getTableView().getItems().get(getIndex()).statutMessage;
-                setStyle(switch (raw == null ? "" : raw) {
-                    case "LU"       -> "-fx-text-fill:#059669;-fx-font-weight:bold;";
-                    case "SUPPRIME" -> "-fx-text-fill:#dc2626;-fx-font-weight:bold;";
-                    default         -> "-fx-text-fill:#2563eb;-fx-font-weight:bold;";
-                });
-            }
-        });
+        lblType.setStyle("-fx-font-size:11;-fx-text-fill:white;" +
+                "-fx-background-color:" + bg + ";-fx-background-radius:10;-fx-padding:2 8;");
 
-        // Colour type column
-        colMsgType.setCellFactory(col -> new TableCell<>() {
-            @Override protected void updateItem(String item, boolean empty) {
-                super.updateItem(item, empty);
-                if (empty || item == null) { setText(null); setStyle(""); return; }
-                setText(item);
-                String raw = getTableView().getItems().get(getIndex()).typeMessage;
-                setStyle(switch (raw == null ? "" : raw) {
-                    case "IMAGE"                    -> "-fx-text-fill:#2563eb;";
-                    case "VIDEO", "APPEL_VIDEO"     -> "-fx-text-fill:#059669;";
-                    case "AUDIO", "VOCALE",
-                         "APPEL_AUDIO"              -> "-fx-text-fill:#0891b2;";
-                    case "PDF"                      -> "-fx-text-fill:#dc2626;";
-                    case "GIF"                      -> "-fx-text-fill:#9333ea;";
-                    default                         -> "-fx-text-fill:#475569;";
-                });
-            }
-        });
-
-        colMsgActions.setCellFactory(col -> new TableCell<>() {
-            private final Button btnSupp = new Button("🗑 Supprimer");
-            {
-                btnSupp.setStyle("-fx-background-color:#ef4444;-fx-text-fill:white;-fx-background-radius:6;-fx-font-size:11;-fx-cursor:hand;-fx-padding:4 8;");
-                btnSupp.setOnAction(e -> supprimerMessage(getTableView().getItems().get(getIndex())));
-            }
-            @Override protected void updateItem(Void item, boolean empty) {
-                super.updateItem(item, empty);
-                setGraphic(empty ? null : btnSupp);
-            }
-        });
-    }
-
-    // ── Load data ─────────────────────────────────────────────────
-    private void refreshAll() {
         loadMessages();
         loadParticipants();
     }
 
-    private void loadConversationDate() {
-        String sql = "SELECT date_creation FROM conversation WHERE id_conversation = ?";
-        try (Connection cnx = MyDB2.getConnection();
-             PreparedStatement ps = cnx.prepareStatement(sql)) {
-            ps.setInt(1, conversationId);
-            try (ResultSet rs = ps.executeQuery()) {
-                if (rs.next() && lblDateCreation != null) {
-                    Timestamp ts = rs.getTimestamp("date_creation");
-                    if (ts != null)
-                        lblDateCreation.setText("Créée le " + ts.toLocalDateTime().toLocalDate());
+    private void setupMessagesTable() {
+        // User Column
+        colMsgUser.setCellValueFactory(cd -> new SimpleStringProperty("User #" + cd.getValue().getIdUser()));
+        colMsgUser.setCellFactory(col -> new TableCell<>() {
+            @Override protected void updateItem(String item, boolean empty) {
+                super.updateItem(item, empty);
+                if (empty || getTableRow() == null || getTableRow().getItem() == null) {
+                    setGraphic(null); return;
                 }
+                String label = item;
+                HBox box = new HBox(7);
+                box.setAlignment(Pos.CENTER_LEFT);
+                box.getChildren().addAll(makeAvatar(label, 24), makeLabel(label));
+                setGraphic(box); setText(null);
             }
-        } catch (Exception e) {
-            System.out.println("Conv date error: " + e.getMessage());
-        }
+        });
+
+        // Type Column
+        colMsgType.setCellValueFactory(cd -> new SimpleStringProperty(cd.getValue().getTypeMessage()));
+        colMsgType.setCellFactory(col -> new TableCell<>() {
+            @Override protected void updateItem(String item, boolean empty) {
+                super.updateItem(item, empty);
+                if (empty || item == null) { setGraphic(null); return; }
+                Label b = new Label(item);
+                String bg = switch (item.toUpperCase()) {
+                    case "VOCAL"  -> "#f59e0b";
+                    case "VIDEO"  -> "#8b5cf6";
+                    case "FICHIER"-> "#06b6d4";
+                    default       -> "#64748b";
+                };
+                b.setStyle("-fx-background-color:" + bg + "22;-fx-text-fill:" + bg + ";" +
+                        "-fx-background-radius:10;-fx-padding:2 8;-fx-font-size:11;-fx-font-weight:bold;");
+                setGraphic(b); setText(null); setAlignment(Pos.CENTER);
+            }
+        });
+
+        // Contenu Column
+        colMsgContenu.setCellValueFactory(cd -> new SimpleStringProperty(cd.getValue().getContenu()));
+        colMsgContenu.setCellFactory(col -> new TableCell<>() {
+            @Override protected void updateItem(String item, boolean empty) {
+                super.updateItem(item, empty);
+                if (empty || item == null) { setText(null); return; }
+                setWrapText(true);
+                setText(item);
+            }
+        });
+
+        // Statut Column
+        colMsgStatut.setCellValueFactory(cd -> new SimpleStringProperty(cd.getValue().getStatutMessage()));
+        colMsgStatut.setCellFactory(col -> new TableCell<>() {
+            @Override protected void updateItem(String item, boolean empty) {
+                super.updateItem(item, empty);
+                if (empty || item == null) { setGraphic(null); return; }
+                String color = "LU".equals(item) ? "#22c55e" : "#3b82f6";
+                Label b = new Label(item);
+                b.setStyle("-fx-background-color:" + color + "22;-fx-text-fill:" + color + ";-fx-background-radius:10;-fx-padding:2 8;");
+                setGraphic(b); setText(null); setAlignment(Pos.CENTER);
+            }
+        });
+
+        // Date Column
+        colMsgDate.setCellValueFactory(cd -> {
+            LocalDateTime dt = cd.getValue().getDateEnvoi();
+            return new SimpleStringProperty(dt != null ? dt.format(FMT) : "");
+        });
+
+        // Action Column
+        colMsgActions.setCellFactory(col -> new TableCell<>() {
+            final Button btnDel = new Button("🗑");
+            {
+                btnDel.setStyle("-fx-background-color:#ef4444;-fx-text-fill:white;-fx-cursor:hand;");
+                btnDel.setOnAction(e -> {
+                    Message m = getTableRow().getItem();
+                    if (m != null && messageDAO.deleteMessage(m.getIdMessage())) loadMessages();
+                });
+            }
+            @Override protected void updateItem(Void v, boolean empty) {
+                super.updateItem(v, empty);
+                setGraphic(empty ? null : btnDel);
+            }
+        });
+
+        tblMessages.setItems(messages);
+    }
+
+    private void setupParticipantsList() {
+        lstParticipants.setItems(participants);
+        lstParticipants.setCellFactory(lv -> new ListCell<>() {
+            @Override protected void updateItem(String name, boolean empty) {
+                super.updateItem(name, empty);
+                if (empty || name == null) { setGraphic(null); setText(null); return; }
+                HBox box = new HBox(9);
+                box.setAlignment(Pos.CENTER_LEFT);
+                box.getChildren().addAll(makeAvatar(name, 26), makeLabel(name));
+                setGraphic(box);
+            }
+        });
     }
 
     private void loadMessages() {
-        List<MsgRow> list = new ArrayList<>();
-        String sql = """
-                SELECT m.id_message, m.type_message, m.contenu, m.statut_message,
-                       m.date_envoi, m.date_lecture, u.nom, u.prenom
-                FROM message m
-                JOIN user_app u ON m.id_user = u.id_user
-                WHERE m.id_conversation = ?
-                ORDER BY m.date_envoi ASC
-                """;
-        try (Connection cnx = MyDB2.getConnection();
-             PreparedStatement ps = cnx.prepareStatement(sql)) {
-            ps.setInt(1, conversationId);
-            try (ResultSet rs = ps.executeQuery()) {
-                while (rs.next()) {
-                    MsgRow r = new MsgRow();
-                    r.id            = rs.getInt("id_message");
-                    r.typeMessage   = rs.getString("type_message");
-                    r.contenu       = rs.getString("contenu");
-                    r.statutMessage = rs.getString("statut_message");
-                    Timestamp ts = rs.getTimestamp("date_envoi");
-                    if (ts != null) r.dateEnvoi = ts.toLocalDateTime();
-                    String nom    = rs.getString("nom");
-                    String prenom = rs.getString("prenom");
-                    r.userNom = ((nom != null ? nom : "") + " " + (prenom != null ? prenom : "")).trim();
-                    String c = r.contenu != null ? r.contenu : "";
-                    r.contenuResume = c.length() > 70 ? c.substring(0, 67) + "…" : c;
-                    list.add(r);
-                }
-            }
-        } catch (Exception e) {
-            System.out.println("Messages load error: " + e.getMessage());
+        messages.clear();
+        List<Message> list = messageDAO.getMessagesByConversation(conversationId);
+        if (list != null) {
+            list.sort(Comparator.comparing(Message::getDateEnvoi));
+            messages.setAll(list);
         }
-        tblMessages.setItems(FXCollections.observableArrayList(list));
-        if (lblNbMessages != null) lblNbMessages.setText(list.size() + " message(s)");
+        lblNbMessages.setText(messages.size() + " message(s)");
+        if (!messages.isEmpty()) Platform.runLater(() -> tblMessages.scrollTo(messages.size() - 1));
     }
 
     private void loadParticipants() {
-        if (lstParticipants == null) return;
-        lstParticipants.getItems().clear();
-        // FIX: table conversation_membres → conversation_user
-        String sql = """
-                SELECT u.nom, u.prenom
-                FROM conversation_user cu
-                JOIN user_app u ON cu.id_user = u.id_user
-                WHERE cu.id_conversation = ?
-                ORDER BY u.nom
-                """;
-        try (Connection cnx = MyDB2.getConnection();
-             PreparedStatement ps = cnx.prepareStatement(sql)) {
-            ps.setInt(1, conversationId);
-            try (ResultSet rs = ps.executeQuery()) {
-                int count = 0;
-                while (rs.next()) {
-                    lstParticipants.getItems().add(
-                            "👤  " + rs.getString("nom") + " " + rs.getString("prenom"));
-                    count++;
-                }
-                if (lblNbParticipants != null)
-                    lblNbParticipants.setText(count + " participant(s)");
-            }
-        } catch (Exception e) {
-            System.out.println("Participants load error: " + e.getMessage());
-            if (lblNbParticipants != null) lblNbParticipants.setText("0 participant(s)");
-        }
-    }
-
-    // ── Actions ───────────────────────────────────────────────────
-    private void supprimerMessage(MsgRow row) {
-        if (!confirm("Supprimer message", "Supprimer ce message de " + row.userNom + " ?")) return;
-        try (Connection cnx = MyDB2.getConnection();
-             PreparedStatement ps = cnx.prepareStatement(
-                     "DELETE FROM message WHERE id_message = ?")) {
-            ps.setInt(1, row.id);
-            ps.executeUpdate();
-            loadMessages();
-        } catch (Exception e) {
-            alert(Alert.AlertType.ERROR, "Erreur", e.getMessage());
-        }
-    }
-
-    @FXML
-    private void onEnvoyerMessage(ActionEvent e) {
-        if (txtAdminMsg == null) return;
-        String contenu = txtAdminMsg.getText().trim();
-        if (contenu.isEmpty()) {
-            setFeedback("⚠ Le message ne peut pas être vide.", "#d97706");
-            return;
-        }
-
-        Entities.UserApp admin = Entities.Session.getConnectedUser();
-        if (admin == null) {
-            setFeedback("⚠ Aucun utilisateur connecté.", "#dc2626");
-            return;
-        }
-
-        // FIX: provide date_envoi explicitly (was missing → "Field 'date_creation' doesn't have a default value"
-        //      was a red-herring from another DAO; here we always supply NOW())
-        String sql = "INSERT INTO message "
-                   + "(type_message, contenu, statut_message, date_envoi, id_conversation, id_user) "
-                   + "VALUES ('TEXTE', ?, 'ENVOYE', NOW(), ?, ?)";
-        try (Connection cnx = MyDB2.getConnection();
-             PreparedStatement ps = cnx.prepareStatement(sql)) {
-            ps.setString(1, contenu);
-            ps.setInt(2, conversationId);
-            ps.setInt(3, admin.getIdUser());
-            ps.executeUpdate();
-            txtAdminMsg.clear();
-            setFeedback("✓ Message envoyé.", "#059669");
-            loadMessages();
-        } catch (Exception ex) {
-            setFeedback("✗ Erreur : " + ex.getMessage(), "#dc2626");
-        }
-    }
-
-    private void setFeedback(String msg, String color) {
-        if (lblComposerFeedback != null) {
-            lblComposerFeedback.setText(msg);
-            lblComposerFeedback.setStyle(
-                    "-fx-font-size:12;-fx-padding:0 16 10 16;-fx-text-fill:" + color + ";");
-        }
-    }
-
-    @FXML
-    private void onBanConversation(ActionEvent e) {
-        if (!confirm("Bannir conversation",
-                "Supprimer tous les messages de « " + conversationTitre + " » ?")) return;
-        try (Connection cnx = MyDB2.getConnection();
-             PreparedStatement ps = cnx.prepareStatement(
-                     "DELETE FROM message WHERE id_conversation = ?")) {
-            ps.setInt(1, conversationId);
-            int n = ps.executeUpdate();
-            alert(Alert.AlertType.INFORMATION, "Succès", n + " message(s) supprimé(s).");
-            loadMessages();
-        } catch (Exception ex) {
-            alert(Alert.AlertType.ERROR, "Erreur", ex.getMessage());
-        }
-    }
-
-    @FXML
-    private void onDeleteConversation(ActionEvent e) {
-        if (!confirm("Supprimer conversation",
-                "Supprimer définitivement cette conversation et tous ses messages ?")) return;
-        try (Connection cnx = MyDB2.getConnection()) {
-            // FIX: table conversation_membres → conversation_user
-            cnx.createStatement().execute(
-                    "DELETE FROM message WHERE id_conversation = " + conversationId);
-            cnx.createStatement().execute(
-                    "DELETE FROM conversation_user WHERE id_conversation = " + conversationId);
-            cnx.createStatement().execute(
-                    "DELETE FROM conversation WHERE id_conversation = " + conversationId);
-            onRetour(e);
-        } catch (Exception ex) {
-            alert(Alert.AlertType.ERROR, "Erreur", ex.getMessage());
-        }
-    }
-
-    @FXML
-    private void onRetour(ActionEvent e) {
+        participants.clear();
         try {
-            Parent root = FXMLLoader.load(getClass().getResource("/fxml/AdminMessagerie.fxml"));
-            AdminMessagerieController.changeCenterTo(root, tblMessages);
-        } catch (Exception ex) {
-            ex.printStackTrace();
+            List<String> list = conversationDAO.getMembresByConversation(conversationId);
+            if (list != null) participants.setAll(list);
+        } catch (Exception e) { e.printStackTrace(); }
+        lblNbParticipants.setText(participants.size() + " participant(s)");
+    }
+
+    @FXML private void onRetour() {
+        ((Stage) lblTitre.getScene().getWindow()).close();
+    }
+
+    @FXML private void onEnvoyerMessage() {
+        String text = txtAdminMsg.getText().trim();
+        if (text.isEmpty()) return;
+
+        Message msg = new Message("TEXTE", text, "ENVOYE", LocalDateTime.now(), conversationId, ADMIN_USER_ID);
+        if (messageDAO.addMessage(msg)) {
+            txtAdminMsg.clear();
+            loadMessages();
+            setFeedback("✔ Envoyé", "#22c55e");
         }
     }
 
-    // ── Display helpers ───────────────────────────────────────────
-    private String typeLabel(String type) {
-        if (type == null) return "TEXTE";
-        return switch (type) {
-            case "TEXTE", "TEXT" -> "💬 Texte";
-            case "IMAGE"         -> "🖼 Image";
-            case "VIDEO"         -> "🎬 Vidéo";
-            case "AUDIO"         -> "🎵 Audio";
-            case "VOCALE"        -> "🎙 Vocal";
-            case "PDF"           -> "📄 PDF";
-            case "GIF"           -> "🎭 GIF";
-            case "EMOJI"         -> "😊 Emoji";
-            case "APPEL_AUDIO"   -> "📞 Appel audio";
-            case "APPEL_VIDEO"   -> "📹 Appel vidéo";
-            default              -> type;
-        };
+    private void setFeedback(String text, String color) {
+        lblComposerFeedback.setText(text);
+        lblComposerFeedback.setStyle("-fx-text-fill:" + color + ";");
     }
 
-    private String statutLabel(String statut) {
-        if (statut == null) return "ENVOYE";
-        return switch (statut) {
-            case "LU"       -> "✓✓ Lu";
-            case "SUPPRIME" -> "✗ Supprimé";
-            default         -> "✓ Envoyé";
-        };
+    private Label makeAvatar(String name, int size) {
+        String letter = (name == null || name.isBlank()) ? "?" : name.substring(0, 1).toUpperCase();
+        int idx = Math.abs(name.hashCode()) % AVATAR_COLORS.length;
+        Label av = new Label(letter);
+        av.setStyle("-fx-background-color:" + AVATAR_COLORS[idx] + ";-fx-text-fill:white;-fx-background-radius:50;" +
+                "-fx-min-width:" + size + ";-fx-min-height:" + size + ";-fx-alignment:center;-fx-font-weight:bold;");
+        return av;
     }
 
-    private boolean confirm(String title, String msg) {
-        Alert a = new Alert(Alert.AlertType.CONFIRMATION, msg, ButtonType.OK, ButtonType.CANCEL);
-        a.setTitle(title);
-        Optional<ButtonType> r = a.showAndWait();
-        return r.isPresent() && r.get() == ButtonType.OK;
+    private Label makeLabel(String text) {
+        return new Label(text);
     }
 
-    private void alert(Alert.AlertType type, String title, String msg) {
-        Alert a = new Alert(type);
-        a.setTitle(title);
-        a.setContentText(msg);
-        a.showAndWait();
-    }
-
-    // ── Inner data model ──────────────────────────────────────────
-    public static class MsgRow {
-        public int           id;
-        public String        typeMessage;
-        public String        contenu;
-        public String        contenuResume;
-        public String        statutMessage;
-        public LocalDateTime dateEnvoi;
-        public String        userNom;
+    public void setConversation(int id, String titre, String type, String dateCreation) {
     }
 }
