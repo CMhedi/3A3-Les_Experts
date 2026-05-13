@@ -106,6 +106,12 @@
 
                 <Label text="Liste des Activités" styleClass="title"/>
 
+                <HBox spacing="12" alignment="CENTER_LEFT" styleClass="searchBox">
+                    <TextField fx:id="txtSearch" promptText="Rechercher une activité..."
+                               HBox.hgrow="ALWAYS" styleClass="searchInput"/>
+                    <Label fx:id="lblCount" text="0 activité(s)" styleClass="muted"/>
+                </HBox>
+
                 <TableView fx:id="tableActivites"
                            VBox.vgrow="ALWAYS">
 
@@ -138,6 +144,12 @@
                     <Button text="Statistique"
                             styleClass="btn-secondary"
                             onAction="#openstat"/>
+                </HBox>
+
+                <HBox alignment="CENTER_RIGHT" spacing="10" styleClass="cardsContainer">
+                    <Button fx:id="btnPrevPage" text="← Précédent" styleClass="secondaryBtn" onAction="#previousPage"/>
+                    <Label fx:id="lblPageInfo" text="Page 0 / 0" styleClass="muted"/>
+                    <Button fx:id="btnNextPage" text="Suivant →" styleClass="secondaryBtn" onAction="#nextPage"/>
                 </HBox>
 
             </VBox>

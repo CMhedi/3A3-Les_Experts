@@ -1,6 +1,8 @@
 package controllers;
 
 import Utiles.MyDB2;
+import javafx.animation.KeyFrame;
+import javafx.animation.Timeline;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.collections.FXCollections;
 import javafx.event.ActionEvent;
@@ -8,6 +10,7 @@ import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.control.*;
+import javafx.util.Duration;
 
 import java.sql.*;
 import java.time.LocalDateTime;
@@ -40,6 +43,7 @@ public class AdminMessagerieDetailController {
     private int     conversationId;
     private String  conversationTitre;
     private boolean estGroupe;
+    private Timeline autoRefreshTimeline;
 
     // ─────────────────────────────────────────────────────────────
     @FXML
@@ -55,6 +59,7 @@ public class AdminMessagerieDetailController {
         if (lblType  != null) lblType.setText(estGroupe ? "👥 Groupe" : "💬 Conversation privée");
         loadConversationDate();
         refreshAll();
+        startAutoRefresh();
     }
 
     // ── Columns ───────────────────────────────────────────────────
@@ -118,6 +123,19 @@ public class AdminMessagerieDetailController {
     private void refreshAll() {
         loadMessages();
         loadParticipants();
+    }
+
+    private void startAutoRefresh() {
+        stopAutoRefresh();
+        autoRefreshTimeline = new Timeline(new KeyFrame(Duration.seconds(3), event -> refreshAll()));
+        autoRefreshTimeline.setCycleCount(Timeline.INDEFINITE);
+        autoRefreshTimeline.play();
+    }
+
+    private void stopAutoRefresh() {
+        if (autoRefreshTimeline != null) {
+            autoRefreshTimeline.stop();
+        }
     }
 
     private void loadConversationDate() {
@@ -297,6 +315,7 @@ public class AdminMessagerieDetailController {
     @FXML
     private void onRetour(ActionEvent e) {
         try {
+            stopAutoRefresh();
             Parent root = FXMLLoader.load(getClass().getResource("/fxml/AdminMessagerie.fxml"));
             AdminMessagerieController.changeCenterTo(root, tblMessages);
         } catch (Exception ex) {

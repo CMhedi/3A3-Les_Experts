@@ -1,6 +1,8 @@
 package controllers;
 
 import Utiles.MyDB2;
+import javafx.animation.KeyFrame;
+import javafx.animation.Timeline;
 import javafx.beans.property.SimpleIntegerProperty;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.collections.FXCollections;
@@ -18,6 +20,7 @@ import javafx.scene.chart.XYChart;
 import javafx.scene.control.*;
 import javafx.scene.layout.*;
 import javafx.stage.Stage;
+import javafx.util.Duration;
 
 import java.sql.*;
 import java.time.LocalDateTime;
@@ -55,6 +58,7 @@ public class AdminMessagerieController {
     @FXML private ComboBox<String> cmbType;
 
     private final List<ConvRow> allRows = new ArrayList<>();
+    private Timeline autoRefreshTimeline;
 
     // ─────────────────────────────────────────────────────────────
     @FXML
@@ -69,6 +73,7 @@ public class AdminMessagerieController {
 
         setupColumns();
         refreshAll();
+        startAutoRefresh();
     }
 
     // ── Column setup ──────────────────────────────────────────────
@@ -105,12 +110,35 @@ public class AdminMessagerieController {
     // ── Refresh ───────────────────────────────────────────────────
     @FXML private void onRefresh(ActionEvent e) { refreshAll(); }
 
+    private void startAutoRefresh() {
+        stopAutoRefresh();
+        autoRefreshTimeline = new Timeline(new KeyFrame(Duration.seconds(4), event -> refreshAll()));
+        autoRefreshTimeline.setCycleCount(Timeline.INDEFINITE);
+        autoRefreshTimeline.play();
+    }
+
+    private void stopAutoRefresh() {
+        if (autoRefreshTimeline != null) {
+            autoRefreshTimeline.stop();
+        }
+    }
+
     private void refreshAll() {
-        loadKpi();
-        loadConversations();
-        loadTopCreateurs();
-        loadTopCommunicateurs();
-        loadCharts();
+        if (Platform.isFxApplicationThread()) {
+            loadKpi();
+            loadConversations();
+            loadTopCreateurs();
+            loadTopCommunicateurs();
+            loadCharts();
+        } else {
+            Platform.runLater(() -> {
+                loadKpi();
+                loadConversations();
+                loadTopCreateurs();
+                loadTopCommunicateurs();
+                loadCharts();
+            });
+        }
     }
 
     // ── KPI ───────────────────────────────────────────────────────

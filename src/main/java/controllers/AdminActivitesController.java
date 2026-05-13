@@ -1,7 +1,8 @@
 package controllers;
 
 import Models.Activite;
-import Utiles.MyDB;
+import Utiles.MyDB2;
+import javafx.collections.transformation.FilteredList;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
@@ -19,12 +20,19 @@ import java.io.IOException;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Date;
 
 public class AdminActivitesController {
 
     @FXML private TableView<Activite> tableActivites;
     @FXML private DatePicker dateReservation;
+    @FXML private TextField txtSearch;
+    @FXML private Label lblCount;
+    @FXML private Label lblPageInfo;
+    @FXML private Button btnPrevPage;
+    @FXML private Button btnNextPage;
     @FXML private TableColumn<Activite, Integer> colId;
     @FXML private TableColumn<Activite, String> colNom;
     @FXML private TableColumn<Activite, String> colType;
@@ -36,12 +44,14 @@ public class AdminActivitesController {
     @FXML private TableColumn<Activite, Date> colDate;
 
 
-
+    private static final int PAGE_SIZE = 8;
     private final ObservableList<Activite> activites = FXCollections.observableArrayList();
+    private final List<Activite> filteredActivites = new ArrayList<>();
+    private int currentPageIndex = 0;
 
     @FXML
     public void initialize() {
-      //  colId.setCellValueFactory(new PropertyValueFactory<>("idActivite"));
+        colId.setCellValueFactory(new PropertyValueFactory<>("idActivite"));
         colNom.setCellValueFactory(new PropertyValueFactory<>("nom"));
         colType.setCellValueFactory(new PropertyValueFactory<>("typeActivite"));
         colCategorie.setCellValueFactory(new PropertyValueFactory<>("categorieAct"));
@@ -51,17 +61,19 @@ public class AdminActivitesController {
         colImage.setCellValueFactory(new PropertyValueFactory<>("imageUrl"));
         colDate.setCellValueFactory(new PropertyValueFactory<>("date"));
 
+        if (txtSearch != null) {
+            txtSearch.textProperty().addListener((obs, oldValue, newValue) -> applyFilterAndPagination());
+        }
+
         loadActivites();
     }
 
 
     //   telech de activ  d apres mon bd
     private void loadActivites() {
-        try {
-            Connection cnx = MyDB.getInstance().getConnection();
-            String sql = "SELECT * FROM activite";
-            PreparedStatement ps = cnx.prepareStatement(sql);
-            ResultSet rs = ps.executeQuery();
+        try (Connection cnx = MyDB2.getConnection();
+             PreparedStatement ps = cnx.prepareStatement("SELECT * FROM activite");
+             ResultSet rs = ps.executeQuery()) {
 
             activites.clear();
 
@@ -76,17 +88,98 @@ public class AdminActivitesController {
                         rs.getString("statut"),
                         rs.getString("image_url"),
                         rs.getDate("date_reservation")
-
-
                 ));
             }
 
-            tableActivites.setItems(activites);
-            tableActivites.refresh();
+            applyFilterAndPagination();
 
         } catch (Exception e) {
             e.printStackTrace();
             showAlert("Erreur lors du chargement des activités !");
+        }
+    }
+
+    private void applyFilterAndPagination() {
+        String search = txtSearch == null ? "" : txtSearch.getText().trim().toLowerCase();
+
+        filteredActivites.clear();
+        for (Activite activite : activites) {
+            if (matchesSearch(activite, search)) {
+                filteredActivites.add(activite);
+            }
+        }
+
+        if (filteredActivites.isEmpty()) {
+            currentPageIndex = 0;
+        } else {
+            int maxPageIndex = Math.max(0, (filteredActivites.size() - 1) / PAGE_SIZE);
+            currentPageIndex = Math.min(currentPageIndex, maxPageIndex);
+        }
+
+        refreshPage();
+    }
+
+    private boolean matchesSearch(Activite activite, String search) {
+        if (search == null || search.isEmpty()) {
+            return true;
+        }
+
+        return contains(activite.getNom(), search)
+                || contains(activite.getTypeActivite(), search)
+                || contains(activite.getCategorieAct(), search)
+                || contains(activite.getNiveauAct(), search)
+                || contains(activite.getStatut(), search)
+                || contains(activite.getImageUrl(), search)
+                || String.valueOf(activite.getIdActivite()).contains(search);
+    }
+
+    private boolean contains(String value, String search) {
+        return value != null && value.toLowerCase().contains(search);
+    }
+
+    private void refreshPage() {
+        int fromIndex = currentPageIndex * PAGE_SIZE;
+        int toIndex = Math.min(fromIndex + PAGE_SIZE, filteredActivites.size());
+
+        if (fromIndex > toIndex) {
+            fromIndex = 0;
+            toIndex = Math.min(PAGE_SIZE, filteredActivites.size());
+            currentPageIndex = 0;
+        }
+
+        List<Activite> pageItems = filteredActivites.subList(fromIndex, toIndex);
+        tableActivites.setItems(FXCollections.observableArrayList(pageItems));
+        tableActivites.refresh();
+
+        if (lblCount != null) {
+            lblCount.setText(filteredActivites.size() + " activité(s)");
+        }
+        if (lblPageInfo != null) {
+            int pageCount = Math.max(1, (filteredActivites.size() + PAGE_SIZE - 1) / PAGE_SIZE);
+            lblPageInfo.setText("Page " + (filteredActivites.isEmpty() ? 0 : currentPageIndex + 1) + " / " + pageCount);
+        }
+        if (btnPrevPage != null) {
+            btnPrevPage.setDisable(currentPageIndex <= 0);
+        }
+        if (btnNextPage != null) {
+            btnNextPage.setDisable((currentPageIndex + 1) * PAGE_SIZE >= filteredActivites.size());
+        }
+    }
+
+    @FXML
+    private void previousPage() {
+        if (currentPageIndex > 0) {
+            currentPageIndex--;
+            refreshPage();
+        }
+    }
+
+    @FXML
+    private void nextPage() {
+        int pageCount = Math.max(1, (filteredActivites.size() + PAGE_SIZE - 1) / PAGE_SIZE);
+        if (currentPageIndex < pageCount - 1) {
+            currentPageIndex++;
+            refreshPage();
         }
     }
 
@@ -106,7 +199,7 @@ public class AdminActivitesController {
 
             // controller du popup(modifier)
             EditActiviteController controller = loader.getController();
-            controller.setActivite(selected);  // remplir les champs
+            controller.setActivite(selected);
 
             Stage popup = new Stage();
             popup.setTitle("Modifier Activité");
@@ -163,10 +256,8 @@ public class AdminActivitesController {
 
 
     private void deleteActivite(int id) {
-        try {
-            Connection cnx = MyDB.getInstance().getConnection();
-            String sql = "DELETE FROM activite WHERE id_activite = ?";
-            PreparedStatement ps = cnx.prepareStatement(sql);
+        try (Connection cnx = MyDB2.getConnection();
+             PreparedStatement ps = cnx.prepareStatement("DELETE FROM activite WHERE id_activite = ?")) {
             ps.setInt(1, id);
             ps.executeUpdate();
 

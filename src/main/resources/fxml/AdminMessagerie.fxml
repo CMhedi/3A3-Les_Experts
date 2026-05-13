@@ -8,75 +8,56 @@
 <?import javafx.scene.layout.*?>
 
 <ScrollPane fitToWidth="true"
-            style="-fx-background-color:#f1f5f9;-fx-background:#f1f5f9;"
+            styleClass="root"
+            stylesheets="@/css/app.css"
             xmlns="http://javafx.com/javafx/17"
             xmlns:fx="http://javafx.com/fxml/1"
             fx:controller="controllers.AdminMessagerieController">
 
-<VBox spacing="18" style="-fx-background-color:#f1f5f9;-fx-padding:24;">
+<VBox spacing="18" styleClass="page">
 
     <!-- ══ HEADER ═════════════════════════════════════════════ -->
-    <HBox alignment="CENTER_LEFT" spacing="12">
-        <Label text="💬 Admin Messagerie"
-               style="-fx-font-size:22;-fx-font-weight:bold;-fx-text-fill:#0f172a;"/>
+       <HBox alignment="CENTER_LEFT" spacing="12" styleClass="topbar card">
+              <Label text="💬 Admin Messagerie" styleClass="title"/>
         <Region HBox.hgrow="ALWAYS"/>
-        <Button text="🔄 Actualiser" onAction="#onRefresh"
-                style="-fx-background-color:#0f766e;-fx-text-fill:white;-fx-background-radius:8;-fx-cursor:hand;-fx-font-weight:bold;-fx-padding:8 16;"/>
+              <Button text="🔄 Actualiser" onAction="#onRefresh" styleClass="btn-primary"/>
     </HBox>
 
     <!-- ══ KPI CARDS ══════════════════════════════════════════ -->
-    <HBox spacing="14">
-        <VBox alignment="CENTER_LEFT" spacing="4" HBox.hgrow="ALWAYS"
-              style="-fx-background-color:linear-gradient(to right,#3b82f6,#1d4ed8);-fx-background-radius:12;-fx-padding:18 20;">
-            <Label text="💬  Conversations"
-                   style="-fx-text-fill:rgba(255,255,255,.85);-fx-font-size:11;-fx-font-weight:bold;"/>
-            <Label fx:id="kpiConversations" text="—"
-                   style="-fx-text-fill:white;-fx-font-size:28;-fx-font-weight:bold;"/>
+       <HBox spacing="14">
+              <VBox alignment="CENTER_LEFT" spacing="4" HBox.hgrow="ALWAYS" styleClass="card stat-card">
+                     <Label text="💬  Conversations" styleClass="muted"/>
+                     <Label fx:id="kpiConversations" text="—" styleClass="title"/>
         </VBox>
-        <VBox alignment="CENTER_LEFT" spacing="4" HBox.hgrow="ALWAYS"
-              style="-fx-background-color:linear-gradient(to right,#06b6d4,#0891b2);-fx-background-radius:12;-fx-padding:18 20;">
-            <Label text="👥  Groupes"
-                   style="-fx-text-fill:rgba(255,255,255,.85);-fx-font-size:11;-fx-font-weight:bold;"/>
-            <Label fx:id="kpiGroupes" text="—"
-                   style="-fx-text-fill:white;-fx-font-size:28;-fx-font-weight:bold;"/>
+              <VBox alignment="CENTER_LEFT" spacing="4" HBox.hgrow="ALWAYS" styleClass="card stat-card">
+                     <Label text="👥  Groupes" styleClass="muted"/>
+                     <Label fx:id="kpiGroupes" text="—" styleClass="title"/>
         </VBox>
-        <VBox alignment="CENTER_LEFT" spacing="4" HBox.hgrow="ALWAYS"
-              style="-fx-background-color:linear-gradient(to right,#10b981,#059669);-fx-background-radius:12;-fx-padding:18 20;">
-            <Label text="✉  Messages (7 j)"
-                   style="-fx-text-fill:rgba(255,255,255,.85);-fx-font-size:11;-fx-font-weight:bold;"/>
-            <Label fx:id="kpiMessages7j" text="—"
-                   style="-fx-text-fill:white;-fx-font-size:28;-fx-font-weight:bold;"/>
+              <VBox alignment="CENTER_LEFT" spacing="4" HBox.hgrow="ALWAYS" styleClass="card stat-card">
+                     <Label text="✉  Messages (7 j)" styleClass="muted"/>
+                     <Label fx:id="kpiMessages7j" text="—" styleClass="title"/>
         </VBox>
-        <VBox alignment="CENTER_LEFT" spacing="4" HBox.hgrow="ALWAYS"
-              style="-fx-background-color:linear-gradient(to right,#8b5cf6,#6d28d9);-fx-background-radius:12;-fx-padding:18 20;">
-            <Label text="👤  Utilisateurs actifs"
-                   style="-fx-text-fill:rgba(255,255,255,.85);-fx-font-size:11;-fx-font-weight:bold;"/>
-            <Label fx:id="kpiActifs" text="—"
-                   style="-fx-text-fill:white;-fx-font-size:28;-fx-font-weight:bold;"/>
+              <VBox alignment="CENTER_LEFT" spacing="4" HBox.hgrow="ALWAYS" styleClass="card stat-card">
+                     <Label text="👤  Utilisateurs actifs" styleClass="muted"/>
+                     <Label fx:id="kpiActifs" text="—" styleClass="title"/>
         </VBox>
     </HBox>
 
     <!-- ══ FILTER ROW ═════════════════════════════════════════ -->
-    <HBox spacing="10" alignment="CENTER_LEFT"
-          style="-fx-background-color:white;-fx-background-radius:10;-fx-padding:12 16;-fx-border-color:#e2e8f0;-fx-border-radius:10;">
-        <Label text="🔍" style="-fx-font-size:14;"/>
-        <TextField fx:id="txtSearch" promptText="Rechercher par titre ou initiateur…"
-                   prefWidth="300"
-                   style="-fx-background-radius:8;-fx-border-color:#e2e8f0;-fx-border-radius:8;-fx-padding:7 12;"/>
-        <ComboBox fx:id="cmbType" prefWidth="130"
-                  style="-fx-background-radius:8;"/>
+       <HBox spacing="10" alignment="CENTER_LEFT" styleClass="card searchBox">
+              <Label text="🔍" styleClass="muted"/>
+              <TextField fx:id="txtSearch" promptText="Rechercher par titre ou initiateur…"
+                               prefWidth="300" styleClass="searchInput"/>
+              <ComboBox fx:id="cmbType" prefWidth="130"/>
     </HBox>
 
     <!-- ══ CONVERSATIONS TABLE ════════════════════════════════ -->
-    <VBox spacing="0"
-          style="-fx-background-color:white;-fx-background-radius:12;-fx-border-color:#e2e8f0;-fx-border-radius:12;">
+       <VBox spacing="0" styleClass="card surface-card">
         <HBox alignment="CENTER_LEFT" spacing="8"
               style="-fx-padding:14 18;-fx-border-color:#f1f5f9;-fx-border-width:0 0 1 0;">
-            <Label text="Toutes les Conversations"
-                   style="-fx-font-size:14;-fx-font-weight:bold;-fx-text-fill:#0f172a;"/>
+                     <Label text="Toutes les Conversations" styleClass="title"/>
         </HBox>
-        <TableView fx:id="tblConversations" prefHeight="300"
-                   style="-fx-background-color:transparent;-fx-border-color:transparent;">
+              <TableView fx:id="tblConversations" prefHeight="300" styleClass="table-view">
             <columns>
                 <TableColumn fx:id="colId"             text="ID"          prefWidth="55"  style="-fx-alignment:CENTER;"/>
                 <TableColumn fx:id="colTitre"          text="Titre"       prefWidth="200"/>
@@ -97,12 +78,10 @@
     <!-- ══ TOP USERS (with ban buttons) ══════════════════════ -->
     <HBox spacing="14">
         <!-- Top dans conversations -->
-        <VBox spacing="0" HBox.hgrow="ALWAYS"
-              style="-fx-background-color:white;-fx-background-radius:12;-fx-border-color:#e2e8f0;-fx-border-radius:12;">
+       <VBox spacing="0" HBox.hgrow="ALWAYS" styleClass="card surface-card">
             <HBox alignment="CENTER_LEFT" spacing="8"
                   style="-fx-padding:12 16;-fx-border-color:#f1f5f9;-fx-border-width:0 0 1 0;">
-                <Label text="🏆  Top Membres actifs"
-                       style="-fx-font-size:13;-fx-font-weight:bold;-fx-text-fill:#0f172a;"/>
+              <Label text="🏆  Top Membres actifs" styleClass="title"/>
             </HBox>
             <ScrollPane fitToWidth="true" prefHeight="200"
                         style="-fx-background-color:transparent;-fx-background:transparent;">
@@ -110,12 +89,10 @@
             </ScrollPane>
         </VBox>
         <!-- Top communicateurs -->
-        <VBox spacing="0" HBox.hgrow="ALWAYS"
-              style="-fx-background-color:white;-fx-background-radius:12;-fx-border-color:#e2e8f0;-fx-border-radius:12;">
+       <VBox spacing="0" HBox.hgrow="ALWAYS" styleClass="card surface-card">
             <HBox alignment="CENTER_LEFT" spacing="8"
                   style="-fx-padding:12 16;-fx-border-color:#f1f5f9;-fx-border-width:0 0 1 0;">
-                <Label text="💬  Top Communicateurs (7 j)"
-                       style="-fx-font-size:13;-fx-font-weight:bold;-fx-text-fill:#0f172a;"/>
+              <Label text="💬  Top Communicateurs (7 j)" styleClass="title"/>
             </HBox>
             <ScrollPane fitToWidth="true" prefHeight="200"
                         style="-fx-background-color:transparent;-fx-background:transparent;">
@@ -127,23 +104,19 @@
     <!-- ══ CHARTS ══════════════════════════════════════════════ -->
     <HBox spacing="14">
         <!-- Pie: types de conversations -->
-        <VBox spacing="0" HBox.hgrow="ALWAYS"
-              style="-fx-background-color:white;-fx-background-radius:12;-fx-border-color:#e2e8f0;-fx-border-radius:12;">
+         <VBox spacing="0" HBox.hgrow="ALWAYS" styleClass="card surface-card">
             <HBox alignment="CENTER_LEFT" spacing="8"
                   style="-fx-padding:12 16;-fx-border-color:#f1f5f9;-fx-border-width:0 0 1 0;">
-                <Label text="🥧  Types de conversations"
-                       style="-fx-font-size:13;-fx-font-weight:bold;-fx-text-fill:#0f172a;"/>
+                  <Label text="🥧  Types de conversations" styleClass="title"/>
             </HBox>
             <PieChart fx:id="chartConvTypes" prefHeight="220" legendVisible="true"
                       style="-fx-padding:8;"/>
         </VBox>
         <!-- Bar: messages par jour -->
-        <VBox spacing="0" HBox.hgrow="ALWAYS"
-              style="-fx-background-color:white;-fx-background-radius:12;-fx-border-color:#e2e8f0;-fx-border-radius:12;">
+         <VBox spacing="0" HBox.hgrow="ALWAYS" styleClass="card surface-card">
             <HBox alignment="CENTER_LEFT" spacing="8"
                   style="-fx-padding:12 16;-fx-border-color:#f1f5f9;-fx-border-width:0 0 1 0;">
-                <Label text="📊  Messages / jour (7 j)"
-                       style="-fx-font-size:13;-fx-font-weight:bold;-fx-text-fill:#0f172a;"/>
+                  <Label text="📊  Messages / jour (7 j)" styleClass="title"/>
             </HBox>
             <BarChart fx:id="chartMsgJour" prefHeight="220" legendVisible="false"
                       style="-fx-padding:8;">
@@ -152,12 +125,10 @@
             </BarChart>
         </VBox>
         <!-- Pie: types de messages -->
-        <VBox spacing="0" HBox.hgrow="ALWAYS"
-              style="-fx-background-color:white;-fx-background-radius:12;-fx-border-color:#e2e8f0;-fx-border-radius:12;">
+         <VBox spacing="0" HBox.hgrow="ALWAYS" styleClass="card surface-card">
             <HBox alignment="CENTER_LEFT" spacing="8"
                   style="-fx-padding:12 16;-fx-border-color:#f1f5f9;-fx-border-width:0 0 1 0;">
-                <Label text="💌  Types de messages (7 j)"
-                       style="-fx-font-size:13;-fx-font-weight:bold;-fx-text-fill:#0f172a;"/>
+                  <Label text="💌  Types de messages (7 j)" styleClass="title"/>
             </HBox>
             <PieChart fx:id="chartMsgTypes" prefHeight="220" legendVisible="true"
                       style="-fx-padding:8;"/>
