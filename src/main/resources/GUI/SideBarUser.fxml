@@ -12,6 +12,8 @@
         <Button onAction="#goToMessengerie" maxWidth="Infinity" text=" Messengerie" styleClass="nav-btn-user" style="-fx-background-color: transparent; -fx-text-fill: white; -fx-alignment: CENTER_LEFT; -fx-cursor: hand;"/>
         <Button onAction="#goToNews" maxWidth="Infinity" text=" News" styleClass="nav-btn-user" style="-fx-background-color: transparent; -fx-text-fill: white; -fx-alignment: CENTER_LEFT; -fx-cursor: hand;"/>
         <Button onAction="#goTorsrv" maxWidth="Infinity" text=" Mes réservations" styleClass="nav-btn-user" style="-fx-background-color: transparent; -fx-text-fill: white; -fx-alignment: CENTER_LEFT; -fx-cursor: hand;"/>
+        <Button onAction="#goToActivities" maxWidth="Infinity" text=" Réservations d’activités" styleClass="nav-btn-user" style="-fx-background-color: transparent; -fx-text-fill: white; -fx-alignment: CENTER_LEFT; -fx-cursor: hand;"/>
+
         <Button onAction="#goToEvenements"
                 maxWidth="Infinity"
                 text=" Évènements"

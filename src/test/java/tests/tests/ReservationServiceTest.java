@@ -6,10 +6,9 @@ import Utiles.MyDB;
 import org.junit.jupiter.api.Test;
 
 import java.sql.Connection;
-import java.sql.Date;
 import java.sql.ResultSet;
 import java.sql.Statement;
-import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -37,11 +36,12 @@ public class ReservationServiceTest {
         //  create
         Reservation r = new Reservation(
                 0,
-                Date.valueOf(LocalDate.now().plusDays(2)),
+                LocalDateTime.now().plusDays(2),
                 "EN_ATTENTE",
                 3,
                 userId,
-                activiteId
+                activiteId,
+                null
         );
 
         int newId = service.addAndReturnId(r);
@@ -60,11 +60,12 @@ public class ReservationServiceTest {
         // update
         Reservation updated = new Reservation(
                 newId,
-                Date.valueOf(LocalDate.now().plusDays(5)),
+                LocalDateTime.now().plusDays(5),
                 "CONFIRMEE",
                 5,
                 userId,
-                activiteId
+                activiteId,
+                null
         );
 
         service.update(updated);

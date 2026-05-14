@@ -1,5 +1,6 @@
 package controllers;
 
+import GUI.utils.ActiviteQuickAdd;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
@@ -14,6 +15,7 @@ import javafx.scene.chart.PieChart;
 import javafx.scene.chart.XYChart;
 import javafx.scene.control.Label;
 import javafx.stage.Stage;
+import javafx.stage.Window;
 
 import java.sql.*;
 import java.text.DecimalFormat;
@@ -40,6 +42,13 @@ public class StatsActiviteController {
     @FXML
     public void initialize() {
         refresh(null);
+    }
+
+    @FXML
+    private void openActiviteQuickAdd() {
+        Window w = pieCategories != null && pieCategories.getScene() != null
+                ? pieCategories.getScene().getWindow() : null;
+        ActiviteQuickAdd.openDialog(w, () -> refresh(null));
     }
 
     @FXML

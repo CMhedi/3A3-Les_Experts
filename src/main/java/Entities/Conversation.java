@@ -8,32 +8,37 @@ public class Conversation {
     private String titre;
     private int estGroupe;
     private LocalDateTime dateCreation;
+    /** FK vers `conversation.id_createur` (obligatoire à l'insertion). */
+    private int idCreateur;
 
-    // Constructor 1: Empty constructor
     public Conversation() {}
 
-    // Constructor 2: With all parameters (3 params) ← This is what you need!
-    public Conversation(int idConversation, String titre, int estGroupe) {
+    /** Ligne complète depuis la base (`date_creation`, `id_createur`). */
+    public Conversation(int idConversation, String titre, int estGroupe, int idCreateur, LocalDateTime dateCreation) {
         this.idConversation = idConversation;
         this.titre = titre;
         this.estGroupe = estGroupe;
-    }
-
-    // Constructor 3: With all parameters including dateCreation (4 params)
-    public Conversation(int idConversation, String titre, int estGroupe, LocalDateTime dateCreation) {
-        this.idConversation = idConversation;
-        this.titre = titre;
-        this.estGroupe = estGroupe;
+        this.idCreateur = idCreateur;
         this.dateCreation = dateCreation;
     }
 
-    // Constructor 4: For creating new conversation (2 params)
-    public Conversation(String titre, int estGroupe) {
-        this.titre = titre;
-        this.estGroupe = estGroupe;
+    /** Compat : sans métadonnées créateur / date. */
+    public Conversation(int idConversation, String titre, int estGroupe) {
+        this(idConversation, titre, estGroupe, 0, null);
     }
 
-    // Getters and Setters
+    /** Nouvelle conversation : `id_createur` requis pour l'INSERT SQL. */
+    public Conversation(String titre, int estGroupe, int idCreateur) {
+        this.titre = titre;
+        this.estGroupe = estGroupe;
+        this.idCreateur = idCreateur;
+    }
+
+    /** @deprecated Préférer {@link #Conversation(String, int, int)} pour les insertions. */
+    public Conversation(String titre, int estGroupe) {
+        this(titre, estGroupe, 0);
+    }
+
     public int getIdConversation() {
         return idConversation;
     }
@@ -66,6 +71,14 @@ public class Conversation {
         this.dateCreation = dateCreation;
     }
 
+    public int getIdCreateur() {
+        return idCreateur;
+    }
+
+    public void setIdCreateur(int idCreateur) {
+        this.idCreateur = idCreateur;
+    }
+
     @Override
     public String toString() {
         return "Conversation{" +
@@ -73,6 +86,7 @@ public class Conversation {
                 ", titre='" + titre + '\'' +
                 ", estGroupe=" + estGroupe +
                 ", dateCreation=" + dateCreation +
+                ", idCreateur=" + idCreateur +
                 '}';
     }
 }

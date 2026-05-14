@@ -5,6 +5,8 @@ import Entities.Activite;
 import Entities.Inscription;
 import Entities.Session;
 import Entities.UserApp;
+import enums.StatutPack;
+import enums.TypePack;
 import Services.PackService;
 import Services.PackServiceUser;
 import Services.InscriptionService;
@@ -36,6 +38,15 @@ public class PackInscriptionViewController implements Initializable {
     // ══════════════════════ FXML ══════════════════════
     @FXML private Button   btnBack;
     @FXML private GridPane packsGrid;
+
+    @FXML private Label lblKpiResults;
+    @FXML private Label lblKpiTypes;
+    @FXML private Label lblKpiFilters;
+    @FXML private TextField txtSearchPack;
+    @FXML private ComboBox<String> comboPackType;
+    @FXML private ComboBox<String> comboPackStatut;
+    @FXML private ComboBox<String> comboPackSort;
+    @FXML private Label lblPackFilterIntersection;
 
     @FXML private VBox  detailsSection;
     @FXML private Label lblPackName;
@@ -82,6 +93,15 @@ public class PackInscriptionViewController implements Initializable {
     private List<Pack> allPacks     = new ArrayList<>();
     private UserApp    currentUser  = null;
 
+    private static final String FILTER_ALL = "Tous";
+
+    private static final String SORT_NAME_ASC  = "Nom (A → Z)";
+    private static final String SORT_NAME_DESC = "Nom (Z → A)";
+    private static final String SORT_PRICE_ASC = "Prix (croissant)";
+    private static final String SORT_PRICE_DESC = "Prix (décroissant)";
+    private static final String SORT_ACT_ASC  = "Activités (moins → plus)";
+    private static final String SORT_ACT_DESC = "Activités (plus → moins)";
+
     // ══════════════════════ INIT ══════════════════════
 
     @Override
@@ -91,6 +111,7 @@ public class PackInscriptionViewController implements Initializable {
         setupPaymentToggle();
         setupSpinner();
         setupValidation();
+        setupFilterCombos();
         loadPacks();
         setCurrentUser(Session.getConnectedUser());
     }
@@ -140,25 +161,217 @@ public class PackInscriptionViewController implements Initializable {
         }).start();
     }
 
+    private void setupFilterCombos() {
+        comboPackType.getItems().setAll(
+                FILTER_ALL,
+                labelType(TypePack.INDIVIDUEL),
+                labelType(TypePack.GROUPE),
+                labelType(TypePack.ENTREPRISE),
+                labelType(TypePack.LOISIR)
+        );
+        comboPackStatut.getItems().setAll(
+                FILTER_ALL,
+                labelStatut(StatutPack.ACTIF),
+                labelStatut(StatutPack.INACTIF)
+        );
+        comboPackSort.getItems().setAll(
+                SORT_NAME_ASC, SORT_NAME_DESC, SORT_PRICE_ASC, SORT_PRICE_DESC,
+                SORT_ACT_ASC, SORT_ACT_DESC
+        );
+        comboPackType.getSelectionModel().select(0);
+        comboPackStatut.getSelectionModel().select(0);
+        comboPackSort.getSelectionModel().select(0);
+    }
+
+    @FXML
+    private void onApplyPackFilters() {
+        displayPacks();
+    }
+
+    @FXML
+    private void onResetPackFilters() {
+        txtSearchPack.setText("");
+        comboPackType.getSelectionModel().select(0);
+        comboPackStatut.getSelectionModel().select(0);
+        comboPackSort.getSelectionModel().select(0);
+        displayPacks();
+    }
+
+    private String labelType(TypePack t) {
+        if (t == null) return "";
+        switch (t) {
+            case INDIVIDUEL: return "Individuel";
+            case GROUPE: return "Groupe";
+            case ENTREPRISE: return "Entreprise";
+            case LOISIR: return "Loisir";
+            default: return t.name();
+        }
+    }
+
+    private String labelStatut(StatutPack s) {
+        if (s == null) return "";
+        switch (s) {
+            case ACTIF: return "Actif";
+            case INACTIF: return "Inactif";
+            default: return s.name();
+        }
+    }
+
+    private TypePack parseTypeFilter(String sel) {
+        if (sel == null || FILTER_ALL.equals(sel)) return null;
+        for (TypePack t : TypePack.values()) {
+            if (labelType(t).equals(sel)) return t;
+        }
+        return null;
+    }
+
+    private StatutPack parseStatutFilter(String sel) {
+        if (sel == null || FILTER_ALL.equals(sel)) return null;
+        for (StatutPack s : StatutPack.values()) {
+            if (labelStatut(s).equals(sel)) return s;
+        }
+        return null;
+    }
+
+    private Comparator<Pack> comparatorForSort() {
+        String sel = comboPackSort.getSelectionModel().getSelectedItem();
+        if (sel == null) sel = SORT_NAME_ASC;
+        Comparator<Pack> byName = Comparator.comparing(
+                p -> p.getNom() != null ? p.getNom() : "", String.CASE_INSENSITIVE_ORDER);
+        Comparator<Pack> byPrice = Comparator.comparing(
+                p -> p.getPrixBase() != null ? p.getPrixBase() : BigDecimal.ZERO);
+        Comparator<Pack> byAct = Comparator.comparingInt(Pack::getNbActivitesMax);
+        switch (sel) {
+            case SORT_NAME_DESC:
+                return byName.reversed();
+            case SORT_PRICE_ASC:
+                return byPrice;
+            case SORT_PRICE_DESC:
+                return byPrice.reversed();
+            case SORT_ACT_ASC:
+                return byAct;
+            case SORT_ACT_DESC:
+                return byAct.reversed();
+            case SORT_NAME_ASC:
+            default:
+                return byName;
+        }
+    }
+
+    private List<Pack> buildFilteredList() {
+        String q = txtSearchPack.getText() == null ? "" : txtSearchPack.getText().trim().toLowerCase(Locale.ROOT);
+        TypePack typeFilter = parseTypeFilter(comboPackType.getSelectionModel().getSelectedItem());
+        StatutPack statutFilter = parseStatutFilter(comboPackStatut.getSelectionModel().getSelectedItem());
+        List<Pack> out = new ArrayList<>();
+        for (Pack p : allPacks) {
+            if (typeFilter != null && p.getTypePack() != typeFilter) continue;
+            if (statutFilter != null && p.getStatutPack() != statutFilter) continue;
+            if (!q.isEmpty()) {
+                String nom = p.getNom() != null ? p.getNom() : "";
+                String blob = (nom + " " + labelType(p.getTypePack()) + " " + labelStatut(p.getStatutPack()))
+                        .toLowerCase(Locale.ROOT);
+                if (!blob.contains(q)) continue;
+            }
+            out.add(p);
+        }
+        return out;
+    }
+
+    private boolean isDefaultSort() {
+        String s = comboPackSort.getSelectionModel().getSelectedItem();
+        return s == null || SORT_NAME_ASC.equals(s);
+    }
+
+    private int countActiveFilters() {
+        int n = 0;
+        if (txtSearchPack != null && !txtSearchPack.getText().trim().isEmpty()) n++;
+        String t = comboPackType.getSelectionModel().getSelectedItem();
+        if (t != null && !FILTER_ALL.equals(t)) n++;
+        String st = comboPackStatut.getSelectionModel().getSelectedItem();
+        if (st != null && !FILTER_ALL.equals(st)) n++;
+        if (!isDefaultSort()) n++;
+        return n;
+    }
+
+    private void updateFilterMeta(List<Pack> visible) {
+        lblKpiResults.setText(String.valueOf(visible.size()));
+        long typeCount = visible.stream().map(Pack::getTypePack).filter(Objects::nonNull).distinct().count();
+        lblKpiTypes.setText(String.valueOf(typeCount));
+        lblKpiFilters.setText(String.valueOf(countActiveFilters()));
+
+        StringBuilder sb = new StringBuilder("Intersection actuelle · ");
+        List<String> parts = new ArrayList<>();
+        String q = txtSearchPack.getText() == null ? "" : txtSearchPack.getText().trim();
+        if (!q.isEmpty()) parts.add("recherche « " + q + " »");
+        String ts = comboPackType.getSelectionModel().getSelectedItem();
+        if (ts != null && !FILTER_ALL.equals(ts)) parts.add("type " + ts);
+        String ss = comboPackStatut.getSelectionModel().getSelectedItem();
+        if (ss != null && !FILTER_ALL.equals(ss)) parts.add("statut " + ss.toLowerCase(Locale.ROOT));
+        String sort = comboPackSort.getSelectionModel().getSelectedItem();
+        if (sort != null && !isDefaultSort()) parts.add("tri : " + sort);
+        if (parts.isEmpty()) {
+            sb.append("aucun filtre appliqué (tri par défaut).");
+        } else {
+            sb.append(String.join(" · ", parts)).append(".");
+        }
+        lblPackFilterIntersection.setText(sb.toString());
+    }
+
     private void displayPacks() {
         packsGrid.getChildren().clear();
-        int col = 0, row = 0;
 
-        // FIX : SUPPRESSION DU FILTRE SUR statutPack
-        // Cause du bug : la BDD contient 'Actif' mais l'enum mappait vers null silencieusement
-        // → le filtre éliminait tous les packs
-        // Solution : afficher TOUS les packs retournés par la BDD
         if (allPacks.isEmpty()) {
+            lblKpiResults.setText("0");
+            lblKpiTypes.setText("0");
+            lblKpiFilters.setText(String.valueOf(countActiveFilters()));
+            lblPackFilterIntersection.setText("Intersection actuelle · aucun pack en base.");
             Label none = new Label("Aucun pack disponible pour le moment.");
             none.setStyle("-fx-font-size: 13px; -fx-text-fill: #94A3B8;");
             packsGrid.add(none, 0, 0);
             return;
         }
 
-        for (Pack pack : allPacks) {
-            packsGrid.add(createPackCard(pack), col, row);
+        List<Pack> visible = buildFilteredList();
+        visible.sort(comparatorForSort());
+        updateFilterMeta(visible);
+
+        if (visible.isEmpty()) {
+            Label none = new Label("Aucun pack ne correspond à ces filtres.");
+            none.setStyle("-fx-font-size: 13px; -fx-text-fill: #94A3B8;");
+            packsGrid.add(none, 0, 0);
+            if (selectedPack != null) {
+                hideForm();
+                selectedPack = null;
+            }
+            return;
+        }
+
+        if (selectedPack != null && visible.stream().noneMatch(p -> p.getIdPack() == selectedPack.getIdPack())) {
+            hideForm();
+            selectedPack = null;
+        }
+
+        int col = 0, row = 0;
+        for (Pack pack : visible) {
+            VBox card = createPackCard(pack);
+            packsGrid.add(card, col, row);
+            if (selectedPack != null && selectedPack.getIdPack() == pack.getIdPack()) {
+                setCardSelected(card, true);
+            }
             col++;
             if (col > 2) { col = 0; row++; }
+        }
+    }
+
+    private void setCardSelected(VBox card, boolean selected) {
+        card.getStyleClass().remove("pi-pack-card-selected");
+        if (selected) {
+            if (!card.getStyleClass().contains("pi-pack-card")) {
+                card.getStyleClass().add("pi-pack-card");
+            }
+            card.getStyleClass().add("pi-pack-card-selected");
+        } else if (!card.getStyleClass().contains("pi-pack-card")) {
+            card.getStyleClass().add("pi-pack-card");
         }
     }
 
@@ -166,77 +379,49 @@ public class PackInscriptionViewController implements Initializable {
 
     private VBox createPackCard(Pack pack) {
         VBox card = new VBox(12);
+        card.setUserData(pack);
         card.setPrefWidth(Double.MAX_VALUE);
-        card.setStyle(
-                "-fx-background-color: white; -fx-background-radius: 14;" +
-                        "-fx-border-color: #E2E8F0; -fx-border-width: 1.5; -fx-border-radius: 14;" +
-                        "-fx-padding: 18; -fx-effect: dropshadow(gaussian,rgba(0,0,0,0.06),10,0,0,3);"
-        );
+        card.getStyleClass().setAll("pi-pack-card");
 
-        // Badge type
-        String typeStr = (pack.getTypePack() != null) ? pack.getTypePack().name() : "Pack";
-        Label badge = new Label(typeStr.toUpperCase());
-        badge.setStyle(
-                "-fx-background-color: #ECFDF5; -fx-text-fill: #059669;" +
-                        "-fx-font-size: 10px; -fx-font-weight: 700;" +
-                        "-fx-padding: 3 10 3 10; -fx-background-radius: 20;"
-        );
+        String badgeText = labelType(pack.getTypePack());
+        if (badgeText.isEmpty()) badgeText = "Pack";
+        Label badge = new Label(badgeText.toUpperCase(Locale.ROOT));
+        badge.getStyleClass().add("pi-pack-badge");
 
-        // Nom
         Label nom = new Label(pack.getNom());
-        nom.setStyle("-fx-font-size: 16px; -fx-font-weight: 800; -fx-text-fill: #0F172A;");
+        nom.getStyleClass().add("pi-pack-name");
         nom.setWrapText(true);
 
-        Separator sep = new Separator();
+        Region sep = new Region();
+        sep.setPrefHeight(1);
+        sep.setMaxWidth(Double.MAX_VALUE);
+        sep.getStyleClass().add("pi-pack-sep");
 
-        // Prix + réduction
+        BigDecimal base = pack.getPrixBase() != null ? pack.getPrixBase() : BigDecimal.ZERO;
+        BigDecimal red = pack.getReduction() != null ? pack.getReduction() : BigDecimal.ZERO;
+
         HBox prixBox = new HBox(8);
         prixBox.setAlignment(Pos.CENTER_LEFT);
-        Label prixLabel = new Label("TND " + String.format("%.2f", pack.getPrixBase()));
-        prixLabel.setStyle("-fx-font-size: 22px; -fx-font-weight: 900; -fx-text-fill: #10B981;");
-        Label redLabel = new Label("− " + String.format("%.2f", pack.getReduction()) + " TND");
-        redLabel.setStyle(
-                "-fx-background-color: #FEF9C3; -fx-text-fill: #92400E;" +
-                        "-fx-font-size: 11px; -fx-font-weight: 700;" +
-                        "-fx-padding: 3 8; -fx-background-radius: 6;"
-        );
+        Label prixLabel = new Label("TND " + String.format(Locale.ROOT, "%.2f", base));
+        prixLabel.getStyleClass().add("pi-pack-price");
+        Label redLabel = new Label("− " + String.format(Locale.ROOT, "%.2f", red) + " TND");
+        redLabel.getStyleClass().add("pi-pack-discount");
         prixBox.getChildren().addAll(prixLabel, redLabel);
 
-        // Activités max
         Label actLabel = new Label("↗  " + pack.getNbActivitesMax() + " activités max");
-        actLabel.setStyle("-fx-font-size: 12px; -fx-text-fill: #64748B;");
+        actLabel.getStyleClass().add("pi-pack-meta");
 
-        // Prix net
-        BigDecimal net = pack.getPrixBase().subtract(pack.getReduction());
+        BigDecimal net = base.subtract(red);
         if (net.compareTo(BigDecimal.ZERO) < 0) net = BigDecimal.ZERO;
-        Label netLabel = new Label("Prix net : TND " + String.format("%.2f", net) + " / pers.");
-        netLabel.setStyle("-fx-font-size: 11px; -fx-text-fill: #94A3B8;");
+        Label netLabel = new Label("Prix net : TND " + String.format(Locale.ROOT, "%.2f", net) + " / pers.");
+        netLabel.getStyleClass().add("pi-pack-net");
 
         Region spacer = new Region();
         VBox.setVgrow(spacer, Priority.ALWAYS);
 
-        // Bouton S'inscrire
-        Button btnInscrire = new Button("🎒  S'inscrire");
+        Button btnInscrire = new Button("S'inscrire au pack");
+        btnInscrire.getStyleClass().add("pi-pack-cta");
         btnInscrire.setMaxWidth(Double.MAX_VALUE);
-        btnInscrire.setStyle(
-                "-fx-background-color: #143D30; -fx-text-fill: white;" +
-                        "-fx-font-size: 13px; -fx-font-weight: 700;" +
-                        "-fx-background-radius: 9; -fx-padding: 10 0; -fx-cursor: hand;"
-        );
-        btnInscrire.setOnMouseEntered(e -> btnInscrire.setStyle(
-                "-fx-background-color: #10B981; -fx-text-fill: white;" +
-                        "-fx-font-size: 13px; -fx-font-weight: 700;" +
-                        "-fx-background-radius: 9; -fx-padding: 10 0; -fx-cursor: hand;"
-        ));
-        btnInscrire.setOnMouseExited(e -> {
-            String bg = (selectedPack != null && selectedPack.getIdPack() == pack.getIdPack())
-                    ? "#10B981" : "#143D30";
-            btnInscrire.setStyle(
-                    "-fx-background-color: " + bg + "; -fx-text-fill: white;" +
-                            "-fx-font-size: 13px; -fx-font-weight: 700;" +
-                            "-fx-background-radius: 9; -fx-padding: 10 0; -fx-cursor: hand;"
-            );
-        });
         btnInscrire.setOnAction(e -> selectPack(pack, card));
 
         card.getChildren().addAll(badge, nom, sep, prixBox, actLabel, netLabel, spacer, btnInscrire);
@@ -247,25 +432,12 @@ public class PackInscriptionViewController implements Initializable {
 
     private void selectPack(Pack pack, VBox card) {
         selectedPack = pack;
-
-        // Reset toutes les cartes
         packsGrid.getChildren().forEach(node -> {
             if (node instanceof VBox) {
-                node.setStyle(
-                        "-fx-background-color: white; -fx-background-radius: 14;" +
-                                "-fx-border-color: #E2E8F0; -fx-border-width: 1.5; -fx-border-radius: 14;" +
-                                "-fx-padding: 18; -fx-effect: dropshadow(gaussian,rgba(0,0,0,0.06),10,0,0,3);"
-                );
+                setCardSelected((VBox) node, false);
             }
         });
-
-        // Surbrillance
-        card.setStyle(
-                "-fx-background-color: #F0FDF4; -fx-background-radius: 14;" +
-                        "-fx-border-color: #10B981; -fx-border-width: 2.5; -fx-border-radius: 14;" +
-                        "-fx-padding: 18; -fx-effect: dropshadow(gaussian,rgba(16,185,129,0.25),14,0,0,4);"
-        );
-
+        setCardSelected(card, true);
         updateFormDetails(pack);
         showFormAnimated();
         loadActivities(pack);
@@ -276,7 +448,7 @@ public class PackInscriptionViewController implements Initializable {
     private void updateFormDetails(Pack pack) {
         lblPackName.setText(pack.getNom());
         lblPackDescription.setText(
-                "Pack " + (pack.getTypePack() != null ? pack.getTypePack().name() : "") +
+                "Pack " + labelType(pack.getTypePack()) +
                         " — " + pack.getNbActivitesMax() + " activités max"
         );
         lblPriceBase.setText("TND " + String.format("%.2f", pack.getPrixBase()));
@@ -517,11 +689,7 @@ public class PackInscriptionViewController implements Initializable {
     private void resetCardStyles() {
         packsGrid.getChildren().forEach(node -> {
             if (node instanceof VBox) {
-                node.setStyle(
-                        "-fx-background-color: white; -fx-background-radius: 14;" +
-                                "-fx-border-color: #E2E8F0; -fx-border-width: 1.5; -fx-border-radius: 14;" +
-                                "-fx-padding: 18; -fx-effect: dropshadow(gaussian,rgba(0,0,0,0.06),10,0,0,3);"
-                );
+                setCardSelected((VBox) node, false);
             }
         });
     }

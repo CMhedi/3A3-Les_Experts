@@ -29,17 +29,15 @@
                     <ColumnConstraints percentWidth="50"/>
                 </columnConstraints>
 
-
-             <!--   <VBox spacing="6" GridPane.rowIndex="0" GridPane.columnIndex="0">
-                    <Label text="Date Réservation" styleClass="field-label"/>
-                    <DatePicker fx:id="dpDate" styleClass="field"/>
-                </VBox>-->
+                <VBox spacing="6" GridPane.rowIndex="0" GridPane.columnIndex="0">
+                    <Label text="Date de réservation" styleClass="field-label"/>
+                    <DatePicker fx:id="dpDateReservation" styleClass="field"/>
+                </VBox>
 
                 <VBox spacing="6" GridPane.rowIndex="0" GridPane.columnIndex="1">
                     <Label text="Statut" styleClass="field-label"/>
                     <ComboBox fx:id="cbStatut" promptText="Choisir..." styleClass="field"/>
                 </VBox>
-
 
                 <VBox spacing="6" GridPane.rowIndex="1" GridPane.columnIndex="0">
                     <Label text="Participants" styleClass="field-label"/>
@@ -47,14 +45,12 @@
                 </VBox>
 
                 <VBox spacing="6" GridPane.rowIndex="1" GridPane.columnIndex="1">
-                    <Label text="Numéro De Resérvation" styleClass="field-label"/>
+                    <Label text="Numéro de réservation" styleClass="field-label"/>
                     <TextField fx:id="tfIdReservation" editable="false" styleClass="field read-only"/>
                 </VBox>
 
-
-
-                <VBox spacing="6" GridPane.rowIndex="2" GridPane.columnIndex="1">
-                    <Label text="Numero De Recu Activité" styleClass="field-label"/>
+                <VBox spacing="6" GridPane.rowIndex="2" GridPane.columnIndex="0" GridPane.columnSpan="2">
+                    <Label text="Référence activité" styleClass="field-label"/>
                     <TextField fx:id="tfIdActivite" editable="false" styleClass="field read-only"/>
                 </VBox>
 

@@ -1,6 +1,7 @@
-// ===== AjouterActiviteController.java (COMPLET CORRIGÉ) =====
 package controllers;
 
+import Models.Activite;
+import Services.interfaces.ActiviteService;
 import Services.interfaces.WeatherService;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
@@ -15,7 +16,6 @@ import javafx.scene.control.TextField;
 import javafx.stage.Stage;
 
 import java.io.IOException;
-import java.sql.*;
 import java.util.function.Consumer;
 
 public class AjouterActiviteController {
@@ -29,9 +29,7 @@ public class AjouterActiviteController {
     @FXML private TextField imageField;
     @FXML private DatePicker dateReservation;
 
-    private final String URL = "jdbc:mysql://localhost:3306/ecoadventure?useSSL=false&serverTimezone=UTC";
-    private final String USER = "root";
-    private final String PASSWORD = "";
+    private final ActiviteService activiteService = new ActiviteService();
 
     private int wrongAttempts = 0;
     private static final int MAX_ATTEMPTS = 3;
@@ -40,7 +38,7 @@ public class AjouterActiviteController {
 
     @FXML
     public void initialize() {
-        categorieBox.getItems().addAll("FITNESS", "RUNNING", "FOOTBALL", "BASKETBALL");
+        categorieBox.getItems().addAll("FITNESS", "RUNNING", "FOOTBALL", "BASKETBALL", "TENNIS", "NATATION", "RANDONNEE", "CYCLISME", "YOGA", "AUTRE");
         niveauBox.getItems().addAll("DEBUTANT", "INTERMEDIAIRE", "AVANCE");
         statutBox.getItems().addAll("DISPONIBLE", "INDISPONIBLE");
         typeBox.getItems().addAll("SPORT", "CAMPING", "INTELECTUEL", "CULTUREL");
@@ -53,6 +51,10 @@ public class AjouterActiviteController {
         if (now < lockUntilMillis) {
             long remain = (lockUntilMillis - now) / 1000;
             new Alert(Alert.AlertType.ERROR, "Trop d'erreurs. Réessayer dans " + remain + "s.").show();
+            return;
+        }
+
+        if (!validateForm()) {
             return;
         }
 
@@ -84,69 +86,82 @@ public class AjouterActiviteController {
         });
     }
 
-    // ✅ CORRIGÉ: on passe generatedId au reçu + setActiviteId(generatedId) + setData avec 7 params corrects
-    private void doAjouterActivite() {
-
-        Connection conn = null;
-        PreparedStatement pst = null;
-        ResultSet rs = null;
-
+    private boolean validateForm() {
+        String nom = nomField.getText() != null ? nomField.getText().trim() : "";
+        if (nom.isEmpty()) {
+            new Alert(Alert.AlertType.WARNING, "Le nom de l'activité est obligatoire.").show();
+            return false;
+        }
+        if (typeBox.getValue() == null || categorieBox.getValue() == null
+                || niveauBox.getValue() == null || statutBox.getValue() == null) {
+            new Alert(Alert.AlertType.WARNING, "Veuillez renseigner type, catégorie, niveau et statut.").show();
+            return false;
+        }
         try {
-            conn = DriverManager.getConnection(URL, USER, PASSWORD);
-
-            String sql = "INSERT INTO activite (nom, type_activite, categorie_act, niveau_act, prix, statut, image_url, id_pack, date_reservation) " +
-                    "VALUES (?, ?, ?, ?, ?, ?, ?, NULL, ?)";
-
-            pst = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);
-
-            pst.setString(1, nomField.getText());
-            pst.setString(2, typeBox.getValue());
-            pst.setString(3, categorieBox.getValue());
-            pst.setString(4, niveauBox.getValue());
-            pst.setDouble(5, Double.parseDouble(prixField.getText()));
-            pst.setString(6, statutBox.getValue());
-            pst.setString(7, imageField.getText());
-            pst.setString(8, dateReservation.getValue().toString());
-
-            pst.executeUpdate();
-
-            rs = pst.getGeneratedKeys();
-            int generatedId = 0;
-            if (rs.next()) {
-                generatedId = rs.getInt(1); // ✅ ID activité insérée
+            double p = Double.parseDouble(prixField.getText().trim());
+            if (p < 0) {
+                throw new NumberFormatException();
             }
+        } catch (Exception e) {
+            new Alert(Alert.AlertType.WARNING, "Prix invalide (nombre positif attendu).").show();
+            return false;
+        }
+        return true;
+    }
+
+    private void doAjouterActivite() {
+        try {
+            double prix = Double.parseDouble(prixField.getText().trim());
+            String img = imageField.getText() != null ? imageField.getText().trim() : "";
+
+            Activite a = new Activite(
+                    0,
+                    nomField.getText().trim(),
+                    typeBox.getValue(),
+                    categorieBox.getValue(),
+                    niveauBox.getValue(),
+                    prix,
+                    statutBox.getValue(),
+                    img,
+                    0,
+                    null,
+                    null
+            );
+
+            int generatedId = activiteService.addAndReturnId(a);
 
             FXMLLoader loader = new FXMLLoader(getClass().getResource("/GUI/recuActivite.fxml"));
             Parent root = loader.load();
 
             RecuActiviteController controller = loader.getController();
 
-            // ✅ IMPORTANT: injecter l'id activité
             controller.setActiviteId(generatedId);
 
-            // ✅ IMPORTANT: signature setData correcte (7 paramètres)
+            java.time.LocalDate ld = dateReservation.getValue() != null
+                    ? dateReservation.getValue()
+                    : java.time.LocalDate.now();
+
             controller.setData(
                     typeBox.getValue(),
-                    nomField.getText(),
+                    nomField.getText().trim(),
                     categorieBox.getValue(),
                     niveauBox.getValue(),
-                    prixField.getText(),
-                    dateReservation.getValue(),  // LocalDate
-                    statutBox.getValue()         // String date
+                    prixField.getText().trim(),
+                    ld,
+                    statutBox.getValue()
             );
 
-            Stage stage = new Stage();
-            stage.setScene(new Scene(root));
-            stage.setTitle("Reçu Activité");
-            stage.show();
+            Stage receiptStage = new Stage();
+            receiptStage.setScene(new Scene(root));
+            receiptStage.setTitle("Reçu Activité");
+            receiptStage.show();
+
+            Stage addStage = (Stage) nomField.getScene().getWindow();
+            addStage.close();
 
         } catch (Exception e) {
             e.printStackTrace();
             new Alert(Alert.AlertType.ERROR, "Erreur d'ajout : " + e.getMessage()).show();
-        } finally {
-            try { if (rs != null) rs.close(); } catch (Exception ignored) {}
-            try { if (pst != null) pst.close(); } catch (Exception ignored) {}
-            try { if (conn != null) conn.close(); } catch (Exception ignored) {}
         }
     }
 

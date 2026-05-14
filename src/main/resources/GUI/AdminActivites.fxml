@@ -10,49 +10,6 @@
             styleClass="root"
             stylesheets="@/css/app.css">
 
-    <!-- ================= SIDEBAR ================= -->
-    <left>
-        <StackPane maxWidth="270" minWidth="270" prefWidth="270" styleClass="sidebar">
-
-            <Region styleClass="sidebar-overlay"/>
-
-            <VBox spacing="14" styleClass="sidebar-content">
-
-                <!-- Brand -->
-                <VBox spacing="2">
-                    <Label text="EcoAdventure" styleClass="brand"/>
-                    <Label text="Admin Panel" styleClass="brand-sub" />
-                </VBox>
-
-                <Region styleClass="sep"/>
-
-                <!-- Navigation -->
-                <VBox spacing="6">
-
-
-                    <Button text="MainLayout"
-                            styleClass="nav-item"
-                            onAction="#goToUserSeances"/>
-                    <Button text="Activités"
-                            styleClass="nav-item active-nav"/>
-
-                    <Button text="Réservations"
-                            styleClass="nav-item"
-                            onAction="#openReservations"/>
-
-
-                </VBox>
-
-                <Region VBox.vgrow="ALWAYS"/>
-
-                <Button text="Déconnexion"
-                        styleClass="nav-item"
-                        />
-
-            </VBox>
-        </StackPane>
-    </left>
-
     <!-- ================= TOPBAR ================= -->
     <top>
         <HBox alignment="CENTER_LEFT" spacing="12" styleClass="topbar">
@@ -68,8 +25,8 @@
             <Region HBox.hgrow="ALWAYS"/>
 
             <HBox alignment="CENTER_RIGHT" spacing="10">
-                <Label text="En ligne" styleClass="pill"/>
-                <Button text="Admin" styleClass="btn-secondary"/>
+                    <Label text="En ligne" styleClass="pill"/>
+                    <Button text="Admin" styleClass="btn-secondary"/>
             </HBox>
         </HBox>
     </top>
@@ -104,7 +61,11 @@
             <!-- TABLE CARD -->
             <VBox spacing="15" styleClass="card content-card" VBox.vgrow="ALWAYS">
 
-                <Label text="Liste des Activités" styleClass="title"/>
+                <VBox spacing="4">
+                    <Label text="Liste des Activités" styleClass="title"/>
+                    <Label text="CRUD : Ajouter, Afficher détails, Modifier, Supprimer — double-clic sur une ligne pour les détails."
+                           styleClass="subtitle"/>
+                </VBox>
 
                 <TableView fx:id="tableActivites"
                            VBox.vgrow="ALWAYS">
@@ -114,7 +75,7 @@
                     </columnResizePolicy>
 
                     <columns>
-                        <TableColumn fx:id="colDate" text="Date"/>
+                        <TableColumn fx:id="colId" text="ID" prefWidth="56"/>
                         <TableColumn fx:id="colNom" text="Nom"/>
                         <TableColumn fx:id="colType" text="Type"/>
                         <TableColumn fx:id="colCategorie" text="Catégorie"/>
@@ -122,11 +83,20 @@
                         <TableColumn fx:id="colStatut" text="Statut"/>
                         <TableColumn fx:id="colPrix" text="Prix"/>
                         <TableColumn fx:id="colImage" text="Image URL"/>
+                        <TableColumn fx:id="colPack" text="Pack" prefWidth="64"/>
                     </columns>
 
                 </TableView>
 
                 <HBox alignment="CENTER_RIGHT" spacing="12">
+                    <Button text="Ajouter"
+                            styleClass="btn-primary"
+                            onAction="#ajouterActivite"/>
+
+                    <Button text="Afficher détails"
+                            styleClass="btn-secondary"
+                            onAction="#afficherDetailsActivite"/>
+
                     <Button text="Modifier"
                             styleClass="btn-primary"
                             onAction="#modifierActivite"/>
@@ -134,6 +104,10 @@
                     <Button text="Supprimer"
                             styleClass="btn-danger"
                             onAction="#supprimerActivite"/>
+
+                    <Button text="Actualiser"
+                            styleClass="btn-secondary"
+                            onAction="#actualiserListe"/>
 
                     <Button text="Statistique"
                             styleClass="btn-secondary"

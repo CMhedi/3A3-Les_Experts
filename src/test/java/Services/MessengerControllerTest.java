@@ -24,7 +24,7 @@ public class MessengerControllerTest {
     @Test
     @Order(1)
     void ajouterConversationTest() throws SQLException {
-        Conversation conv = new Conversation(0, "Test JUnit Unit", 1);
+        Conversation conv = new Conversation("Test JUnit Unit", 1, TEST_USER_ID);
 
         // La méthode addConversation retourne maintenant l'ID généré
         idCreated = sc.addConversation(conv);

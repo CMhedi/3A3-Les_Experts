@@ -1,0 +1,306 @@
+/* Admin — Inscriptions packs (dashboard vitré) */
+
+.adi-root {
+    -fx-background-color: linear-gradient(to bottom, #fdf4ff 0%, #f0f9ff 40%, #f1f5f9 100%);
+}
+
+.adi-hero {
+    -fx-background-color: linear-gradient(to bottom right, #1e1b4b 0%, #312e81 35%, #0f766e 70%, #134e4a 100%);
+    -fx-background-radius: 0 0 26 26;
+    -fx-padding: 22 28 20 28;
+    -fx-effect: dropshadow(gaussian, rgba(30, 27, 75, 0.45), 34, 0, 0, 10);
+}
+
+.adi-hero-kicker {
+    -fx-text-fill: rgba(253, 224, 71, 0.9);
+    -fx-font-size: 11px;
+    -fx-font-weight: 800;
+    -fx-letter-spacing: 0.16em;
+}
+
+.adi-hero-title {
+    -fx-text-fill: white;
+    -fx-font-size: 26px;
+    -fx-font-weight: 900;
+}
+
+.adi-hero-sub {
+    -fx-text-fill: rgba(224, 231, 255, 0.9);
+    -fx-font-size: 13px;
+}
+
+.adi-kpi-deck {
+    -fx-spacing: 12;
+    -fx-padding: 16 0 0 0;
+}
+
+.adi-kpi-glass {
+    -fx-background-color: rgba(255, 255, 255, 0.13);
+    -fx-background-radius: 14;
+    -fx-padding: 10 14 12 14;
+    -fx-border-color: rgba(255, 255, 255, 0.24);
+    -fx-border-radius: 14;
+    -fx-border-width: 1;
+}
+
+.adi-kpi-lbl {
+    -fx-font-size: 10px;
+    -fx-font-weight: 800;
+    -fx-text-fill: rgba(224, 231, 255, 0.78);
+}
+
+.adi-kpi-val {
+    -fx-font-size: 20px;
+    -fx-font-weight: 900;
+    -fx-text-fill: #fef9c3;
+}
+
+.adi-toolbar {
+    -fx-spacing: 12;
+    -fx-padding: 14 0 0 0;
+    -fx-alignment: CENTER_LEFT;
+}
+
+.adi-search {
+    -fx-background-color: rgba(15, 23, 42, 0.38);
+    -fx-background-radius: 12;
+    -fx-border-color: rgba(255, 255, 255, 0.2);
+    -fx-border-radius: 12;
+    -fx-border-width: 1;
+    -fx-padding: 4 12;
+}
+
+.adi-search-field {
+    -fx-background-color: transparent;
+    -fx-border-width: 0;
+    -fx-text-fill: white;
+    -fx-prompt-text-fill: rgba(199, 210, 254, 0.85);
+    -fx-font-size: 13px;
+    -fx-padding: 8 6;
+}
+
+.adi-count {
+    -fx-text-fill: rgba(226, 232, 240, 0.9);
+    -fx-font-size: 12px;
+    -fx-font-weight: 700;
+}
+
+.adi-btn-add {
+    -fx-background-color: linear-gradient(to bottom, #f97316, #ea580c);
+    -fx-text-fill: white;
+    -fx-font-weight: 800;
+    -fx-background-radius: 10;
+    -fx-padding: 9 18;
+    -fx-cursor: hand;
+}
+
+.adi-btn-wa {
+    -fx-background-color: linear-gradient(to bottom, #22c55e, #16a34a);
+    -fx-text-fill: white;
+    -fx-font-weight: 800;
+    -fx-background-radius: 10;
+    -fx-padding: 9 14;
+    -fx-cursor: hand;
+}
+
+.adi-btn-ghost {
+    -fx-background-color: rgba(255, 255, 255, 0.12);
+    -fx-text-fill: white;
+    -fx-font-weight: 700;
+    -fx-background-radius: 10;
+    -fx-padding: 9 14;
+    -fx-border-color: rgba(255, 255, 255, 0.25);
+    -fx-border-radius: 10;
+    -fx-border-width: 1;
+    -fx-cursor: hand;
+}
+
+.adi-btn-ghost:hover {
+    -fx-background-color: rgba(255, 255, 255, 0.2);
+}
+
+.adi-btn-danger {
+    -fx-background-color: linear-gradient(to bottom, #ef4444, #dc2626);
+    -fx-text-fill: white;
+    -fx-font-weight: 800;
+    -fx-background-radius: 10;
+    -fx-padding: 9 14;
+    -fx-cursor: hand;
+}
+
+.adi-scroll {
+    -fx-background-color: transparent;
+    -fx-border-color: transparent;
+    -fx-padding: 20 24 16 24;
+}
+
+.adi-scroll > .viewport {
+    -fx-background-color: transparent;
+}
+
+.adi-flow {
+    -fx-hgap: 18;
+    -fx-vgap: 18;
+    -fx-padding: 4 4 24 4;
+    -fx-pref-wrap-length: 1200;
+}
+
+.adi-card {
+    -fx-background-color: rgba(255, 255, 255, 0.96);
+    -fx-background-radius: 18;
+    -fx-padding: 16 18 16 18;
+    -fx-border-color: rgba(226, 232, 240, 0.95);
+    -fx-border-radius: 18;
+    -fx-border-width: 1;
+    -fx-effect: dropshadow(gaussian, rgba(49, 46, 129, 0.12), 20, 0, 0, 5);
+    -fx-spacing: 8;
+    -fx-min-width: 300;
+    -fx-pref-width: 320;
+    -fx-max-width: 380;
+    -fx-cursor: hand;
+}
+
+.adi-card:hover {
+    -fx-border-color: rgba(129, 140, 248, 0.55);
+}
+
+.adi-card-selected {
+    -fx-background-color: linear-gradient(to bottom, #eef2ff, #ffffff);
+    -fx-border-color: #6366f1;
+    -fx-border-width: 2;
+    -fx-effect: dropshadow(gaussian, rgba(99, 102, 241, 0.35), 24, 0, 0, 4);
+}
+
+.adi-user {
+    -fx-font-size: 16px;
+    -fx-font-weight: 900;
+    -fx-text-fill: #1e1b4b;
+    -fx-wrap-text: true;
+}
+
+.adi-pack {
+    -fx-font-size: 13px;
+    -fx-font-weight: 700;
+    -fx-text-fill: #0f766e;
+}
+
+.adi-date {
+    -fx-font-size: 11px;
+    -fx-text-fill: #64748b;
+}
+
+.adi-montant {
+    -fx-font-size: 20px;
+    -fx-font-weight: 900;
+    -fx-text-fill: #b45309;
+}
+
+.badge-inscr-conf {
+    -fx-background-color: #dcfce7;
+    -fx-text-fill: #166534;
+    -fx-font-size: 10px;
+    -fx-font-weight: 800;
+    -fx-padding: 4 10;
+    -fx-background-radius: 16;
+}
+
+.badge-inscr-wait {
+    -fx-background-color: #fef9c3;
+    -fx-text-fill: #92400e;
+    -fx-font-size: 10px;
+    -fx-font-weight: 800;
+    -fx-padding: 4 10;
+    -fx-background-radius: 16;
+}
+
+.badge-inscr-cancel {
+    -fx-background-color: #fee2e2;
+    -fx-text-fill: #991b1b;
+    -fx-font-size: 10px;
+    -fx-font-weight: 800;
+    -fx-padding: 4 10;
+    -fx-background-radius: 16;
+}
+
+.badge-inscr-default {
+    -fx-background-color: #f1f5f9;
+    -fx-text-fill: #64748b;
+    -fx-font-size: 10px;
+    -fx-font-weight: 800;
+    -fx-padding: 4 10;
+    -fx-background-radius: 16;
+}
+
+.badge-pay-ok {
+    -fx-background-color: #dbeafe;
+    -fx-text-fill: #1e40af;
+    -fx-font-size: 10px;
+    -fx-font-weight: 800;
+    -fx-padding: 4 10;
+    -fx-background-radius: 16;
+}
+
+.badge-pay-wait {
+    -fx-background-color: #fef3c7;
+    -fx-text-fill: #92400e;
+    -fx-font-size: 10px;
+    -fx-font-weight: 800;
+    -fx-padding: 4 10;
+    -fx-background-radius: 16;
+}
+
+.badge-pay-bad {
+    -fx-background-color: #fee2e2;
+    -fx-text-fill: #991b1b;
+    -fx-font-size: 10px;
+    -fx-font-weight: 800;
+    -fx-padding: 4 10;
+    -fx-background-radius: 16;
+}
+
+.badge-pay-default {
+    -fx-background-color: #f1f5f9;
+    -fx-text-fill: #64748b;
+    -fx-font-size: 10px;
+    -fx-font-weight: 800;
+    -fx-padding: 4 10;
+    -fx-background-radius: 16;
+}
+
+.adi-footer {
+    -fx-padding: 10 28 14 28;
+    -fx-background-color: rgba(255, 255, 255, 0.5);
+}
+
+.adi-footer-text {
+    -fx-text-fill: #64748b;
+    -fx-font-size: 12px;
+}
+
+/* ——— Graphiques ——— */
+.adi-charts-wrap {
+    -fx-padding: 8 4 32 4;
+}
+
+.adi-charts-head {
+    -fx-font-size: 15px;
+    -fx-font-weight: 900;
+    -fx-text-fill: #1e1b4b;
+}
+
+.adi-chart {
+    -fx-min-height: 260;
+    -fx-pref-height: 280;
+    -fx-background-color: rgba(255, 255, 255, 0.94);
+    -fx-background-radius: 14;
+    -fx-padding: 10 10 6 10;
+    -fx-border-color: #e2e8f0;
+    -fx-border-radius: 14;
+    -fx-border-width: 1;
+    -fx-effect: dropshadow(gaussian, rgba(49, 46, 129, 0.08), 14, 0, 0, 2);
+}
+
+.adi-chart-row {
+    -fx-spacing: 14;
+    -fx-alignment: TOP_LEFT;
+}

@@ -1,0 +1,336 @@
+/* Admin — Gestion des packs (dashboard vitré, sans angles CSS web) */
+
+.adb-root {
+    -fx-background-color: linear-gradient(to bottom, #e8f4ef 0%, #f0f4f8 50%, #e2e8f0 100%);
+}
+
+.adb-stack {
+    -fx-spacing: 0;
+}
+
+.adb-hero {
+    -fx-background-color: linear-gradient(to bottom right, #0a1628 0%, #143d30 38%, #1a5c4a 72%, #1e3a5f 100%);
+    -fx-background-radius: 0 0 26 26;
+    -fx-padding: 22 28 20 28;
+    -fx-effect: dropshadow(gaussian, rgba(5, 20, 30, 0.5), 36, 0, 0, 12);
+}
+
+.adb-hero-kicker {
+    -fx-text-fill: rgba(254, 243, 199, 0.85);
+    -fx-font-size: 11px;
+    -fx-font-weight: 800;
+    -fx-letter-spacing: 0.18em;
+}
+
+.adb-hero-title {
+    -fx-text-fill: white;
+    -fx-font-size: 26px;
+    -fx-font-weight: 900;
+}
+
+.adb-hero-sub {
+    -fx-text-fill: rgba(226, 245, 236, 0.88);
+    -fx-font-size: 13px;
+}
+
+.adb-pill {
+    -fx-background-radius: 22;
+    -fx-padding: 6 14;
+    -fx-font-size: 12px;
+    -fx-font-weight: 800;
+}
+
+.adb-pill-actif {
+    -fx-background-color: rgba(34, 197, 94, 0.35);
+    -fx-text-fill: #bbf7d0;
+    -fx-border-color: rgba(74, 222, 128, 0.55);
+    -fx-border-radius: 22;
+    -fx-border-width: 1;
+}
+
+.adb-pill-inactif {
+    -fx-background-color: rgba(148, 163, 184, 0.2);
+    -fx-text-fill: #e2e8f0;
+    -fx-border-color: rgba(148, 163, 184, 0.35);
+    -fx-border-radius: 22;
+    -fx-border-width: 1;
+}
+
+.adb-kpi-deck {
+    -fx-spacing: 12;
+    -fx-padding: 16 0 0 0;
+}
+
+.adb-kpi-glass {
+    -fx-background-color: rgba(255, 255, 255, 0.12);
+    -fx-background-radius: 14;
+    -fx-padding: 10 16 12 16;
+    -fx-border-color: rgba(255, 255, 255, 0.22);
+    -fx-border-radius: 14;
+    -fx-border-width: 1;
+}
+
+.adb-kpi-lbl {
+    -fx-font-size: 10px;
+    -fx-font-weight: 800;
+    -fx-text-fill: rgba(226, 245, 236, 0.75);
+}
+
+.adb-kpi-val {
+    -fx-font-size: 22px;
+    -fx-font-weight: 900;
+    -fx-text-fill: #fffbeb;
+}
+
+.adb-toolbar {
+    -fx-spacing: 12;
+    -fx-padding: 14 0 0 0;
+    -fx-alignment: CENTER_LEFT;
+}
+
+.adb-search {
+    -fx-background-color: rgba(15, 23, 42, 0.35);
+    -fx-background-radius: 12;
+    -fx-border-color: rgba(255, 255, 255, 0.18);
+    -fx-border-radius: 12;
+    -fx-border-width: 1;
+    -fx-padding: 4 12;
+}
+
+.adb-search-field {
+    -fx-background-color: transparent;
+    -fx-border-width: 0;
+    -fx-text-fill: white;
+    -fx-prompt-text-fill: rgba(148, 163, 184, 0.95);
+    -fx-font-size: 13px;
+    -fx-padding: 8 6;
+}
+
+.adb-count {
+    -fx-text-fill: rgba(226, 232, 240, 0.85);
+    -fx-font-size: 12px;
+    -fx-font-weight: 700;
+}
+
+.adb-btn-add {
+    -fx-background-color: linear-gradient(to bottom, #f97316, #ea580c);
+    -fx-text-fill: white;
+    -fx-font-weight: 800;
+    -fx-background-radius: 10;
+    -fx-padding: 9 18;
+    -fx-cursor: hand;
+    -fx-effect: dropshadow(gaussian, rgba(234, 88, 12, 0.45), 12, 0, 0, 2);
+}
+
+.adb-btn-add:hover {
+    -fx-background-color: linear-gradient(to bottom, #fb923c, #f97316);
+}
+
+.adb-btn-ghost {
+    -fx-background-color: rgba(255, 255, 255, 0.1);
+    -fx-text-fill: white;
+    -fx-font-weight: 700;
+    -fx-background-radius: 10;
+    -fx-padding: 9 14;
+    -fx-border-color: rgba(255, 255, 255, 0.28);
+    -fx-border-radius: 10;
+    -fx-border-width: 1;
+    -fx-cursor: hand;
+}
+
+.adb-btn-ghost:hover {
+    -fx-background-color: rgba(255, 255, 255, 0.18);
+}
+
+.adb-btn-danger {
+    -fx-background-color: linear-gradient(to bottom, #ef4444, #dc2626);
+    -fx-text-fill: white;
+    -fx-font-weight: 800;
+    -fx-background-radius: 10;
+    -fx-padding: 9 14;
+    -fx-cursor: hand;
+}
+
+.adb-btn-danger:hover {
+    -fx-background-color: linear-gradient(to bottom, #f87171, #ef4444);
+}
+
+.adb-scroll {
+    -fx-background-color: transparent;
+    -fx-border-color: transparent;
+    -fx-padding: 20 24 16 24;
+}
+
+.adb-scroll > .viewport {
+    -fx-background-color: transparent;
+}
+
+.adb-flow {
+    -fx-hgap: 20;
+    -fx-vgap: 20;
+    -fx-padding: 4 4 24 4;
+    -fx-pref-wrap-length: 1180;
+}
+
+.adb-pack-card {
+    -fx-background-color: rgba(255, 255, 255, 0.97);
+    -fx-background-radius: 18;
+    -fx-padding: 18 18 16 18;
+    -fx-border-color: rgba(226, 232, 240, 0.95);
+    -fx-border-radius: 18;
+    -fx-border-width: 1;
+    -fx-effect: dropshadow(gaussian, rgba(15, 61, 46, 0.12), 22, 0, 0, 6);
+    -fx-spacing: 10;
+    -fx-min-width: 268;
+    -fx-pref-width: 300;
+    -fx-max-width: 340;
+    -fx-cursor: hand;
+}
+
+.adb-pack-card:hover {
+    -fx-border-color: rgba(52, 211, 153, 0.65);
+    -fx-effect: dropshadow(gaussian, rgba(16, 185, 129, 0.22), 26, 0, 0, 8);
+}
+
+.adb-pack-card-selected {
+    -fx-background-color: linear-gradient(to bottom, #ecfdf5, #ffffff);
+    -fx-border-color: #10b981;
+    -fx-border-width: 2;
+    -fx-effect: dropshadow(gaussian, rgba(16, 185, 129, 0.35), 28, 0, 0, 4);
+}
+
+.adb-type-chip {
+    -fx-background-color: #e0f2fe;
+    -fx-text-fill: #0369a1;
+    -fx-font-size: 10px;
+    -fx-font-weight: 900;
+    -fx-padding: 4 10;
+    -fx-background-radius: 20;
+}
+
+.adb-stat-actif {
+    -fx-background-color: #dcfce7;
+    -fx-text-fill: #166534;
+    -fx-font-size: 11px;
+    -fx-font-weight: 800;
+    -fx-padding: 4 12;
+    -fx-background-radius: 20;
+}
+
+.adb-stat-inactif {
+    -fx-background-color: #f1f5f9;
+    -fx-text-fill: #64748b;
+    -fx-font-size: 11px;
+    -fx-font-weight: 800;
+    -fx-padding: 4 12;
+    -fx-background-radius: 20;
+}
+
+.adb-pack-name {
+    -fx-font-size: 17px;
+    -fx-font-weight: 900;
+    -fx-text-fill: #0f172a;
+    -fx-wrap-text: true;
+}
+
+.adb-metric {
+    -fx-font-size: 12px;
+    -fx-text-fill: #64748b;
+}
+
+.adb-metric-strong {
+    -fx-font-size: 13px;
+    -fx-font-weight: 800;
+    -fx-text-fill: #0f172a;
+}
+
+.adb-price {
+    -fx-font-size: 22px;
+    -fx-font-weight: 900;
+    -fx-text-fill: #c2410c;
+}
+
+.adb-red-label {
+    -fx-font-size: 11px;
+    -fx-text-fill: #15803d;
+    -fx-font-weight: 800;
+}
+
+.adb-card-actions {
+    -fx-spacing: 8;
+    -fx-padding: 6 0 0 0;
+}
+
+.adb-mini-btn {
+    -fx-background-color: #1e293b;
+    -fx-text-fill: white;
+    -fx-font-size: 11px;
+    -fx-font-weight: 700;
+    -fx-background-radius: 8;
+    -fx-padding: 6 12;
+    -fx-cursor: hand;
+}
+
+.adb-mini-btn:hover {
+    -fx-background-color: #334155;
+}
+
+.adb-mini-del {
+    -fx-background-color: #fee2e2;
+    -fx-text-fill: #b91c1c;
+    -fx-font-size: 11px;
+    -fx-font-weight: 800;
+    -fx-background-radius: 8;
+    -fx-padding: 6 10;
+    -fx-cursor: hand;
+}
+
+.adb-mini-del:hover {
+    -fx-background-color: #fecaca;
+}
+
+.adb-sep {
+    -fx-background-color: #e2e8f0;
+    -fx-pref-height: 1;
+    -fx-max-width: infinity;
+}
+
+.adb-footer {
+    -fx-padding: 10 28 14 28;
+    -fx-background-color: rgba(255, 255, 255, 0.55);
+    -fx-border-color: transparent transparent rgba(226, 232, 240, 0.9) transparent;
+    -fx-border-width: 1;
+}
+
+.adb-footer-text {
+    -fx-text-fill: #64748b;
+    -fx-font-size: 12px;
+}
+
+/* ——— Graphiques (données catalogue, sans modifier le hero / cartes) ——— */
+.adb-charts-wrap {
+    -fx-padding: 8 4 32 4;
+}
+
+.adb-charts-head {
+    -fx-font-size: 15px;
+    -fx-font-weight: 900;
+    -fx-text-fill: #0f172a;
+}
+
+.adb-chart {
+    -fx-min-height: 260;
+    -fx-pref-height: 280;
+    -fx-background-color: rgba(255, 255, 255, 0.92);
+    -fx-background-radius: 14;
+    -fx-padding: 10 10 6 10;
+    -fx-border-color: #e2e8f0;
+    -fx-border-radius: 14;
+    -fx-border-width: 1;
+    -fx-effect: dropshadow(gaussian, rgba(15, 23, 42, 0.06), 14, 0, 0, 2);
+}
+
+.adb-chart-row {
+    -fx-spacing: 14;
+    -fx-alignment: TOP_LEFT;
+}

@@ -72,7 +72,7 @@ public class SideBarUserController {
 
     @FXML
     void goToActivities(ActionEvent event) {
-        // logic pour les activités
+        changeCenter("/views/reservation_activites_user.fxml");
     }
 
     @FXML
@@ -96,7 +96,7 @@ public class SideBarUserController {
     // =====================================================================
     @FXML
     public void goToPackInscription(ActionEvent event) {
-        changeCenter("/FXML/PackInscriptionView.fxml");
+        changeCenter("/fxml/PackInscriptionView.fxml");
     }
 
     @FXML

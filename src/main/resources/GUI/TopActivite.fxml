@@ -21,6 +21,11 @@
             <Label text="TOP 3 CLIENTS"
                    style="-fx-font-size: 26px; -fx-font-weight: bold; -fx-text-fill: white;"/>
 
+            <HBox alignment="CENTER_RIGHT" maxWidth="Infinity">
+                <Button text="➕  Activité" onAction="#openActiviteQuickAdd"
+                        style="-fx-background-color: linear-gradient(to bottom, #059669, #047857); -fx-text-fill: white; -fx-font-weight: 800; -fx-background-radius: 10; -fx-padding: 8 14; -fx-cursor: hand;"/>
+            </HBox>
+
             <!-- Podium -->
             <HBox spacing="18" alignment="BOTTOM_CENTER">
 

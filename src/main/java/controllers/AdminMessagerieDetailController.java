@@ -67,14 +67,14 @@ public class AdminMessagerieDetailController implements Initializable {
     }
 
     /**
-     * Updated to handle the 'est_groupe' logic from image_1da319.png (0 or 1)
+     * @param type conversation type label, e.g. {@code "Groupe"} or {@code "Privée"} (same as list view)
      */
-    public void setConversation(int id, String titre, int estGroupe, String dateCreation) {
+    public void setConversation(int id, String titre, String type, String dateCreation) {
         this.conversationId = id;
         lblTitre.setText(titre);
         lblDateCreation.setText("Créée le " + dateCreation);
 
-        boolean isGroup = (estGroupe == 1);
+        boolean isGroup = type != null && type.equalsIgnoreCase("Groupe");
         lblType.setText(isGroup ? "GROUPE" : "PRIVE");
         String bg = isGroup ? "#3b82f6" : "#22c55e";
 
@@ -238,6 +238,4 @@ public class AdminMessagerieDetailController implements Initializable {
         return new Label(text);
     }
 
-    public void setConversation(int id, String titre, String type, String dateCreation) {
-    }
 }

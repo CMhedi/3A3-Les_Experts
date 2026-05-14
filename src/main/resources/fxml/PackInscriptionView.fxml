@@ -13,44 +13,70 @@
       xmlns:fx="http://javafx.com/fxml/1"
       fx:controller="controllers.PackInscriptionViewController"
       spacing="0"
-      style="-fx-background-color: #F0F4F8;">
+      styleClass="pi-page"
+      stylesheets="@/css/pack-inscription-view.css">
 
-    <!-- ══════════════════ HEADER ══════════════════ -->
-    <HBox alignment="CENTER_LEFT" spacing="16"
-          style="-fx-background-color: #143D30; -fx-padding: 18 28 18 28;">
-        <Button fx:id="btnBack" text="← Retour"
-                style="-fx-background-color: rgba(255,255,255,0.15);
-                       -fx-text-fill: white; -fx-font-size: 13px;
-                       -fx-cursor: hand; -fx-border-radius: 6;
-                       -fx-background-radius: 6; -fx-padding: 6 16;"/>
-        <VBox spacing="2">
-            <Label text="🎒 Nos Packs EcoAdventure"
-                   style="-fx-font-size: 20px; -fx-font-weight: 700; -fx-text-fill: white;"/>
-            <Label text="Choisissez un pack et inscrivez-vous en quelques étapes"
-                   style="-fx-font-size: 12px; -fx-text-fill: rgba(255,255,255,0.65);"/>
+    <!-- Hero + KPI (maquette) -->
+    <HBox alignment="TOP_LEFT" spacing="24" styleClass="pi-hero">
+        <Button fx:id="btnBack" text="← Retour" styleClass="pi-btn-back"/>
+        <VBox spacing="8" HBox.hgrow="ALWAYS">
+            <Label text="🎒 Inscription aux packs" styleClass="pi-hero-title" wrapText="true"/>
+            <Label text="Trouvez le pack idéal, affinez par filtres puis cliquez sur « S'inscrire au pack »."
+                   styleClass="pi-hero-sub" wrapText="true"/>
+        </VBox>
+        <VBox spacing="10" alignment="TOP_RIGHT" minWidth="260" prefWidth="300">
+            <HBox styleClass="pi-kpi-glass" alignment="CENTER_LEFT" spacing="10">
+                <VBox spacing="2" HBox.hgrow="ALWAYS">
+                    <Label text="Résultats visibles" styleClass="pi-kpi-lbl"/>
+                    <Label fx:id="lblKpiResults" text="0" styleClass="pi-kpi-val"/>
+                </VBox>
+            </HBox>
+            <HBox styleClass="pi-kpi-glass" alignment="CENTER_LEFT" spacing="10">
+                <VBox spacing="2" HBox.hgrow="ALWAYS">
+                    <Label text="Types affichés" styleClass="pi-kpi-lbl"/>
+                    <Label fx:id="lblKpiTypes" text="0" styleClass="pi-kpi-val"/>
+                </VBox>
+            </HBox>
+            <HBox styleClass="pi-kpi-glass" alignment="CENTER_LEFT" spacing="10">
+                <VBox spacing="2" HBox.hgrow="ALWAYS">
+                    <Label text="Filtres actifs" styleClass="pi-kpi-lbl"/>
+                    <Label fx:id="lblKpiFilters" text="0" styleClass="pi-kpi-val"/>
+                </VBox>
+            </HBox>
         </VBox>
     </HBox>
 
-    <!-- ══════════════════ CONTENU SCROLLABLE ══════════════════ -->
-    <ScrollPane fitToWidth="true" VBox.vgrow="ALWAYS"
-                style="-fx-background-color: transparent; -fx-border-color: transparent;">
+    <ScrollPane fitToWidth="true" VBox.vgrow="ALWAYS" styleClass="pi-scroll">
 
-        <VBox spacing="28" style="-fx-padding: 28 32 40 32;">
+        <VBox spacing="22" style="-fx-padding: 22 28 36 28;">
 
-            <!-- ────────────────────────────────────────────────
-                 SECTION 1 : LISTE DES PACKS
-                 Remplie dynamiquement par le contrôleur
-                 Chaque carte a un bouton "S'inscrire"
-            ──────────────────────────────────────────────── -->
-            <VBox spacing="14">
-                <HBox alignment="CENTER_LEFT" spacing="10">
-                    <Label text="Packs disponibles"
-                           style="-fx-font-size: 17px; -fx-font-weight: 700; -fx-text-fill: #1E293B;"/>
-                    <Label text="Cliquez sur « S'inscrire » pour rejoindre un pack"
-                           style="-fx-font-size: 12px; -fx-text-fill: #94A3B8;"/>
+            <!-- Filtres -->
+            <VBox spacing="12" styleClass="pi-filter-card">
+                <HBox styleClass="pi-filter-search" alignment="CENTER_LEFT" spacing="10">
+                    <Label text="🔍" style="-fx-opacity: 0.55;"/>
+                    <TextField fx:id="txtSearchPack" promptText="Nom du pack, type…"
+                               styleClass="pi-filter-field" HBox.hgrow="ALWAYS"/>
                 </HBox>
+                <HBox spacing="12" alignment="CENTER_LEFT">
+                    <ComboBox fx:id="comboPackType" prefWidth="170" promptText="Type" styleClass="pi-filter-combo"/>
+                    <ComboBox fx:id="comboPackStatut" prefWidth="170" promptText="Statut" styleClass="pi-filter-combo"/>
+                    <ComboBox fx:id="comboPackSort" prefWidth="200" promptText="Tri" styleClass="pi-filter-combo"/>
+                    <Region HBox.hgrow="ALWAYS"/>
+                    <Button text="Appliquer" onAction="#onApplyPackFilters" styleClass="pi-btn-apply"/>
+                    <Button text="Réinitialiser" onAction="#onResetPackFilters" styleClass="pi-btn-reset"/>
+                </HBox>
+                <Label fx:id="lblPackFilterIntersection"
+                       text="Intersection actuelle · aucun filtre."
+                       styleClass="pi-filter-intersection" wrapText="true"/>
+            </VBox>
 
-                <!-- packsGrid rempli par le contrôleur (3 colonnes) -->
+            <VBox spacing="12">
+                <VBox spacing="4">
+                    <Label text="Packs disponibles" styleClass="pi-section-title"/>
+                    <Label text="Cliquez sur « S'inscrire au pack » pour afficher le formulaire ci-dessous."
+                           styleClass="pi-section-hint"/>
+                </VBox>
+
                 <GridPane fx:id="packsGrid" hgap="18" vgap="18">
                     <columnConstraints>
                         <ColumnConstraints percentWidth="33"/>

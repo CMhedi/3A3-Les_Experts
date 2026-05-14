@@ -68,7 +68,7 @@ public class PackInscriptionMetierService {
 
     public List<Activite> getActivitesByPack(int packId) throws SQLException {
         String sql = """
-                SELECT id_activite, nom, type_activite, categorie_act, niveau_act, prix, statut, image_url, id_pack
+                SELECT id_activite, nom, type_activite, categorie_act, niveau_act, prix, statut, image_url, id_pack, latitude, longitude
                 FROM activite
                 WHERE id_pack = ?
                 ORDER BY id_activite DESC
@@ -96,7 +96,10 @@ public class PackInscriptionMetierService {
                     a.setPrix(rs.getBigDecimal("prix"));
                     a.setStatut(rs.getString("statut"));
                     a.setImageUrl(rs.getString("image_url"));
-                    a.setIdPack(rs.getInt("id_pack"));
+                    Integer idPk = (Integer) rs.getObject("id_pack");
+                    a.setIdPack(idPk != null ? idPk : 0);
+                    a.setLatitude(rs.getObject("latitude") != null ? rs.getDouble("latitude") : null);
+                    a.setLongitude(rs.getObject("longitude") != null ? rs.getDouble("longitude") : null);
 
                     list.add(a);
                 }

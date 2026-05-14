@@ -2,18 +2,22 @@ package Entities;
 
 import enums.StatutReservation;
 
+import java.time.LocalDateTime;
+
+/**
+ * Entité alignée sur {@code reservation_activite}.
+ */
 public class ReservationActivite {
 
     private int idResAct;
-    // private LocalDateTime dateReservation;
+    private LocalDateTime dateReservation;
     private StatutReservation statutRes;
     private int nbPersonnes;
     private int idUser;
     private int idActivite;
+    private String villeUser;
 
     public ReservationActivite() {}
-
-    // ===== Getters & Setters =====
 
     public int getIdResAct() {
         return idResAct;
@@ -23,13 +27,13 @@ public class ReservationActivite {
         this.idResAct = idResAct;
     }
 
-   /* public LocalDateTime getDateReservation() {
+    public LocalDateTime getDateReservation() {
         return dateReservation;
-    }*/
+    }
 
-   /* public void setDateReservation(LocalDateTime dateReservation) {
+    public void setDateReservation(LocalDateTime dateReservation) {
         this.dateReservation = dateReservation;
-    }*/
+    }
 
     public StatutReservation getStatutRes() {
         return statutRes;
@@ -63,7 +67,14 @@ public class ReservationActivite {
         this.idActivite = idActivite;
     }
 
-    // ===== toString =====
+    public String getVilleUser() {
+        return villeUser;
+    }
+
+    public void setVilleUser(String villeUser) {
+        this.villeUser = villeUser;
+    }
+
     @Override
     public String toString() {
         return "ResAct #" + idResAct + " | " + statutRes;

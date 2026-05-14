@@ -46,44 +46,44 @@ public class TicketService {
     public VerifyDetailsResult verifyAndCheckInWithDetails(String token) throws Exception {
         ParsedToken pt = verifySignedToken(token);
 
-        // 1) vérifier ticket_token existe + état used
         String checkSql = """
-            SELECT ra.id_res_act, ra.checked_in
+            SELECT ra.id_res_act, ra.statut_res
             FROM reservation_activite ra
-            WHERE ra.id_res_act = ? AND ra.ticket_token = ?
-        """;
+            WHERE ra.id_res_act = ?
+            """;
 
-        boolean alreadyUsed;
+        String statut;
         try (PreparedStatement ps = cnx.prepareStatement(checkSql)) {
             ps.setInt(1, pt.reservationId);
-            ps.setString(2, token);
-
             try (ResultSet rs = ps.executeQuery()) {
                 if (!rs.next()) {
                     return new VerifyDetailsResult(false, false, null);
                 }
-                alreadyUsed = rs.getInt("checked_in") == 1;
+                statut = rs.getString("statut_res");
             }
         }
 
-        // 2) si pas utilisé -> check-in atomique
+        boolean alreadyUsed = "SCANNEE".equalsIgnoreCase(statut);
+
         if (!alreadyUsed) {
+            if (!"CONFIRMEE".equalsIgnoreCase(statut)) {
+                return new VerifyDetailsResult(false, false, null);
+            }
             String up = """
                 UPDATE reservation_activite
-                SET checked_in = 1, checkin_time = NOW()
-                WHERE id_res_act = ? AND ticket_token = ? AND checked_in = 0
-            """;
+                SET statut_res = 'SCANNEE'
+                WHERE id_res_act = ? AND UPPER(statut_res) = 'CONFIRMEE'
+                """;
             try (PreparedStatement ps = cnx.prepareStatement(up)) {
                 ps.setInt(1, pt.reservationId);
-                ps.setString(2, token);
                 int updated = ps.executeUpdate();
-                if (updated == 0) alreadyUsed = true;
+                if (updated == 0) {
+                    alreadyUsed = true;
+                }
             }
         }
 
-        // 3) charger détails (après checkin)
         ReservationDetails details = loadReservationDetails(pt.reservationId);
-
         return new VerifyDetailsResult(true, alreadyUsed, details);
     }
 
@@ -109,17 +109,11 @@ public class TicketService {
         }
     }
 
-    private void saveToken(int reservationId, String token) throws SQLException {
-        String up = """
-            UPDATE reservation_activite
-            SET ticket_token = ?, ticket_generated_at = NOW()
-            WHERE id_res_act = ?
-        """;
-        try (PreparedStatement ps = cnx.prepareStatement(up)) {
-            ps.setString(1, token);
-            ps.setInt(2, reservationId);
-            ps.executeUpdate();
+    private void saveToken(int reservationId, String token) {
+        if (reservationId <= 0 || token == null || token.isBlank()) {
+            return;
         }
+        // Pas de colonnes ticket en base : le jeton signé suffit pour la vérification.
     }
 
     private ReservationDetails loadReservationDetails(int reservationId) throws SQLException {
@@ -131,8 +125,7 @@ public class TicketService {
                 ra.nb_personnes,
                 ra.id_user,
                 ra.id_activite,
-                ra.checked_in,
-                ra.checkin_time,
+                ra.date_reservation,
                 a.nom AS activite_nom,
                 a.type_activite,
                 a.categorie_act,
@@ -141,7 +134,7 @@ public class TicketService {
             FROM reservation_activite ra
             JOIN activite a ON a.id_activite = ra.id_activite
             WHERE ra.id_res_act = ?
-        """;
+            """;
 
         try (PreparedStatement ps = cnx.prepareStatement(sql)) {
             ps.setInt(1, reservationId);
@@ -152,12 +145,14 @@ public class TicketService {
                 int nb = rs.getInt("nb_personnes");
                 double total = prix * nb;
 
-                Timestamp t = rs.getTimestamp("checkin_time");
-                String checkTime = (t == null) ? null : t.toString();
+                String st = rs.getString("statut_res");
+                boolean checkedIn = "SCANNEE".equalsIgnoreCase(st);
+                Timestamp dr = rs.getTimestamp("date_reservation");
+                String checkTime = checkedIn && dr != null ? dr.toString() : null;
 
                 return new ReservationDetails(
                         rs.getInt("id_res_act"),
-                        rs.getString("statut_res"),
+                        st,
                         nb,
                         rs.getInt("id_user"),
                         rs.getInt("id_activite"),
@@ -167,7 +162,7 @@ public class TicketService {
                         rs.getString("niveau_act"),
                         prix,
                         total,
-                        rs.getInt("checked_in") == 1,
+                        checkedIn,
                         checkTime
                 );
             }

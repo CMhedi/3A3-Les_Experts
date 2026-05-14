@@ -1,15 +1,20 @@
 package Entities;
+
 import java.time.LocalDateTime;
 
 public class Message {
     private int idMessage;
-    private String typeMessage;      // TEXTE, VOCAL, IMAGE
+    private String typeMessage;
     private String contenu;
-    private String statutMessage;    // ENVOYE, LU, SUPPRIME
+    private String statutMessage;
     private LocalDateTime dateEnvoi;
     private LocalDateTime dateLecture;
     private int idConversation;
     private int idUser;
+    private LocalDateTime dateModifier;
+    private String reactions;
+    private String attachments;
+    private String prioriteMessage;
 
     public Message() {}
 
@@ -23,6 +28,7 @@ public class Message {
         this.dateLecture = dateLecture;
         this.idConversation = idConversation;
         this.idUser = idUser;
+        this.prioriteMessage = "NORMAL";
     }
 
     public Message(String typeMessage, String contenu, String statutMessage,
@@ -33,6 +39,7 @@ public class Message {
         this.dateEnvoi = dateEnvoi;
         this.idConversation = idConversation;
         this.idUser = idUser;
+        this.prioriteMessage = "NORMAL";
     }
 
     public int getIdMessage() { return idMessage; }
@@ -51,4 +58,13 @@ public class Message {
     public void setIdConversation(int idConversation) { this.idConversation = idConversation; }
     public int getIdUser() { return idUser; }
     public void setIdUser(int idUser) { this.idUser = idUser; }
+
+    public LocalDateTime getDateModifier() { return dateModifier; }
+    public void setDateModifier(LocalDateTime dateModifier) { this.dateModifier = dateModifier; }
+    public String getReactions() { return reactions; }
+    public void setReactions(String reactions) { this.reactions = reactions; }
+    public String getAttachments() { return attachments; }
+    public void setAttachments(String attachments) { this.attachments = attachments; }
+    public String getPrioriteMessage() { return prioriteMessage; }
+    public void setPrioriteMessage(String prioriteMessage) { this.prioriteMessage = prioriteMessage; }
 }

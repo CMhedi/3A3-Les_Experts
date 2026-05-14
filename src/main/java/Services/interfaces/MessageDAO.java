@@ -4,9 +4,13 @@ import Entities.Message;
 import Utiles.MyDB;
 
 import java.sql.*;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 
 public class MessageDAO {
 
@@ -54,6 +58,16 @@ public class MessageDAO {
                         rs.getInt("id_conversation"),
                         rs.getInt("id_user")
                 );
+                Timestamp dm = rs.getTimestamp("date_modifier");
+                if (dm != null) {
+                    message.setDateModifier(dm.toLocalDateTime());
+                }
+                message.setReactions(rs.getString("reactions"));
+                message.setAttachments(rs.getString("attachments"));
+                String pr = rs.getString("priorite_message");
+                if (pr != null) {
+                    message.setPrioriteMessage(pr);
+                }
                 messages.add(message);
             }
         } catch (SQLException e) {
@@ -114,6 +128,110 @@ public class MessageDAO {
             System.out.println("❌ Error adding vocal message: " + e.getMessage());
             return false;
         }
+    }
+
+    public static final class TopUserMsg {
+        private final String name;
+        private final long count;
+
+        public TopUserMsg(String name, long count) {
+            this.name = name;
+            this.count = count;
+        }
+
+        public String name() {
+            return name;
+        }
+
+        public long count() {
+            return count;
+        }
+    }
+
+    /** Nombre de messages envoyés dans les {@code days} derniers jours. */
+    public long countMessagesLastDays(int days) {
+        String q = "SELECT COUNT(*) FROM message WHERE date_envoi >= DATE_SUB(NOW(), INTERVAL ? DAY)";
+        try (PreparedStatement ps = connection.prepareStatement(q)) {
+            ps.setInt(1, days);
+            ResultSet rs = ps.executeQuery();
+            if (rs.next()) {
+                return rs.getLong(1);
+            }
+        } catch (SQLException e) {
+            System.out.println("countMessagesLastDays: " + e.getMessage());
+        }
+        return 0;
+    }
+
+    /** Index 0 = J-6, index 6 = aujourd'hui (comptage par jour calendaire). */
+    public int[] getDailyMessageCountsLast7Days() {
+        int[] counts = new int[7];
+        LocalDate end = LocalDate.now();
+        LocalDate start = end.minusDays(6);
+        String sql = "SELECT DATE(date_envoi) AS d, COUNT(*) AS cnt FROM message "
+                + "WHERE DATE(date_envoi) BETWEEN ? AND ? GROUP BY DATE(date_envoi)";
+        try (PreparedStatement ps = connection.prepareStatement(sql)) {
+            ps.setDate(1, Date.valueOf(start));
+            ps.setDate(2, Date.valueOf(end));
+            Map<LocalDate, Integer> map = new HashMap<>();
+            ResultSet rs = ps.executeQuery();
+            while (rs.next()) {
+                Date d = rs.getDate("d");
+                if (d != null) {
+                    map.put(d.toLocalDate(), rs.getInt("cnt"));
+                }
+            }
+            for (int i = 0; i < 7; i++) {
+                counts[i] = map.getOrDefault(start.plusDays(i), 0);
+            }
+        } catch (SQLException e) {
+            System.out.println("getDailyMessageCountsLast7Days: " + e.getMessage());
+        }
+        return counts;
+    }
+
+    /** Comptages par {@code type_message} sur la période. */
+    public Map<String, Long> countByTypeMessageLastDays(int days) {
+        Map<String, Long> map = new LinkedHashMap<>();
+        String sql = "SELECT type_message, COUNT(*) AS cnt FROM message "
+                + "WHERE date_envoi >= DATE_SUB(NOW(), INTERVAL ? DAY) GROUP BY type_message ORDER BY cnt DESC";
+        try (PreparedStatement ps = connection.prepareStatement(sql)) {
+            ps.setInt(1, days);
+            ResultSet rs = ps.executeQuery();
+            while (rs.next()) {
+                map.put(rs.getString("type_message"), rs.getLong("cnt"));
+            }
+        } catch (SQLException e) {
+            System.out.println("countByTypeMessageLastDays: " + e.getMessage());
+        }
+        return map;
+    }
+
+    public List<TopUserMsg> topUsersByMessagesLastDays(int days, int limit) {
+        List<TopUserMsg> list = new ArrayList<>();
+        String sql = "SELECT TRIM(CONCAT(COALESCE(u.nom, ''), ' ', COALESCE(u.prenom, ''))) AS nm, COUNT(*) AS cnt "
+                + "FROM message m JOIN user_app u ON u.id_user = m.id_user "
+                + "WHERE m.date_envoi >= DATE_SUB(NOW(), INTERVAL ? DAY) "
+                + "GROUP BY m.id_user, u.nom, u.prenom ORDER BY cnt DESC LIMIT ?";
+        try (PreparedStatement ps = connection.prepareStatement(sql)) {
+            ps.setInt(1, days);
+            ps.setInt(2, limit);
+            ResultSet rs = ps.executeQuery();
+            while (rs.next()) {
+                String nm = rs.getString("nm");
+                if (nm == null) {
+                    nm = "";
+                }
+                nm = nm.trim();
+                if (nm.isEmpty()) {
+                    nm = "Utilisateur";
+                }
+                list.add(new TopUserMsg(nm, rs.getLong("cnt")));
+            }
+        } catch (SQLException e) {
+            System.out.println("topUsersByMessagesLastDays: " + e.getMessage());
+        }
+        return list;
     }
 
 }

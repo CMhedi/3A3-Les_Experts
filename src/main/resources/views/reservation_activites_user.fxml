@@ -1,0 +1,153 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<VBox xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1"
+      fx:controller="controllers.ReservationActiviteUserController"
+      stylesheets="@/styles/app.css, @/styles/reservationActivitesUser.css"
+      styleClass="ra-page root"
+      spacing="0" VBox.vgrow="ALWAYS">
+
+    <TabPane fx:id="tabs" VBox.vgrow="ALWAYS" styleClass="ra-tabs" tabClosingPolicy="UNAVAILABLE">
+
+        <Tab text="Catalogue &amp; réservation">
+            <ScrollPane fitToWidth="true" hbarPolicy="NEVER" styleClass="ra-scroll-client" VBox.vgrow="ALWAYS">
+                <VBox spacing="18" styleClass="ra-tab-stack">
+                    <padding>
+                        <Insets top="20" right="24" bottom="28" left="24"/>
+                    </padding>
+
+                    <VBox spacing="14" styleClass="ra-tab-body">
+                        <HBox alignment="CENTER_LEFT" spacing="16">
+                            <VBox spacing="6" HBox.hgrow="ALWAYS">
+                                <Label text="Catalogue d’activités" styleClass="ra-section-title"/>
+                                <Label fx:id="lblCatalogLead"
+                                       text="Parcourez les activités et réservez celle qui vous convient."
+                                       styleClass="ra-section-desc" wrapText="true"/>
+                            </VBox>
+                            <HBox spacing="10" alignment="CENTER_RIGHT">
+                                <Button fx:id="btnAjoutActiviteBasique" text="➕  Ajout rapide"
+                                        onAction="#onAjoutActiviteBasique" styleClass="ra-btn-create-toggle"/>
+                                <Button fx:id="btnAjoutActivitePro" text="➕  Création pro"
+                                        onAction="#onAjoutActivitePro" styleClass="ra-btn-create-toggle"/>
+                                <Button fx:id="btnToggleCreateAct" text="➕  Nouvelle activité"
+                                        onAction="#onToggleCreateActForm" styleClass="ra-btn-create-toggle"/>
+                                <Button text="↻  Actualiser" onAction="#onRefresh" styleClass="ra-btn-refresh"/>
+                            </HBox>
+                        </HBox>
+                        <Label fx:id="lblActiviteGestHint" styleClass="ra-admin-gest-hint" wrapText="true"
+                               visible="false" managed="false" maxWidth="920"/>
+
+                        <VBox spacing="12" styleClass="ra-filter-card">
+                            <HBox styleClass="ra-search-wrap" alignment="CENTER_LEFT" spacing="10">
+                                <Label text="🔍" styleClass="ra-search-icon"/>
+                                <TextField fx:id="searchAct"
+                                           promptText="Nom, discipline, formule…"
+                                           styleClass="ra-search-field" HBox.hgrow="ALWAYS"/>
+                            </HBox>
+                            <HBox spacing="12" alignment="CENTER_LEFT">
+                                <ComboBox fx:id="comboType" prefWidth="170" promptText="Type" styleClass="ra-filter-combo"/>
+                                <ComboBox fx:id="comboStatut" prefWidth="170" promptText="Statut" styleClass="ra-filter-combo"/>
+                                <ComboBox fx:id="comboSort" prefWidth="200" promptText="Tri" styleClass="ra-filter-combo"/>
+                                <Region HBox.hgrow="ALWAYS"/>
+                                <Button text="Appliquer" onAction="#onApplyFilters" styleClass="ra-btn-primary"/>
+                                <Button text="Réinitialiser" onAction="#onResetFilters" styleClass="ra-btn-ghost"/>
+                            </HBox>
+                        </VBox>
+
+                        <!-- Formulaire création activité (admin) — même page que le catalogue -->
+                        <VBox fx:id="boxCreateActForm" spacing="14" styleClass="ra-filter-card ra-create-act-form"
+                              visible="false" managed="false">
+                            <Label text="Créer une activité" styleClass="ra-section-title"/>
+                            <Label text="Les champs correspondent aux cartes du catalogue (type, discipline, niveau, tarif, accès)."
+                                   styleClass="ra-section-desc" wrapText="true"/>
+                            <GridPane hgap="12" vgap="12">
+                                <columnConstraints>
+                                    <ColumnConstraints percentWidth="50"/>
+                                    <ColumnConstraints percentWidth="50"/>
+                                </columnConstraints>
+                                <VBox spacing="6" GridPane.rowIndex="0" GridPane.columnIndex="0" GridPane.columnSpan="2">
+                                    <Label text="Nom de l’activité" styleClass="ra-form-label"/>
+                                    <TextField fx:id="newActNom" promptText="Ex. Séance yoga matinal"
+                                               styleClass="ra-search-field"/>
+                                </VBox>
+                                <VBox spacing="6" GridPane.rowIndex="1" GridPane.columnIndex="0">
+                                    <Label text="Type" styleClass="ra-form-label"/>
+                                    <ComboBox fx:id="newActType" prefWidth="9999" styleClass="ra-filter-combo"/>
+                                </VBox>
+                                <VBox spacing="6" GridPane.rowIndex="1" GridPane.columnIndex="1">
+                                    <Label text="Discipline (catégorie)" styleClass="ra-form-label"/>
+                                    <ComboBox fx:id="newActCategorie" prefWidth="9999" styleClass="ra-filter-combo"/>
+                                </VBox>
+                                <VBox spacing="6" GridPane.rowIndex="2" GridPane.columnIndex="0">
+                                    <Label text="Niveau" styleClass="ra-form-label"/>
+                                    <ComboBox fx:id="newActNiveau" prefWidth="9999" styleClass="ra-filter-combo"/>
+                                </VBox>
+                                <VBox spacing="6" GridPane.rowIndex="2" GridPane.columnIndex="1">
+                                    <Label text="Tarif (TND)" styleClass="ra-form-label"/>
+                                    <TextField fx:id="newActPrix" promptText="Ex. 25" styleClass="ra-search-field"/>
+                                </VBox>
+                                <VBox spacing="6" GridPane.rowIndex="3" GridPane.columnIndex="0">
+                                    <Label text="Accès (statut)" styleClass="ra-form-label"/>
+                                    <ComboBox fx:id="newActStatut" prefWidth="9999" styleClass="ra-filter-combo"/>
+                                </VBox>
+                                <VBox spacing="6" GridPane.rowIndex="3" GridPane.columnIndex="1">
+                                    <Label text="Image URL (optionnel)" styleClass="ra-form-label"/>
+                                    <TextField fx:id="newActImage" promptText="https://…" styleClass="ra-search-field"/>
+                                </VBox>
+                            </GridPane>
+                            <HBox spacing="10" alignment="CENTER_RIGHT">
+                                <Button text="Réinitialiser le formulaire" onAction="#onResetNewActiviteForm"
+                                        styleClass="ra-btn-ghost"/>
+                                <Button text="Enregistrer dans le catalogue" onAction="#onSaveNewActivite"
+                                        styleClass="ra-btn-primary"/>
+                            </HBox>
+                        </VBox>
+                    </VBox>
+
+                    <StackPane styleClass="ra-list-shell" VBox.vgrow="ALWAYS" minHeight="280">
+                        <ListView fx:id="listActivites" styleClass="ra-list ra-list-pro"/>
+                        <VBox fx:id="paneEmptyAct" styleClass="ra-empty" alignment="CENTER" spacing="10" visible="false" managed="false">
+                            <Label text="Aucun résultat" styleClass="ra-empty-title"/>
+                            <Label text="Élargissez votre recherche ou réinitialisez les filtres."
+                                   styleClass="ra-empty-desc" wrapText="true" maxWidth="380"/>
+                        </VBox>
+                    </StackPane>
+                </VBox>
+            </ScrollPane>
+        </Tab>
+
+        <Tab text="Mes réservations">
+            <ScrollPane fitToWidth="true" hbarPolicy="NEVER" styleClass="ra-scroll-client" VBox.vgrow="ALWAYS">
+                <VBox spacing="18" styleClass="ra-tab-stack">
+                    <padding>
+                        <Insets top="20" right="24" bottom="28" left="24"/>
+                    </padding>
+
+                    <VBox spacing="10" styleClass="ra-tab-body">
+                        <Label text="Mes réservations" styleClass="ra-section-title"/>
+                        <Label fx:id="lblInfo"
+                               text="Suivi de vos demandes de réservation d’activités."
+                               styleClass="ra-section-desc" wrapText="true"/>
+                        <HBox styleClass="ra-search-wrap" alignment="CENTER_LEFT" spacing="10">
+                            <Label text="🔍" styleClass="ra-search-icon"/>
+                            <TextField fx:id="searchRes"
+                                       promptText="Filtrer par activité, statut ou ville…"
+                                       styleClass="ra-search-field" HBox.hgrow="ALWAYS"/>
+                        </HBox>
+                    </VBox>
+
+                    <StackPane styleClass="ra-list-shell" VBox.vgrow="ALWAYS" minHeight="280">
+                        <ListView fx:id="listReservations" styleClass="ra-list ra-list-pro"/>
+                        <VBox fx:id="paneEmptyRes" styleClass="ra-empty" alignment="CENTER" spacing="10" visible="false" managed="false">
+                            <Label text="Aucune réservation" styleClass="ra-empty-title"/>
+                            <Label text="Vos demandes apparaîtront ici après réservation depuis le catalogue."
+                                   styleClass="ra-empty-desc" wrapText="true" maxWidth="400"/>
+                        </VBox>
+                    </StackPane>
+                </VBox>
+            </ScrollPane>
+        </Tab>
+    </TabPane>
+</VBox>

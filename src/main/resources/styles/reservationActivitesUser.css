@@ -1,0 +1,925 @@
+/* =============================================================================
+   EcoAdventure — Réservations activités (espace client) — UI premium
+   Complète app.css ; palette alignée #143D30 / émeraude
+   ============================================================================= */
+
+.ra-page {
+    -fx-background-color: linear-gradient(to bottom right, #ecfdf5 0%, #f0fdfa 18%, #f8fafc 55%, #f1f5f9 100%);
+}
+
+/* ----- Hero ----- */
+.ra-hero-shell {
+    -fx-background-color: rgba(255, 255, 255, 0.92);
+    -fx-background-radius: 0 0 18 18;
+    -fx-effect: dropshadow(gaussian, rgba(15, 23, 42, 0.08), 24, 0, 0, 6);
+    -fx-padding: 0 0 22 0;
+}
+
+.ra-hero-rail {
+    -fx-background-color: linear-gradient(to bottom, #10b981, #047857, #064e3b);
+    -fx-background-radius: 0 0 0 18;
+}
+
+.ra-hero-inner {
+    -fx-padding: 26 28 8 28;
+}
+
+.ra-brand-mark {
+    -fx-background-color: linear-gradient(to bottom right, #059669 0%, #0f766e 55%, #134e4a 100%);
+    -fx-background-radius: 14;
+    -fx-effect: dropshadow(gaussian, rgba(5, 150, 105, 0.45), 16, 0, 0, 4);
+}
+
+.ra-brand-glyph {
+    -fx-text-fill: rgba(255, 255, 255, 0.95);
+    -fx-font-size: 22px;
+    -fx-font-weight: 900;
+}
+
+.ra-brand-kicker {
+    -fx-text-fill: #059669;
+    -fx-font-size: 11px;
+    -fx-font-weight: 800;
+    -fx-letter-spacing: 3.2px;
+}
+
+.ra-hero-title {
+    -fx-font-size: 28px;
+    -fx-font-weight: 900;
+    -fx-text-fill: #064e3b;
+    -fx-letter-spacing: -0.8px;
+}
+
+.ra-hero-sub {
+    -fx-font-size: 13.5px;
+    -fx-text-fill: #64748b;
+    -fx-max-width: 720;
+}
+
+.ra-btn-refresh {
+    -fx-background-color: white;
+    -fx-text-fill: #0f766e;
+    -fx-font-weight: 800;
+    -fx-font-size: 13px;
+    -fx-background-radius: 12;
+    -fx-padding: 12 20;
+    -fx-cursor: hand;
+    -fx-border-color: #d1fae5;
+    -fx-border-radius: 12;
+    -fx-border-width: 1.5;
+    -fx-effect: dropshadow(gaussian, rgba(16, 185, 129, 0.12), 10, 0, 0, 2);
+}
+
+.ra-btn-refresh:hover {
+    -fx-background-color: #ecfdf5;
+    -fx-border-color: #6ee7b7;
+}
+
+.ra-btn-refresh:pressed {
+    -fx-background-color: #d1fae5;
+}
+
+/* ----- KPI deck ----- */
+.ra-stat-deck {
+    -fx-padding: 4 0 0 0;
+}
+
+.ra-stat-card {
+    -fx-background-color: #ffffff;
+    -fx-background-radius: 14;
+    -fx-padding: 16 18 16 18;
+    -fx-spacing: 4;
+    -fx-border-color: #e2e8f0;
+    -fx-border-radius: 14;
+    -fx-border-width: 1;
+    -fx-effect: dropshadow(gaussian, rgba(15, 23, 42, 0.04), 12, 0, 0, 2);
+}
+
+.ra-stat-card-accent {
+    -fx-background-color: linear-gradient(to bottom right, #ecfdf5, #ffffff);
+    -fx-border-color: #a7f3d0;
+}
+
+.ra-stat-card-dark {
+    -fx-background-color: linear-gradient(to bottom right, #064e3b 0%, #0f766e 55%, #115e59 100%);
+    -fx-border-color: transparent;
+    -fx-effect: dropshadow(gaussian, rgba(6, 78, 59, 0.35), 18, 0, 0, 6);
+}
+
+.ra-stat-kicker {
+    -fx-font-size: 11px;
+    -fx-font-weight: 800;
+    -fx-text-fill: #64748b;
+    -fx-letter-spacing: 0.8px;
+}
+
+.ra-stat-kicker-light {
+    -fx-font-size: 11px;
+    -fx-font-weight: 800;
+    -fx-text-fill: rgba(255, 255, 255, 0.75);
+    -fx-letter-spacing: 0.8px;
+}
+
+.ra-stat-metric {
+    -fx-font-size: 32px;
+    -fx-font-weight: 900;
+    -fx-text-fill: #0f172a;
+    -fx-padding: 2 0 0 0;
+}
+
+.ra-stat-metric-light {
+    -fx-font-size: 32px;
+    -fx-font-weight: 900;
+    -fx-text-fill: white;
+    -fx-padding: 2 0 0 0;
+}
+
+.ra-stat-foot {
+    -fx-font-size: 12px;
+    -fx-text-fill: #64748b;
+    -fx-font-weight: 600;
+}
+
+.ra-stat-foot-light {
+    -fx-font-size: 12px;
+    -fx-text-fill: rgba(255, 255, 255, 0.85);
+    -fx-font-weight: 600;
+}
+
+/* ----- Tabs ----- */
+.ra-tabs {
+    -fx-background-color: transparent;
+    -fx-padding: 16 24 28 24;
+}
+
+.ra-tabs .tab-header-area {
+    -fx-padding: 0 0 0 4;
+}
+
+.ra-tabs .tab-header-background {
+    -fx-background-color: transparent;
+}
+
+.ra-tabs .tab-header-region .tab {
+    -fx-background-insets: 0;
+    -fx-background-radius: 12 12 0 0;
+    -fx-padding: 12 26 12 26;
+    -fx-font-weight: 800;
+    -fx-font-size: 13px;
+    -fx-text-fill: #64748b;
+    -fx-background-color: rgba(255, 255, 255, 0.45);
+}
+
+.ra-tabs .tab-header-region .tab:selected {
+    -fx-background-color: white;
+    -fx-text-fill: #047857;
+    -fx-effect: dropshadow(gaussian, rgba(15, 23, 42, 0.06), 8, 0, 0, -1);
+}
+
+.ra-tabs .tab-header-region .tab:hover:!selected {
+    -fx-background-color: rgba(255, 255, 255, 0.75);
+}
+
+.ra-tabs .tab-content-area {
+    -fx-background-color: transparent;
+}
+
+.ra-tab-body {
+    -fx-background-color: rgba(255, 255, 255, 0.97);
+    -fx-background-radius: 0 16 16 16;
+    -fx-padding: 22 24 24 24;
+    -fx-border-color: rgba(226, 232, 240, 0.9);
+    -fx-border-radius: 0 16 16 16;
+    -fx-border-width: 1;
+    -fx-effect: dropshadow(gaussian, rgba(15, 23, 42, 0.06), 20, 0, 0, 4);
+}
+
+/* Section header */
+.ra-section-bar {
+    -fx-background-color: linear-gradient(to bottom, #10b981, #059669);
+    -fx-background-radius: 3;
+}
+
+.ra-section-title {
+    -fx-font-size: 17px;
+    -fx-font-weight: 900;
+    -fx-text-fill: #0f172a;
+}
+
+.ra-section-desc {
+    -fx-font-size: 12.5px;
+    -fx-text-fill: #64748b;
+    -fx-max-width: 680;
+}
+
+/* Search */
+.ra-search-wrap {
+    -fx-background-color: #f8fafc;
+    -fx-background-radius: 12;
+    -fx-padding: 4 14 4 12;
+    -fx-border-color: #e2e8f0;
+    -fx-border-radius: 12;
+    -fx-border-width: 1;
+}
+
+.ra-search-wrap:focus-within {
+    -fx-border-color: #34d399;
+    -fx-background-color: white;
+    -fx-effect: dropshadow(gaussian, rgba(16, 185, 129, 0.15), 12, 0, 0, 0);
+}
+
+.ra-search-icon {
+    -fx-font-size: 14px;
+    -fx-opacity: 0.65;
+}
+
+.ra-search-field {
+    -fx-background-color: transparent;
+    -fx-border-width: 0;
+    -fx-padding: 10 8;
+    -fx-font-size: 13.5px;
+    -fx-prompt-text-fill: #94a3b8;
+}
+
+/* List shell + cartes (remplace table) */
+.ra-list-shell {
+    -fx-padding: 16 0 0 0;
+}
+
+.ra-list.ra-list-pro {
+    -fx-background-color: transparent;
+    -fx-background-insets: 0;
+    -fx-border-color: transparent;
+    -fx-padding: 2 0 8 0;
+}
+
+.ra-list.ra-list-pro .list-cell {
+    -fx-background-color: transparent;
+    -fx-padding: 5 2 5 2;
+}
+
+.ra-list.ra-list-pro .list-cell:empty {
+    -fx-padding: 0;
+}
+
+.ra-list.ra-list-pro .list-cell:selected .ra-list-card {
+    -fx-border-color: #10b981;
+    -fx-background-color: #ecfdf5;
+}
+
+.ra-list.ra-list-pro .list-cell:hover .ra-list-card {
+    -fx-border-color: #6ee7b7;
+}
+
+.ra-list-card {
+    -fx-background-color: #ffffff;
+    -fx-background-radius: 12;
+    -fx-border-color: #e2e8f0;
+    -fx-border-radius: 12;
+    -fx-border-width: 1;
+    -fx-effect: dropshadow(gaussian, rgba(15, 23, 42, 0.05), 10, 0, 0, 2);
+}
+
+.ra-card-title {
+    -fx-font-size: 15px;
+    -fx-font-weight: 900;
+    -fx-text-fill: #0f172a;
+}
+
+.ra-card-meta {
+    -fx-font-size: 12px;
+    -fx-text-fill: #64748b;
+}
+
+.ra-card-price {
+    -fx-font-size: 18px;
+    -fx-font-weight: 900;
+    -fx-text-fill: #047857;
+}
+
+.ra-card-pack {
+    -fx-font-size: 11.5px;
+    -fx-text-fill: #475569;
+}
+
+/* Table shell + pro table (conservé si d’autres écrans l’utilisent) */
+.ra-table-shell {
+    -fx-padding: 16 0 0 0;
+}
+
+.ra-table.ra-table-pro {
+    -fx-background-color: #ffffff;
+    -fx-background-radius: 14;
+    -fx-border-color: #e2e8f0;
+    -fx-border-radius: 14;
+    -fx-border-width: 1;
+    -fx-padding: 0;
+    -fx-table-cell-border-color: transparent;
+}
+
+.ra-table.ra-table-pro .column-header-background {
+    -fx-background-color: linear-gradient(to bottom, #f8fafc, #f1f5f9);
+    -fx-background-radius: 14 14 0 0;
+}
+
+.ra-table.ra-table-pro .column-header,
+.ra-table.ra-table-pro .filler {
+    -fx-min-height: 44;
+    -fx-border-color: transparent transparent #e2e8f0 transparent;
+    -fx-border-width: 0 0 1 0;
+}
+
+.ra-table.ra-table-pro .column-header .label {
+    -fx-text-fill: #334155;
+    -fx-font-weight: 900;
+    -fx-font-size: 11.5px;
+    -fx-letter-spacing: 0.4px;
+    -fx-padding: 0 10 0 10;
+}
+
+.ra-table.ra-table-pro .table-row-cell {
+    -fx-cell-size: 48px;
+    -fx-background-color: #ffffff;
+    -fx-border-color: transparent transparent #f1f5f9 transparent;
+    -fx-border-width: 0 0 1 0;
+}
+
+.ra-table.ra-table-pro .table-row-cell:odd {
+    -fx-background-color: #fafbfc;
+}
+
+.ra-table.ra-table-pro .table-row-cell:hover {
+    -fx-background-color: #ecfdf5;
+}
+
+.ra-table.ra-table-pro .table-row-cell:selected {
+    -fx-background-color: #d1fae5;
+    -fx-table-cell-border-color: transparent;
+}
+
+.ra-table.ra-table-pro .table-row-cell:selected .text {
+    -fx-fill: #0f172a;
+}
+
+.ra-table.ra-table-pro .table-cell {
+    -fx-padding: 8 12 8 12;
+    -fx-font-size: 13px;
+}
+
+/* Primary column emphasis (applied from code on name cells) */
+.ra-cell-title {
+    -fx-font-weight: 800;
+    -fx-text-fill: #0f172a;
+}
+
+.ra-cell-muted {
+    -fx-text-fill: #64748b;
+}
+
+/* Badges (table cells hosting labels) */
+.ra-badge {
+    -fx-padding: 5 12;
+    -fx-background-radius: 999;
+    -fx-font-size: 11.5px;
+    -fx-font-weight: 800;
+}
+
+.ra-badge-ok {
+    -fx-background-color: #d1fae5;
+    -fx-text-fill: #065f46;
+}
+
+.ra-badge-warn {
+    -fx-background-color: #fef3c7;
+    -fx-text-fill: #b45309;
+}
+
+.ra-badge-muted {
+    -fx-background-color: #f1f5f9;
+    -fx-text-fill: #475569;
+}
+
+.ra-badge-danger {
+    -fx-background-color: #fee2e2;
+    -fx-text-fill: #991b1b;
+}
+
+.ra-badge-info {
+    -fx-background-color: #dbeafe;
+    -fx-text-fill: #1d4ed8;
+}
+
+/* Empty state */
+.ra-empty {
+    -fx-background-color: rgba(255, 255, 255, 0.92);
+    -fx-background-radius: 14;
+    -fx-padding: 48 32;
+    -fx-border-color: #e2e8f0;
+    -fx-border-radius: 14;
+    -fx-border-style: dashed;
+    -fx-border-width: 1.5;
+}
+
+.ra-empty-title {
+    -fx-font-size: 18px;
+    -fx-font-weight: 900;
+    -fx-text-fill: #334155;
+}
+
+.ra-empty-desc {
+    -fx-font-size: 13px;
+    -fx-text-fill: #64748b;
+    -fx-text-alignment: center;
+}
+
+/* Footer */
+.ra-footbar {
+    -fx-padding: 18 4 0 4;
+    -fx-spacing: 16;
+    -fx-alignment: CENTER_LEFT;
+}
+
+.ra-foot-hint {
+    -fx-font-size: 12px;
+    -fx-text-fill: #94a3b8;
+    -fx-font-style: italic;
+}
+
+.ra-admin-gest-hint {
+    -fx-text-fill: #92400e;
+    -fx-font-size: 12.5px;
+    -fx-font-weight: 600;
+    -fx-wrap-text: true;
+    -fx-background-color: #fffbeb;
+    -fx-background-radius: 10;
+    -fx-border-color: #fde68a;
+    -fx-border-radius: 10;
+    -fx-border-width: 1;
+    -fx-padding: 10 14;
+}
+
+.ra-btn-primary {
+    -fx-background-color: linear-gradient(to bottom, #059669, #047857);
+    -fx-text-fill: white;
+    -fx-font-weight: 800;
+    -fx-font-size: 13px;
+    -fx-background-radius: 12;
+    -fx-padding: 12 26;
+    -fx-cursor: hand;
+    -fx-effect: dropshadow(gaussian, rgba(5, 150, 105, 0.4), 14, 0, 0, 4);
+}
+
+.ra-btn-primary:hover {
+    -fx-background-color: linear-gradient(to bottom, #10b981, #059669);
+}
+
+.ra-btn-primary:pressed {
+    -fx-effect: dropshadow(gaussian, rgba(5, 150, 105, 0.2), 6, 0, 0, 1);
+}
+
+/* Bouton secondaire sur carte (admin : modifier à côté de réserver) */
+.ra-btn-card-secondary {
+    -fx-background-color: white;
+    -fx-text-fill: #0f766e;
+    -fx-font-weight: 800;
+    -fx-font-size: 13px;
+    -fx-background-radius: 12;
+    -fx-padding: 12 18;
+    -fx-cursor: hand;
+    -fx-border-color: #10b981;
+    -fx-border-radius: 12;
+    -fx-border-width: 1.5;
+}
+
+.ra-btn-card-secondary:hover {
+    -fx-background-color: #ecfdf5;
+}
+
+.ra-btn-card-secondary:pressed {
+    -fx-background-color: #d1fae5;
+}
+
+.ra-btn-card-danger {
+    -fx-background-color: #fef2f2;
+    -fx-text-fill: #b91c1c;
+    -fx-font-weight: 800;
+    -fx-font-size: 13px;
+    -fx-background-radius: 12;
+    -fx-padding: 10 16;
+    -fx-cursor: hand;
+    -fx-border-color: #fecaca;
+    -fx-border-radius: 12;
+    -fx-border-width: 1.5;
+}
+
+.ra-btn-card-danger:hover {
+    -fx-background-color: #fee2e2;
+}
+
+.ra-btn-card-danger:pressed {
+    -fx-background-color: #fecaca;
+}
+
+.ra-btn-ghost {
+    -fx-background-radius: 10;
+    -fx-padding: 10 18;
+    -fx-border-color: #cbd5e1;
+    -fx-border-radius: 10;
+    -fx-border-width: 1;
+    -fx-background-color: white;
+    -fx-text-fill: #334155;
+    -fx-font-weight: 700;
+    -fx-cursor: hand;
+}
+
+.ra-btn-ghost:hover {
+    -fx-background-color: #f8fafc;
+}
+
+/* Scroll léger (layout « classique » client) */
+.ra-scroll-client {
+    -fx-background-color: transparent;
+    -fx-border-color: transparent;
+}
+
+.ra-scroll-client > .viewport {
+    -fx-background-color: transparent;
+}
+
+/* Badge + séparateur pour cartes liste (style classique) */
+.ra-card-badge {
+    -fx-font-size: 10px;
+    -fx-font-weight: 800;
+    -fx-text-fill: #047857;
+    -fx-background-color: #d1fae5;
+    -fx-padding: 4 10;
+    -fx-background-radius: 20;
+}
+
+.ra-card-sep {
+    -fx-background-color: #e2e8f0;
+    -fx-pref-height: 1;
+    -fx-max-height: 1;
+    -fx-min-height: 1;
+    -fx-max-width: infinity;
+}
+
+.ra-card-price-label {
+    -fx-font-size: 11px;
+    -fx-font-weight: 700;
+    -fx-text-fill: #64748b;
+}
+
+/* =============================================================================
+   Maquette « Packs / catalogue » — page réservations activités
+   ============================================================================= */
+
+.ra-page-pack {
+    -fx-background-color: #f4f6f8;
+}
+
+.ra-tabs-pack {
+    -fx-background-color: transparent;
+    -fx-padding: 0;
+}
+
+.ra-tabs-pack .tab-header-area {
+    -fx-padding: 16 24 0 24;
+    -fx-background-color: transparent;
+}
+
+.ra-tabs-pack .tab-header-background {
+    -fx-background-color: transparent;
+}
+
+.ra-tabs-pack .tab-header-region .tab {
+    -fx-background-radius: 12 12 0 0;
+    -fx-padding: 11 24 11 24;
+    -fx-font-weight: 800;
+    -fx-font-size: 13px;
+    -fx-text-fill: #64748b;
+    -fx-background-color: #e8ecf0;
+}
+
+.ra-tabs-pack .tab-header-region .tab:selected {
+    -fx-background-color: white;
+    -fx-text-fill: #1b3022;
+}
+
+.ra-scroll-pack {
+    -fx-background-color: transparent;
+    -fx-border-color: transparent;
+}
+
+.ra-scroll-pack > .viewport {
+    -fx-background-color: #f4f6f8;
+}
+
+.ra-tab-stack {
+    -fx-max-width: 1100;
+}
+
+/* Hero sombre + KPIs vitrés */
+.ra-pack-hero {
+    -fx-background-color: linear-gradient(to bottom right, #1b3022 0%, #243d31 45%, #2d4a3e 100%);
+    -fx-background-radius: 18;
+    -fx-padding: 26 28 26 28;
+    -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.25), 28, 0, 0, 8);
+}
+
+.ra-pack-hero-title {
+    -fx-font-size: 24px;
+    -fx-font-weight: 900;
+    -fx-text-fill: white;
+    -fx-wrap-text: true;
+    -fx-max-width: 620;
+}
+
+.ra-pack-hero-sub {
+    -fx-font-size: 13.5px;
+    -fx-text-fill: rgba(255, 255, 255, 0.78);
+    -fx-wrap-text: true;
+    -fx-max-width: 620;
+}
+
+.ra-btn-hero-outline {
+    -fx-background-color: rgba(255, 255, 255, 0.1);
+    -fx-text-fill: white;
+    -fx-font-weight: 800;
+    -fx-background-radius: 10;
+    -fx-padding: 10 18;
+    -fx-border-color: rgba(255, 255, 255, 0.35);
+    -fx-border-radius: 10;
+    -fx-border-width: 1;
+    -fx-cursor: hand;
+}
+
+.ra-btn-hero-outline:hover {
+    -fx-background-color: rgba(255, 255, 255, 0.2);
+}
+
+.ra-kpi-glass {
+    -fx-background-color: rgba(255, 255, 255, 0.12);
+    -fx-background-radius: 12;
+    -fx-padding: 12 14 12 14;
+    -fx-border-color: rgba(255, 255, 255, 0.18);
+    -fx-border-radius: 12;
+    -fx-border-width: 1;
+}
+
+.ra-kpi-label {
+    -fx-font-size: 11px;
+    -fx-font-weight: 800;
+    -fx-text-fill: rgba(255, 255, 255, 0.72);
+    -fx-letter-spacing: 0.4px;
+}
+
+.ra-kpi-value {
+    -fx-font-size: 22px;
+    -fx-font-weight: 900;
+    -fx-text-fill: white;
+}
+
+/* Carte filtres */
+.ra-filter-card {
+    -fx-background-color: white;
+    -fx-background-radius: 16;
+    -fx-padding: 20 22 18 22;
+    -fx-effect: dropshadow(gaussian, rgba(15, 23, 42, 0.08), 20, 0, 0, 4);
+    -fx-border-color: #e8ecf0;
+    -fx-border-radius: 16;
+    -fx-border-width: 1;
+}
+
+.ra-filter-search-row {
+    -fx-background-color: #f8fafc;
+    -fx-background-radius: 12;
+    -fx-padding: 6 12 6 10;
+    -fx-border-color: #e2e8f0;
+    -fx-border-radius: 12;
+    -fx-border-width: 1;
+}
+
+.ra-filter-search-ico {
+    -fx-font-size: 15px;
+    -fx-opacity: 0.55;
+}
+
+.ra-filter-search-field {
+    -fx-background-color: transparent;
+    -fx-border-width: 0;
+    -fx-padding: 10 8;
+    -fx-font-size: 14px;
+}
+
+.ra-filter-combo {
+    -fx-background-radius: 10;
+    -fx-font-size: 13px;
+}
+
+.ra-btn-apply {
+    -fx-background-color: #1b3022;
+    -fx-text-fill: white;
+    -fx-font-weight: 800;
+    -fx-background-radius: 10;
+    -fx-padding: 10 22;
+    -fx-cursor: hand;
+}
+
+.ra-btn-apply:hover {
+    -fx-background-color: #2a4a38;
+}
+
+.ra-btn-reset {
+    -fx-background-color: white;
+    -fx-text-fill: #1b3022;
+    -fx-font-weight: 800;
+    -fx-background-radius: 10;
+    -fx-padding: 10 18;
+    -fx-border-color: #1b3022;
+    -fx-border-radius: 10;
+    -fx-border-width: 1.5;
+    -fx-cursor: hand;
+}
+
+.ra-btn-reset:hover {
+    -fx-background-color: #f0fdf4;
+}
+
+.ra-filter-intersection {
+    -fx-font-size: 12.5px;
+    -fx-text-fill: #64748b;
+    -fx-font-weight: 600;
+}
+
+/* Liste + cartes type pack */
+.ra-list-shell-pack {
+    -fx-padding: 4 0 0 0;
+}
+
+.ra-list.ra-list-pack {
+    -fx-background-color: transparent;
+    -fx-padding: 4 0 12 0;
+}
+
+.ra-list.ra-list-pack .list-cell {
+    -fx-background-color: transparent;
+    -fx-padding: 0 0 16 0;
+}
+
+.ra-list.ra-list-pack .list-cell:empty {
+    -fx-padding: 0;
+}
+
+.ra-list.ra-list-pack .list-cell:selected .ra-pack-card {
+    -fx-border-color: #f39c12;
+    -fx-effect: dropshadow(gaussian, rgba(243, 156, 18, 0.35), 16, 0, 0, 4);
+}
+
+.ra-pack-card {
+    -fx-background-color: white;
+    -fx-background-radius: 16;
+    -fx-padding: 20 22 18 22;
+    -fx-border-color: #e8ecf0;
+    -fx-border-radius: 16;
+    -fx-border-width: 1;
+    -fx-effect: dropshadow(gaussian, rgba(15, 23, 42, 0.07), 16, 0, 0, 3);
+    -fx-spacing: 14;
+}
+
+.ra-pack-badge {
+    -fx-background-color: #e8f5e9;
+    -fx-text-fill: #1b3022;
+    -fx-font-size: 11px;
+    -fx-font-weight: 900;
+    -fx-padding: 5 12;
+    -fx-background-radius: 20;
+    -fx-alignment: center;
+}
+
+.ra-pack-title {
+    -fx-font-size: 19px;
+    -fx-font-weight: 900;
+    -fx-text-fill: #1b3022;
+}
+
+.ra-pack-sep {
+    -fx-background-color: #e8ecf0;
+    -fx-pref-height: 1;
+    -fx-max-height: 1;
+    -fx-min-height: 1;
+}
+
+.ra-pack-price-label {
+    -fx-font-size: 11px;
+    -fx-font-weight: 800;
+    -fx-text-fill: #64748b;
+}
+
+.ra-pack-price-main {
+    -fx-font-size: 26px;
+    -fx-font-weight: 900;
+    -fx-text-fill: #e67e22;
+}
+
+.ra-pack-price-sub {
+    -fx-font-size: 12px;
+    -fx-text-fill: #64748b;
+}
+
+.ra-pack-meta-line {
+    -fx-font-size: 13px;
+    -fx-text-fill: #334155;
+}
+
+.ra-pack-cta {
+    -fx-background-color: #1b3022;
+    -fx-text-fill: white;
+    -fx-font-weight: 800;
+    -fx-font-size: 14px;
+    -fx-background-radius: 12;
+    -fx-padding: 14 18;
+    -fx-cursor: hand;
+    -fx-max-width: infinity;
+}
+
+.ra-pack-cta:hover {
+    -fx-background-color: #2a4a38;
+}
+
+.ra-pack-cta:disabled {
+    -fx-opacity: 0.55;
+}
+
+/* Mes réservations — en-tête */
+.ra-res-head-card {
+    -fx-background-color: white;
+    -fx-background-radius: 16;
+    -fx-padding: 20 22;
+    -fx-effect: dropshadow(gaussian, rgba(15, 23, 42, 0.06), 14, 0, 0, 3);
+    -fx-border-color: #e8ecf0;
+    -fx-border-radius: 16;
+    -fx-border-width: 1;
+}
+
+.ra-res-main-title {
+    -fx-font-size: 22px;
+    -fx-font-weight: 900;
+    -fx-text-fill: #1b3022;
+}
+
+.ra-res-main-sub {
+    -fx-font-size: 13px;
+    -fx-text-fill: #64748b;
+}
+
+/* Empty pack */
+.ra-empty-pack {
+    -fx-background-color: rgba(255, 255, 255, 0.96);
+    -fx-background-radius: 16;
+    -fx-padding: 40 28;
+    -fx-border-color: #e2e8f0;
+    -fx-border-radius: 16;
+    -fx-border-style: dashed;
+    -fx-border-width: 1.5;
+}
+
+.ra-empty-title-pack {
+    -fx-font-size: 18px;
+    -fx-font-weight: 900;
+    -fx-text-fill: #334155;
+}
+
+.ra-empty-desc-pack {
+    -fx-font-size: 13px;
+    -fx-text-fill: #64748b;
+}
+
+/* Formulaire création activité (catalogue admin) */
+.ra-btn-create-toggle {
+    -fx-background-color: linear-gradient(to bottom, #059669, #047857);
+    -fx-text-fill: white;
+    -fx-font-weight: 800;
+    -fx-font-size: 13px;
+    -fx-background-radius: 12;
+    -fx-padding: 12 18;
+    -fx-cursor: hand;
+    -fx-effect: dropshadow(gaussian, rgba(5, 150, 105, 0.28), 12, 0, 0, 3);
+}
+
+.ra-btn-create-toggle:hover {
+    -fx-background-color: linear-gradient(to bottom, #10b981, #059669);
+}
+
+.ra-create-act-form {
+    -fx-border-color: #a7f3d0;
+    -fx-border-width: 1.5;
+    -fx-border-radius: 14;
+    -fx-background-color: linear-gradient(to bottom right, #ffffff 0%, #f0fdf4 100%);
+}
+
+.ra-form-label {
+    -fx-font-size: 12px;
+    -fx-font-weight: 700;
+    -fx-text-fill: #475569;
+}

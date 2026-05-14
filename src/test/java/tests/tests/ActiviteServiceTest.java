@@ -22,6 +22,8 @@ public class ActiviteServiceTest {
                 25.50,
                 "DISPONIBLE",
                 null,
+                0,
+                null,
                 null
         );
 
@@ -47,6 +49,8 @@ public class ActiviteServiceTest {
                 40.00,
                 "INDISPONIBLE",
                 "https://example.com/img.png",
+                0,
+                null,
                 null
         );
 

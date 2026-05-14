@@ -5,7 +5,9 @@ public enum StatutReservation {
     LISTE_ATTENTE("Liste d'attente"),
     CONFIRMEE("Confirmée"),
     ANNULEE("Annulée"),
-    TERMINEE("Terminée");
+    TERMINEE("Terminée"),
+    /** Après scan / check-in ticket (pas de colonnes ticket en base). */
+    SCANNEE("Scannée");
 
     private final String label;
 

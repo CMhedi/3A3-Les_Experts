@@ -2,7 +2,6 @@ package GUI;
 
 import GUI.utils.DialogUtils;
 import GUI.utils.SceneUtils;
-import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -20,11 +19,6 @@ public class SideBarController {
 
     @FXML
     private VBox sidebarRoot;
-
-    @FXML
-    private void initialize() {
-        Platform.runLater(() -> changeCenter("/gui/AdminUsers.fxml"));
-    }
 
     @FXML
     void goToDashboard(ActionEvent event) {
@@ -87,6 +81,16 @@ public class SideBarController {
     @FXML
     private void goToAdminMessagerie(ActionEvent event) {
         changeCenter("/fxml/AdminMessagerie.fxml");
+    }
+
+    @FXML
+    private void goToAdminActivites(ActionEvent event) {
+        changeCenter("/GUI/AdminActivites.fxml");
+    }
+
+    @FXML
+    private void goToAdminReservationsActivites(ActionEvent event) {
+        changeCenter("/GUI/reservation.fxml");
     }
 
     @FXML

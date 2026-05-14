@@ -2,18 +2,23 @@ package controllers;
 
 import Models.Reservation;
 import Services.interfaces.SendGridEmailService;
+import Utiles.MyDB;
 import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
 import javafx.stage.Stage;
 
 import java.sql.Connection;
-import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
+import java.sql.Timestamp;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.LocalTime;
 
 public class EditReservationPopupController {
 
+    @FXML private DatePicker dpDateReservation;
     @FXML private ComboBox<String> cbStatut;
     @FXML private Spinner<Integer> spNbPersonnes;
     @FXML private TextField tfIdReservation;
@@ -22,15 +27,11 @@ public class EditReservationPopupController {
     private Reservation reservation;
     private ReservationController parentController;
 
-    private final String URL = "jdbc:mysql://localhost:3306/ecoadventure?useSSL=false&serverTimezone=UTC";
-    private final String USER = "root";
-    private final String PASSWORD = "";
-
     private final SendGridEmailService emailService = new SendGridEmailService();
 
     @FXML
     public void initialize() {
-        cbStatut.getItems().setAll("EN_ATTENTE", "CONFIRMEE", "ANNULEE");
+        cbStatut.getItems().setAll("EN_ATTENTE", "CONFIRMEE", "ANNULEE", "SCANNEE");
         SpinnerValueFactory<Integer> vf =
                 new SpinnerValueFactory.IntegerSpinnerValueFactory(1, 500, 1);
         spNbPersonnes.setValueFactory(vf);
@@ -43,6 +44,12 @@ public class EditReservationPopupController {
         tfIdActivite.setText(String.valueOf(r.getIdActivite()));
         cbStatut.setValue(r.getStatut());
         spNbPersonnes.getValueFactory().setValue(r.getNbPersonnes());
+        LocalDateTime dr = r.getDateReservation();
+        if (dr != null) {
+            dpDateReservation.setValue(dr.toLocalDate());
+        } else {
+            dpDateReservation.setValue(LocalDate.now());
+        }
     }
 
     public void setParentController(ReservationController parentController) {
@@ -65,16 +72,30 @@ public class EditReservationPopupController {
         String newStatut = cbStatut.getValue();
         int newNb = spNbPersonnes.getValue();
 
-        try (Connection conn = DriverManager.getConnection(URL, USER, PASSWORD)) {
+        LocalDateTime newDateReservation = reservation.getDateReservation();
+        LocalDate picked = dpDateReservation != null ? dpDateReservation.getValue() : null;
+        if (picked != null) {
+            LocalTime timePart = reservation.getDateReservation() != null
+                    ? reservation.getDateReservation().toLocalTime()
+                    : LocalTime.MIDNIGHT;
+            newDateReservation = LocalDateTime.of(picked, timePart);
+        }
 
-            String sql = "UPDATE reservation_activite SET statut_res=?, nb_personnes=? WHERE id_res_act=?";
+        try (Connection conn = MyDB.getInstance().getConnection()) {
+
+            String sql = "UPDATE reservation_activite SET statut_res=?, nb_personnes=?, date_reservation=? WHERE id_res_act=?";
 
             try (PreparedStatement pst = conn.prepareStatement(sql)) {
                 pst.setString(1, newStatut);
                 pst.setInt(2, newNb);
-                pst.setInt(3, reservation.getId());
+                pst.setTimestamp(3, newDateReservation != null ? Timestamp.valueOf(newDateReservation) : null);
+                pst.setInt(4, reservation.getId());
                 pst.executeUpdate();
             }
+
+            reservation.setStatut(newStatut);
+            reservation.setNbPersonnes(newNb);
+            reservation.setDateReservation(newDateReservation);
 
             if (parentController != null)
                 parentController.refreshTable();
@@ -83,7 +104,7 @@ public class EditReservationPopupController {
                 try {
                     UserInfo user;
 
-                    try (Connection newConn = DriverManager.getConnection(URL, USER, PASSWORD)) {
+                    try (Connection newConn = MyDB.getInstance().getConnection()) {
                         user = fetchUserInfo(newConn, reservation.getIdUser());
                     }
 

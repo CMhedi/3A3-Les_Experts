@@ -22,6 +22,8 @@
             <Button text="Réservations" styleClass="side-btn" onAction="#goReservations"/>
             <Button text="Statistiques" styleClass="side-btn-active"/>
 
+            <Button text="➕  Activité" styleClass="side-btn" onAction="#openActiviteQuickAdd"/>
+
             <Region VBox.vgrow="ALWAYS"/>
 
             <Button text="Retour" styleClass="side-btn" onAction="#goBack"/>

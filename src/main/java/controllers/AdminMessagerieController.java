@@ -1,5 +1,8 @@
 package controllers;
 
+import Entities.AdminConversationListItem;
+import Services.interfaces.ConversationDAO;
+import Services.interfaces.MessageDAO;
 import javafx.beans.property.*;
 import javafx.collections.*;
 import javafx.collections.transformation.FilteredList;
@@ -9,8 +12,6 @@ import javafx.scene.chart.*;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.layout.*;
-import javafx.scene.paint.Color;
-import javafx.scene.shape.Circle;
 import javafx.stage.Stage;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
@@ -70,6 +71,14 @@ public class AdminMessagerieController implements Initializable {
     private final ObservableList<ConversationRow> masterList   = FXCollections.observableArrayList();
     private FilteredList<ConversationRow>          filteredList;
 
+    private ConversationDAO conversationDAO;
+    private MessageDAO      messageDAO;
+    /** Messages sur les 7 derniers jours (KPI). */
+    private long messagesLast7Days;
+    private int[] dailyMessageCounts7d = new int[7];
+    private Map<String, Long> typeCounts7d = new LinkedHashMap<>();
+    private List<MessageDAO.TopUserMsg> topCommunicators = List.of();
+
     // ── Colors ───────────────────────────────────────────────
     private static final String[] AVATAR_COLORS = {
             "#3b82f6","#10b981","#f59e0b","#ef4444","#8b5cf6","#06b6d4","#ec4899"
@@ -80,6 +89,8 @@ public class AdminMessagerieController implements Initializable {
     // ════════════════════════════════════════════════════════
     @Override
     public void initialize(URL url, ResourceBundle rb) {
+        conversationDAO = new ConversationDAO();
+        messageDAO = new MessageDAO();
         setupFilters();
         setupTable();
         loadData();
@@ -231,20 +242,39 @@ public class AdminMessagerieController implements Initializable {
 
     private void loadData() {
         masterList.clear();
-
-        // TODO: replace with service.getAllConversations()
-        masterList.addAll(
-                new ConversationRow(1,  "Assistant IA Group", "Groupe",  "Mohamed chadeb",   2, 5, "21/06/2026", "Bonjour comment puis-je vous aider ?", true),
-                new ConversationRow(2,  "Assistant IA Drag",  "Groupe",  "Mohamed chadeb",   2, 3, "21/06/2026", "Merci pour votre réponse",              true),
-                new ConversationRow(3,  "ola khalil",         "Groupe",  "Mohamed chadeb",   1, 2, "21/06/2026", "Ok c'est noté",                         true),
-                new ConversationRow(4,  "ola khalil",         "Groupe",  "Utilisateur Inconnu", 0, 0, "21/06/2026", "",                                   true),
-                new ConversationRow(5,  "Clai Team",          "Groupe",  "Utilisateur Inconnu", 0, 1, "21/06/2026", "user_edit",                          true),
-                new ConversationRow(6,  "Assistant IA Group", "Groupe",  "Utilisateur Inconnu", 0, 0, "21/06/2026", "hahaha message",                     false),
-                new ConversationRow(7,  "Assistant IA Drag",  "Groupe",  "Utilisateur Inconnu", 0, 0, "21/06/2026", "hahaha message",                     false),
-                new ConversationRow(8,  "Assistant IA Group", "Groupe",  "Utilisateur Inconnu", 0, 0, "21/06/2026", "hahaha message",                     false),
-                new ConversationRow(9,  "hadi chahib",        "Groupe",  "Utilisateur Inconnu", 0, 0, "21/06/2026", "hahaha message",                     true),
-                new ConversationRow(10, "ola khalil",         "Groupe",  "Utilisateur Inconnu", 0, 0, "21/06/2026", "hahaha message",                     true)
-        );
+        try {
+            List<AdminConversationListItem> rows = conversationDAO.findAllForAdmin();
+            DateTimeFormatter dtf = DateTimeFormatter.ofPattern("dd/MM/yyyy");
+            for (AdminConversationListItem it : rows) {
+                String type = it.estGroupe() == 1 ? "Groupe" : "Privée";
+                String dateStr = it.dateCreation() != null ? it.dateCreation().format(dtf) : "";
+                String last = it.dernierMessage() != null ? it.dernierMessage().trim() : "";
+                if (last.length() > 500) {
+                    last = last.substring(0, 497) + "…";
+                }
+                masterList.add(new ConversationRow(
+                        it.idConversation(),
+                        it.titre(),
+                        type,
+                        it.createurNom(),
+                        it.nbParticipants(),
+                        it.nbMessages(),
+                        dateStr,
+                        last,
+                        false));
+            }
+            messagesLast7Days = messageDAO.countMessagesLastDays(7);
+            dailyMessageCounts7d = messageDAO.getDailyMessageCountsLast7Days();
+            typeCounts7d = messageDAO.countByTypeMessageLastDays(7);
+            topCommunicators = messageDAO.topUsersByMessagesLastDays(7, 10);
+        } catch (Exception ex) {
+            ex.printStackTrace();
+            showError("Impossible de charger les données messagerie : " + ex.getMessage());
+            messagesLast7Days = 0;
+            dailyMessageCounts7d = new int[7];
+            typeCounts7d = new LinkedHashMap<>();
+            topCommunicators = List.of();
+        }
 
         updateKpis();
         applyFilter();
@@ -255,12 +285,11 @@ public class AdminMessagerieController implements Initializable {
     // ── KPIs ─────────────────────────────────────────────────
     private void updateKpis() {
         long nbGroupe = masterList.stream().filter(c -> "Groupe".equalsIgnoreCase(c.getType())).count();
-        int  totalMsg = masterList.stream().mapToInt(ConversationRow::getNbMessages).sum();
         long actifs   = masterList.stream().map(ConversationRow::getCreateurNom).distinct().count();
 
         kpiConversations.setText(String.valueOf(masterList.size()));
         kpiGroupes.setText(String.valueOf(nbGroupe));
-        kpiMessages7j.setText(String.valueOf(totalMsg));
+        kpiMessages7j.setText(String.valueOf(messagesLast7Days));
         kpiActifs.setText(String.valueOf(actifs));
     }
 
@@ -278,11 +307,15 @@ public class AdminMessagerieController implements Initializable {
                 .limit(10)
                 .forEach(e -> addUserRow(vboxTopCreateurs, e.getKey(), e.getValue().intValue(), true));
 
-        // TODO: replace with service.getTopCommunicateurs(7 days)
-        // For now show placeholder
-        Label empty = new Label("Aucune donnée ajoutée.");
-        empty.setStyle("-fx-text-fill:#94a3b8;-fx-font-size:12;-fx-padding:16;");
-        vboxTopCommunicateurs.getChildren().add(empty);
+        if (topCommunicators == null || topCommunicators.isEmpty()) {
+            Label empty = new Label("Aucun message sur les 7 derniers jours.");
+            empty.setStyle("-fx-text-fill:#94a3b8;-fx-font-size:12;-fx-padding:16;");
+            vboxTopCommunicateurs.getChildren().add(empty);
+        } else {
+            for (MessageDAO.TopUserMsg t : topCommunicators) {
+                addUserRow(vboxTopCommunicateurs, t.name(), (int) t.count(), true);
+            }
+        }
     }
 
     private void addUserRow(VBox container, String name, int count, boolean hasBanBtn) {
@@ -326,11 +359,12 @@ public class AdminMessagerieController implements Initializable {
         XYChart.Series<String, Number> series = new XYChart.Series<>();
         series.setName("Messages");
         DateTimeFormatter fmt = DateTimeFormatter.ofPattern("dd/MM");
-        // TODO: replace with service.getMessagesPerDay(7)
-        int[] sampleCounts = {3, 7, 2, 0, 5, 8, 4};
         for (int i = 6; i >= 0; i--) {
             String day = LocalDate.now().minusDays(i).format(fmt);
-            series.getData().add(new XYChart.Data<>(day, sampleCounts[6 - i]));
+            int idx = 6 - i;
+            int val = (dailyMessageCounts7d != null && idx < dailyMessageCounts7d.length)
+                    ? dailyMessageCounts7d[idx] : 0;
+            series.getData().add(new XYChart.Data<>(day, val));
         }
         chartMsgJour.getData().clear();
         chartMsgJour.getData().add(series);
@@ -340,19 +374,15 @@ public class AdminMessagerieController implements Initializable {
                         node.setStyle("-fx-bar-fill:#3b82f6;")));
 
         // Pie: message types (last 7 days)
-        // TODO: replace with service.getMessageTypeCounts(7)
-        int total = masterList.stream().mapToInt(ConversationRow::getNbMessages).sum();
-        if (total == 0) {
-            Label lbl = new Label("Aucune donnée disponible.");
-            lbl.setStyle("-fx-text-fill:#94a3b8;-fx-font-size:12;-fx-padding:16;");
+        long pieTotal = typeCounts7d == null ? 0 : typeCounts7d.values().stream().mapToLong(Long::longValue).sum();
+        if (pieTotal == 0) {
             chartMsgTypes.setData(FXCollections.emptyObservableList());
         } else {
-            chartMsgTypes.setData(FXCollections.observableArrayList(
-                    new PieChart.Data("Texte",   (int)(total * 0.70)),
-                    new PieChart.Data("Image",   (int)(total * 0.15)),
-                    new PieChart.Data("Fichier", (int)(total * 0.10)),
-                    new PieChart.Data("Audio",   (int)(total * 0.05))
-            ));
+            List<PieChart.Data> slice = new ArrayList<>();
+            for (Map.Entry<String, Long> e : typeCounts7d.entrySet()) {
+                slice.add(new PieChart.Data(e.getKey() + " (" + e.getValue() + ")", Math.max(e.getValue(), 0.01)));
+            }
+            chartMsgTypes.setData(FXCollections.observableArrayList(slice));
         }
     }
 
@@ -367,19 +397,20 @@ public class AdminMessagerieController implements Initializable {
             FXMLLoader loader = new FXMLLoader(
                     getClass().getResource("/fxml/AdminMessagerieDetail.fxml"));
             Parent root = loader.load();
+
             AdminMessagerieDetailController ctrl = loader.getController();
-            ctrl.setConversation(conv.getId(), conv.getTitre(),
-                    conv.getType(), conv.getDateCreation());
+
+            // This is the clean, single line you need:
+            ctrl.setConversation(conv.getId(), conv.getTitre(), conv.getType(), conv.getDateCreation());
+
             Stage stage = new Stage();
             stage.setTitle("Détail – " + conv.getTitre());
             stage.setScene(new Scene(root, 980, 660));
             stage.show();
-            // Option B: replace center pane — uncomment and adapt to your navigation system
         } catch (IOException ex) {
             showError("Impossible d'ouvrir le détail : " + ex.getMessage());
         }
     }
-
     /** Empty a conversation's messages. */
     private void banConversation(ConversationRow conv) {
         if (conv == null) return;
@@ -401,12 +432,11 @@ public class AdminMessagerieController implements Initializable {
                 "Supprimer définitivement « " + conv.getTitre() + " » ?\nCette action est irréversible.");
         dlg.showAndWait().ifPresent(btn -> {
             if (btn == ButtonType.YES) {
-                // TODO: service.deleteConversation(conv.getId());
-                masterList.remove(conv);
-                updateKpis();
-                updateTopUsers();
-                updateCharts();
-                lblConvCount.setText(filteredList.size() + " conversation(s)");
+                if (conversationDAO.deleteConversation(conv.getId())) {
+                    loadData();
+                } else {
+                    showError("Impossible de supprimer la conversation en base.");
+                }
             }
         });
     }
@@ -508,10 +538,10 @@ public class AdminMessagerieController implements Initializable {
             this.isNew = isNew;
         }
 
-        // JavaFX property accessors (required by PropertyValueFactory)
+        // Corrected Getters
         public int    getId()             { return id.get(); }
         public String getTitre()          { return titre.get(); }
-        public String getType()           { return type.get(); }
+        public String getType()        { return type.get(); }
         public String getCreateurNom()    { return createurNom.get(); }
         public int    getNbParticipants() { return nbParticipants.get(); }
         public int    getNbMessages()     { return nbMessages.get(); }
@@ -519,9 +549,10 @@ public class AdminMessagerieController implements Initializable {
         public String getDernierMessage() { return dernierMessage.get(); }
         public boolean isNew()            { return isNew; }
 
+        // Corrected Properties
         public IntegerProperty idProperty()             { return id; }
         public StringProperty  titreProperty()          { return titre; }
-        public StringProperty  typeProperty()           { return type; }
+        public StringProperty  typeProperty()           { return type; } // Should be StringProperty
         public StringProperty  createurNomProperty()    { return createurNom; }
         public IntegerProperty nbParticipantsProperty() { return nbParticipants; }
         public IntegerProperty nbMessagesProperty()     { return nbMessages; }

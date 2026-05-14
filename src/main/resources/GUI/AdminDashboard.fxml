@@ -18,6 +18,7 @@
                         <Label text="Tableau de Bord EcoAdventure" style="-fx-font-size: 28; -fx-font-weight: 800; -fx-text-fill: #143D30;"/>
                         <Label text="Voici un résumé de l'activité aujourd'hui." style="-fx-text-fill: #6b7280; -fx-font-size: 14;"/>
                     </VBox>
+                    <Region HBox.hgrow="ALWAYS"/>
                 </HBox>
 
                 <GridPane hgap="20">

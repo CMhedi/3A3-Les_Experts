@@ -4,8 +4,10 @@ import enums.CategorieActivite;
 import enums.NiveauActivite;
 
 import java.math.BigDecimal;
-import java.time.LocalDateTime;
 
+/**
+ * Entité alignée sur la table {@code activite} (colonnes SQL).
+ */
 public class Activite {
 
     private int idActivite;
@@ -17,11 +19,10 @@ public class Activite {
     private String statut;
     private String imageUrl;
     private int idPack;
-    private LocalDateTime dateReservation;
+    private Double latitude;
+    private Double longitude;
 
     public Activite() {}
-
-    // ===== Getters & Setters =====
 
     public int getIdActivite() {
         return idActivite;
@@ -30,7 +31,6 @@ public class Activite {
     public void setIdActivite(int idActivite) {
         this.idActivite = idActivite;
     }
-
 
     public String getNom() {
         return nom;
@@ -42,13 +42,6 @@ public class Activite {
 
     public String getTypeActivite() {
         return typeActivite;
-    }
-    public LocalDateTime getDateReservation() {
-        return dateReservation;
-    }
-
-    public void setDateReservation(LocalDateTime dateReservation) {
-        this.dateReservation = dateReservation;
     }
 
     public void setTypeActivite(String typeActivite) {
@@ -87,7 +80,6 @@ public class Activite {
         this.statut = statut;
     }
 
-
     public String getImageUrl() {
         return imageUrl;
     }
@@ -104,7 +96,22 @@ public class Activite {
         this.idPack = idPack;
     }
 
-    // ===== toString =====
+    public Double getLatitude() {
+        return latitude;
+    }
+
+    public void setLatitude(Double latitude) {
+        this.latitude = latitude;
+    }
+
+    public Double getLongitude() {
+        return longitude;
+    }
+
+    public void setLongitude(Double longitude) {
+        this.longitude = longitude;
+    }
+
     @Override
     public String toString() {
         return nom + " | " + categorieAct + " | " + niveauAct;

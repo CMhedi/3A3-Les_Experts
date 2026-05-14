@@ -1187,14 +1187,14 @@ public class MessengerController implements Initializable {
                     if(avail.isEmpty()){ showAlert("Info","Aucun utilisateur disponible."); return; }
                     ChoiceDialog<String> cd=new ChoiceDialog<>(avail.get(0),avail); cd.setTitle("Nouveau chat privé"); cd.setContentText("Utilisateur :");
                     cd.showAndWait().ifPresent(su->{ try{ String[]p=su.split("\\|"); String name=p[0].trim(); String id=p.length>1?p[1].trim():"";
-                        int newId=conversationDAO.addConversation(new Conversation(name,0));
+                        int newId=conversationDAO.addConversation(new Conversation(name,0,currentUserId));
                         if(newId!=-1){ conversationDAO.addMemberToConversation(newId,currentUserId); if(id.matches("\\d+")) conversationDAO.addMemberToConversation(newId,Integer.parseInt(id)); else conversationDAO.addMemberToConversation(newId,id); loadConversations(); showAlert("Succès","Conversation créée avec "+name+" ✅"); }
                     }catch(Exception ex){ showAlert("Erreur",ex.getMessage()); } });
                 } catch(Exception ex){ showAlert("Erreur",ex.getMessage()); }
             } else {
                 TextInputDialog ni=new TextInputDialog(); ni.setTitle("Créer un groupe"); ni.setContentText("Nom du groupe :"); ni.getEditor().setPromptText("Ex: Projet 2024...");
                 ni.showAndWait().ifPresent(name->{ if(name.trim().isEmpty()){ showAlert("Attention","Le nom ne peut pas être vide."); return; }
-                    try{ int newId=conversationDAO.addConversation(new Conversation(name.trim(),1));
+                    try{ int newId=conversationDAO.addConversation(new Conversation(name.trim(),1,currentUserId));
                         if(newId!=-1){ conversationDAO.addMemberToConversation(newId,currentUserId); loadConversations(); showAlert("Succès","Groupe \""+name.trim()+"\" créé ✅"); }
                     }catch(Exception ex){ showAlert("Erreur",ex.getMessage()); } });
             }

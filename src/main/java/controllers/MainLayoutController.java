@@ -109,12 +109,11 @@ public class MainLayoutController {
             BorderPane shell = new BorderPane();
             shell.setLeft(sideBar);
 
-            URL usersUrl = getClass().getResource("/gui/AdminUsers.fxml");
-            if (usersUrl != null) {
-                Parent usersView = FXMLLoader.load(usersUrl);
-                shell.setCenter(usersView);
+            URL dashUrl = getClass().getResource("/GUI/AdminDashboard.fxml");
+            if (dashUrl != null) {
+                shell.setCenter(FXMLLoader.load(dashUrl));
             } else {
-                Label lbl = new Label("AdminUsers.fxml introuvable ( /gui/AdminUsers.fxml )");
+                Label lbl = new Label("AdminDashboard.fxml introuvable ( /GUI/AdminDashboard.fxml )");
                 lbl.setStyle("-fx-text-fill: white; -fx-font-size: 14;");
                 shell.setCenter(new StackPane(lbl));
             }

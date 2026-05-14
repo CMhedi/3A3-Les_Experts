@@ -1,0 +1,488 @@
+/* Pack inscription — palette adoucie (forêt + sarcelle + accents chauds) */
+
+
+
+.pi-page {
+
+    -fx-background-color: linear-gradient(to bottom, #ecfdf5 0%, #f5f7fa 42%, #f0f4f8 100%);
+
+}
+
+
+
+.pi-hero {
+
+    -fx-background-color: linear-gradient(to bottom right, #0f3d2e 0%, #145a3d 38%, #178a5e 72%, #1a6b52 100%);
+
+    -fx-background-radius: 0 0 22 22;
+
+    -fx-padding: 24 30 26 30;
+
+    -fx-effect: dropshadow(gaussian, rgba(15, 61, 46, 0.28), 26, 0, 0, 8);
+
+}
+
+
+
+.pi-btn-back {
+
+    -fx-background-color: rgba(255, 255, 255, 0.14);
+
+    -fx-text-fill: #f8fafc;
+
+    -fx-font-size: 13px;
+
+    -fx-font-weight: 700;
+
+    -fx-background-radius: 11;
+
+    -fx-padding: 9 18;
+
+    -fx-border-color: rgba(255, 255, 255, 0.38);
+
+    -fx-border-radius: 11;
+
+    -fx-border-width: 1;
+
+    -fx-cursor: hand;
+
+}
+
+
+
+.pi-btn-back:hover {
+
+    -fx-background-color: rgba(255, 255, 255, 0.26);
+
+    -fx-border-color: rgba(254, 243, 199, 0.55);
+
+}
+
+
+
+.pi-hero-title {
+
+    -fx-font-size: 25px;
+
+    -fx-font-weight: 900;
+
+    -fx-text-fill: #f8fafc;
+
+}
+
+
+
+.pi-hero-sub {
+
+    -fx-font-size: 13.5px;
+
+    -fx-text-fill: rgba(236, 253, 245, 0.88);
+
+}
+
+
+
+.pi-kpi-glass {
+
+    -fx-background-color: rgba(255, 255, 255, 0.14);
+
+    -fx-background-radius: 13;
+
+    -fx-padding: 12 15;
+
+    -fx-border-color: rgba(254, 243, 199, 0.22);
+
+    -fx-border-radius: 13;
+
+    -fx-border-width: 1;
+
+}
+
+
+
+.pi-kpi-lbl {
+
+    -fx-font-size: 11px;
+
+    -fx-font-weight: 800;
+
+    -fx-text-fill: rgba(236, 253, 245, 0.78);
+
+}
+
+
+
+.pi-kpi-val {
+
+    -fx-font-size: 22px;
+
+    -fx-font-weight: 900;
+
+    -fx-text-fill: #fffbeb;
+
+}
+
+
+
+.pi-scroll {
+
+    -fx-background-color: transparent;
+
+    -fx-border-color: transparent;
+
+}
+
+
+
+.pi-scroll > .viewport {
+
+    -fx-background-color: transparent;
+
+}
+
+
+
+.pi-filter-card {
+
+    -fx-background-color: rgba(255, 255, 255, 0.96);
+
+    -fx-background-radius: 16;
+
+    -fx-padding: 18 20 16 20;
+
+    -fx-effect: dropshadow(gaussian, rgba(15, 61, 46, 0.09), 20, 0, 0, 4);
+
+    -fx-border-color: rgba(167, 243, 208, 0.65);
+
+    -fx-border-radius: 16;
+
+    -fx-border-width: 1;
+
+}
+
+
+
+.pi-filter-search {
+
+    -fx-background-color: #f8fafc;
+
+    -fx-background-radius: 12;
+
+    -fx-padding: 6 12 6 10;
+
+    -fx-border-color: #e2e8f0;
+
+    -fx-border-radius: 12;
+
+    -fx-border-width: 1;
+
+}
+
+
+
+.pi-filter-field {
+
+    -fx-background-color: transparent;
+
+    -fx-border-width: 0;
+
+    -fx-padding: 10 8;
+
+    -fx-font-size: 14px;
+
+}
+
+
+
+.pi-filter-combo {
+
+    -fx-background-radius: 10;
+
+    -fx-font-size: 13px;
+
+}
+
+
+
+.pi-btn-apply {
+
+    -fx-background-color: linear-gradient(to bottom, #0d9488, #0f766e);
+
+    -fx-text-fill: white;
+
+    -fx-font-weight: 800;
+
+    -fx-background-radius: 10;
+
+    -fx-padding: 10 20;
+
+    -fx-cursor: hand;
+
+    -fx-effect: dropshadow(gaussian, rgba(13, 148, 136, 0.35), 12, 0, 0, 2);
+
+}
+
+
+
+.pi-btn-apply:hover {
+
+    -fx-background-color: linear-gradient(to bottom, #14b8a6, #0d9488);
+
+}
+
+
+
+.pi-btn-reset {
+
+    -fx-background-color: white;
+
+    -fx-text-fill: #0f3d2e;
+
+    -fx-font-weight: 800;
+
+    -fx-background-radius: 10;
+
+    -fx-padding: 10 16;
+
+    -fx-border-color: #94a3b8;
+
+    -fx-border-radius: 10;
+
+    -fx-border-width: 1.2;
+
+    -fx-cursor: hand;
+
+}
+
+
+
+.pi-btn-reset:hover {
+
+    -fx-background-color: #f8fafc;
+
+    -fx-border-color: #64748b;
+
+}
+
+
+
+.pi-filter-intersection {
+
+    -fx-font-size: 12.5px;
+
+    -fx-text-fill: #475569;
+
+    -fx-font-weight: 600;
+
+}
+
+
+
+.pi-section-title {
+
+    -fx-font-size: 18px;
+
+    -fx-font-weight: 900;
+
+    -fx-text-fill: #0f3d2e;
+
+}
+
+
+
+.pi-section-hint {
+
+    -fx-font-size: 12px;
+
+    -fx-text-fill: #64748b;
+
+}
+
+
+
+/* Carte pack */
+
+.pi-pack-card {
+
+    -fx-background-color: rgba(255, 255, 255, 0.98);
+
+    -fx-background-radius: 16;
+
+    -fx-padding: 18 20 16 20;
+
+    -fx-border-color: #e2e8f0;
+
+    -fx-border-radius: 16;
+
+    -fx-border-width: 1;
+
+    -fx-effect: dropshadow(gaussian, rgba(15, 61, 46, 0.06), 14, 0, 0, 3);
+
+    -fx-spacing: 12;
+
+}
+
+
+
+.pi-pack-card:hover {
+
+    -fx-border-color: #6ee7b7;
+
+    -fx-effect: dropshadow(gaussian, rgba(16, 185, 129, 0.12), 18, 0, 0, 4);
+
+}
+
+
+
+.pi-pack-card-selected {
+
+    -fx-background-color: #ecfdf5;
+
+    -fx-border-color: #10b981;
+
+    -fx-border-width: 2.5;
+
+    -fx-effect: dropshadow(gaussian, rgba(16, 185, 129, 0.28), 18, 0, 0, 4);
+
+}
+
+
+
+.pi-pack-badge {
+
+    -fx-background-color: #d1fae5;
+
+    -fx-text-fill: #065f46;
+
+    -fx-font-size: 11px;
+
+    -fx-font-weight: 900;
+
+    -fx-padding: 5 12;
+
+    -fx-background-radius: 20;
+
+}
+
+
+
+.pi-pack-name {
+
+    -fx-font-size: 17px;
+
+    -fx-font-weight: 900;
+
+    -fx-text-fill: #0f172a;
+
+}
+
+
+
+.pi-pack-sep {
+
+    -fx-background-color: #e2e8f0;
+
+    -fx-pref-height: 1;
+
+    -fx-max-height: 1;
+
+    -fx-min-height: 1;
+
+}
+
+
+
+.pi-pack-price {
+
+    -fx-font-size: 24px;
+
+    -fx-font-weight: 900;
+
+    -fx-text-fill: #c2410c;
+
+}
+
+
+
+.pi-pack-discount {
+
+    -fx-background-color: #fef3c7;
+
+    -fx-text-fill: #92400e;
+
+    -fx-font-size: 11px;
+
+    -fx-font-weight: 800;
+
+    -fx-padding: 4 10;
+
+    -fx-background-radius: 8;
+
+}
+
+
+
+.pi-pack-meta {
+
+    -fx-font-size: 12px;
+
+    -fx-text-fill: #64748b;
+
+}
+
+
+
+.pi-pack-net {
+
+    -fx-font-size: 11.5px;
+
+    -fx-text-fill: #94a3b8;
+
+}
+
+
+
+.pi-pack-cta {
+
+    -fx-background-color: linear-gradient(to bottom, #0f3d2e, #145a3d);
+
+    -fx-text-fill: white;
+
+    -fx-font-size: 14px;
+
+    -fx-font-weight: 800;
+
+    -fx-background-radius: 12;
+
+    -fx-padding: 12 16;
+
+    -fx-cursor: hand;
+
+    -fx-max-width: infinity;
+
+}
+
+
+
+.pi-pack-cta:hover {
+
+    -fx-background-color: linear-gradient(to bottom, #145a3d, #178a5e);
+
+}
+
+
+
+.pi-pack-card-selected .pi-pack-cta {
+
+    -fx-background-color: linear-gradient(to bottom, #059669, #047857);
+
+}
+
+
+
+.pi-pack-card-selected .pi-pack-cta:hover {
+
+    -fx-background-color: linear-gradient(to bottom, #10b981, #059669);
+
+}
+

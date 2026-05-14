@@ -23,6 +23,12 @@
         <Button onAction="#goToAdminMessagerie" maxWidth="Infinity" text="💬 Admin Messagerie"
                 style="-fx-background-color: transparent; -fx-text-fill: white; -fx-alignment: CENTER_LEFT; -fx-cursor: hand;"/>
 
+        <Button onAction="#goToAdminActivites" maxWidth="Infinity" text="🧗 Admin Activités"
+                style="-fx-background-color: transparent; -fx-text-fill: white; -fx-alignment: CENTER_LEFT; -fx-cursor: hand;"/>
+
+        <Button onAction="#goToAdminReservationsActivites" maxWidth="Infinity" text="📋 Réservations activités"
+                style="-fx-background-color: transparent; -fx-text-fill: white; -fx-alignment: CENTER_LEFT; -fx-cursor: hand;"/>
+
         <Button onAction="#goToMessengerie" maxWidth="Infinity" text="Messagerie Utilisateur"
                 style="-fx-background-color: transparent; -fx-text-fill: white; -fx-alignment: CENTER_LEFT; -fx-cursor: hand;"/>
 

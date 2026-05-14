@@ -10,29 +10,6 @@
             styleClass="root"
             stylesheets="@/css/app.css, @reservation.css">
 
-    <!-- ================= SIDEBAR ================= -->
-    <left>
-        <StackPane maxWidth="270" minWidth="270" prefWidth="270" styleClass="sidebar">
-
-            <Region styleClass="sidebar-overlay"/>
-
-            <VBox spacing="14" styleClass="sidebar-content">
-
-                <Label text="EcoAdventure" styleClass="brand"/>
-                <Label text="Gestion Réservations" styleClass="brand-sub"/>
-
-                <Region styleClass="sep"/>
-
-                <Button text="MainLayout" styleClass="nav-item" onAction="#goToUserSeances"/>
-                <Button text="Activités" styleClass="nav-item" onAction="#goActivites"/>
-                <Button text="Réservations" styleClass="nav-item active-nav"/>
-
-
-                <Region VBox.vgrow="ALWAYS"/>
-            </VBox>
-        </StackPane>
-    </left>
-
     <!-- ================= TOPBAR ================= -->
     <top>
         <HBox alignment="CENTER_LEFT" spacing="12" styleClass="topbar">
@@ -42,7 +19,7 @@
 
             <VBox spacing="2">
                 <Label text="Gestion des Réservations" styleClass="title"/>
-                <Label text="Vue complète des réservations et tickets" styleClass="subtitle"/>
+                <Label text="Réservations d’activités (base ecoadventure)" styleClass="subtitle"/>
             </VBox>
 
             <Region HBox.hgrow="ALWAYS"/>
@@ -66,12 +43,12 @@
                 </VBox>
 
                 <VBox spacing="6" alignment="CENTER" styleClass="card kpi-card">
-                    <Label text="Tickets générés" styleClass="subtitle"/>
+                    <Label text="Places (Σ participants)" styleClass="subtitle"/>
                     <Label fx:id="lblTickets" text="0" styleClass="title"/>
                 </VBox>
 
                 <VBox spacing="6" alignment="CENTER" styleClass="card kpi-card">
-                    <Label text="Check-in" styleClass="subtitle"/>
+                    <Label text="Scans ticket (SCANNEE)" styleClass="subtitle"/>
                     <Label fx:id="lblChecked" text="0" styleClass="title"/>
                 </VBox>
             </HBox>
@@ -85,12 +62,12 @@
                            VBox.vgrow="ALWAYS">
 
                     <columns>
-                        <TableColumn fx:id="colStatut" text="Statut" prefWidth="130"/>
-                        <TableColumn fx:id="colNb" text="Participants" prefWidth="120"/>
-                        <TableColumn fx:id="colToken" text="Ticket Token" prefWidth="220"/>
-                        <TableColumn fx:id="colGeneratedAt" text="Généré le" prefWidth="160"/>
-                        <TableColumn fx:id="colCheckedIn" text="Check-in" prefWidth="110"/>
-                        <TableColumn fx:id="colCheckinTime" text="Heure check-in" prefWidth="160"/>
+                        <TableColumn fx:id="colStatut" text="Statut" prefWidth="120"/>
+                        <TableColumn fx:id="colNb" text="Participants" prefWidth="100"/>
+                        <TableColumn fx:id="colDate" text="Date réservation" prefWidth="150"/>
+                        <TableColumn fx:id="colVille" text="Ville" prefWidth="110"/>
+                        <TableColumn fx:id="colActivite" text="Activité" prefWidth="180"/>
+                        <TableColumn fx:id="colUser" text="Utilisateur" prefWidth="160"/>
                     </columns>
 
                 </TableView>

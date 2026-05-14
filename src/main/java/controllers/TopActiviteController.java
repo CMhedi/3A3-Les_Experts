@@ -1,5 +1,6 @@
 package controllers;
 
+import GUI.utils.ActiviteQuickAdd;
 import Models.TopActivite;
 import Services.interfaces.ActiviteService;
 import javafx.event.ActionEvent;
@@ -12,6 +13,7 @@ import javafx.scene.control.Alert;
 import javafx.scene.control.Label;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
+import javafx.stage.Window;
 
 import java.io.IOException;
 import java.util.List;
@@ -30,6 +32,16 @@ public class TopActiviteController {
 
     @FXML
     public void initialize() {
+        loadTop(true);
+    }
+
+    @FXML
+    private void openActiviteQuickAdd() {
+        Window w = boxTop1 != null && boxTop1.getScene() != null ? boxTop1.getScene().getWindow() : null;
+        ActiviteQuickAdd.openDialog(w, () -> loadTop(false));
+    }
+
+    private void loadTop(boolean showEmptyAlert) {
         try {
             List<TopActivite> top = service.getTop3Activites();
 
@@ -42,7 +54,7 @@ public class TopActiviteController {
             if (top.size() > 1) fillTop2(top.get(1));
             if (top.size() > 2) fillTop3(top.get(2));
 
-            if (top.isEmpty()) {
+            if (showEmptyAlert && top.isEmpty()) {
                 new Alert(Alert.AlertType.INFORMATION,
                         "Aucune réservation trouvée pour calculer le Top 3.").show();
             }

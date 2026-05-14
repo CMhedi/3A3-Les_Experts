@@ -107,7 +107,14 @@ public class PackServiceUser {
         a.setPrix(rs.getBigDecimal("prix"));
         a.setStatut(rs.getString("statut"));
         a.setImageUrl(rs.getString("image_url"));
-        a.setIdPack(rs.getInt("id_pack"));
+        int idPack = rs.getInt("id_pack");
+        if (rs.wasNull()) {
+            a.setIdPack(0);
+        } else {
+            a.setIdPack(idPack);
+        }
+        a.setLatitude(rs.getObject("latitude") != null ? rs.getDouble("latitude") : null);
+        a.setLongitude(rs.getObject("longitude") != null ? rs.getDouble("longitude") : null);
 
         // CategorieActivite : enum → valueOf avec protection
         try {
